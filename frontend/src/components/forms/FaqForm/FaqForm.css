@@ -1,0 +1,17 @@
+/* Assunto e ordem lado a lado: a ordem é um número curto */
+.faq-form__linha {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 9rem;
+  gap: var(--esp-4);
+}
+
+.faq-form textarea {
+  resize: vertical;
+  min-height: 8rem;
+}
+
+@media (max-width: 520px) {
+  .faq-form__linha {
+    grid-template-columns: 1fr;
+  }
+}

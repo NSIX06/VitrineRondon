@@ -1,0 +1,121 @@
+/* Estilos específicos do EmpreendedorForm; os campos usam as classes globais de .formulario */
+.empreendedor-form .status {
+  margin-block: 0;
+}
+
+/* Bloco de localização */
+.empreendedor-form__grupo {
+  margin: 0;
+  padding: var(--esp-4);
+  border: var(--borda);
+  border-radius: var(--raio);
+  background: var(--cor-superficie-baixa);
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  min-width: 0;
+}
+
+.empreendedor-form__legenda {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+  padding: 0 var(--esp-2);
+  font-family: var(--fonte-titulo);
+  font-weight: 700;
+  font-size: var(--texto-lg);
+  color: var(--cor-anil);
+}
+
+.empreendedor-form__ajuda {
+  margin: 0;
+}
+
+.formulario__linha--endereco {
+  grid-template-columns: minmax(0, 3fr) minmax(120px, 1fr);
+}
+
+.formulario__linha--cidade {
+  grid-template-columns: minmax(0, 3fr) minmax(100px, 1fr);
+}
+
+.empreendedor-form__mapa-acoes {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  flex-wrap: wrap;
+}
+
+.empreendedor-form__previa {
+  height: 220px;
+  border: var(--borda);
+  border-radius: var(--raio);
+  background: var(--cor-superficie-media);
+}
+
+.empreendedor-form__previa iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+@media (max-width: 600px) {
+  .formulario__linha--endereco,
+  .formulario__linha--cidade {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Formulário "deitado" ----------
+   O formulário é um contêiner: ele se organiza pela própria largura, e não pela
+   da tela. No modal largo do painel ficam três colunas lado a lado; na coluna
+   estreita do cadastro, uma embaixo da outra. */
+.empreendedor-form {
+  container-type: inline-size;
+  container-name: form-negocio;
+}
+
+.empreendedor-form__grade {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--esp-5);
+  align-items: start;
+}
+
+.empreendedor-form__coluna {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  min-width: 0;
+}
+
+/* Dentro do formulário, dois campos cabem lado a lado em colunas menores */
+.empreendedor-form .formulario__linha {
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+
+.empreendedor-form__grupo.empreendedor-form__coluna {
+  margin: 0;
+}
+
+/* Duas colunas: dados | localização, horários na largura toda */
+@container form-negocio (min-width: 700px) {
+  .empreendedor-form__grade {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .empreendedor-form__coluna--horarios {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Três colunas: dados | localização | horários */
+@container form-negocio (min-width: 1100px) {
+  .empreendedor-form__grade {
+    /* Horários ganham mais espaço: manhã e tarde cabem na mesma linha */
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr) minmax(0, 1.35fr);
+  }
+  .empreendedor-form__coluna--horarios {
+    grid-column: auto;
+  }
+}

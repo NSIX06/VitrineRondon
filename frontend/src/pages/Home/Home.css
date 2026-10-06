@@ -1,0 +1,514 @@
+/* Herói */
+.hero {
+  position: relative;
+  background: var(--linhas-claras), var(--cor-anil);
+  color: var(--cor-branco);
+  border-bottom: var(--borda);
+}
+
+/* Hachura de nanquim no canto do herói */
+.hero::after {
+  content: '';
+  position: absolute;
+  right: var(--gutter);
+  bottom: 18px;
+  width: 52px;
+  height: 19px;
+  background: var(--hachura-clara) no-repeat center / contain;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.hero__conteudo {
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: var(--esp-8);
+  align-items: center;
+  padding-block: var(--esp-8);
+}
+
+.hero__texto-bloco {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--esp-5);
+}
+
+.hero__selo {
+  display: inline-block;
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
+  padding: 0.25rem 0.75rem;
+  border: var(--borda-fina);
+  border-radius: 4px;
+  box-shadow: 3px 3px 0 0 var(--cor-contorno);
+  transform: rotate(-1.5deg);
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.hero__titulo {
+  margin: 0;
+  color: var(--cor-branco);
+  /* Teto calibrado para "Seu negócio existe." caber em uma linha na coluna
+     do herói (~616px em telas largas); acima disso o título quebra em 4 linhas */
+  font-size: clamp(30px, 4vw, 52px);
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+.hero__texto {
+  font-size: var(--texto-lg);
+  line-height: 1.55;
+  max-width: 52ch;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+}
+
+.hero__acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-4);
+}
+
+/* Foto colada como cartaz de lambe-lambe */
+.hero__cartaz {
+  position: relative;
+  justify-self: end;
+  width: 100%;
+  max-width: 440px;
+  background: var(--cor-branco);
+  padding: var(--esp-2);
+  border: var(--borda);
+  border-radius: var(--raio);
+  transform: rotate(2deg);
+  box-shadow: 7px 7px 0 0 var(--cor-ouro);
+}
+
+/* Reflexo de vitrine sobre a foto do cartaz */
+.hero__cartaz::before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  background: var(--reflexo) no-repeat center / contain;
+  opacity: 0.9;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hero__cartaz-foto {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: var(--borda);
+  border-radius: var(--raio-md);
+  background: var(--cor-superficie-media);
+}
+
+.hero__cartaz-foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero__cartaz-legenda {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-2);
+  padding: var(--esp-2) var(--esp-1) var(--esp-1);
+  color: var(--cor-anil);
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.hero__cartaz-etiqueta {
+  background: var(--cor-anil);
+  color: var(--cor-ouro);
+  padding: 2px 6px;
+  border: var(--borda-fina);
+  border-radius: 4px;
+  transform: rotate(1deg);
+  font-size: 10px;
+}
+
+/* Contadores com barra à esquerda */
+.numeros {
+  border-bottom: var(--borda);
+  padding-block: var(--esp-7);
+}
+
+.numeros__lista {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--esp-6);
+  /* margin-block apenas: o shorthand `margin` anularia o margin-inline
+     automático de .container e jogaria a linha para a borda da tela */
+  margin-block: 0;
+}
+
+.numeros__item {
+  border-left: 5px solid var(--cor-contorno);
+  box-shadow: inset 4px 0 0 0 var(--cor-ouro);
+  padding-left: var(--esp-4);
+}
+
+.numeros__item dd {
+  margin: 0;
+  font-family: var(--fonte-titulo);
+  font-size: 50px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--cor-anil);
+}
+
+.numeros__item dt {
+  margin-top: var(--esp-1);
+  font-weight: 600;
+  color: var(--cor-cinza);
+}
+
+.categorias {
+  padding-block: var(--esp-5) 0;
+}
+
+.categorias__lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}
+
+.categorias__item {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border: var(--borda);
+  border-radius: var(--raio-md);
+  box-shadow: 3px 3px 0 0 var(--cor-contorno);
+  color: var(--cor-tinta);
+  font-weight: 700;
+  font-size: 12px;
+  text-decoration: none;
+  background: var(--cor-branco);
+  transition: var(--transicao-tecla);
+}
+
+.categorias__item:hover {
+  background: var(--cor-ouro-claro);
+  transform: translate(1px, 1px);
+  box-shadow: var(--sombra-dura-sm);
+}
+
+.categorias__item--ativo,
+.categorias__item--ativo:hover {
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
+  transform: rotate(-1.5deg);
+  box-shadow: 3px 3px 0 0 var(--cor-contorno), var(--cel-sm);
+}
+
+/* Link "Ver todos" no cabeçalho de seção */
+.secao__link {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--cor-anil);
+  text-decoration: none;
+  padding-block: var(--esp-1);
+}
+
+.secao__link:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.secao__link--claro {
+  color: var(--cor-ouro);
+}
+
+/* Seção em azul: quem está na feira */
+.feira {
+  background: var(--cor-anil);
+  color: var(--cor-branco);
+  padding-block: var(--esp-7);
+  border-block: var(--borda);
+  background: var(--linhas-claras), var(--cor-anil);
+}
+
+.feira__cabecalho {
+  border-bottom-color: rgba(255, 255, 255, 0.3);
+}
+
+.feira h2 {
+  color: var(--cor-branco);
+}
+
+.feira .secao__subtitulo {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Sobre o azul a sombra preta some: o cartão ganha sombra amarela */
+.feira .empreendedor-card {
+  box-shadow: 5px 5px 0 0 var(--cor-ouro);
+}
+
+.feira .empreendedor-card:hover,
+.feira .empreendedor-card:focus-within {
+  box-shadow: 2px 2px 0 0 var(--cor-ouro);
+}
+
+.como-funciona {
+  position: relative;
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura);
+  background: var(--cor-superficie-baixa);
+  padding: var(--esp-7);
+}
+
+.como-funciona::before {
+  content: '';
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  width: 52px;
+  height: 19px;
+  background: var(--hachura) no-repeat center / contain;
+  pointer-events: none;
+}
+
+.como-funciona__intro {
+  max-width: 60ch;
+  margin-bottom: var(--esp-5);
+}
+
+.como-funciona__intro h2 {
+  font-size: var(--texto-2xl);
+  margin-bottom: var(--esp-1);
+}
+
+.como-funciona__passos {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--esp-5);
+}
+
+.como-funciona__passo {
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-botao);
+  padding: var(--esp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+}
+
+.como-funciona__passo h3 {
+  margin: 0;
+}
+
+.como-funciona__passo p {
+  margin: 0;
+  font-size: var(--texto-sm);
+  color: var(--cor-cinza);
+}
+
+.como-funciona__numero {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
+  border: var(--borda-fina);
+  border-radius: var(--raio-sm);
+  box-shadow: var(--sombra-dura-sm), var(--cel-sm);
+  transform: rotate(-3deg);
+  font-family: var(--fonte-titulo);
+  font-weight: 800;
+  font-size: 18px;
+}
+
+@media (max-width: 900px) {
+  .hero__conteudo {
+    grid-template-columns: 1fr;
+    gap: var(--esp-6);
+    padding-block: var(--esp-6);
+  }
+
+  .hero__cartaz {
+    justify-self: center;
+    transform: rotate(1.5deg);
+  }
+
+  .numeros__lista,
+  .como-funciona__passos {
+    grid-template-columns: 1fr;
+    gap: var(--esp-4);
+  }
+
+  .numeros__item dd {
+    font-size: 40px;
+  }
+
+  .como-funciona {
+    padding: var(--esp-5);
+  }
+}
+
+/* Fonte do dado do herói, sobre fundo azul */
+.hero__texto-bloco .fonte {
+  margin-top: calc(-1 * var(--esp-3));
+  color: var(--cor-ouro);
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.hero__texto-bloco .fonte:hover {
+  background: var(--cor-ouro);
+  border-color: var(--cor-contorno);
+  color: var(--cor-tinta);
+}
+
+.para-quem {
+  background: var(--linhas-escuras), var(--cor-ouro-claro);
+  border-top: var(--borda);
+  border-bottom: var(--borda);
+}
+
+.para-quem__conteudo {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: var(--esp-6);
+  align-items: center;
+  padding-block: var(--esp-7);
+}
+
+.para-quem__conteudo h2 {
+  margin: 0;
+}
+
+.para-quem__marca {
+  color: var(--cor-ouro-escuro);
+}
+
+.para-quem__texto p {
+  font-family: var(--fonte-titulo);
+  font-size: var(--texto-xl);
+  font-weight: 700;
+  line-height: 1.4;
+  color: #251a00;
+  margin: 0 0 var(--esp-3);
+}
+
+.para-quem__texto p:last-child {
+  margin-bottom: 0;
+}
+
+/* O que fazemos */
+.funcionalidades {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--esp-3);
+}
+
+.funcionalidades__item {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  padding: var(--esp-4);
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-radius: var(--raio-md);
+  box-shadow: 3px 3px 0 0 var(--cor-contorno);
+  font-weight: 600;
+  font-size: var(--texto-sm);
+}
+
+.funcionalidades__item .icone {
+  color: var(--cor-anil);
+}
+
+/* Transparência */
+.como-funciona__colunas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--esp-5);
+}
+
+.como-funciona__colunas--unica {
+  grid-template-columns: 1fr;
+}
+
+.como-funciona__colunas--unica .como-funciona__regras {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--esp-3) var(--esp-6);
+}
+
+.como-funciona__regras {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}
+
+.como-funciona__regras li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--esp-2);
+  line-height: 1.5;
+}
+
+.como-funciona__regras .icone {
+  color: var(--cor-sucesso);
+  margin-top: 2px;
+}
+
+
+
+
+@media (max-width: 900px) {
+  .como-funciona__colunas {
+    grid-template-columns: 1fr;
+  }
+
+  .funcionalidades {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .para-quem__conteudo {
+    grid-template-columns: 1fr;
+    gap: var(--esp-4);
+    padding-block: var(--esp-6);
+  }
+}
+
+@media (max-width: 560px) {
+  .funcionalidades {
+    grid-template-columns: 1fr;
+  }
+
+  .como-funciona__colunas--unica .como-funciona__regras {
+    grid-template-columns: 1fr;
+  }
+}

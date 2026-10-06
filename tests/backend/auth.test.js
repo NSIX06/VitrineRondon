@@ -1,0 +1,198 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import jwt from 'jsonwebtoken'
+
+vi.mock('../../backend/src/config/prisma.js', () => ({
+  default: { usuario: { findUnique: vi.fn() } },
+}))
+
+process.env.JWT_SECRET = 'segredo-de-teste'
+
+const { default: prisma } = await import('../../backend/src/config/prisma.js')
+const { PERFIS, gerarToken, autenticar, autenticarOpcional, exigirPerfil, ehAdmin } = await import(
+  '../../backend/src/middlewares/auth.js'
+)
+
+const ANA = { id: 4, nome: 'Ana', email: 'ana@exemplo.com', perfil: PERFIS.EMPREENDEDOR, ativo: true }
+
+/** Requisição com o cabeçalho Authorization montado */
+const comToken = (token) => ({ headers: token ? { authorization: `Bearer ${token}` } : {} })
+
+function resposta() {
+  const saida = { codigo: 0, corpo: null }
+  return {
+    saida,
+    status(codigo) {
+      saida.codigo = codigo
+      return this
+    },
+    json(corpo) {
+      saida.corpo = corpo
+      return this
+    },
+  }
+}
+
+beforeEach(() => {
+  prisma.usuario.findUnique.mockReset()
+  prisma.usuario.findUnique.mockResolvedValue(ANA)
+})
+
+describe('gerarToken', () => {
+  it('guarda só o id e o perfil', () => {
+    const conteudo = jwt.verify(gerarToken({ ...ANA, senhaHash: '$2b$10$x' }), process.env.JWT_SECRET)
+    expect(conteudo.sub).toBe(4)
+    expect(conteudo.perfil).toBe(PERFIS.EMPREENDEDOR)
+  })
+
+  it('não leva nome, e-mail nem senha para dentro do token', () => {
+    const conteudo = jwt.verify(gerarToken({ ...ANA, senhaHash: '$2b$10$x' }), process.env.JWT_SECRET)
+    expect(Object.keys(conteudo).sort()).toEqual(['exp', 'iat', 'perfil', 'sub'])
+  })
+
+  it('tem prazo de validade', () => {
+    const conteudo = jwt.verify(gerarToken(ANA), process.env.JWT_SECRET)
+    expect(conteudo.exp).toBeGreaterThan(conteudo.iat)
+  })
+})
+
+describe('autenticar', () => {
+  it('deixa passar com token válido e carrega o usuário do banco', async () => {
+    const req = comToken(gerarToken(ANA))
+    const seguir = vi.fn()
+    await autenticar(req, resposta(), seguir)
+    expect(seguir).toHaveBeenCalled()
+    expect(req.usuario).toEqual(ANA)
+  })
+
+  it('lê o perfil do banco, não o que veio no token', async () => {
+    // Quem for rebaixado a COMUM não continua administrador com o token antigo
+    const tokenAntigo = gerarToken({ ...ANA, perfil: PERFIS.ADMIN })
+    prisma.usuario.findUnique.mockResolvedValue({ ...ANA, perfil: PERFIS.COMUM })
+    const req = comToken(tokenAntigo)
+    await autenticar(req, resposta(), vi.fn())
+    expect(req.usuario.perfil).toBe(PERFIS.COMUM)
+  })
+
+  it('recusa quem não mandou token', async () => {
+    const res = resposta()
+    const seguir = vi.fn()
+    await autenticar(comToken(null), res, seguir)
+    expect(res.saida.codigo).toBe(401)
+    expect(seguir).not.toHaveBeenCalled()
+  })
+
+  it('recusa token assinado com outro segredo', async () => {
+    const forjado = jwt.sign({ sub: 1, perfil: PERFIS.ADMIN }, 'outro-segredo')
+    const res = resposta()
+    await autenticar(comToken(forjado), res, vi.fn())
+    expect(res.saida.codigo).toBe(401)
+    expect(res.saida.corpo.message).toMatch(/inválida/i)
+  })
+
+  it('avisa quando a sessão expirou', async () => {
+    const vencido = jwt.sign({ sub: 4, perfil: PERFIS.COMUM }, process.env.JWT_SECRET, { expiresIn: -10 })
+    const res = resposta()
+    await autenticar(comToken(vencido), res, vi.fn())
+    expect(res.saida.codigo).toBe(401)
+    expect(res.saida.corpo.message).toMatch(/expirada/i)
+  })
+
+  it('recusa token de conta que não existe mais', async () => {
+    prisma.usuario.findUnique.mockResolvedValue(null)
+    const res = resposta()
+    await autenticar(comToken(gerarToken(ANA)), res, vi.fn())
+    expect(res.saida.codigo).toBe(401)
+  })
+
+  it('bloqueia conta desativada com 403, e não com 401', async () => {
+    prisma.usuario.findUnique.mockResolvedValue({ ...ANA, ativo: false })
+    const res = resposta()
+    await autenticar(comToken(gerarToken(ANA)), res, vi.fn())
+    expect(res.saida.codigo).toBe(403)
+    expect(res.saida.corpo.message).toMatch(/desativada/i)
+  })
+
+  it('não consulta o banco de novo quando a requisição já trouxe o usuário', async () => {
+    const seguir = vi.fn()
+    await autenticar({ headers: {}, usuario: ANA }, resposta(), seguir)
+    expect(seguir).toHaveBeenCalled()
+    expect(prisma.usuario.findUnique).not.toHaveBeenCalled()
+  })
+})
+
+describe('autenticarOpcional', () => {
+  it('segue como visitante quando não há token', async () => {
+    const req = comToken(null)
+    const seguir = vi.fn()
+    await autenticarOpcional(req, resposta(), seguir)
+    expect(seguir).toHaveBeenCalled()
+    expect(req.usuario).toBeUndefined()
+  })
+
+  it('identifica quem está navegando quando o token é válido', async () => {
+    const req = comToken(gerarToken(ANA))
+    await autenticarOpcional(req, resposta(), vi.fn())
+    expect(req.usuario).toEqual(ANA)
+  })
+
+  it('segue como visitante quando o token não presta, sem responder erro', async () => {
+    const req = comToken('token-qualquer')
+    const res = resposta()
+    const seguir = vi.fn()
+    await autenticarOpcional(req, res, seguir)
+    expect(req.usuario).toBeUndefined()
+    expect(res.saida.codigo).toBe(0)
+    expect(seguir).toHaveBeenCalled()
+  })
+
+  it('ignora conta desativada', async () => {
+    prisma.usuario.findUnique.mockResolvedValue({ ...ANA, ativo: false })
+    const req = comToken(gerarToken(ANA))
+    await autenticarOpcional(req, resposta(), vi.fn())
+    expect(req.usuario).toBeUndefined()
+  })
+})
+
+describe('exigirPerfil', () => {
+  it('deixa passar quem tem o perfil pedido', () => {
+    const seguir = vi.fn()
+    exigirPerfil(PERFIS.ADMIN)({ usuario: { perfil: PERFIS.ADMIN } }, resposta(), seguir)
+    expect(seguir).toHaveBeenCalled()
+  })
+
+  it('aceita qualquer um dos perfis informados', () => {
+    const seguir = vi.fn()
+    exigirPerfil(PERFIS.ADMIN, PERFIS.EMPREENDEDOR)({ usuario: ANA }, resposta(), seguir)
+    expect(seguir).toHaveBeenCalled()
+  })
+
+  it('responde 403 para perfil sem permissão', () => {
+    const res = resposta()
+    exigirPerfil(PERFIS.ADMIN)({ usuario: { perfil: PERFIS.COMUM } }, res, vi.fn())
+    expect(res.saida.codigo).toBe(403)
+  })
+
+  it('responde 401 quando ninguém está autenticado', () => {
+    const res = resposta()
+    exigirPerfil(PERFIS.ADMIN)({}, res, vi.fn())
+    expect(res.saida.codigo).toBe(401)
+  })
+})
+
+describe('ehAdmin', () => {
+  it('reconhece o administrador', () => {
+    expect(ehAdmin({ perfil: PERFIS.ADMIN })).toBe(true)
+  })
+
+  it.each([[PERFIS.COMUM], [PERFIS.EMPREENDEDOR], ['ADMINISTRADOR'], ['admin']])(
+    'recusa o perfil %s',
+    (perfil) => {
+      expect(ehAdmin({ perfil })).toBe(false)
+    }
+  )
+
+  it('recusa visitante sem conta', () => {
+    expect(ehAdmin(null)).toBe(false)
+    expect(ehAdmin(undefined)).toBe(false)
+  })
+})

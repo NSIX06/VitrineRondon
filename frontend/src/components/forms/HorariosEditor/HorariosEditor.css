@@ -1,0 +1,250 @@
+.horarios-editor {
+  margin: 0;
+  padding: var(--esp-4);
+  border: var(--borda);
+  border-radius: var(--raio);
+  background: var(--cor-superficie-baixa);
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  min-width: 0;
+}
+
+.horarios-editor__titulo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 var(--esp-2);
+  font-family: var(--fonte-titulo);
+  font-weight: 700;
+  font-size: var(--texto-lg);
+  color: var(--cor-anil);
+}
+
+.horarios-editor__explica {
+  margin: 0;
+  font-size: var(--texto-sm);
+  color: var(--cor-cinza);
+  line-height: 1.5;
+}
+
+.horarios-editor__atalhos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}
+
+.horarios-editor__atalho {
+  padding: 0.35rem 0.7rem;
+  background: var(--cor-branco);
+  border: var(--borda-fina);
+  border-radius: var(--raio-sm);
+  box-shadow: var(--sombra-dura-sm);
+  color: var(--cor-anil);
+  font-size: var(--texto-xs);
+  font-weight: 700;
+}
+
+.horarios-editor__atalho:hover {
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
+}
+
+.horarios-editor__atalho--limpar {
+  color: var(--cor-cinza);
+}
+
+.horarios-editor__atalho--limpar:hover {
+  background: var(--cor-lacre-fundo);
+  color: var(--cor-lacre-escuro);
+}
+
+.horarios-editor__dias {
+  /* Contêiner aqui, e não no fieldset, que tem layout especial por causa da legenda */
+  container-type: inline-size;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.horarios-editor__dia {
+  display: grid;
+  grid-template-columns: 68px minmax(0, 1fr);
+  gap: var(--esp-2);
+  align-items: start;
+  padding: var(--esp-2) 0;
+  border-top: 2px dashed var(--cor-superficie-alta);
+}
+
+.horarios-editor__dia:first-child {
+  border-top: none;
+}
+
+.horarios-editor__dia--hoje .horarios-editor__nome {
+  color: var(--cor-anil);
+  text-decoration: underline;
+  text-decoration-color: var(--cor-ouro);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 4px;
+}
+
+.horarios-editor__nome {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  font-weight: 700;
+  font-size: var(--texto-sm);
+  color: var(--cor-tinta);
+  cursor: pointer;
+}
+
+.horarios-editor__nome input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--cor-anil);
+}
+
+.horarios-editor__intervalos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-2);
+  min-height: 36px;
+}
+
+.horarios-editor__fechado {
+  font-size: var(--texto-sm);
+  color: var(--cor-cinza-claro);
+}
+
+.horarios-editor__intervalo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.horarios-editor__horas {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--cor-branco);
+  border: var(--borda-fina);
+  border-radius: var(--raio-sm);
+  padding: 2px 2px 2px 4px;
+  font-size: var(--texto-xs);
+  color: var(--cor-cinza);
+}
+
+.horarios-editor__horas .campo__entrada {
+  width: 6.2rem;
+  min-width: 0;
+  min-height: 32px;
+  padding: 0.2rem 0.35rem;
+  border-width: 2px;
+  border-radius: 4px;
+  font-size: var(--texto-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.horarios-editor__remover {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  color: var(--cor-cinza);
+}
+
+.horarios-editor__remover:hover {
+  background: var(--cor-lacre-fundo);
+  color: var(--cor-lacre-escuro);
+}
+
+.horarios-editor__adicionar {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0.25rem 0.5rem;
+  border: 2px dashed var(--cor-contorno);
+  border-radius: var(--raio-sm);
+  background: none;
+  color: var(--cor-anil);
+  font-size: var(--texto-xs);
+  font-weight: 700;
+}
+
+.horarios-editor__adicionar:hover {
+  background: var(--cor-branco);
+}
+
+.horarios-editor__previa {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--esp-2);
+  padding: var(--esp-3);
+  background: var(--cor-lacre-fundo);
+  border: var(--borda-fina);
+  border-radius: var(--raio-md);
+}
+
+.horarios-editor__previa div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.horarios-editor__previa strong {
+  color: var(--cor-lacre-escuro);
+  font-size: var(--texto-sm);
+}
+
+.horarios-editor__previa span {
+  font-size: var(--texto-xs);
+  color: var(--cor-cinza);
+}
+
+.horarios-editor__ponto {
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  margin-top: 4px;
+  border-radius: 50%;
+  background: var(--cor-lacre);
+}
+
+.horarios-editor__previa--aberto {
+  background: var(--cor-sucesso-fundo);
+}
+
+.horarios-editor__previa--aberto strong {
+  color: var(--cor-sucesso-tinta);
+}
+
+.horarios-editor__previa--aberto .horarios-editor__ponto {
+  background: var(--cor-whatsapp);
+}
+
+/* Com mouse, o relógio nativo do campo de hora só ocupa espaço: digitar
+   "0800" já preenche. No celular o seletor nativo continua aparecendo. */
+@media (pointer: fine) {
+  .horarios-editor__horas .campo__entrada {
+    width: 4.6rem;
+  }
+
+  .horarios-editor__horas input[type='time']::-webkit-calendar-picker-indicator {
+    display: none;
+  }
+}
+
+/* Em colunas estreitas o dia fica em cima e os intervalos embaixo */
+@container (max-width: 340px) {
+  .horarios-editor__dia {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}

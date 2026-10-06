@@ -1,0 +1,31 @@
+.paginacao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--esp-3);
+  margin-top: var(--esp-6);
+  padding-top: var(--esp-4);
+  border-top: 2px dashed var(--cor-contorno);
+}
+
+.paginacao__texto {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: var(--texto-sm);
+  color: var(--cor-cinza);
+  /* Largura fixa: sem ela, ir de "Página 9" para "Página 10" empurra os botões */
+  min-width: 15ch;
+  text-align: center;
+}
+
+.paginacao__texto strong {
+  color: var(--cor-anil);
+}
+
+.paginacao__total {
+  font-size: var(--texto-xs);
+  color: var(--cor-cinza-claro);
+}

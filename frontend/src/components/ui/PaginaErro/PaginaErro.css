@@ -1,0 +1,35 @@
+.pagina-erro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--esp-3);
+  padding-block: var(--esp-8);
+}
+
+.pagina-erro__icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura);
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
+  transform: rotate(-3deg);
+}
+
+.pagina-erro p {
+  max-width: 46ch;
+  color: var(--cor-cinza);
+}
+
+.pagina-erro__acoes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--esp-2);
+  margin-top: var(--esp-2);
+}

@@ -1,0 +1,105 @@
+.status {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  padding: var(--esp-3) var(--esp-4);
+  border: var(--borda);
+  border-radius: var(--raio-md);
+  box-shadow: var(--sombra-botao);
+  margin-block: var(--esp-4);
+  font-weight: 600;
+}
+
+.status__marca {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  background: currentColor;
+  border: 2px solid var(--cor-contorno);
+  border-radius: 3px;
+  transform: rotate(-8deg);
+}
+
+.status__conteudo {
+  flex: 1;
+  min-width: 0;
+}
+
+.status__titulo {
+  display: block;
+  margin-bottom: 2px;
+}
+
+.status__texto p {
+  font-weight: 400;
+}
+.status__texto p:last-child {
+  margin-bottom: 0;
+}
+
+.status__acao {
+  margin-top: var(--esp-3);
+}
+
+.status__fechar {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  padding: 0 var(--esp-1);
+  color: inherit;
+  opacity: 0.75;
+}
+.status__fechar:hover {
+  opacity: 1;
+}
+
+.status--sucesso {
+  background: var(--cor-sucesso-fundo);
+  color: var(--cor-sucesso-tinta);
+}
+
+.status--erro {
+  background: var(--cor-lacre-fundo);
+  color: var(--cor-lacre-escuro);
+}
+
+.status--aviso {
+  background: var(--cor-ouro-claro);
+  color: var(--cor-ouro-escuro);
+}
+
+.status--info {
+  background: var(--cor-anil-claro);
+  color: var(--cor-anil);
+}
+
+/* Estado vazio: barraca de feira em traço único */
+.status--vazio {
+  flex-direction: column;
+  text-align: center;
+  background: var(--cor-branco);
+  color: var(--cor-anil);
+  border-style: dashed;
+  box-shadow: none;
+  border-radius: var(--raio);
+  padding: var(--esp-7) var(--esp-5);
+  font-weight: 500;
+}
+
+.status--vazio .status__titulo {
+  font-family: var(--fonte-titulo);
+  font-size: var(--texto-xl);
+  font-weight: 700;
+}
+
+.status--vazio .status__texto p {
+  margin-inline: auto;
+  color: var(--cor-cinza);
+}
+
+.status__icone {
+  width: 72px;
+  height: 60px;
+  color: var(--cor-anil);
+}

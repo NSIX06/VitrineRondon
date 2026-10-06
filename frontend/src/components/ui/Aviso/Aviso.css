@@ -1,0 +1,32 @@
+.aviso {
+  position: fixed;
+  right: var(--gutter);
+  bottom: calc(var(--esp-5) + env(safe-area-inset-bottom, 0px));
+  z-index: 90;
+  width: min(420px, calc(100% - 2 * var(--gutter)));
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura);
+  animation: aviso-entrar 0.22s ease-out;
+}
+
+.aviso .status {
+  margin: 0;
+  border-radius: var(--raio);
+}
+
+@keyframes aviso-entrar {
+  from {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aviso {
+    animation: none;
+  }
+}

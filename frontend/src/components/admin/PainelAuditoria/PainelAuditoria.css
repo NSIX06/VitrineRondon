@@ -1,0 +1,254 @@
+.auditoria {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.auditoria__filtros {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--esp-3);
+  padding: var(--esp-4);
+  background: var(--cor-superficie-baixa);
+  border: var(--borda);
+  border-radius: var(--raio);
+}
+
+.auditoria__campo {
+  margin: 0;
+}
+
+/* A busca ocupa a linha inteira quando há espaço */
+.auditoria__campo--busca {
+  grid-column: 1 / -1;
+}
+
+@media (min-width: 900px) {
+  .auditoria__campo--busca {
+    grid-column: span 2;
+  }
+}
+
+.auditoria__barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-4);
+  flex-wrap: wrap;
+}
+
+.auditoria__total {
+  font-size: var(--texto-sm);
+  font-weight: 700;
+  color: var(--cor-cinza);
+}
+
+.auditoria__barra-acoes {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  flex-wrap: wrap;
+}
+
+.auditoria__por-pagina {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+  font-size: var(--texto-sm);
+  font-weight: 700;
+  color: var(--cor-cinza);
+}
+
+.auditoria__por-pagina .campo__entrada {
+  width: auto;
+  padding-block: 0.3rem;
+}
+
+.auditoria__quando {
+  display: flex;
+  flex-direction: column;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  font-size: var(--texto-sm);
+}
+
+/* Hora abaixo da data: a coluna fica estreita e a de ações cabe na tela */
+.auditoria__hora {
+  font-size: var(--texto-xs);
+  color: var(--cor-cinza-claro);
+}
+
+.auditoria__anonimo {
+  color: var(--cor-cinza-claro);
+  font-style: italic;
+}
+
+.auditoria__acao {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.auditoria__acao strong {
+  color: var(--cor-anil);
+  white-space: nowrap;
+}
+
+.auditoria__acao-codigo {
+  font-size: var(--texto-xs);
+  letter-spacing: 0.06em;
+  color: var(--cor-cinza-claro);
+}
+
+.auditoria__descricao {
+  display: block;
+  max-width: 38ch;
+  /* O painel impede quebra de linha nas células (.admin .data-table td).
+     Aqui a caixa tem largura máxima, então sem quebra o texto vazava por
+     baixo da coluna Situação. */
+  white-space: normal;
+  /* E-mails e URLs longos não podem invadir a coluna ao lado */
+  overflow-wrap: anywhere;
+  font-size: var(--texto-sm);
+  line-height: 1.45;
+}
+
+.auditoria__registro {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--cor-cinza-claro);
+}
+
+.auditoria__paginacao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--esp-4);
+  padding-top: var(--esp-2);
+  flex-wrap: wrap;
+}
+
+.auditoria__paginacao-texto {
+  font-size: var(--texto-sm);
+  font-weight: 700;
+  color: var(--cor-cinza);
+  font-variant-numeric: tabular-nums;
+}
+
+.auditoria-detalhe {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.auditoria-detalhe__lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--esp-3);
+  margin: 0;
+}
+
+.auditoria-detalhe__lista > div {
+  padding: var(--esp-3);
+  background: var(--cor-superficie-baixa);
+  border-left: 4px solid var(--cor-mostarda);
+  border-radius: 0 var(--raio-sm) var(--raio-sm) 0;
+}
+
+.auditoria-detalhe__lista dt {
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cor-cinza-claro);
+  margin-bottom: 2px;
+}
+
+.auditoria-detalhe__lista dd {
+  margin: 0;
+  font-size: var(--texto-sm);
+  line-height: 1.5;
+  color: var(--cor-tinta);
+  word-break: break-word;
+}
+
+.auditoria-detalhe__lista code {
+  font-size: var(--texto-xs);
+  background: var(--cor-superficie-alta);
+  padding: 1px 4px;
+}
+
+.auditoria-detalhe__agente {
+  display: block;
+  margin-top: 4px;
+  font-size: var(--texto-xs);
+  color: var(--cor-cinza-claro);
+  line-height: 1.4;
+}
+
+.auditoria-detalhe__descricao {
+  margin: 0;
+  padding: var(--esp-3);
+  border: var(--borda);
+  border-radius: var(--raio);
+  font-size: var(--texto-md);
+  line-height: 1.55;
+}
+
+.auditoria-detalhe__mudancas h3 {
+  font-family: var(--fonte-titulo);
+  font-size: var(--texto-lg);
+  color: var(--cor-anil);
+  margin: 0 0 var(--esp-2);
+}
+
+.auditoria-detalhe__antes {
+  color: var(--cor-lacre-escuro);
+  text-decoration: line-through;
+  word-break: break-word;
+}
+
+.auditoria-detalhe__depois {
+  color: var(--cor-sucesso-tinta);
+  font-weight: 700;
+  word-break: break-word;
+}
+
+.auditoria-detalhe__sem-mudanca {
+  margin: 0;
+  font-size: var(--texto-sm);
+  color: var(--cor-cinza);
+}
+
+.auditoria-detalhe__aviso {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  margin: 0;
+  padding: var(--esp-3);
+  background: var(--cor-superficie-baixa);
+  border: 2px dashed var(--cor-contorno);
+  border-radius: var(--raio-md);
+  font-size: var(--texto-sm);
+  color: var(--cor-cinza);
+}
+
+@media (max-width: 1100px) {
+  .auditoria__descricao {
+    max-width: 26ch;
+  }
+}
+
+@media (max-width: 720px) {
+  .auditoria__filtros {
+    padding: var(--esp-3);
+  }
+
+  .auditoria__descricao {
+    max-width: 28ch;
+  }
+}
+

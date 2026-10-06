@@ -1,0 +1,61 @@
+.aceite {
+  margin: 0;
+  padding: var(--esp-4);
+  border: var(--borda);
+  border-radius: var(--raio);
+  background: var(--cor-superficie-baixa);
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}
+
+.aceite__legenda {
+  padding: 0 var(--esp-2);
+  font-family: var(--fonte-titulo);
+  font-weight: 700;
+  font-size: var(--texto-lg);
+  color: var(--cor-anil);
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--esp-2);
+}
+
+.aceite__versao {
+  font-family: var(--fonte-texto);
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cor-cinza);
+}
+
+.aceite__item {
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  gap: 4px var(--esp-3);
+  align-items: start;
+}
+
+.aceite__item input {
+  width: 20px;
+  height: 20px;
+  margin: 2px 0 0;
+  accent-color: var(--cor-anil);
+}
+
+.aceite__item label {
+  line-height: 1.5;
+  font-size: var(--texto-md);
+}
+
+.aceite__item label a {
+  font-weight: 700;
+}
+
+.aceite__item .campo__erro {
+  grid-column: 2;
+}
+
+.aceite__item--erro label {
+  color: var(--cor-lacre-escuro);
+}

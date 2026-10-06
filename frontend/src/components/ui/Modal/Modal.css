@@ -1,0 +1,109 @@
+.modal__fundo {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(17, 24, 39, 0.72);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: var(--esp-6) var(--esp-4);
+  overflow-y: auto;
+}
+
+.modal {
+  width: 100%;
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: 8px 8px 0 0 var(--cor-ouro);
+  animation: modal-entrar 0.16s ease-out;
+}
+
+.modal--sm {
+  max-width: 460px;
+}
+.modal--md {
+  max-width: 640px;
+}
+.modal--lg {
+  max-width: 760px;
+}
+/* Formulários "deitados", como o do negócio, que se dividem em colunas */
+.modal--xl {
+  max-width: 1440px;
+}
+
+/* Fixo no alto ao rolar: em documento ou formulário longo, o botão de fechar
+   continua à mão em vez de sumir lá em cima. O top negativo desconta o
+   espaçamento do fundo; com top: 0 o texto passava numa faixa acima dele. */
+.modal__cabecalho {
+  position: sticky;
+  top: calc(var(--esp-6) * -1);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-4);
+  padding: var(--esp-4) var(--esp-5);
+  background: var(--cor-ouro);
+  border-bottom: var(--borda);
+  border-radius: calc(var(--raio) - 3px) calc(var(--raio) - 3px) 0 0;
+}
+
+.modal__titulo {
+  margin: 0;
+  font-size: var(--texto-2xl);
+  font-weight: 700;
+}
+
+.modal__fechar {
+  width: 34px;
+  height: 34px;
+  border: var(--borda);
+  border-radius: var(--raio-sm);
+  box-shadow: var(--sombra-dura-sm);
+  background: var(--cor-branco);
+  color: var(--cor-tinta);
+  font-size: 1.5rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal__fechar:hover {
+  background: var(--cor-lacre-escuro);
+  color: var(--cor-branco);
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
+.modal__corpo {
+  padding: var(--esp-5);
+}
+
+@keyframes modal-entrar {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 600px) {
+  .modal__fundo {
+    padding: var(--esp-3);
+  }
+  .modal__cabecalho {
+    top: calc(var(--esp-3) * -1);
+  }
+  .modal {
+    box-shadow: 5px 5px 0 0 var(--cor-ouro);
+  }
+  .modal__corpo,
+  .modal__cabecalho {
+    padding-inline: var(--esp-4);
+  }
+}

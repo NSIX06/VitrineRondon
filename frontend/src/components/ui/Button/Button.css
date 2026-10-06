@@ -1,0 +1,115 @@
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--esp-2);
+  border: var(--borda);
+  border-radius: var(--raio-md);
+  box-shadow: var(--sombra-botao), var(--cel);
+  font-weight: 700;
+  text-decoration: none;
+  line-height: 1.2;
+  white-space: nowrap;
+  transition: var(--transicao-tecla);
+}
+
+/* Tecla pressionável: afunda em direção à sombra */
+.botao:hover:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: var(--sombra-dura-sm), var(--cel);
+}
+.botao:active:not(:disabled) {
+  transform: translate(4px, 4px);
+  box-shadow: var(--cel);
+}
+
+.botao--md {
+  padding: 0.8rem 1.5rem;
+  font-size: 14px;
+}
+
+.botao--sm {
+  padding: 0.4rem 0.75rem;
+  font-size: 12px;
+}
+
+.botao--primario {
+  background: var(--cor-anil);
+  color: var(--cor-branco);
+}
+.botao--primario:hover:not(:disabled) {
+  background: var(--cor-anil-escuro);
+}
+
+.botao--destaque {
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
+}
+.botao--destaque:hover:not(:disabled) {
+  background: var(--cor-mostarda);
+}
+
+.botao--secundario {
+  background: var(--cor-branco);
+  color: var(--cor-anil);
+}
+.botao--secundario:hover:not(:disabled) {
+  background: var(--cor-ouro-claro);
+  color: var(--cor-tinta);
+}
+
+/* Sobre fundo escuro: vira um adesivo branco com contorno */
+.botao--claro {
+  background: var(--cor-branco);
+  color: var(--cor-anil);
+}
+.botao--claro:hover:not(:disabled) {
+  background: var(--cor-ouro-claro);
+  color: var(--cor-tinta);
+}
+
+.botao--perigo {
+  background: var(--cor-branco);
+  color: var(--cor-lacre-escuro);
+}
+.botao--perigo:hover:not(:disabled) {
+  background: var(--cor-lacre-escuro);
+  color: var(--cor-branco);
+}
+
+.botao--whatsapp {
+  background: var(--cor-whatsapp);
+  color: var(--cor-whatsapp-tinta);
+}
+.botao--whatsapp:hover:not(:disabled) {
+  background: var(--cor-whatsapp-hover);
+}
+
+.botao--texto {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  color: var(--cor-anil);
+  padding-inline: var(--esp-2);
+}
+.botao--texto:hover:not(:disabled),
+.botao--texto:active:not(:disabled) {
+  transform: none;
+  box-shadow: none;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+}
+
+/* Sombra mais profunda para a chamada principal da tela */
+.botao--sombra {
+  box-shadow: var(--sombra-dura), var(--cel);
+}
+.botao--sombra:hover:not(:disabled) {
+  transform: translate(3px, 3px);
+}
+
+.botao:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}

@@ -1,0 +1,33 @@
+.fonte {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--cor-anil);
+  text-decoration: none;
+  padding: 1px 6px;
+  border: var(--borda-fina);
+  border-radius: 4px;
+  background: var(--cor-branco);
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.fonte:hover {
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
+}
+
+/* Sobre fundo azul */
+.fonte--clara {
+  color: var(--cor-ouro);
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+.fonte--clara:hover {
+  background: var(--cor-ouro);
+  border-color: var(--cor-contorno);
+  color: var(--cor-tinta);
+}

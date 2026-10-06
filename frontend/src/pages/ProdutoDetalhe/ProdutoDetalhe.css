@@ -1,0 +1,121 @@
+.produto-detalhe {
+  display: grid;
+  grid-template-columns: 6fr 6fr;
+  gap: var(--esp-7);
+  align-items: start;
+}
+
+.produto-detalhe__imagem {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: var(--borda);
+  border-radius: var(--raio);
+  background: var(--cor-superficie-media);
+  box-shadow: var(--sombra-dura);
+}
+
+.produto-detalhe__imagem img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.produto-detalhe__tags {
+  position: absolute;
+  top: var(--esp-3);
+  left: var(--esp-3);
+  display: flex;
+  gap: var(--esp-2);
+}
+
+.produto-detalhe__info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  min-width: 0;
+}
+
+.produto-detalhe__nome {
+  margin: 0;
+  font-size: clamp(28px, 3.6vw, 42px);
+  overflow-wrap: anywhere;
+}
+
+.produto-detalhe__descricao {
+  margin: 0;
+  font-size: var(--texto-lg);
+  line-height: 1.6;
+  color: var(--cor-cinza);
+}
+
+.produto-detalhe__preco-caixa {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--esp-3);
+  position: relative;
+  padding: var(--esp-4);
+  background: var(--cor-ouro);
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura), var(--cel);
+  transform: rotate(-0.6deg);
+}
+
+.produto-detalhe__a-partir {
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cor-cinza);
+}
+
+.produto-detalhe__preco {
+  font-family: var(--fonte-titulo);
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--cor-anil);
+}
+
+.produto-detalhe__acoes {
+  display: flex;
+  gap: var(--esp-3);
+  flex-wrap: wrap;
+}
+
+.produto-detalhe__acoes .botao {
+  flex: 1 1 220px;
+}
+
+.produto-detalhe__aviso {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  margin: 0;
+  font-size: var(--texto-sm);
+  color: var(--cor-tinta);
+}
+
+.produto-detalhe__aviso .icone {
+  color: var(--cor-ouro-escuro);
+}
+
+.produto-detalhe__quem {
+  background: var(--cor-superficie-media);
+  border-block: var(--borda);
+}
+
+.produto-detalhe__quem-card {
+  max-width: 420px;
+}
+
+@media (max-width: 800px) {
+  .produto-detalhe {
+    grid-template-columns: 1fr;
+    gap: var(--esp-5);
+  }
+}

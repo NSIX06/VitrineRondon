@@ -1,0 +1,49 @@
+.tag {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border: var(--borda-fina);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 0 var(--cor-contorno), var(--cel-sm);
+  transform: rotate(-1.5deg);
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.tag--neutra {
+  background: var(--cor-superficie-media);
+  color: var(--cor-tinta);
+}
+
+.tag--categoria {
+  background: var(--cor-ouro-claro);
+  color: var(--cor-tinta);
+}
+
+.tag--produto {
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
+}
+
+.tag--servico {
+  background: var(--cor-anil);
+  color: var(--cor-branco);
+}
+
+.tag--ouro {
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
+}
+
+.tag--alerta {
+  background: var(--cor-lacre-escuro);
+  color: var(--cor-branco);
+}
+
+/* Adesivos vizinhos colam em ângulos diferentes */
+.tag + .tag {
+  transform: rotate(1deg);
+}

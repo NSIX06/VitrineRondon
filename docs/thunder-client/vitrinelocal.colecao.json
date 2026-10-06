@@ -1,0 +1,1561 @@
+{
+  "clientName": "Thunder Client",
+  "collectionName": "VitrineLocal",
+  "collectionId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+  "dateExported": "2026-09-19T19:38:24.543Z",
+  "version": "1.4",
+  "folders": [
+    {
+      "_id": "211d1ce8-0d7f-4d0d-8dd1-f9c75ec0fc5d",
+      "name": "1. Comece aqui",
+      "containerId": "",
+      "created": "2026-09-19T19:38:24.543Z",
+      "sortNum": 10000
+    },
+    {
+      "_id": "a04ab566-4732-461c-84ff-e5dc3c330ca8",
+      "name": "2. Vitrine pública (sem login)",
+      "containerId": "",
+      "created": "2026-09-19T19:38:24.543Z",
+      "sortNum": 20000
+    },
+    {
+      "_id": "61d41ee5-22fb-4cc3-8ff2-c46b854f5850",
+      "name": "3. Área do empreendedor (Carlos)",
+      "containerId": "",
+      "created": "2026-09-19T19:38:24.543Z",
+      "sortNum": 30000
+    },
+    {
+      "_id": "957b9f05-b7ae-427e-a17e-917e37745875",
+      "name": "4. Administração",
+      "containerId": "",
+      "created": "2026-09-19T19:38:24.543Z",
+      "sortNum": 40000
+    },
+    {
+      "_id": "cc279a57-6a24-4c74-b03b-9926d5a66ce9",
+      "name": "5. Erros esperados (segurança e validação)",
+      "containerId": "",
+      "created": "2026-09-19T19:38:24.543Z",
+      "sortNum": 50000
+    },
+    {
+      "_id": "009b87cd-ca24-4f71-a811-bd551b5cb5a6",
+      "name": "6. Paginação e perguntas frequentes",
+      "containerId": "",
+      "created": "2026-09-27T17:00:50.598Z",
+      "sortNum": 60000
+    }
+  ],
+  "requests": [
+    {
+      "_id": "62f04fa2-8d06-49be-adf9-08d7498e8d40",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "211d1ce8-0d7f-4d0d-8dd1-f9c75ec0fc5d",
+      "name": "01. API no ar",
+      "url": "{{baseUrl}}/health",
+      "method": "GET",
+      "sortNum": 10000,
+      "created": "2026-09-19T19:38:24.543Z",
+      "modified": "2026-09-19T19:38:24.543Z",
+      "headers": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        }
+      ],
+      "docs": [
+        "Esperado: 200",
+        "",
+        "Responde `success: true` e a mensagem \"API VitrineLocal operando\". Se falhar, o backend não está rodando."
+      ]
+    },
+    {
+      "_id": "c1feee05-ddbd-4911-9234-9abd9c1ee77b",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "211d1ce8-0d7f-4d0d-8dd1-f9c75ec0fc5d",
+      "name": "02. Entrar como administrador",
+      "url": "{{baseUrl}}/auth/login",
+      "method": "POST",
+      "sortNum": 20000,
+      "created": "2026-09-19T19:38:24.543Z",
+      "modified": "2026-09-19T19:38:24.543Z",
+      "headers": [],
+      "body": {
+        "type": "json",
+        "raw": [
+          "{",
+          "  \"email\": \"{{adminEmail}}\",",
+          "  \"senha\": \"{{adminSenha}}\"",
+          "}"
+        ],
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "set-env-var",
+          "custom": "json.data.token",
+          "action": "setto",
+          "value": "{{tokenAdmin}}"
+        }
+      ],
+      "docs": [
+        "Esperado: 200",
+        "",
+        "A resposta traz `data.token` e `data.usuario.perfil` igual a `ADMIN`. O token vai sozinho para a variável `tokenAdmin`."
+      ]
+    },
+    {
+      "_id": "c8a8e320-12a3-4e77-a604-22e41c35d16c",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "211d1ce8-0d7f-4d0d-8dd1-f9c75ec0fc5d",
+      "name": "03. Entrar como empreendedor (Carlos)",
+      "url": "{{baseUrl}}/auth/login",
+      "method": "POST",
+      "sortNum": 30000,
+      "created": "2026-09-19T19:38:24.543Z",
+      "modified": "2026-09-19T19:38:24.543Z",
+      "headers": [],
+      "body": {
+        "type": "json",
+        "raw": [
+          "{",
+          "  \"email\": \"{{empreendedorEmail}}\",",
+          "  \"senha\": \"{{empreendedorSenha}}\"",
+          "}"
+        ],
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "set-env-var",
+          "custom": "json.data.token",
+          "action": "setto",
+          "value": "{{tokenEmpreendedor}}"
+        }
+      ],
+      "docs": [
+        "Esperado: 200",
+        "",
+        "O perfil vem como `EMPREENDEDOR`. O token vai para a variável `tokenEmpreendedor`."
+      ]
+    },
+    {
+      "_id": "917de8fd-5c9f-442b-8046-7b5f34c46784",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "211d1ce8-0d7f-4d0d-8dd1-f9c75ec0fc5d",
+      "name": "04. Quem sou eu (admin)",
+      "url": "{{baseUrl}}/auth/me",
+      "method": "GET",
+      "sortNum": 40000,
+      "created": "2026-09-19T19:38:24.543Z",
+      "modified": "2026-09-19T19:38:24.543Z",
+      "headers": [],
+      "auth": {
+        "type": "bearer",
+        "bearer": "{{tokenAdmin}}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        }
+      ],
+      "docs": [
+        "Esperado: 200",
+        "",
+        "Mostra nome, e-mail e perfil da conta do token. A senha nunca aparece."
+      ]
+    },
+    {
+      "_id": "26338588-89ca-4739-b68d-241bb651ec8c",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "a04ab566-4732-461c-84ff-e5dc3c330ca8",
+      "name": "05. Listar empreendedores",
+      "url": "{{baseUrl}}/empreendedores",
+      "method": "GET",
+      "sortNum": 10000,
+      "created": "2026-09-19T19:38:24.543Z",
+      "modified": "2026-09-19T19:38:24.543Z",
+      "headers": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        }
+      ],
+      "docs": [
+        "Esperado: 200",
+        "",
+        "`total` traz a quantidade, e cada negócio vem com a lista `horarios`."
+      ]
+    },
+    {
+      "_id": "8d3f190d-002c-4212-b402-184298b9bb62",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "a04ab566-4732-461c-84ff-e5dc3c330ca8",
+      "name": "06. Empreendedores da categoria Moda",
+      "url": "{{baseUrl}}/empreendedores?categoria=Moda",
+      "method": "GET",
+      "sortNum": 20000,
+      "created": "2026-09-19T19:38:24.543Z",
+      "modified": "2026-09-19T19:38:24.543Z",
+      "headers": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        }
+      ],
+      "docs": [
+        "Esperado: 200",
+        "",
+        "Só aparecem negócios da categoria Moda, como o Brechó da Ju."
+      ]
+    },
+    {
+      "_id": "e1051062-49a1-48a7-9ebd-ca50e5fd00d3",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "a04ab566-4732-461c-84ff-e5dc3c330ca8",
+      "name": "07. Buscar empreendedores por texto",
+      "url": "{{baseUrl}}/empreendedores?busca=bolo",
+      "method": "GET",
+      "sortNum": 30000,
+      "created": "2026-09-19T19:38:24.543Z",
+      "modified": "2026-09-19T19:38:24.543Z",
+      "headers": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        }
+      ],
+      "docs": [
+        "Esperado: 200",
+        "",
+        "A busca olha nome, responsável e descrição. \"bolo\" encontra a Doces da Dona Lu."
+      ]
+    },
+    {
+      "_id": "b7c2b5df-c027-4998-8b60-1ccd7738bd4e",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "a04ab566-4732-461c-84ff-e5dc3c330ca8",
+      "name": "08. Listar produtos e serviços",
+      "url": "{{baseUrl}}/produtos",
+      "method": "GET",
+      "sortNum": 40000,
+      "created": "2026-09-19T19:38:24.543Z",
+      "modified": "2026-09-19T19:38:24.543Z",
+      "headers": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "set-env-var",
+          "custom": "json.data.0.id",
+          "action": "setto",
+          "value": "{{produtoId}}"
+        }
+      ],
+      "docs": [
+        "Esperado: 200",
+        "",
+        "Cada item vem com um resumo do negócio. O id do primeiro vai para a variável `produtoId`."
+      ]
+    },
+    {
+      "_id": "4ff92747-ad7f-4de6-8b51-616ff520aa6f",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "a04ab566-4732-461c-84ff-e5dc3c330ca8",
+      "name": "09. Somente serviços",
+      "url": "{{baseUrl}}/produtos?tipo=servico",
+      "method": "GET",
+      "sortNum": 50000,
+      "created": "2026-09-19T19:38:24.543Z",
+      "modified": "2026-09-19T19:38:24.543Z",
+      "headers": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        }
+      ],
+      "docs": [
+        "Esperado: 200",
+        "",
+        "Todos os itens têm `tipo: \"servico\"`."
+      ]
+    },
+    {
+      "_id": "e2b57542-c621-4980-8750-1268bd8e447f",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "a04ab566-4732-461c-84ff-e5dc3c330ca8",
+      "name": "10. Detalhe de um produto",
+      "url": "{{baseUrl}}/produtos/{{produtoId}}",
+      "method": "GET",
+      "sortNum": 60000,
+      "created": "2026-09-19T19:38:24.543Z",
+      "modified": "2026-09-19T19:38:24.543Z",
+      "headers": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        }
+      ],
+      "docs": [
+        "Esperado: 200",
+        "",
+        "Um único item, com os dados completos do empreendedor."
+      ]
+    },
+    {
+      "_id": "4be26f5a-0df5-4ce9-abed-eeb5f05f3c94",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "a04ab566-4732-461c-84ff-e5dc3c330ca8",
+      "name": "11. Banner da página inicial",
+      "url": "{{baseUrl}}/configuracoes/banner",
+      "method": "GET",
+      "sortNum": 70000,
+      "created": "2026-09-19T19:38:24.543Z",
+      "modified": "2026-09-19T19:38:24.543Z",
+      "headers": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        }
+      ],
+      "docs": [
+        "Esperado: 200",
+        "",
+        "`imagemUrl` fica `null` quando a administração não escolheu imagem: a página inicial usa a foto do item mais recente."
+      ]
+    },
+    {
+      "_id": "01ee1e09-a04e-49e9-9665-58550e5f938e",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "a04ab566-4732-461c-84ff-e5dc3c330ca8",
+      "name": "12. Termos de Uso",
+      "url": "{{baseUrl}}/termos/TERMOS_DE_USO",
+      "method": "GET",
+      "sortNum": 80000,
+      "created": "2026-09-19T19:38:24.543Z",
+      "modified": "2026-09-19T19:38:24.543Z",
+      "headers": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        }
+      ],
+      "docs": [
+        "Esperado: 200",
+        "",
+        "Traz o texto em Markdown e a versão vigente."
+      ]
+    },
+    {
+      "_id": "aa6a4383-6d5c-47dc-a0cd-0a5e8dc596b5",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "a04ab566-4732-461c-84ff-e5dc3c330ca8",
+      "name": "13. Política de Privacidade",
+      "url": "{{baseUrl}}/termos/POLITICA_PRIVACIDADE",
+      "method": "GET",
+      "sortNum": 90000,
+      "created": "2026-09-19T19:38:24.543Z",
+      "modified": "2026-09-19T19:38:24.543Z",
+      "headers": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        }
+      ],
+      "docs": [
+        "Esperado: 200",
+        "",
+        "Mesmo formato dos termos, com o texto da política."
+      ]
+    },
+    {
+      "_id": "52f522ad-c560-4c9d-9611-8e6cf0037447",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "a04ab566-4732-461c-84ff-e5dc3c330ca8",
+      "name": "14. Enviar mensagem de contato",
+      "url": "{{baseUrl}}/contatos",
+      "method": "POST",
+      "sortNum": 100000,
+      "created": "2026-09-19T19:38:24.543Z",
+      "modified": "2026-09-19T19:38:24.543Z",
+      "headers": [],
+      "body": {
+        "type": "json",
+        "raw": [
+          "{",
+          "  \"nome\": \"Teste API\",",
+          "  \"email\": \"teste.api@email.com\",",
+          "  \"telefone\": null,",
+          "  \"mensagem\": \"Mensagem enviada durante o teste da API.\",",
+          "  \"empreendedorId\": null",
+          "}"
+        ],
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "201"
+        }
+      ],
+      "docs": [
+        "Esperado: 201",
+        "",
+        "Código 201 e a mensagem salva. Ela aparece depois em \"Mensagens recebidas\", na pasta 4. Esta requisição grava dados de verdade."
+      ]
+    },
+    {
+      "_id": "12efe534-919c-47c2-a6ea-31f421b62a7d",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "61d41ee5-22fb-4cc3-8ff2-c46b854f5850",
+      "name": "15. Meu negócio",
+      "url": "{{baseUrl}}/empreendedores/meu",
+      "method": "GET",
+      "sortNum": 10000,
+      "created": "2026-09-19T19:38:24.543Z",
+      "modified": "2026-09-19T19:38:24.543Z",
+      "headers": [],
+      "auth": {
+        "type": "bearer",
+        "bearer": "{{tokenEmpreendedor}}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "set-env-var",
+          "custom": "json.data.id",
+          "action": "setto",
+          "value": "{{empreendedorId}}"
+        }
+      ],
+      "docs": [
+        "Esperado: 200",
+        "",
+        "O negócio do Carlos, com produtos e horários. O id vai para a variável `empreendedorId`. Rode esta antes das outras da pasta."
+      ]
+    },
+    {
+      "_id": "17f86784-b94d-4dba-b67b-07a1825e43e3",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "61d41ee5-22fb-4cc3-8ff2-c46b854f5850",
+      "name": "16. Detalhe público do meu negócio",
+      "url": "{{baseUrl}}/empreendedores/{{empreendedorId}}",
+      "method": "GET",
+      "sortNum": 20000,
+      "created": "2026-09-19T19:38:24.543Z",
+      "modified": "2026-09-19T19:38:24.543Z",
+      "headers": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        }
+      ],
+      "docs": [
+        "Esperado: 200",
+        "",
+        "O mesmo negócio visto por um visitante, sem login."
+      ]
+    },
+    {
+      "_id": "57bfd74f-ae0c-490d-903e-fbe97fb957fb",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "61d41ee5-22fb-4cc3-8ff2-c46b854f5850",
+      "name": "17. Definir horário (08:00–12:00 e 13:00–17:00, seg a sex)",
+      "url": "{{baseUrl}}/empreendedores/{{empreendedorId}}",
+      "method": "PUT",
+      "sortNum": 30000,
+      "created": "2026-09-19T19:38:24.543Z",
+      "modified": "2026-09-19T19:38:24.543Z",
+      "headers": [],
+      "body": {
+        "type": "json",
+        "raw": [
+          "{",
+          "  \"horarios\": [",
+          "    {",
+          "      \"diaSemana\": 1,",
+          "      \"abre\": \"08:00\",",
+          "      \"fecha\": \"12:00\"",
+          "    },",
+          "    {",
+          "      \"diaSemana\": 1,",
+          "      \"abre\": \"13:00\",",
+          "      \"fecha\": \"17:00\"",
+          "    },",
+          "    {",
+          "      \"diaSemana\": 2,",
+          "      \"abre\": \"08:00\",",
+          "      \"fecha\": \"12:00\"",
+          "    },",
+          "    {",
+          "      \"diaSemana\": 2,",
+          "      \"abre\": \"13:00\",",
+          "      \"fecha\": \"17:00\"",
+          "    },",
+          "    {",
+          "      \"diaSemana\": 3,",
+          "      \"abre\": \"08:00\",",
+          "      \"fecha\": \"12:00\"",
+          "    },",
+          "    {",
+          "      \"diaSemana\": 3,",
+          "      \"abre\": \"13:00\",",
+          "      \"fecha\": \"17:00\"",
+          "    },",
+          "    {",
+          "      \"diaSemana\": 4,",
+          "      \"abre\": \"08:00\",",
+          "      \"fecha\": \"12:00\"",
+          "    },",
+          "    {",
+          "      \"diaSemana\": 4,",
+          "      \"abre\": \"13:00\",",
+          "      \"fecha\": \"17:00\"",
+          "    },",
+          "    {",
+          "      \"diaSemana\": 5,",
+          "      \"abre\": \"08:00\",",
+          "      \"fecha\": \"12:00\"",
+          "    },",
+          "    {",
+          "      \"diaSemana\": 5,",
+          "      \"abre\": \"13:00\",",
+          "      \"fecha\": \"17:00\"",
+          "    }",
+          "  ]",
+          "}"
+        ],
+        "form": []
+      },
+      "auth": {
+        "type": "bearer",
+        "bearer": "{{tokenEmpreendedor}}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        }
+      ],
+      "docs": [
+        "Esperado: 200",
+        "",
+        "A resposta volta com 10 intervalos. Na página do negócio, o selo \"Disponível\" passa a seguir esse horário. Esta requisição grava dados de verdade."
+      ]
+    },
+    {
+      "_id": "0a6d4d33-01f5-44c6-9cee-624d67b2a3be",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "61d41ee5-22fb-4cc3-8ff2-c46b854f5850",
+      "name": "18. Cadastrar produto no meu negócio",
+      "url": "{{baseUrl}}/produtos",
+      "method": "POST",
+      "sortNum": 40000,
+      "created": "2026-09-19T19:38:24.543Z",
+      "modified": "2026-09-19T19:38:24.543Z",
+      "headers": [],
+      "body": {
+        "type": "json",
+        "raw": [
+          "{",
+          "  \"nome\": \"Item de teste da API\",",
+          "  \"descricao\": \"Criado durante o teste da API.\",",
+          "  \"preco\": 25.5,",
+          "  \"tipo\": \"servico\",",
+          "  \"empreendedorId\": {{empreendedorId}},",
+          "  \"disponivel\": true",
+          "}"
+        ],
+        "form": []
+      },
+      "auth": {
+        "type": "bearer",
+        "bearer": "{{tokenEmpreendedor}}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "201"
+        },
+        {
+          "type": "set-env-var",
+          "custom": "json.data.id",
+          "action": "setto",
+          "value": "{{produtoId}}"
+        }
+      ],
+      "docs": [
+        "Esperado: 201",
+        "",
+        "Código 201. O id do item novo vai para `produtoId`, usado nas duas próximas."
+      ]
+    },
+    {
+      "_id": "df0d04ef-472f-4945-a4ee-4e7eaffa9236",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "61d41ee5-22fb-4cc3-8ff2-c46b854f5850",
+      "name": "19. Alterar só o preço do produto",
+      "url": "{{baseUrl}}/produtos/{{produtoId}}",
+      "method": "PUT",
+      "sortNum": 50000,
+      "created": "2026-09-19T19:38:24.543Z",
+      "modified": "2026-09-19T19:38:24.543Z",
+      "headers": [],
+      "body": {
+        "type": "json",
+        "raw": [
+          "{",
+          "  \"preco\": 30",
+          "}"
+        ],
+        "form": []
+      },
+      "auth": {
+        "type": "bearer",
+        "bearer": "{{tokenEmpreendedor}}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        }
+      ],
+      "docs": [
+        "Esperado: 200",
+        "",
+        "O preço vira 30 e o tipo continua `servico`: a edição parcial não mexe no que não foi enviado."
+      ]
+    },
+    {
+      "_id": "4bb2926c-520d-4e58-99dd-5612eca9b4b3",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "61d41ee5-22fb-4cc3-8ff2-c46b854f5850",
+      "name": "20. Excluir o produto",
+      "url": "{{baseUrl}}/produtos/{{produtoId}}",
+      "method": "DELETE",
+      "sortNum": 60000,
+      "created": "2026-09-19T19:38:24.543Z",
+      "modified": "2026-09-19T19:38:24.543Z",
+      "headers": [],
+      "auth": {
+        "type": "bearer",
+        "bearer": "{{tokenEmpreendedor}}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        }
+      ],
+      "docs": [
+        "Esperado: 200",
+        "",
+        "Mensagem de exclusão. Se repetir o \"Detalhe de um produto\" agora, a resposta passa a ser 404."
+      ]
+    },
+    {
+      "_id": "5248f5fd-d5a4-4dec-b020-3414eea61862",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "957b9f05-b7ae-427e-a17e-917e37745875",
+      "name": "21. Mensagens recebidas",
+      "url": "{{baseUrl}}/contatos",
+      "method": "GET",
+      "sortNum": 10000,
+      "created": "2026-09-19T19:38:24.543Z",
+      "modified": "2026-09-19T19:38:24.543Z",
+      "headers": [],
+      "auth": {
+        "type": "bearer",
+        "bearer": "{{tokenAdmin}}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        }
+      ],
+      "docs": [
+        "Esperado: 200",
+        "",
+        "Inclui a mensagem enviada na pasta 2. Só o administrador consegue ler."
+      ]
+    },
+    {
+      "_id": "bd7fdf58-f120-49c6-8faf-c6cf99e45029",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "957b9f05-b7ae-427e-a17e-917e37745875",
+      "name": "22. Contas cadastradas",
+      "url": "{{baseUrl}}/usuarios",
+      "method": "GET",
+      "sortNum": 20000,
+      "created": "2026-09-19T19:38:24.543Z",
+      "modified": "2026-09-19T19:38:24.543Z",
+      "headers": [],
+      "auth": {
+        "type": "bearer",
+        "bearer": "{{tokenAdmin}}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        }
+      ],
+      "docs": [
+        "Esperado: 200",
+        "",
+        "Lista as contas com perfil e negócio. Nenhuma traz `senhaHash`."
+      ]
+    },
+    {
+      "_id": "d788d8ed-92c2-457d-8d7a-f45797dd422f",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "957b9f05-b7ae-427e-a17e-917e37745875",
+      "name": "23. Auditoria (página 1, 10 por página)",
+      "url": "{{baseUrl}}/auditoria?pagina=1&porPagina=10",
+      "method": "GET",
+      "sortNum": 30000,
+      "created": "2026-09-19T19:38:24.543Z",
+      "modified": "2026-09-19T19:38:24.543Z",
+      "headers": [],
+      "auth": {
+        "type": "bearer",
+        "bearer": "{{tokenAdmin}}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        }
+      ],
+      "docs": [
+        "Esperado: 200",
+        "",
+        "`paginacao` informa total e número de páginas. Os registros vêm do mais novo para o mais antigo."
+      ]
+    },
+    {
+      "_id": "2129a1b8-a7f0-47f1-bfcb-aea604c12452",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "957b9f05-b7ae-427e-a17e-917e37745875",
+      "name": "24. Auditoria: só entradas recusadas",
+      "url": "{{baseUrl}}/auditoria?acao=LOGIN_RECUSADO",
+      "method": "GET",
+      "sortNum": 40000,
+      "created": "2026-09-19T19:38:24.543Z",
+      "modified": "2026-09-19T19:38:24.543Z",
+      "headers": [],
+      "auth": {
+        "type": "bearer",
+        "bearer": "{{tokenAdmin}}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        }
+      ],
+      "docs": [
+        "Esperado: 200",
+        "",
+        "Só aparecem tentativas de login recusadas."
+      ]
+    },
+    {
+      "_id": "d7dbc356-8c9b-46c3-b2d4-4fb859fd645c",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "957b9f05-b7ae-427e-a17e-917e37745875",
+      "name": "25. Opções dos filtros da auditoria",
+      "url": "{{baseUrl}}/auditoria/opcoes",
+      "method": "GET",
+      "sortNum": 50000,
+      "created": "2026-09-19T19:38:24.543Z",
+      "modified": "2026-09-19T19:38:24.543Z",
+      "headers": [],
+      "auth": {
+        "type": "bearer",
+        "bearer": "{{tokenAdmin}}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        }
+      ],
+      "docs": [
+        "Esperado: 200",
+        "",
+        "Ações, entidades e pessoas que existem de fato na trilha, com as quantidades."
+      ]
+    },
+    {
+      "_id": "489986a9-edcd-4cff-93ec-20392f47c812",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "957b9f05-b7ae-427e-a17e-917e37745875",
+      "name": "26. Trocar o banner",
+      "url": "{{baseUrl}}/configuracoes/banner",
+      "method": "PUT",
+      "sortNum": 60000,
+      "created": "2026-09-19T19:38:24.543Z",
+      "modified": "2026-09-19T19:38:24.543Z",
+      "headers": [],
+      "body": {
+        "type": "json",
+        "raw": [
+          "{",
+          "  \"imagemUrl\": \"https://images.unsplash.com/photo-1600166898405-da9535204843?w=800\",",
+          "  \"legenda\": \"Feira do Produtor, Vila Aurora\"",
+          "}"
+        ],
+        "form": []
+      },
+      "auth": {
+        "type": "bearer",
+        "bearer": "{{tokenAdmin}}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        }
+      ],
+      "docs": [
+        "Esperado: 200",
+        "",
+        "Mensagem \"Banner atualizado\". A página inicial passa a mostrar essa imagem. Rode a próxima para desfazer."
+      ]
+    },
+    {
+      "_id": "ff130067-9eb0-40f6-a50b-fb04f54b18fa",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "957b9f05-b7ae-427e-a17e-917e37745875",
+      "name": "27. Voltar o banner automático",
+      "url": "{{baseUrl}}/configuracoes/banner",
+      "method": "PUT",
+      "sortNum": 70000,
+      "created": "2026-09-19T19:38:24.543Z",
+      "modified": "2026-09-19T19:38:24.543Z",
+      "headers": [],
+      "body": {
+        "type": "json",
+        "raw": [
+          "{",
+          "  \"imagemUrl\": null",
+          "}"
+        ],
+        "form": []
+      },
+      "auth": {
+        "type": "bearer",
+        "bearer": "{{tokenAdmin}}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        }
+      ],
+      "docs": [
+        "Esperado: 200",
+        "",
+        "Mensagem \"Banner removido\". A página inicial volta a usar a foto do item mais recente."
+      ]
+    },
+    {
+      "_id": "c1bb447e-6aa0-4b36-9a94-a6d4d2a9d190",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "cc279a57-6a24-4c74-b03b-9926d5a66ce9",
+      "name": "28. 401: mensagens sem login",
+      "url": "{{baseUrl}}/contatos",
+      "method": "GET",
+      "sortNum": 10000,
+      "created": "2026-09-19T19:38:24.543Z",
+      "modified": "2026-09-19T19:38:24.543Z",
+      "headers": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "401"
+        }
+      ],
+      "docs": [
+        "Esperado: 401",
+        "",
+        "Sem token, a API recusa com \"Faça login para continuar\"."
+      ]
+    },
+    {
+      "_id": "20a2f8ab-ff88-4ef7-8714-d1b708d715ad",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "cc279a57-6a24-4c74-b03b-9926d5a66ce9",
+      "name": "29. 403: empreendedor tentando ver contas",
+      "url": "{{baseUrl}}/usuarios",
+      "method": "GET",
+      "sortNum": 20000,
+      "created": "2026-09-19T19:38:24.543Z",
+      "modified": "2026-09-19T19:38:24.543Z",
+      "headers": [],
+      "auth": {
+        "type": "bearer",
+        "bearer": "{{tokenEmpreendedor}}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "403"
+        }
+      ],
+      "docs": [
+        "Esperado: 403",
+        "",
+        "O token é válido, mas o perfil não tem permissão para essa rota."
+      ]
+    },
+    {
+      "_id": "ba125d73-dac7-45b6-8619-e06c85b206d4",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "cc279a57-6a24-4c74-b03b-9926d5a66ce9",
+      "name": "30. 400: categoria fora da lista",
+      "url": "{{baseUrl}}/empreendedores",
+      "method": "POST",
+      "sortNum": 30000,
+      "created": "2026-09-19T19:38:24.543Z",
+      "modified": "2026-09-19T19:38:24.543Z",
+      "headers": [],
+      "body": {
+        "type": "json",
+        "raw": [
+          "{",
+          "  \"nomeNegocio\": \"Teste\",",
+          "  \"responsavel\": \"Fulano\",",
+          "  \"categoria\": \"Geral\",",
+          "  \"cidade\": \"Rondonópolis\",",
+          "  \"whatsapp\": \"66999990000\"",
+          "}"
+        ],
+        "form": []
+      },
+      "auth": {
+        "type": "bearer",
+        "bearer": "{{tokenAdmin}}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "400"
+        }
+      ],
+      "docs": [
+        "Esperado: 400",
+        "",
+        "`errors` aponta o campo `categoria` e lista as opções válidas. Nada é gravado."
+      ]
+    },
+    {
+      "_id": "9b3fb40a-ced8-42f8-ad1b-68b665fde4ed",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "cc279a57-6a24-4c74-b03b-9926d5a66ce9",
+      "name": "31. 400: horário com fim antes do início",
+      "url": "{{baseUrl}}/empreendedores/{{empreendedorId}}",
+      "method": "PUT",
+      "sortNum": 40000,
+      "created": "2026-09-19T19:38:24.543Z",
+      "modified": "2026-09-19T19:38:24.543Z",
+      "headers": [],
+      "body": {
+        "type": "json",
+        "raw": [
+          "{",
+          "  \"horarios\": [",
+          "    {",
+          "      \"diaSemana\": 1,",
+          "      \"abre\": \"12:00\",",
+          "      \"fecha\": \"08:00\"",
+          "    }",
+          "  ]",
+          "}"
+        ],
+        "form": []
+      },
+      "auth": {
+        "type": "bearer",
+        "bearer": "{{tokenEmpreendedor}}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "400"
+        }
+      ],
+      "docs": [
+        "Esperado: 400",
+        "",
+        "`errors` traz \"O fim precisa ser depois do início\". O horário salvo não muda."
+      ]
+    },
+    {
+      "_id": "b4938003-d942-4449-ba2d-0be23314c27c",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "cc279a57-6a24-4c74-b03b-9926d5a66ce9",
+      "name": "32. 401: senha errada",
+      "url": "{{baseUrl}}/auth/login",
+      "method": "POST",
+      "sortNum": 50000,
+      "created": "2026-09-19T19:38:24.543Z",
+      "modified": "2026-09-19T19:38:24.543Z",
+      "headers": [],
+      "body": {
+        "type": "json",
+        "raw": [
+          "{",
+          "  \"email\": \"{{adminEmail}}\",",
+          "  \"senha\": \"senha-errada\"",
+          "}"
+        ],
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "401"
+        }
+      ],
+      "docs": [
+        "Esperado: 401",
+        "",
+        "A mensagem é a mesma para e-mail inexistente e senha errada. A tentativa entra na auditoria como `LOGIN_RECUSADO`."
+      ]
+    },
+    {
+      "_id": "dd1e960b-7695-47ae-a5f1-8753af4ed7d2",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "009b87cd-ca24-4f71-a811-bd551b5cb5a6",
+      "name": "33. Produtos: página 2, 5 por página",
+      "url": "{{baseUrl}}/produtos?pagina=2&porPagina=5",
+      "method": "GET",
+      "sortNum": 10000,
+      "created": "2026-09-27T17:00:50.598Z",
+      "modified": "2026-09-27T17:00:50.598Z",
+      "headers": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        }
+      ],
+      "docs": [
+        "Esperado: 200",
+        "",
+        "No máximo 5 itens e o bloco `paginacao` com página, total e total de páginas."
+      ]
+    },
+    {
+      "_id": "b36fb0ee-681c-4c4e-aa94-b815ede19882",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "009b87cd-ca24-4f71-a811-bd551b5cb5a6",
+      "name": "34. Perguntas frequentes (público)",
+      "url": "{{baseUrl}}/faq",
+      "method": "GET",
+      "sortNum": 20000,
+      "created": "2026-09-27T17:00:50.598Z",
+      "modified": "2026-09-27T17:00:50.598Z",
+      "headers": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        }
+      ],
+      "docs": [
+        "Esperado: 200",
+        "",
+        "Só as perguntas visíveis, em ordem. Não precisa de login."
+      ]
+    },
+    {
+      "_id": "3a536c8a-6fd4-421e-869c-5299388fe88c",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "009b87cd-ca24-4f71-a811-bd551b5cb5a6",
+      "name": "35. Criar pergunta (admin)",
+      "url": "{{baseUrl}}/faq",
+      "method": "POST",
+      "sortNum": 30000,
+      "created": "2026-09-27T17:00:50.598Z",
+      "modified": "2026-09-27T17:00:50.598Z",
+      "headers": [],
+      "body": {
+        "type": "json",
+        "raw": [
+          "{",
+          "  \"pergunta\": \"Pergunta de teste da API?\",",
+          "  \"resposta\": \"Resposta de teste.\\nCom quebra de linha.\",",
+          "  \"categoria\": \"Teste\",",
+          "  \"ordem\": 99",
+          "}"
+        ],
+        "form": []
+      },
+      "auth": {
+        "type": "bearer",
+        "bearer": "{{tokenAdmin}}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "201"
+        },
+        {
+          "type": "set-env-var",
+          "custom": "json.data.id",
+          "action": "setto",
+          "value": "{{faqId}}"
+        }
+      ],
+      "docs": [
+        "Esperado: 201",
+        "",
+        "O id da pergunta nova vai para `faqId`, usado nas próximas."
+      ]
+    },
+    {
+      "_id": "f7933ac6-062c-4294-9ace-c6ee35ba2223",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "009b87cd-ca24-4f71-a811-bd551b5cb5a6",
+      "name": "36. Todas as perguntas, inclusive ocultas (admin)",
+      "url": "{{baseUrl}}/faq/todas",
+      "method": "GET",
+      "sortNum": 40000,
+      "created": "2026-09-27T17:00:50.598Z",
+      "modified": "2026-09-27T17:00:50.598Z",
+      "headers": [],
+      "auth": {
+        "type": "bearer",
+        "bearer": "{{tokenAdmin}}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        }
+      ],
+      "docs": [
+        "Esperado: 200",
+        "",
+        "Confira que a pergunta criada aparece na lista."
+      ]
+    },
+    {
+      "_id": "9925f4ce-1277-4241-977f-a11fe7cf48b9",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "009b87cd-ca24-4f71-a811-bd551b5cb5a6",
+      "name": "37. Editar e esconder a pergunta (admin)",
+      "url": "{{baseUrl}}/faq/{{faqId}}",
+      "method": "PUT",
+      "sortNum": 50000,
+      "created": "2026-09-27T17:00:50.598Z",
+      "modified": "2026-09-27T17:00:50.598Z",
+      "headers": [],
+      "body": {
+        "type": "json",
+        "raw": [
+          "{",
+          "  \"pergunta\": \"Pergunta de teste da API, editada?\",",
+          "  \"ativo\": false",
+          "}"
+        ],
+        "form": []
+      },
+      "auth": {
+        "type": "bearer",
+        "bearer": "{{tokenAdmin}}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        }
+      ],
+      "docs": [
+        "Esperado: 200",
+        "",
+        "Confira: `ativo` virou false, `ordem` continua 99 e `updatedAt` ficou depois de `createdAt`."
+      ]
+    },
+    {
+      "_id": "484e28b9-b13b-4797-bde9-e2c1f453e25d",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "009b87cd-ca24-4f71-a811-bd551b5cb5a6",
+      "name": "38. Pergunta oculta não aparece no público",
+      "url": "{{baseUrl}}/faq",
+      "method": "GET",
+      "sortNum": 60000,
+      "created": "2026-09-27T17:00:50.598Z",
+      "modified": "2026-09-27T17:00:50.598Z",
+      "headers": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        }
+      ],
+      "docs": [
+        "Esperado: 200",
+        "",
+        "Confira que a pergunta escondida na 37 não está na lista."
+      ]
+    },
+    {
+      "_id": "46c79187-d3b8-4bea-a8f7-c852441d1c8b",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "009b87cd-ca24-4f71-a811-bd551b5cb5a6",
+      "name": "39. Excluir a pergunta (admin)",
+      "url": "{{baseUrl}}/faq/{{faqId}}",
+      "method": "DELETE",
+      "sortNum": 70000,
+      "created": "2026-09-27T17:00:50.598Z",
+      "modified": "2026-09-27T17:00:50.598Z",
+      "headers": [],
+      "auth": {
+        "type": "bearer",
+        "bearer": "{{tokenAdmin}}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        }
+      ],
+      "docs": [
+        "Esperado: 200",
+        "",
+        "Exclusão definitiva, registrada na auditoria."
+      ]
+    },
+    {
+      "_id": "10edaa10-5503-4d95-b920-3418685f6ed8",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "009b87cd-ca24-4f71-a811-bd551b5cb5a6",
+      "name": "40. 404: editar pergunta que já foi excluída",
+      "url": "{{baseUrl}}/faq/{{faqId}}",
+      "method": "PUT",
+      "sortNum": 80000,
+      "created": "2026-09-27T17:00:50.598Z",
+      "modified": "2026-09-27T17:00:50.598Z",
+      "headers": [],
+      "body": {
+        "type": "json",
+        "raw": [
+          "{",
+          "  \"pergunta\": \"Não existe mais?\"",
+          "}"
+        ],
+        "form": []
+      },
+      "auth": {
+        "type": "bearer",
+        "bearer": "{{tokenAdmin}}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "404"
+        }
+      ],
+      "docs": [
+        "Esperado: 404",
+        "",
+        "A pergunta da 39 não existe mais."
+      ]
+    },
+    {
+      "_id": "e9d2d4da-2aed-4d14-9612-9db990bfdce0",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "009b87cd-ca24-4f71-a811-bd551b5cb5a6",
+      "name": "41. 401: criar pergunta sem login",
+      "url": "{{baseUrl}}/faq",
+      "method": "POST",
+      "sortNum": 90000,
+      "created": "2026-09-27T17:00:50.598Z",
+      "modified": "2026-09-27T17:00:50.598Z",
+      "headers": [],
+      "body": {
+        "type": "json",
+        "raw": [
+          "{",
+          "  \"pergunta\": \"Pergunta de teste da API?\",",
+          "  \"resposta\": \"Resposta de teste.\\nCom quebra de linha.\",",
+          "  \"categoria\": \"Teste\",",
+          "  \"ordem\": 99",
+          "}"
+        ],
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "401"
+        }
+      ],
+      "docs": [
+        "Esperado: 401",
+        "",
+        "A trava fica no servidor: esconder o botão na tela não bastaria."
+      ]
+    },
+    {
+      "_id": "f0d18d89-64e8-468b-9ea9-f342556c2c28",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "009b87cd-ca24-4f71-a811-bd551b5cb5a6",
+      "name": "42. 403: empreendedor tentando criar pergunta",
+      "url": "{{baseUrl}}/faq",
+      "method": "POST",
+      "sortNum": 100000,
+      "created": "2026-09-27T17:00:50.598Z",
+      "modified": "2026-09-27T17:00:50.598Z",
+      "headers": [],
+      "body": {
+        "type": "json",
+        "raw": [
+          "{",
+          "  \"pergunta\": \"Pergunta de teste da API?\",",
+          "  \"resposta\": \"Resposta de teste.\\nCom quebra de linha.\",",
+          "  \"categoria\": \"Teste\",",
+          "  \"ordem\": 99",
+          "}"
+        ],
+        "form": []
+      },
+      "auth": {
+        "type": "bearer",
+        "bearer": "{{tokenEmpreendedor}}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "403"
+        }
+      ],
+      "docs": [
+        "Esperado: 403",
+        "",
+        "Só a administração mantém a central de ajuda."
+      ]
+    },
+    {
+      "_id": "efed5ac4-0588-4b0f-91fb-5a1cca1e9e78",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "009b87cd-ca24-4f71-a811-bd551b5cb5a6",
+      "name": "43. 403: empreendedor tentando ver as ocultas",
+      "url": "{{baseUrl}}/faq/todas",
+      "method": "GET",
+      "sortNum": 110000,
+      "created": "2026-09-27T17:00:50.598Z",
+      "modified": "2026-09-27T17:00:50.598Z",
+      "headers": [],
+      "auth": {
+        "type": "bearer",
+        "bearer": "{{tokenEmpreendedor}}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "403"
+        }
+      ],
+      "docs": [
+        "Esperado: 403",
+        ""
+      ]
+    },
+    {
+      "_id": "e9a25df8-ff30-4902-b5ea-3172f07b4a3d",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "009b87cd-ca24-4f71-a811-bd551b5cb5a6",
+      "name": "44. 400: pergunta vazia",
+      "url": "{{baseUrl}}/faq",
+      "method": "POST",
+      "sortNum": 120000,
+      "created": "2026-09-27T17:00:50.598Z",
+      "modified": "2026-09-27T17:00:50.598Z",
+      "headers": [],
+      "body": {
+        "type": "json",
+        "raw": [
+          "{",
+          "  \"pergunta\": \"\",",
+          "  \"resposta\": \"Resposta\"",
+          "}"
+        ],
+        "form": []
+      },
+      "auth": {
+        "type": "bearer",
+        "bearer": "{{tokenAdmin}}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "400"
+        }
+      ],
+      "docs": [
+        "Esperado: 400",
+        "",
+        "A resposta aponta o campo `pergunta`."
+      ]
+    },
+    {
+      "_id": "4749adf5-8ae3-46ed-a45c-2b2bc5c71e67",
+      "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
+      "containerId": "009b87cd-ca24-4f71-a811-bd551b5cb5a6",
+      "name": "45. 400: pergunta com 301 caracteres",
+      "url": "{{baseUrl}}/faq",
+      "method": "POST",
+      "sortNum": 130000,
+      "created": "2026-09-27T17:00:50.598Z",
+      "modified": "2026-09-27T17:00:50.598Z",
+      "headers": [],
+      "body": {
+        "type": "json",
+        "raw": [
+          "{",
+          "  \"pergunta\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",",
+          "  \"resposta\": \"Resposta\"",
+          "}"
+        ],
+        "form": []
+      },
+      "auth": {
+        "type": "bearer",
+        "bearer": "{{tokenAdmin}}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "400"
+        }
+      ],
+      "docs": [
+        "Esperado: 400",
+        "",
+        "O limite é de 300 caracteres."
+      ]
+    }
+  ]
+}

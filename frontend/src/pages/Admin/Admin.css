@@ -1,0 +1,256 @@
+.admin {
+  padding-top: 0;
+}
+
+.admin__topo {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--esp-4);
+  flex-wrap: wrap;
+  padding-block: var(--esp-7) var(--esp-6);
+}
+
+.admin__topo h1 {
+  font-size: clamp(30px, 4vw, 42px);
+  margin-bottom: var(--esp-2);
+}
+
+.admin__topo p {
+  color: var(--cor-cinza);
+  margin: 0;
+  max-width: 60ch;
+}
+
+.admin__topo-acoes {
+  display: flex;
+  gap: var(--esp-3);
+  flex-wrap: wrap;
+}
+
+.admin__metricas {
+  display: grid;
+  /* auto-fit em vez de 3 colunas fixas: com 4 indicadores a última linha
+     não fica com um cartão solto */
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: var(--esp-4);
+  margin-bottom: var(--esp-7);
+}
+
+.admin__metrica {
+  position: relative;
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura);
+  padding: var(--esp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}
+
+/* O primeiro indicador vira o cartão amarelo, com reflexo no canto */
+.admin__metrica:first-child {
+  background: var(--cor-ouro);
+}
+.admin__metrica:first-child .admin__metrica-rotulo,
+.admin__metrica:first-child .admin__metrica-detalhe {
+  color: var(--cor-tinta);
+}
+.admin__metrica:first-child::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  width: 30px;
+  height: 30px;
+  background: var(--reflexo) no-repeat center / contain;
+  pointer-events: none;
+}
+
+.admin__metrica-rotulo {
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cor-cinza);
+}
+
+.admin__metrica-valor {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--esp-3);
+}
+
+.admin__metrica-numero {
+  font-family: var(--fonte-titulo);
+  font-size: 42px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--cor-anil);
+}
+
+.admin__metrica-detalhe {
+  padding-top: var(--esp-2);
+  border-top: 2px dashed var(--cor-contorno);
+  display: flex;
+  justify-content: space-between;
+  gap: var(--esp-2);
+  font-size: var(--texto-sm);
+  color: var(--cor-cinza);
+}
+
+.admin__metrica-detalhe strong {
+  color: var(--cor-anil);
+}
+
+/* Abas como plaquinhas presas à tabela */
+.admin__abas {
+  display: flex;
+  gap: var(--esp-1);
+  border-bottom: var(--borda);
+  overflow-x: auto;
+}
+
+.admin__aba {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+  padding: 0.75rem 1rem;
+  margin-bottom: -3px;
+  background: var(--cor-superficie-baixa);
+  border: var(--borda);
+  border-bottom: none;
+  border-radius: var(--raio-md) var(--raio-md) 0 0;
+  color: var(--cor-cinza);
+  font-weight: 700;
+  font-size: 14px;
+  white-space: nowrap;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.admin__aba:hover {
+  color: var(--cor-tinta);
+  background: var(--cor-ouro-claro);
+}
+
+.admin__aba--ativa,
+.admin__aba--ativa:hover {
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
+}
+
+.admin__contador {
+  min-width: 20px;
+  height: 20px;
+  padding-inline: 6px;
+  background: var(--cor-anil);
+  color: var(--cor-branco);
+  border: 1.5px solid var(--cor-contorno);
+  border-radius: 999px;
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin__painel {
+  padding-top: var(--esp-5);
+}
+
+.admin__barra {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--esp-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--esp-4);
+}
+
+.admin__celula-principal {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  font-weight: 700;
+  color: var(--cor-anil);
+}
+
+.admin__secundario {
+  font-weight: 400;
+  font-size: var(--texto-xs);
+  color: var(--cor-cinza);
+}
+
+.admin__preco {
+  font-family: var(--fonte-titulo);
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--cor-anil);
+}
+
+@media (min-width: 721px) {
+  .admin .data-table td {
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 600px) {
+  /* Quatro cartões empilhados ocupavam quase uma tela inteira antes das abas:
+     no celular eles ficam dois a dois, com o número menor e sem a linha de detalhe */
+  .admin__metricas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--esp-3);
+    margin-bottom: var(--esp-5);
+  }
+
+  .admin__metrica {
+    padding: var(--esp-3);
+    gap: var(--esp-2);
+    box-shadow: var(--sombra-botao);
+  }
+
+  .admin__metrica-valor {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--esp-2);
+  }
+
+  .admin__metrica-numero {
+    font-size: 32px;
+  }
+
+  .admin__metrica-detalhe {
+    display: none;
+  }
+
+  /* Seis abas em grade de duas colunas, todas do mesmo tamanho: soltas, elas
+     quebravam em três linhas desencontradas */
+  .admin__abas {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow: visible;
+    gap: var(--esp-1);
+    border-bottom: none;
+  }
+
+  .admin__aba {
+    justify-content: flex-start;
+    padding: 0.65rem 0.7rem;
+    font-size: var(--texto-sm);
+    margin-bottom: 0;
+    border-bottom: var(--borda);
+    border-radius: var(--raio-md);
+    white-space: normal;
+    text-align: left;
+    line-height: 1.25;
+  }
+}
+
+.admin__celula-principal--normal {
+  font-weight: 400;
+  color: var(--cor-tinta);
+}

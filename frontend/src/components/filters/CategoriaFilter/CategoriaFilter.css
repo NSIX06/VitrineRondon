@@ -1,0 +1,32 @@
+.categoria-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}
+
+.categoria-filter__opcao {
+  padding: 0.5rem 1rem;
+  border: var(--borda);
+  border-radius: var(--raio-md);
+  box-shadow: 3px 3px 0 0 var(--cor-contorno);
+  background: var(--cor-branco);
+  color: var(--cor-tinta);
+  font-weight: 700;
+  font-size: 14px;
+  transition: var(--transicao-tecla);
+}
+
+.categoria-filter__opcao:hover {
+  background: var(--cor-ouro-claro);
+  transform: translate(1px, 1px);
+  box-shadow: var(--sombra-dura-sm);
+}
+
+/* Filtro escolhido: adesivo amarelo colado torto */
+.categoria-filter__opcao--ativa,
+.categoria-filter__opcao--ativa:hover {
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
+  transform: rotate(-1.5deg);
+  box-shadow: 3px 3px 0 0 var(--cor-contorno), var(--cel-sm);
+}

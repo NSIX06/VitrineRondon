@@ -1,0 +1,156 @@
+.footer {
+  position: relative;
+  margin-top: auto;
+  background: var(--linhas-claras), var(--cor-anil);
+  color: var(--cor-branco);
+  border-top: var(--borda);
+}
+
+/* Hachuras de nanquim nos dois cantos de cima do rodapé */
+.footer::before,
+.footer::after {
+  content: '';
+  position: absolute;
+  top: 22px;
+  width: 36px;
+  height: 14px;
+  background: var(--hachura-clara) no-repeat center / contain;
+  opacity: 0.6;
+  pointer-events: none;
+}
+.footer::before {
+  left: 12px;
+}
+.footer::after {
+  right: 12px;
+}
+
+.footer__colunas {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1.3fr;
+  gap: var(--esp-7);
+  padding-block: var(--esp-7);
+  border-bottom: 2px dashed rgba(255, 255, 255, 0.3);
+}
+
+.footer__coluna {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+}
+
+.footer__marca {
+  font-family: var(--fonte-titulo);
+  font-weight: 800;
+  font-size: 28px;
+  line-height: 1.1;
+}
+
+.footer__titulo {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cor-ouro);
+  margin-bottom: var(--esp-1);
+}
+
+.footer__texto {
+  font-size: var(--texto-sm);
+  line-height: 1.6;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 44ch;
+}
+
+.footer a {
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  font-size: var(--texto-sm);
+}
+
+.footer a:hover {
+  color: var(--cor-ouro);
+  text-decoration: underline;
+}
+
+.footer__ods {
+  border: var(--borda);
+  border-radius: var(--raio);
+  background: var(--cor-anil-escuro);
+  box-shadow: 5px 5px 0 0 var(--cor-ouro);
+  padding: var(--esp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+}
+
+.footer__ods-selo {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--cor-ouro);
+}
+
+.footer__base {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-3);
+  flex-wrap: wrap;
+  padding-block: var(--esp-5);
+  font-size: var(--texto-sm);
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.footer__slogan {
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cor-ouro);
+}
+
+@media (max-width: 800px) {
+  .footer__colunas {
+    grid-template-columns: 1fr;
+    gap: var(--esp-5);
+    padding-block: var(--esp-6);
+  }
+}
+
+.footer__redes {
+  list-style: none;
+  padding: 0;
+  margin: var(--esp-2) 0 0;
+  display: flex;
+  gap: var(--esp-2);
+}
+
+.footer__redes a {
+  width: 40px;
+  height: 40px;
+  border: var(--borda);
+  border-radius: var(--raio-md);
+  background: var(--cor-branco);
+  box-shadow: 3px 3px 0 0 var(--cor-contorno);
+  color: var(--cor-anil);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transicao-tecla);
+}
+
+.footer__redes a:hover {
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
+  text-decoration: none;
+  transform: translate(1px, 1px);
+  box-shadow: var(--sombra-dura-sm);
+}
+
+.footer__ods-selo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+}

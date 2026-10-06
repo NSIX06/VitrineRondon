@@ -1,0 +1,65 @@
+.termos {
+  display: grid;
+  grid-template-columns: minmax(0, 8fr) 4fr;
+  gap: var(--esp-7);
+  align-items: start;
+  padding-top: 0;
+}
+
+/* Quadro do documento; a tipografia do texto fica no DocumentoLegal */
+.termos__documento {
+  padding: var(--esp-6);
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura);
+  line-height: 1.7;
+}
+
+.termos__lateral {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  position: sticky;
+  top: 96px;
+}
+
+.termos__caixa {
+  padding: var(--esp-5);
+  background: var(--cor-ouro-claro);
+  border: var(--borda-fina);
+  border-left: 6px solid var(--cor-mostarda);
+  border-radius: var(--raio-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  align-items: flex-start;
+}
+
+.termos__caixa h2 {
+  font-size: var(--texto-xl);
+  margin: 0;
+}
+
+.termos__caixa p {
+  margin: 0;
+  font-size: var(--texto-sm);
+  color: var(--cor-cinza);
+}
+
+.termos__caixa > a:not(.botao) {
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .termos {
+    grid-template-columns: 1fr;
+    gap: var(--esp-5);
+  }
+  .termos__lateral {
+    position: static;
+  }
+  .termos__documento {
+    padding: var(--esp-4);
+  }
+}

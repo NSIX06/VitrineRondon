@@ -1,0 +1,29 @@
+.spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--esp-3);
+  padding: var(--esp-8) var(--esp-4);
+  color: var(--cor-cinza);
+}
+
+.spinner__circulo {
+  width: 36px;
+  height: 36px;
+  border: 4px solid var(--cor-superficie-alta);
+  border-top-color: var(--cor-contorno);
+  border-right-color: var(--cor-ouro);
+  border-radius: var(--raio-sm);
+  animation: spinner-girar 0.9s linear infinite;
+}
+
+.spinner__texto {
+  font-size: var(--texto-sm);
+  font-weight: 600;
+}
+
+@keyframes spinner-girar {
+  to {
+    transform: rotate(360deg);
+  }
+}

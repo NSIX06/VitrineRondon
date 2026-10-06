@@ -1,0 +1,49 @@
+{
+  "clientName": "Thunder Client",
+  "environmentName": "VitrineLocal (local)",
+  "environmentId": "d51e97f7-e5d9-44ef-8913-06c65bc4e3aa",
+  "dateExported": "2026-09-19T19:38:24.543Z",
+  "version": "1.2",
+  "variables": [
+    {
+      "name": "baseUrl",
+      "value": "http://localhost:3001/api"
+    },
+    {
+      "name": "adminEmail",
+      "value": "admin@vitrinelocal.com.br"
+    },
+    {
+      "name": "adminSenha",
+      "value": "Admin@2026"
+    },
+    {
+      "name": "empreendedorEmail",
+      "value": "carlos@silvareparos.com.br"
+    },
+    {
+      "name": "empreendedorSenha",
+      "value": "Carlos@2026"
+    },
+    {
+      "name": "tokenAdmin",
+      "value": ""
+    },
+    {
+      "name": "tokenEmpreendedor",
+      "value": ""
+    },
+    {
+      "name": "empreendedorId",
+      "value": ""
+    },
+    {
+      "name": "produtoId",
+      "value": ""
+    },
+    {
+      "name": "faqId",
+      "value": ""
+    }
+  ]
+}

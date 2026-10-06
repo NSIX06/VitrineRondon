@@ -1,0 +1,61 @@
+.perguntas {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.perguntas__cabecalho {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--esp-4);
+  flex-wrap: wrap;
+}
+
+.perguntas__cabecalho h2 {
+  margin-bottom: var(--esp-1);
+}
+
+.perguntas__cabecalho p {
+  color: var(--cor-cinza);
+}
+
+.perguntas__filtros {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: var(--esp-4);
+  align-items: end;
+}
+
+.perguntas__filtros .campo {
+  margin: 0;
+}
+
+.perguntas__caixa-busca {
+  position: relative;
+}
+
+.perguntas__lupa {
+  position: absolute;
+  left: 0.8rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--cor-cinza-claro);
+  pointer-events: none;
+}
+
+.perguntas__entrada {
+  padding-left: 2.6rem;
+}
+
+.perguntas__contagem {
+  font-size: var(--texto-sm);
+  font-weight: 700;
+  color: var(--cor-cinza);
+}
+
+@media (max-width: 640px) {
+  .perguntas__filtros {
+    grid-template-columns: 1fr;
+  }
+}

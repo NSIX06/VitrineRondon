@@ -1,0 +1,824 @@
+/* Barra de migalhas e utilidades */
+.detalhe__migalhas {
+  background: var(--cor-superficie-baixa);
+  border-bottom: var(--borda);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cor-cinza);
+}
+
+.detalhe__migalhas-conteudo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-3);
+  flex-wrap: wrap;
+  padding-block: var(--esp-2);
+}
+
+/* Na linha das migalhas as setas ficam centradas, sem o espaço de baixo */
+.detalhe__migalhas-conteudo .navegacao {
+  margin-bottom: 0;
+}
+
+.detalhe__migalhas-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  min-width: 0;
+}
+
+.detalhe__migalhas-nav a {
+  color: var(--cor-cinza);
+  text-decoration: none;
+}
+
+.detalhe__migalhas-nav a:hover {
+  color: var(--cor-anil);
+}
+
+.detalhe__migalhas-atual {
+  color: var(--cor-anil);
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.detalhe__utilidades {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+}
+
+.detalhe__disponivel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 10px;
+  background: var(--cor-branco);
+  border: var(--borda-fina);
+  border-radius: 999px;
+  box-shadow: var(--sombra-dura-sm);
+  color: var(--cor-tinta);
+}
+
+.detalhe__ponto {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid var(--cor-contorno);
+  background: var(--cor-whatsapp);
+}
+
+.detalhe__disponivel--inativo {
+  color: var(--cor-lacre-escuro);
+  background: var(--cor-lacre-fundo);
+}
+
+.detalhe__disponivel--inativo .detalhe__ponto {
+  background: var(--cor-lacre);
+}
+
+/* Capa com sombra e selos */
+.detalhe__capa {
+  position: relative;
+  height: clamp(200px, 30vw, 320px);
+  background: var(--cor-anil-escuro);
+  overflow: hidden;
+  border-bottom: var(--borda);
+}
+
+.detalhe__capa img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.detalhe__capa-sombra {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(17, 24, 39, 0.8), rgba(17, 24, 39, 0.3) 45%, transparent);
+}
+
+.detalhe__capa-selos {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: var(--esp-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-3);
+  flex-wrap: wrap;
+}
+
+.detalhe__selo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.35rem 0.75rem;
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 4px;
+  box-shadow: 3px 3px 0 0 var(--cor-contorno);
+  transform: rotate(-1.5deg);
+}
+
+.detalhe__selo--verificado {
+  background: var(--cor-anil);
+  color: var(--cor-branco);
+  border: var(--borda-fina);
+}
+
+.detalhe__selo--verificado .icone {
+  color: var(--cor-ouro);
+}
+
+.detalhe__selo--local {
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
+  border: var(--borda-fina);
+  transform: rotate(1deg);
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 12px;
+}
+
+.detalhe__selo--local .icone {
+  color: var(--cor-tinta);
+}
+
+.detalhe__selo--solto {
+  align-self: flex-start;
+  background: var(--cor-anil);
+}
+
+/* Perfil */
+.detalhe__conteudo {
+  display: grid;
+  grid-template-columns: 8fr 4fr;
+  gap: var(--esp-7);
+  align-items: start;
+  padding-block: var(--esp-7);
+}
+
+.detalhe__identidade {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  min-width: 0;
+}
+
+.detalhe__tags {
+  display: flex;
+  gap: var(--esp-1);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.detalhe__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0.25rem 0.75rem;
+  background: var(--cor-branco);
+  border: var(--borda-fina);
+  border-radius: var(--raio-sm);
+  box-shadow: var(--sombra-dura-sm);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cor-tinta);
+}
+
+.detalhe__chip .icone {
+  color: var(--cor-anil-escuro);
+}
+
+.detalhe__nome {
+  margin: 0;
+  font-size: clamp(30px, 4vw, 46px);
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+}
+
+.detalhe__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  font-family: var(--fonte-titulo);
+  font-size: var(--texto-xl);
+  font-weight: 700;
+  color: var(--cor-tinta);
+  margin: 0;
+}
+
+.detalhe__meta .icone {
+  color: var(--cor-anil);
+}
+
+.detalhe__descricao {
+  font-size: var(--texto-lg);
+  line-height: 1.6;
+  color: var(--cor-cinza);
+  margin: 0;
+  max-width: 60ch;
+}
+
+.detalhe__confianca {
+  position: relative;
+  background: var(--cor-ouro-claro);
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura);
+  padding: var(--esp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}
+
+/* Hachura de nanquim no canto do selo de confiança */
+.detalhe__confianca::after {
+  content: '';
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  width: 40px;
+  height: 15px;
+  background: var(--hachura) no-repeat center / contain;
+  pointer-events: none;
+}
+
+.detalhe__confianca-topo {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--esp-3);
+}
+
+.detalhe__confianca-topo > .icone {
+  color: var(--cor-anil);
+  margin-top: 2px;
+}
+
+.detalhe__confianca-titulo {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--cor-anil);
+}
+
+.detalhe__confianca-texto {
+  margin: 0;
+  font-weight: 500;
+}
+
+.detalhe__confianca-lista {
+  list-style: none;
+  padding: var(--esp-2) 0 0;
+  margin: 0;
+  border-top: 2px dashed var(--cor-contorno);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2) var(--esp-5);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cor-tinta);
+}
+
+.detalhe__confianca-lista li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.detalhe__confianca-lista .icone {
+  color: var(--cor-anil);
+}
+
+.detalhe__contato {
+  position: sticky;
+  top: 96px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  padding: var(--esp-5);
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura);
+}
+
+/* Hachura de nanquim no canto da caixa de contato */
+.detalhe__contato::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  right: 14px;
+  width: 40px;
+  height: 15px;
+  background: var(--hachura) no-repeat center / contain;
+  pointer-events: none;
+}
+
+.detalhe__contato-cabecalho {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  padding-bottom: var(--esp-3);
+  border-bottom: 2px dashed var(--cor-contorno);
+}
+
+.detalhe__contato-selo {
+  align-self: flex-start;
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
+  padding: 2px 8px;
+  border: var(--borda-fina);
+  border-radius: 4px;
+  box-shadow: var(--sombra-dura-sm);
+  transform: rotate(-1.5deg);
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.detalhe__contato-titulo {
+  font-size: var(--texto-2xl);
+  margin: 0;
+}
+
+.detalhe__contato-texto {
+  margin: 0;
+  color: var(--cor-cinza);
+}
+
+.detalhe__telefone-caixa {
+  text-align: center;
+  padding: var(--esp-3);
+  background: var(--cor-superficie-baixa);
+  border: var(--borda-fina);
+  border-style: dashed;
+  border-radius: var(--raio-md);
+}
+
+.detalhe__telefone-rotulo {
+  display: block;
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cor-cinza);
+  margin-bottom: 4px;
+}
+
+.detalhe__telefone {
+  display: block;
+  font-family: var(--fonte-titulo);
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--cor-anil);
+  text-decoration: none;
+}
+
+.detalhe__telefone:hover {
+  color: var(--cor-anil-escuro);
+}
+
+.detalhe__instagram {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--esp-2);
+  padding: var(--esp-2) var(--esp-3);
+  background: var(--cor-branco);
+  border: var(--borda-fina);
+  border-radius: var(--raio-md);
+  box-shadow: 3px 3px 0 0 var(--cor-contorno);
+  font-size: var(--texto-sm);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.detalhe__instagram:hover {
+  text-decoration: underline;
+}
+
+.detalhe__contato .botao--whatsapp {
+  width: 100%;
+  padding-block: 0.9rem;
+}
+
+.detalhe__mensagem {
+  text-align: center;
+  font-size: var(--texto-sm);
+  color: var(--cor-cinza);
+}
+
+.detalhe__garantia {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding-top: var(--esp-3);
+  border-top: 2px dashed var(--cor-contorno);
+  font-size: var(--texto-xs);
+  color: var(--cor-cinza);
+}
+
+.detalhe__garantia .icone {
+  color: var(--cor-ouro-escuro);
+}
+
+/* Catálogo em fundo cinza-claro */
+.detalhe__itens {
+  background: var(--cor-superficie-media);
+  border-block: var(--borda);
+}
+
+.detalhe__itens-contagem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.35rem 0.75rem;
+  background: var(--cor-branco);
+  border: var(--borda-fina);
+  border-radius: var(--raio-sm);
+  box-shadow: var(--sombra-dura-sm);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.detalhe__itens-contagem .icone {
+  color: var(--cor-anil-escuro);
+}
+
+.detalhe__outro {
+  margin-top: var(--esp-7);
+  padding: var(--esp-4);
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-4);
+  flex-wrap: wrap;
+}
+
+.detalhe__outro-texto {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+}
+
+.detalhe__outro-texto p {
+  margin: 0;
+  font-size: var(--texto-sm);
+  color: var(--cor-cinza);
+}
+
+.detalhe__outro-titulo {
+  font-family: var(--fonte-titulo);
+  font-weight: 700;
+  font-size: var(--texto-md);
+  color: var(--cor-anil);
+}
+
+.detalhe__outro-icone {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--raio-md);
+  border: var(--borda-fina);
+  box-shadow: var(--sombra-dura-sm);
+  transform: rotate(-4deg);
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Localização */
+.detalhe__local {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: var(--esp-6);
+  align-items: center;
+}
+
+.detalhe__local-texto {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+}
+
+.detalhe__local-texto h3 {
+  font-size: var(--texto-2xl);
+  margin: 0;
+}
+
+.detalhe__local-texto p {
+  margin: 0;
+  color: var(--cor-cinza);
+  line-height: 1.6;
+}
+
+.detalhe__local-lista {
+  list-style: none;
+  padding: 0;
+  margin: var(--esp-2) 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  font-size: var(--texto-sm);
+}
+
+.detalhe__local-lista li {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+}
+
+.detalhe__local-lista .icone {
+  color: var(--cor-anil);
+}
+
+.detalhe__mapa {
+  position: relative;
+  height: 288px;
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura);
+  overflow: hidden;
+  background: var(--cor-superficie-media);
+}
+
+.detalhe__mapa iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+.detalhe__mapa-legenda {
+  position: absolute;
+  left: var(--esp-3);
+  bottom: var(--esp-3);
+  padding: var(--esp-2) var(--esp-3);
+  background: var(--cor-branco);
+  border: var(--borda-fina);
+  border-radius: var(--raio-sm);
+  box-shadow: var(--sombra-dura-sm);
+  display: flex;
+  flex-direction: column;
+  font-size: var(--texto-sm);
+}
+
+.detalhe__mapa-legenda strong {
+  font-size: 12px;
+  color: var(--cor-anil);
+}
+
+.detalhe__mapa-legenda span {
+  color: var(--cor-cinza);
+}
+
+/* Chamada final */
+.detalhe__cta {
+  background: var(--linhas-escuras), var(--cor-ouro);
+  color: var(--cor-tinta);
+  border-block: var(--borda);
+  padding-block: var(--esp-5);
+}
+
+.detalhe__cta-conteudo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-4);
+  flex-wrap: wrap;
+}
+
+.detalhe__cta-texto {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+}
+
+.detalhe__cta-texto h4 {
+  margin: 0 0 2px;
+  color: var(--cor-anil);
+  font-size: var(--texto-xl);
+}
+
+.detalhe__cta-texto p {
+  margin: 0;
+  font-size: var(--texto-sm);
+  color: var(--cor-tinta);
+}
+
+.detalhe__cta-icone {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--raio-md);
+  border: var(--borda);
+  box-shadow: var(--sombra-dura-sm);
+  transform: rotate(-4deg);
+  background: var(--cor-branco);
+  color: var(--cor-anil);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 900px) {
+  .detalhe__conteudo {
+    grid-template-columns: 1fr;
+    gap: var(--esp-5);
+    padding-block: var(--esp-5);
+  }
+
+  .detalhe__contato {
+    position: relative;
+  }
+
+  .detalhe__local {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .detalhe__utilidades {
+    display: none;
+  }
+
+  .detalhe__capa-selos {
+    justify-content: flex-start;
+  }
+
+  .detalhe__selo--local {
+    display: none;
+  }
+
+  .detalhe__outro .botao,
+  .detalhe__cta .botao {
+    width: 100%;
+  }
+
+  .detalhe__mapa {
+    height: 220px;
+  }
+}
+
+.detalhe__local-aviso {
+  color: var(--cor-cinza);
+  font-size: var(--texto-xs);
+}
+
+.detalhe__local .detalhe__abrir-mapa {
+  align-self: flex-start;
+  margin-top: var(--esp-2);
+}
+
+/* Quando abre ou fecha, ao lado do selo */
+.detalhe__disponivel-quando {
+  font-weight: 400;
+  color: var(--cor-cinza);
+}
+
+.detalhe__disponivel--inativo .detalhe__disponivel-quando {
+  color: var(--cor-lacre-escuro);
+}
+
+.detalhe__horarios {
+  margin-top: var(--esp-5);
+  padding: var(--esp-4) var(--esp-5);
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura);
+  background: var(--cor-branco);
+}
+
+.detalhe__horarios-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--esp-3);
+}
+
+.detalhe__horarios-titulo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+  margin: 0;
+  font-size: var(--texto-lg);
+  color: var(--cor-anil);
+}
+
+.detalhe__situacao {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 10px;
+  border: var(--borda-fina);
+  border-radius: 999px;
+  box-shadow: var(--sombra-dura-sm);
+  background: var(--cor-lacre-fundo);
+  color: var(--cor-lacre-escuro);
+  font-size: var(--texto-sm);
+  font-weight: 700;
+}
+
+.detalhe__situacao .detalhe__ponto {
+  background: var(--cor-lacre);
+}
+
+.detalhe__situacao--aberto {
+  background: var(--cor-sucesso-fundo);
+  color: var(--cor-sucesso-tinta);
+}
+
+.detalhe__situacao--aberto .detalhe__ponto {
+  background: var(--cor-whatsapp);
+}
+
+.detalhe__semana {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  column-gap: var(--esp-5);
+}
+
+/* Em duas colunas a leitura desce: segunda a quinta à esquerda, sexta a domingo à direita */
+@media (min-width: 640px) {
+  .detalhe__semana {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(4, auto);
+    grid-auto-flow: column;
+  }
+}
+
+.detalhe__semana-dia {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--esp-3);
+  padding: 6px 0;
+  border-bottom: 2px dashed var(--cor-superficie-alta);
+  font-size: var(--texto-sm);
+}
+
+.detalhe__semana-dia dt {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  color: var(--cor-tinta);
+}
+
+.detalhe__semana-dia dd {
+  margin: 0;
+  text-align: right;
+  color: var(--cor-cinza);
+  font-variant-numeric: tabular-nums;
+}
+
+.detalhe__semana-dia--hoje dt,
+.detalhe__semana-dia--hoje dd {
+  color: var(--cor-anil);
+  font-weight: 700;
+}
+
+.detalhe__hoje {
+  padding: 0 6px;
+  background: var(--cor-ouro);
+  border: 1.5px solid var(--cor-contorno);
+  border-radius: 3px;
+  transform: rotate(-2deg);
+  color: var(--cor-tinta);
+  font-size: var(--texto-xs);
+  letter-spacing: 0.04em;
+}
+
+.detalhe__horarios-vazio {
+  margin: 0;
+  color: var(--cor-cinza);
+  font-size: var(--texto-sm);
+  line-height: 1.5;
+}
+
+.detalhe__horarios-fuso {
+  margin: var(--esp-3) 0 0;
+  font-size: var(--texto-xs);
+  color: var(--cor-cinza-claro);
+}

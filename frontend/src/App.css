@@ -1,0 +1,236 @@
+/* Estrutura da aplicação */
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app__conteudo {
+  flex: 1;
+}
+
+/* Altura mínima enquanto o arquivo da tela chega: sem ela o rodapé sobe até o
+   cabeçalho e desce de novo assim que a página aparece */
+.app__carregando {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+}
+
+.app__nao-encontrada {
+  padding-block: var(--esp-8);
+}
+
+/* Atenção: classes usadas junto de .container (ex.: class="container x")
+   não devem declarar o shorthand `margin`, pois ele anula o margin-inline
+   automático e desalinha o bloco do resto da página. Use margin-block. */
+
+/* Blocos de página compartilhados */
+.secao {
+  padding-block: var(--esp-7);
+}
+
+.secao__cabecalho {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--esp-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--esp-5);
+  padding-bottom: var(--esp-3);
+  border-bottom: var(--borda);
+}
+
+.secao__cabecalho h2 {
+  margin: 0;
+}
+
+.secao__subtitulo {
+  color: var(--cor-cinza);
+  margin: var(--esp-1) 0 0;
+}
+
+.grade-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--esp-5);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.grade-cards > li {
+  min-width: 0;
+}
+
+/* Cabeçalho editorial das páginas internas */
+.pagina-cabecalho {
+  padding-block: var(--esp-7) var(--esp-5);
+}
+
+.pagina-cabecalho__marca {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+  color: var(--cor-anil);
+  margin-bottom: var(--esp-2);
+}
+
+.pagina-cabecalho__marca::before {
+  content: '';
+  width: 12px;
+  height: 12px;
+  background: var(--cor-ouro);
+  border: 2px solid var(--cor-contorno);
+  border-radius: 3px;
+  transform: rotate(-8deg);
+}
+
+.pagina-cabecalho h1 {
+  margin-bottom: var(--esp-2);
+}
+
+.pagina-cabecalho p {
+  color: var(--cor-cinza);
+  font-size: var(--texto-lg);
+  margin: 0;
+}
+
+/* Caixa com borda e sombra dura, base de vários blocos */
+.caixa {
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura);
+}
+
+/* ==========================================================================
+   Formulários (compartilhado entre ProdutoForm, EmpreendedorForm, ContatoForm)
+   ========================================================================== */
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.formulario__linha {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--esp-4);
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.campo__rotulo {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--cor-anil);
+}
+
+.campo__obrigatorio {
+  color: var(--cor-lacre-escuro);
+  margin-left: 4px;
+}
+
+.campo__entrada {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.6rem 0.85rem;
+  border: var(--borda);
+  border-radius: var(--raio-md);
+  background: var(--cor-branco);
+  font-weight: 500;
+  transition: background-color 0.15s ease, box-shadow 0.12s ease;
+}
+
+.campo__entrada::placeholder {
+  color: var(--cor-cinza-claro);
+}
+
+.campo__entrada:focus {
+  outline: none;
+  background-color: #fffdf5;
+  box-shadow: 3px 3px 0 0 var(--cor-ouro);
+}
+
+.campo__entrada--erro {
+  border-color: var(--cor-lacre-escuro);
+  background: var(--cor-lacre-fundo);
+  color: var(--cor-lacre-escuro);
+}
+
+select.campo__entrada {
+  appearance: none;
+  padding-right: 2.4rem;
+}
+
+textarea.campo__entrada {
+  resize: vertical;
+  min-height: 110px;
+}
+
+.campo__ajuda {
+  font-size: var(--texto-sm);
+  color: var(--cor-cinza);
+}
+
+.campo__erro {
+  font-size: var(--texto-xs);
+  color: var(--cor-lacre-escuro);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.campo--checkbox {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--esp-3);
+  padding: var(--esp-3);
+  border: var(--borda);
+  border-radius: var(--raio-md);
+  background: var(--cor-superficie-baixa);
+  font-weight: 600;
+  color: var(--cor-anil);
+}
+
+.campo--checkbox input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--cor-contorno);
+}
+
+.formulario__acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--esp-3);
+  flex-wrap: wrap;
+  padding-top: var(--esp-2);
+}
+
+@media (max-width: 720px) {
+  .secao {
+    padding-block: var(--esp-6);
+  }
+
+  .pagina-cabecalho {
+    padding-block: var(--esp-6) var(--esp-4);
+  }
+}
+
+/* Enquanto filtros ou página mudam, a tabela anterior fica esmaecida */
+.painel-tabela {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  transition: opacity 0.2s ease;
+}
+
+.painel-tabela--atualizando {
+  opacity: 0.55;
+  pointer-events: none;
+}

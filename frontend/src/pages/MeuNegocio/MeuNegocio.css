@@ -1,0 +1,163 @@
+.meu-negocio {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+}
+
+.meu-negocio__cabecalho {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  max-width: 70ch;
+}
+
+.meu-negocio__cabecalho--painel {
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--esp-5);
+  max-width: none;
+  padding-bottom: var(--esp-4);
+  border-bottom: var(--borda);
+}
+
+.meu-negocio__indice {
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cor-ouro-escuro);
+}
+
+.meu-negocio__titulo {
+  font-family: var(--fonte-titulo);
+  font-size: clamp(28px, 3.4vw, 38px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  color: var(--cor-anil);
+  margin: var(--esp-1) 0 0;
+  text-wrap: balance;
+}
+
+.meu-negocio__linha-fina {
+  margin: var(--esp-2) 0 0;
+  color: var(--cor-cinza);
+  font-size: var(--texto-md);
+  line-height: 1.6;
+}
+
+.meu-negocio__acoes-topo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+  flex-shrink: 0;
+}
+
+.meu-negocio__cartao {
+  padding: var(--esp-5);
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura);
+}
+
+.meu-negocio__resumo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--esp-4);
+}
+
+.meu-negocio__indicador {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+  padding: var(--esp-4);
+  background: var(--cor-ouro-claro);
+  border: var(--borda);
+  border-radius: var(--raio-md);
+}
+
+.meu-negocio__indicador-rotulo {
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cor-cinza-claro);
+}
+
+.meu-negocio__indicador-numero {
+  font-family: var(--fonte-titulo);
+  font-size: 38px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--cor-anil);
+}
+
+/* Quando o indicador é um texto (telefone, situação) e não um número */
+.meu-negocio__indicador-numero--texto {
+  font-size: var(--texto-xl);
+  word-break: break-word;
+}
+
+.meu-negocio__indicador-detalhe {
+  font-size: var(--texto-sm);
+  color: var(--cor-cinza);
+  line-height: 1.5;
+}
+
+.meu-negocio__barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-4);
+  flex-wrap: wrap;
+  margin-top: var(--esp-2);
+}
+
+.meu-negocio__subtitulo {
+  font-family: var(--fonte-titulo);
+  font-size: var(--texto-2xl);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--cor-anil);
+  margin: 0;
+}
+
+.meu-negocio__celula {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+  flex-wrap: wrap;
+  font-weight: 700;
+  color: var(--cor-anil);
+}
+
+.meu-negocio__preco {
+  font-family: var(--fonte-titulo);
+  font-weight: 700;
+  color: var(--cor-tinta);
+  white-space: nowrap;
+}
+
+.meu-negocio__rodape {
+  margin: 0;
+  font-size: var(--texto-sm);
+  color: var(--cor-cinza);
+}
+
+@media (max-width: 720px) {
+  .meu-negocio__cabecalho--painel {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .meu-negocio__acoes-topo {
+    width: 100%;
+  }
+
+  .meu-negocio__cartao {
+    padding: var(--esp-4);
+    box-shadow: var(--sombra-botao);
+  }
+}

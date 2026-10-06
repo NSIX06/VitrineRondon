@@ -1,0 +1,128 @@
+.data-table__wrapper {
+  overflow-x: auto;
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--texto-sm);
+}
+
+.data-table th,
+.data-table td {
+  padding: var(--esp-3) var(--esp-4);
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 2px dashed var(--cor-superficie-alta);
+}
+
+.data-table thead th {
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-bottom: var(--borda);
+  white-space: nowrap;
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.data-table tbody tr:hover {
+  background: #fffbeb;
+}
+
+.data-table__col-acoes {
+  width: 1%;
+  text-align: right;
+}
+
+.data-table__acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--esp-2);
+  white-space: nowrap;
+}
+
+.data-table__vazio {
+  text-align: center;
+  color: var(--cor-cinza);
+  padding-block: var(--esp-6);
+}
+
+.data-table__truncar {
+  display: block;
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Em telas estreitas a tabela vira cartões empilhados */
+@media (max-width: 720px) {
+  .data-table thead {
+    display: none;
+  }
+
+  .data-table,
+  .data-table tbody,
+  .data-table tr,
+  .data-table td {
+    display: block;
+  }
+
+  .data-table tr {
+    padding: var(--esp-3) 0;
+    border-bottom: var(--borda);
+  }
+
+  .data-table tr:last-child {
+    border-bottom: none;
+  }
+
+  .data-table td {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: var(--esp-3);
+    border-bottom: none;
+    padding-block: var(--esp-1);
+  }
+
+  .data-table td::before {
+    content: attr(data-titulo);
+    font-size: var(--texto-xs);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--cor-anil);
+  }
+
+  .data-table td > .tag,
+  .data-table td > span {
+    justify-self: start;
+  }
+
+  .data-table__acoes {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  /* No desktop o 1% encolhe a coluna até caber nos botões; empilhada, a célula
+     vira um bloco, e o mesmo 1% a espremia a poucos pixels */
+  .data-table__col-acoes {
+    width: auto;
+    text-align: left;
+  }
+
+  .data-table__truncar {
+    max-width: 100%;
+    white-space: normal;
+  }
+}

@@ -1,0 +1,2004 @@
+{
+  "info": {
+    "_postman_id": "af17c041-2f1c-4da5-bd50-10737005c79f",
+    "name": "VitrineLocal",
+    "description": "API da VitrineLocal. Selecione o ambiente \"VitrineLocal (local)\" e rode a pasta 1 antes das outras: os logins guardam os tokens sozinhos.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Comece aqui",
+      "item": [
+        {
+          "name": "01. API no ar",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "health"
+              ]
+            },
+            "description": "**Esperado:** 200\n\nResponde `success: true` e a mensagem \"API VitrineLocal operando\". Se falhar, o backend não está rodando."
+          },
+          "response": []
+        },
+        {
+          "name": "02. Entrar como administrador",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "if (json?.data?.token !== undefined) pm.environment.set('tokenAdmin', String(json.data.token));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{adminEmail}}\",\n  \"senha\": \"{{adminSenha}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "**Esperado:** 200\n\nA resposta traz `data.token` e `data.usuario.perfil` igual a `ADMIN`. O token vai sozinho para a variável `tokenAdmin`."
+          },
+          "response": []
+        },
+        {
+          "name": "03. Entrar como empreendedor (Carlos)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "if (json?.data?.token !== undefined) pm.environment.set('tokenEmpreendedor', String(json.data.token));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{empreendedorEmail}}\",\n  \"senha\": \"{{empreendedorSenha}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "**Esperado:** 200\n\nO perfil vem como `EMPREENDEDOR`. O token vai para a variável `tokenEmpreendedor`."
+          },
+          "response": []
+        },
+        {
+          "name": "04. Quem sou eu (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAdmin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            },
+            "description": "**Esperado:** 200\n\nMostra nome, e-mail e perfil da conta do token. A senha nunca aparece."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. Vitrine pública (sem login)",
+      "item": [
+        {
+          "name": "05. Listar empreendedores",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/empreendedores",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "empreendedores"
+              ]
+            },
+            "description": "**Esperado:** 200\n\n`total` traz a quantidade, e cada negócio vem com a lista `horarios`."
+          },
+          "response": []
+        },
+        {
+          "name": "06. Empreendedores da categoria Moda",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/empreendedores?categoria=Moda",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "empreendedores"
+              ],
+              "query": [
+                {
+                  "key": "categoria",
+                  "value": "Moda"
+                }
+              ]
+            },
+            "description": "**Esperado:** 200\n\nSó aparecem negócios da categoria Moda, como o Brechó da Ju."
+          },
+          "response": []
+        },
+        {
+          "name": "07. Buscar empreendedores por texto",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/empreendedores?busca=bolo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "empreendedores"
+              ],
+              "query": [
+                {
+                  "key": "busca",
+                  "value": "bolo"
+                }
+              ]
+            },
+            "description": "**Esperado:** 200\n\nA busca olha nome, responsável e descrição. \"bolo\" encontra a Doces da Dona Lu."
+          },
+          "response": []
+        },
+        {
+          "name": "08. Listar produtos e serviços",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "if (json?.data?.[0]?.id !== undefined) pm.environment.set('produtoId', String(json.data[0].id));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/produtos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "produtos"
+              ]
+            },
+            "description": "**Esperado:** 200\n\nCada item vem com um resumo do negócio. O id do primeiro vai para a variável `produtoId`."
+          },
+          "response": []
+        },
+        {
+          "name": "09. Somente serviços",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/produtos?tipo=servico",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "produtos"
+              ],
+              "query": [
+                {
+                  "key": "tipo",
+                  "value": "servico"
+                }
+              ]
+            },
+            "description": "**Esperado:** 200\n\nTodos os itens têm `tipo: \"servico\"`."
+          },
+          "response": []
+        },
+        {
+          "name": "10. Detalhe de um produto",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/produtos/{{produtoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "produtos",
+                "{{produtoId}}"
+              ]
+            },
+            "description": "**Esperado:** 200\n\nUm único item, com os dados completos do empreendedor."
+          },
+          "response": []
+        },
+        {
+          "name": "11. Banner da página inicial",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/configuracoes/banner",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "configuracoes",
+                "banner"
+              ]
+            },
+            "description": "**Esperado:** 200\n\n`imagemUrl` fica `null` quando a administração não escolheu imagem: a página inicial usa a foto do item mais recente."
+          },
+          "response": []
+        },
+        {
+          "name": "12. Termos de Uso",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/termos/TERMOS_DE_USO",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "termos",
+                "TERMOS_DE_USO"
+              ]
+            },
+            "description": "**Esperado:** 200\n\nTraz o texto em Markdown e a versão vigente."
+          },
+          "response": []
+        },
+        {
+          "name": "13. Política de Privacidade",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/termos/POLITICA_PRIVACIDADE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "termos",
+                "POLITICA_PRIVACIDADE"
+              ]
+            },
+            "description": "**Esperado:** 200\n\nMesmo formato dos termos, com o texto da política."
+          },
+          "response": []
+        },
+        {
+          "name": "14. Enviar mensagem de contato",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 201', () => pm.response.to.have.status(201));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Teste API\",\n  \"email\": \"teste.api@email.com\",\n  \"telefone\": null,\n  \"mensagem\": \"Mensagem enviada durante o teste da API.\",\n  \"empreendedorId\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/contatos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "contatos"
+              ]
+            },
+            "description": "**Esperado:** 201\n\nCódigo 201 e a mensagem salva. Ela aparece depois em \"Mensagens recebidas\", na pasta 4. Esta requisição grava dados de verdade."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. Área do empreendedor (Carlos)",
+      "item": [
+        {
+          "name": "15. Meu negócio",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "if (json?.data?.id !== undefined) pm.environment.set('empreendedorId', String(json.data.id));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenEmpreendedor}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/empreendedores/meu",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "empreendedores",
+                "meu"
+              ]
+            },
+            "description": "**Esperado:** 200\n\nO negócio do Carlos, com produtos e horários. O id vai para a variável `empreendedorId`. Rode esta antes das outras da pasta."
+          },
+          "response": []
+        },
+        {
+          "name": "16. Detalhe público do meu negócio",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/empreendedores/{{empreendedorId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "empreendedores",
+                "{{empreendedorId}}"
+              ]
+            },
+            "description": "**Esperado:** 200\n\nO mesmo negócio visto por um visitante, sem login."
+          },
+          "response": []
+        },
+        {
+          "name": "17. Definir horário (08:00–12:00 e 13:00–17:00, seg a sex)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenEmpreendedor}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"horarios\": [\n    {\n      \"diaSemana\": 1,\n      \"abre\": \"08:00\",\n      \"fecha\": \"12:00\"\n    },\n    {\n      \"diaSemana\": 1,\n      \"abre\": \"13:00\",\n      \"fecha\": \"17:00\"\n    },\n    {\n      \"diaSemana\": 2,\n      \"abre\": \"08:00\",\n      \"fecha\": \"12:00\"\n    },\n    {\n      \"diaSemana\": 2,\n      \"abre\": \"13:00\",\n      \"fecha\": \"17:00\"\n    },\n    {\n      \"diaSemana\": 3,\n      \"abre\": \"08:00\",\n      \"fecha\": \"12:00\"\n    },\n    {\n      \"diaSemana\": 3,\n      \"abre\": \"13:00\",\n      \"fecha\": \"17:00\"\n    },\n    {\n      \"diaSemana\": 4,\n      \"abre\": \"08:00\",\n      \"fecha\": \"12:00\"\n    },\n    {\n      \"diaSemana\": 4,\n      \"abre\": \"13:00\",\n      \"fecha\": \"17:00\"\n    },\n    {\n      \"diaSemana\": 5,\n      \"abre\": \"08:00\",\n      \"fecha\": \"12:00\"\n    },\n    {\n      \"diaSemana\": 5,\n      \"abre\": \"13:00\",\n      \"fecha\": \"17:00\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/empreendedores/{{empreendedorId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "empreendedores",
+                "{{empreendedorId}}"
+              ]
+            },
+            "description": "**Esperado:** 200\n\nA resposta volta com 10 intervalos. Na página do negócio, o selo \"Disponível\" passa a seguir esse horário. Esta requisição grava dados de verdade."
+          },
+          "response": []
+        },
+        {
+          "name": "18. Cadastrar produto no meu negócio",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 201', () => pm.response.to.have.status(201));",
+                  "const json = pm.response.json();",
+                  "if (json?.data?.id !== undefined) pm.environment.set('produtoId', String(json.data.id));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenEmpreendedor}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Item de teste da API\",\n  \"descricao\": \"Criado durante o teste da API.\",\n  \"preco\": 25.5,\n  \"tipo\": \"servico\",\n  \"empreendedorId\": {{empreendedorId}},\n  \"disponivel\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/produtos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "produtos"
+              ]
+            },
+            "description": "**Esperado:** 201\n\nCódigo 201. O id do item novo vai para `produtoId`, usado nas duas próximas."
+          },
+          "response": []
+        },
+        {
+          "name": "19. Alterar só o preço do produto",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenEmpreendedor}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"preco\": 30\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/produtos/{{produtoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "produtos",
+                "{{produtoId}}"
+              ]
+            },
+            "description": "**Esperado:** 200\n\nO preço vira 30 e o tipo continua `servico`: a edição parcial não mexe no que não foi enviado."
+          },
+          "response": []
+        },
+        {
+          "name": "20. Excluir o produto",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenEmpreendedor}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/produtos/{{produtoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "produtos",
+                "{{produtoId}}"
+              ]
+            },
+            "description": "**Esperado:** 200\n\nMensagem de exclusão. Se repetir o \"Detalhe de um produto\" agora, a resposta passa a ser 404."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4. Administração",
+      "item": [
+        {
+          "name": "21. Mensagens recebidas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAdmin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/contatos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "contatos"
+              ]
+            },
+            "description": "**Esperado:** 200\n\nInclui a mensagem enviada na pasta 2. Só o administrador consegue ler."
+          },
+          "response": []
+        },
+        {
+          "name": "22. Contas cadastradas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAdmin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/usuarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios"
+              ]
+            },
+            "description": "**Esperado:** 200\n\nLista as contas com perfil e negócio. Nenhuma traz `senhaHash`."
+          },
+          "response": []
+        },
+        {
+          "name": "23. Auditoria (página 1, 10 por página)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAdmin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auditoria?pagina=1&porPagina=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auditoria"
+              ],
+              "query": [
+                {
+                  "key": "pagina",
+                  "value": "1"
+                },
+                {
+                  "key": "porPagina",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "**Esperado:** 200\n\n`paginacao` informa total e número de páginas. Os registros vêm do mais novo para o mais antigo."
+          },
+          "response": []
+        },
+        {
+          "name": "24. Auditoria: só entradas recusadas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAdmin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auditoria?acao=LOGIN_RECUSADO",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auditoria"
+              ],
+              "query": [
+                {
+                  "key": "acao",
+                  "value": "LOGIN_RECUSADO"
+                }
+              ]
+            },
+            "description": "**Esperado:** 200\n\nSó aparecem tentativas de login recusadas."
+          },
+          "response": []
+        },
+        {
+          "name": "25. Opções dos filtros da auditoria",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAdmin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auditoria/opcoes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auditoria",
+                "opcoes"
+              ]
+            },
+            "description": "**Esperado:** 200\n\nAções, entidades e pessoas que existem de fato na trilha, com as quantidades."
+          },
+          "response": []
+        },
+        {
+          "name": "26. Trocar o banner",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAdmin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"imagemUrl\": \"https://images.unsplash.com/photo-1600166898405-da9535204843?w=800\",\n  \"legenda\": \"Feira do Produtor, Vila Aurora\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/configuracoes/banner",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "configuracoes",
+                "banner"
+              ]
+            },
+            "description": "**Esperado:** 200\n\nMensagem \"Banner atualizado\". A página inicial passa a mostrar essa imagem. Rode a próxima para desfazer."
+          },
+          "response": []
+        },
+        {
+          "name": "27. Voltar o banner automático",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAdmin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"imagemUrl\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/configuracoes/banner",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "configuracoes",
+                "banner"
+              ]
+            },
+            "description": "**Esperado:** 200\n\nMensagem \"Banner removido\". A página inicial volta a usar a foto do item mais recente."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "5. Erros esperados (segurança e validação)",
+      "item": [
+        {
+          "name": "28. 401: mensagens sem login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/contatos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "contatos"
+              ]
+            },
+            "description": "**Esperado:** 401\n\nSem token, a API recusa com \"Faça login para continuar\"."
+          },
+          "response": []
+        },
+        {
+          "name": "29. 403: empreendedor tentando ver contas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 403', () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenEmpreendedor}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/usuarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios"
+              ]
+            },
+            "description": "**Esperado:** 403\n\nO token é válido, mas o perfil não tem permissão para essa rota."
+          },
+          "response": []
+        },
+        {
+          "name": "30. 400: categoria fora da lista",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAdmin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nomeNegocio\": \"Teste\",\n  \"responsavel\": \"Fulano\",\n  \"categoria\": \"Geral\",\n  \"cidade\": \"Rondonópolis\",\n  \"whatsapp\": \"66999990000\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/empreendedores",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "empreendedores"
+              ]
+            },
+            "description": "**Esperado:** 400\n\n`errors` aponta o campo `categoria` e lista as opções válidas. Nada é gravado."
+          },
+          "response": []
+        },
+        {
+          "name": "31. 400: horário com fim antes do início",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenEmpreendedor}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"horarios\": [\n    {\n      \"diaSemana\": 1,\n      \"abre\": \"12:00\",\n      \"fecha\": \"08:00\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/empreendedores/{{empreendedorId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "empreendedores",
+                "{{empreendedorId}}"
+              ]
+            },
+            "description": "**Esperado:** 400\n\n`errors` traz \"O fim precisa ser depois do início\". O horário salvo não muda."
+          },
+          "response": []
+        },
+        {
+          "name": "32. 401: senha errada",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{adminEmail}}\",\n  \"senha\": \"senha-errada\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "**Esperado:** 401\n\nA mensagem é a mesma para e-mail inexistente e senha errada. A tentativa entra na auditoria como `LOGIN_RECUSADO`."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "6. Paginação e perguntas frequentes",
+      "item": [
+        {
+          "name": "33. Produtos: página 2, 5 por página",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('Traz no máximo 5 itens', () => pm.expect(json.data.length).to.be.at.most(5));",
+                  "pm.test('Informa a página pedida', () => pm.expect(json.paginacao).to.include({ pagina: 2, porPagina: 5 }));",
+                  "pm.test('Conta as páginas pelo total', () => pm.expect(json.paginacao.totalPaginas).to.eql(Math.max(1, Math.ceil(json.paginacao.total / 5))));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/produtos?pagina=2&porPagina=5",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "produtos"
+              ],
+              "query": [
+                {
+                  "key": "pagina",
+                  "value": "2"
+                },
+                {
+                  "key": "porPagina",
+                  "value": "5"
+                }
+              ]
+            },
+            "description": "**Esperado:** 200\n\nNo máximo 5 itens e o bloco `paginacao` com página, total e total de páginas. Sem `pagina` na URL, a listagem continua vindo inteira."
+          },
+          "response": []
+        },
+        {
+          "name": "34. Perguntas frequentes (público)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));",
+                  "const lista = pm.response.json().data;",
+                  "pm.test('Não expõe a situação interna', () => lista.forEach((p) => pm.expect(p).to.not.have.property('ativo')));",
+                  "pm.test('Vem em ordem', () => { for (let i = 1; i < lista.length; i++) { const a = lista[i - 1], b = lista[i]; pm.expect(a.ordem < b.ordem || (a.ordem === b.ordem && a.pergunta.localeCompare(b.pergunta) <= 0)).to.be.true; } });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/faq",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "faq"
+              ]
+            },
+            "description": "**Esperado:** 200\n\nSó as perguntas visíveis, em ordem crescente de `ordem` e, no empate, pela pergunta. Não precisa de login."
+          },
+          "response": []
+        },
+        {
+          "name": "35. Criar pergunta (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 201', () => pm.response.to.have.status(201));",
+                  "const p = pm.response.json().data;",
+                  "pm.test('Devolve o id gerado', () => pm.expect(p.id).to.be.a('number'));",
+                  "pm.test('Nasce visível', () => pm.expect(p.ativo).to.eql(true));",
+                  "pm.environment.set('faqId', p.id);",
+                  "pm.environment.set('faqCriadaEm', p.createdAt);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAdmin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pergunta\": \"Pergunta de teste da API?\",\n  \"resposta\": \"Resposta de teste.\\nCom quebra de linha.\",\n  \"categoria\": \"Teste\",\n  \"ordem\": 99\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/faq",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "faq"
+              ]
+            },
+            "description": "**Esperado:** 201\n\nDevolve a pergunta com o `id` gerado pelo banco, que fica guardado em `faqId` para as próximas requisições."
+          },
+          "response": []
+        },
+        {
+          "name": "36. Todas as perguntas, inclusive ocultas (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Inclui a pergunta criada', () => pm.expect(pm.response.json().data.map((p) => p.id)).to.include(pm.environment.get('faqId')));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAdmin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/faq/todas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "faq",
+                "todas"
+              ]
+            },
+            "description": "**Esperado:** 200\n\nA lista completa da administração, com a pergunta recém-criada."
+          },
+          "response": []
+        },
+        {
+          "name": "37. Editar e esconder a pergunta (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));",
+                  "const p = pm.response.json().data;",
+                  "pm.test('Trocou o texto', () => pm.expect(p.pergunta).to.eql('Pergunta de teste da API, editada?'));",
+                  "pm.test('Ficou oculta', () => pm.expect(p.ativo).to.eql(false));",
+                  "pm.test('Manteve a ordem, que não foi enviada', () => pm.expect(p.ordem).to.eql(99));",
+                  "pm.test('Atualizou a data de alteração', () => pm.expect(new Date(p.updatedAt).getTime()).to.be.above(new Date(pm.environment.get('faqCriadaEm')).getTime()));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAdmin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pergunta\": \"Pergunta de teste da API, editada?\",\n  \"ativo\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/faq/{{faqId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "faq",
+                "{{faqId}}"
+              ]
+            },
+            "description": "**Esperado:** 200\n\nMuda o texto, esconde da área pública e atualiza `updatedAt`. Os campos que não vieram no corpo ficam como estavam."
+          },
+          "response": []
+        },
+        {
+          "name": "38. Pergunta oculta não aparece no público",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));",
+                  "pm.test('A oculta ficou de fora', () => pm.expect(pm.response.json().data.map((p) => p.id)).to.not.include(pm.environment.get('faqId')));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/faq",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "faq"
+              ]
+            },
+            "description": "**Esperado:** 200\n\nA pergunta escondida na requisição anterior não está na lista pública."
+          },
+          "response": []
+        },
+        {
+          "name": "39. Excluir a pergunta (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAdmin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/faq/{{faqId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "faq",
+                "{{faqId}}"
+              ]
+            },
+            "description": "**Esperado:** 200\n\nExclusão definitiva, registrada na auditoria."
+          },
+          "response": []
+        },
+        {
+          "name": "40. 404: editar pergunta que já foi excluída",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 404', () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAdmin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pergunta\": \"Não existe mais?\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/faq/{{faqId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "faq",
+                "{{faqId}}"
+              ]
+            },
+            "description": "**Esperado:** 404\n\nA pergunta da requisição 39 não existe mais."
+          },
+          "response": []
+        },
+        {
+          "name": "41. 401: criar pergunta sem login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pergunta\": \"Pergunta de teste da API?\",\n  \"resposta\": \"Resposta de teste.\\nCom quebra de linha.\",\n  \"categoria\": \"Teste\",\n  \"ordem\": 99\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/faq",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "faq"
+              ]
+            },
+            "description": "**Esperado:** 401\n\nA trava fica no servidor: esconder o botão na tela não bastaria."
+          },
+          "response": []
+        },
+        {
+          "name": "42. 403: empreendedor tentando criar pergunta",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 403', () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenEmpreendedor}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pergunta\": \"Pergunta de teste da API?\",\n  \"resposta\": \"Resposta de teste.\\nCom quebra de linha.\",\n  \"categoria\": \"Teste\",\n  \"ordem\": 99\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/faq",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "faq"
+              ]
+            },
+            "description": "**Esperado:** 403\n\nSó a administração mantém a central de ajuda."
+          },
+          "response": []
+        },
+        {
+          "name": "43. 403: empreendedor tentando ver as ocultas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 403', () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenEmpreendedor}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/faq/todas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "faq",
+                "todas"
+              ]
+            },
+            "description": "**Esperado:** 403"
+          },
+          "response": []
+        },
+        {
+          "name": "44. 400: pergunta vazia",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Aponta o campo pergunta', () => pm.expect(pm.response.json().errors.map((e) => e.campo)).to.include('pergunta'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAdmin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pergunta\": \"\",\n  \"resposta\": \"Resposta\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/faq",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "faq"
+              ]
+            },
+            "description": "**Esperado:** 400\n\nAponta o campo `pergunta`."
+          },
+          "response": []
+        },
+        {
+          "name": "45. 400: pergunta com 301 caracteres",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Responde 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Explica o limite', () => pm.expect(pm.response.json().errors[0].mensagem).to.include('300'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAdmin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pergunta\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\n  \"resposta\": \"Resposta\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/faq",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "faq"
+              ]
+            },
+            "description": "**Esperado:** 400\n\nO limite é de 300 caracteres."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

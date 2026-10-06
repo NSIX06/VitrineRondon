@@ -1,0 +1,204 @@
+.contato {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-7);
+  padding-top: 0;
+}
+
+.contato__envio {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.contato__titulo-formulario {
+  margin-bottom: var(--esp-1);
+}
+
+.contato__subtitulo-formulario {
+  color: var(--cor-cinza);
+}
+
+.contato__formulario {
+  position: relative;
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura);
+  padding: var(--esp-6);
+}
+
+/* Hachura de nanquim no canto do talão de recados */
+.contato__formulario::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  right: 14px;
+  width: 40px;
+  height: 15px;
+  background: var(--hachura) no-repeat center / contain;
+  pointer-events: none;
+}
+
+/* Enquanto a lista de destinatários chega, a caixa já ocupa o espaço do
+   formulário: sem isso a página crescia de uma vez e empurrava tudo abaixo */
+.contato__formulario:empty {
+  min-height: 34rem;
+}
+
+.contato__formulario .botao[type='submit'] {
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding-inline: 2rem;
+}
+
+/* As caixas de apoio ficam lado a lado, abaixo do formulário */
+.contato__lateral {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--esp-5);
+  align-items: stretch;
+}
+
+.contato__caixa {
+  display: flex;
+  flex-direction: column;
+}
+
+.contato__caixa .botao {
+  align-self: flex-start;
+  margin-top: auto;
+}
+
+.contato__caixa {
+  position: relative;
+  padding: var(--esp-5);
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura);
+}
+
+/* A primeira (publicar o negócio) vira o cartão amarelo de destaque */
+.contato__caixa:first-child {
+  background: var(--cor-ouro);
+}
+.contato__caixa:first-child p {
+  color: var(--cor-tinta);
+}
+
+.contato__caixa::before {
+  content: '';
+  display: block;
+  width: 36px;
+  height: 8px;
+  background: var(--cor-ouro);
+  border: var(--borda-fina);
+  border-radius: 3px;
+  transform: rotate(-3deg);
+  margin-bottom: var(--esp-4);
+}
+/* No cartão amarelo a hachura vira reflexo branco */
+.contato__caixa:first-child::after {
+  width: 30px;
+  height: 30px;
+  top: 8px;
+  background-image: var(--reflexo);
+}
+
+.contato__caixa:first-child::before {
+  background: var(--cor-anil);
+}
+
+/* Hachura de nanquim no canto superior */
+.contato__caixa::after {
+  content: '';
+  position: absolute;
+  right: 12px;
+  top: 14px;
+  width: 40px;
+  height: 15px;
+  background: var(--hachura) no-repeat center / contain;
+  pointer-events: none;
+}
+
+.contato__caixa h2 {
+  font-size: var(--texto-xl);
+  margin-bottom: var(--esp-2);
+}
+
+.contato__caixa p {
+  color: var(--cor-cinza);
+  line-height: 1.6;
+  margin-bottom: var(--esp-4);
+}
+
+.contato__caixa p:last-child {
+  margin-bottom: 0;
+}
+
+.contato__gratuito {
+  margin-top: var(--esp-3);
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  padding: var(--esp-3);
+  border: var(--borda);
+  border-radius: var(--raio-md);
+  background: var(--cor-ouro-claro);
+  color: var(--cor-tinta);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.contato__gratuito svg {
+  flex-shrink: 0;
+}
+
+.contato__caixa .botao--whatsapp {
+  width: 100%;
+  justify-content: space-between;
+}
+
+.contato__horario {
+  align-self: stretch;
+  display: flex;
+  gap: var(--esp-3);
+  padding: var(--esp-4);
+  background: var(--cor-sucesso-fundo);
+  border: var(--borda-fina);
+  border-radius: var(--raio-md);
+  font-size: var(--texto-sm);
+  color: var(--cor-cinza);
+}
+
+.contato__horario strong {
+  display: block;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cor-anil);
+  margin-bottom: 2px;
+}
+
+@media (max-width: 960px) {
+  .contato__lateral {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 800px) {
+  .contato {
+    gap: var(--esp-5);
+  }
+
+  .contato__formulario {
+    padding: var(--esp-4);
+  }
+}
+
+@media (max-width: 620px) {
+  .contato__lateral {
+    grid-template-columns: 1fr;
+  }
+}

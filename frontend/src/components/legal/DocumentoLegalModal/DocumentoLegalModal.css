@@ -1,0 +1,22 @@
+.documento-modal__versao {
+  margin-bottom: var(--esp-4);
+  font-size: var(--texto-sm);
+  color: var(--cor-cinza);
+}
+
+/* Botão grande no fim: no celular, depois de rolar o documento inteiro, o
+   fechar do topo fica longe do dedo */
+.documento-modal__rodape {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--esp-5);
+  padding-top: var(--esp-4);
+  border-top: 2px solid var(--cor-superficie-alta);
+}
+
+@media (max-width: 600px) {
+  .documento-modal__rodape .botao {
+    width: 100%;
+    justify-content: center;
+  }
+}

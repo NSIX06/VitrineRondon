@@ -1,0 +1,15 @@
+/* Estilos específicos do ProdutoForm; os campos usam as classes globais de .formulario */
+.produto-form .status {
+  margin-block: 0;
+}
+
+/* Negócio fixo: mostrado como texto, sem select, na área do empreendedor */
+.produto-form__negocio {
+  margin: 0;
+  padding: 0.6rem 0.75rem;
+  background: var(--cor-superficie-baixa);
+  border: var(--borda);
+  border-radius: var(--raio);
+  font-weight: 700;
+  color: var(--cor-anil);
+}

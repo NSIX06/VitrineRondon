@@ -1,0 +1,150 @@
+.cadastro {
+  display: grid;
+  grid-template-columns: 7fr 4fr;
+  gap: var(--esp-7);
+  align-items: start;
+  padding-top: 0;
+}
+
+.cadastro__principal {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+  min-width: 0;
+}
+
+.cadastro__etapas {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: var(--esp-4);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--cor-cinza);
+}
+
+.cadastro__etapas li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+}
+
+.cadastro__etapas span {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: var(--borda);
+  border-color: var(--cor-linha);
+  border-radius: var(--raio-sm);
+  font-family: var(--fonte-titulo);
+  font-weight: 800;
+}
+
+.cadastro__etapa--ativa {
+  color: var(--cor-anil);
+}
+
+.cadastro__etapa--ativa span {
+  background: var(--cor-ouro);
+  border-color: var(--cor-contorno);
+  box-shadow: var(--sombra-dura-sm);
+  transform: rotate(-4deg);
+  color: var(--cor-tinta);
+}
+
+.cadastro__etapa--feita span {
+  background: var(--cor-anil);
+  border-color: var(--cor-contorno);
+  color: var(--cor-branco);
+}
+
+.cadastro__formulario {
+  position: relative;
+  padding: var(--esp-5);
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura);
+}
+
+.cadastro__formulario::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  right: 14px;
+  width: 40px;
+  height: 15px;
+  background: var(--hachura) no-repeat center / contain;
+  pointer-events: none;
+}
+
+.cadastro__ola {
+  margin: 0 0 var(--esp-4);
+  padding: var(--esp-3);
+  background: var(--cor-ouro-claro);
+  border: var(--borda-fina);
+  border-radius: var(--raio-md);
+  font-size: var(--texto-sm);
+}
+
+.cadastro__voltar {
+  background: none;
+  border: none;
+  padding: 0;
+  font-weight: 700;
+  color: var(--cor-anil);
+  text-decoration: underline;
+}
+
+.cadastro__lateral {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.cadastro__caixa {
+  padding: var(--esp-5);
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-left: 8px solid var(--cor-mostarda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-botao);
+}
+
+.cadastro__caixa h2 {
+  font-size: var(--texto-xl);
+  margin-bottom: var(--esp-2);
+}
+
+.cadastro__caixa p {
+  font-size: var(--texto-sm);
+  color: var(--cor-cinza);
+  line-height: 1.6;
+}
+
+.cadastro__caixa a:not(.botao) {
+  font-weight: 700;
+}
+
+.cadastro__versao {
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 900px) {
+  .cadastro {
+    grid-template-columns: 1fr;
+    gap: var(--esp-5);
+  }
+}
+
+@media (max-width: 560px) {
+  .cadastro__formulario {
+    padding: var(--esp-4);
+  }
+}

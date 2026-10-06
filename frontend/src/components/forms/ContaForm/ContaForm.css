@@ -1,0 +1,18 @@
+/* Estilos específicos do ContaForm; os campos usam as classes globais de .formulario */
+.conta-form .status {
+  margin-block: 0;
+}
+
+.conta-form__acoes {
+  justify-content: flex-start;
+}
+
+.conta-form__acoes .botao {
+  min-width: 200px;
+}
+
+@media (max-width: 480px) {
+  .conta-form__acoes .botao {
+    width: 100%;
+  }
+}

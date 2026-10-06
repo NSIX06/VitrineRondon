@@ -1,0 +1,21 @@
+{
+  "name": "vitrinelocal",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install:all": "npm install --prefix backend && npm install --prefix frontend",
+    "prisma:migrate": "npm run prisma:migrate --prefix backend",
+    "prisma:seed": "npm run prisma:seed --prefix backend",
+    "dev:backend": "npm run dev --prefix backend",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "audit": "npm audit --audit-level=high --prefix backend && npm audit --audit-level=high --prefix frontend",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "node tests-e2e/teste-ajustes-ui.mjs && node tests-e2e/teste-erros-ui.mjs && node tests-e2e/teste-desempenho.mjs && node tests-e2e/teste-faq-ui.mjs && node tests-e2e/teste-celular-ui.mjs",
+    "banco:criar-usuario": "npm run banco:criar-usuario --prefix backend",
+    "prisma:deploy": "npm run prisma:deploy --prefix backend"
+  },
+  "devDependencies": {
+    "vitest": "^3.2.7"
+  }
+}

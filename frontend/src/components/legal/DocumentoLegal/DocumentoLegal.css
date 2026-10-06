@@ -1,0 +1,49 @@
+.documento-legal {
+  line-height: 1.7;
+}
+
+.documento-legal h1 {
+  display: none; /* o título já aparece no cabeçalho da página ou do modal */
+}
+
+.documento-legal h2 {
+  font-size: var(--texto-2xl);
+  margin: var(--esp-6) 0 var(--esp-3);
+  padding-top: var(--esp-4);
+  border-top: 2px dashed var(--cor-linha);
+}
+
+.documento-legal h2:first-of-type {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+.documento-legal p {
+  margin: 0 0 var(--esp-3);
+  max-width: none;
+}
+
+.documento-legal ul {
+  padding-left: var(--esp-5);
+  margin: 0 0 var(--esp-3);
+}
+
+.documento-legal li {
+  margin-bottom: var(--esp-1);
+}
+
+.documento-legal strong {
+  color: var(--cor-anil);
+}
+
+.documento-legal hr {
+  border: none;
+  border-top: 2px dashed var(--cor-linha);
+  margin: var(--esp-5) 0;
+}
+
+.documento-legal em {
+  color: var(--cor-cinza);
+  font-size: var(--texto-sm);
+}

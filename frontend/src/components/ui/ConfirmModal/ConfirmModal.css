@@ -1,0 +1,12 @@
+.confirm-modal__mensagem {
+  margin-bottom: var(--esp-5);
+  font-size: var(--texto-lg);
+  color: var(--cor-tinta);
+}
+
+.confirm-modal__acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--esp-3);
+  flex-wrap: wrap;
+}

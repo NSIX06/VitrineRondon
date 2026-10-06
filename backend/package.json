@@ -1,0 +1,41 @@
+{
+  "name": "vitrine-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "node scripts/prisma-admin.js migrate dev",
+    "prisma:seed": "node prisma/seed.js",
+    "prisma:studio": "prisma studio",
+    "audit": "npm audit --audit-level=high",
+    "prisma:deploy": "node scripts/prisma-admin.js migrate deploy",
+    "prisma:status": "node scripts/prisma-admin.js migrate status",
+    "banco:criar-usuario": "node scripts/criar-usuario-banco.js"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.3",
+    "bcryptjs": "^3.0.3",
+    "compression": "^1.8.2",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.7.0",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14",
+    "prisma": "^6.19.3"
+  },
+  "overrides": {
+    "deepmerge-ts": "^8.0.2"
+  }
+}

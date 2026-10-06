@@ -1,0 +1,85 @@
+.mapa {
+  position: relative;
+  height: 320px;
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura);
+  background: var(--cor-superficie-baixa);
+  overflow: hidden;
+}
+
+.mapa__tela {
+  width: 100%;
+  height: 100%;
+}
+
+/* O alfinete é um SVG: sem fundo nem borda do Leaflet */
+.mapa__alfinete {
+  background: none;
+  border: none;
+}
+
+.mapa__popup-endereco {
+  display: block;
+  margin-top: 4px;
+  color: var(--cor-cinza);
+}
+
+.mapa__abrir {
+  /* No topo: embaixo ficaria sobre a barra de créditos do OpenStreetMap */
+  position: absolute;
+  right: var(--esp-3);
+  top: var(--esp-3);
+  z-index: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.35rem 0.7rem;
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-radius: var(--raio-sm);
+  box-shadow: 3px 3px 0 0 var(--cor-contorno);
+  color: var(--cor-anil);
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  text-decoration: none;
+  transition: var(--transicao-tecla);
+}
+.mapa__abrir:hover {
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
+  transform: translate(1px, 1px);
+  box-shadow: var(--sombra-dura-sm);
+}
+
+.mapa--vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--esp-2);
+  padding: var(--esp-5);
+  text-align: center;
+  color: var(--cor-cinza);
+}
+
+.mapa--vazio p {
+  margin: 0;
+  font-size: var(--texto-sm);
+}
+
+/* Os controles do Leaflet seguem a identidade do site: contorno preto e sombra dura */
+.mapa .leaflet-control-zoom a {
+  border-radius: 0;
+  color: var(--cor-tinta);
+  font-weight: 700;
+}
+.mapa .leaflet-bar {
+  border: var(--borda-fina);
+  border-radius: var(--raio-sm);
+  overflow: hidden;
+  box-shadow: var(--sombra-dura-sm);
+}
+.mapa .leaflet-control-attribution {
+  font-size: 10px;
+}

@@ -1,0 +1,689 @@
+/* ==========================================================================
+   VitrineLocal — tokens globais e reset
+   Identidade: comércio de bairro em traço de gibi. Azul-anil e amarelo-mostarda
+   sobre papel creme, contorno preto de 3 px, cantos levemente arredondados,
+   sombras duras em bloco e cel-shading de gibi: faixa de sombra e brilho chapados,
+   reflexos em traço diagonal (como o vidro da logo) e hachuras de nanquim.
+   ========================================================================== */
+
+:root {
+  /* Paleta */
+  --cor-anil: #17346e;
+  --cor-anil-escuro: #0f2557;
+  --cor-anil-medio: #1e3a8a;
+  --cor-anil-claro: #dbe4ff;
+  --cor-ouro: #fbbf24;
+  --cor-mostarda: #f59e0b;
+  --cor-ouro-claro: #fde68a;
+  --cor-ouro-escuro: #854d0e;
+  --cor-lacre: #c8322b;
+  --cor-lacre-escuro: #9b1c1c;
+  --cor-lacre-fundo: #fff1ef;
+  --cor-whatsapp: #10b981;
+  --cor-whatsapp-hover: #0ea371;
+  --cor-whatsapp-tinta: #062b1e;
+  --cor-sucesso: #15803d;
+  --cor-sucesso-tinta: #0d4a24;
+  --cor-sucesso-fundo: #e3f5e8;
+  --cor-branco: #ffffff;
+  --cor-contorno: #111827;
+  --cor-tinta: #111827;
+  --cor-cinza: #374151;
+  --cor-cinza-claro: #6b7280;
+  --cor-papel: #f8f6f0;
+  --cor-superficie: #faf8f2;
+  --cor-superficie-baixa: #f4f1e8;
+  --cor-superficie-media: #ece7da;
+  --cor-superficie-alta: #e2dccb;
+  --cor-linha: #cfc8b4;
+
+  /* Tipografia */
+  --fonte-titulo: 'Bricolage Grotesque', 'Arial Black', Impact, sans-serif;
+  --fonte-texto: 'Inter', system-ui, -apple-system, sans-serif;
+
+  --texto-xs: 11px;
+  --texto-sm: 13px;
+  --texto-md: 15px;
+  --texto-lg: 18px;
+  --texto-xl: 20px;
+  --texto-2xl: 23px;
+  --texto-3xl: 30px;
+  --texto-4xl: 42px;
+  --texto-display: 58px;
+
+  /* Espaçamento */
+  --esp-1: 0.25rem;
+  --esp-2: 0.5rem;
+  --esp-3: 0.75rem;
+  --esp-4: 1rem;
+  --esp-5: 1.5rem;
+  --esp-6: 2rem;
+  --esp-7: 2.5rem;
+  --esp-8: 4rem;
+
+  /* Layout */
+  --largura-max: 1200px;
+  --gutter: clamp(1rem, 4vw, 2.5rem);
+
+  /* Traço cartoon: contorno grosso, sombra em bloco sem desfoque */
+  --borda: 3px solid var(--cor-contorno);
+  --borda-fina: 2px solid var(--cor-contorno);
+  --sombra-dura: 5px 5px 0 0 var(--cor-contorno);
+  --sombra-botao: 4px 4px 0 0 var(--cor-contorno);
+  --sombra-dura-sm: 2px 2px 0 0 var(--cor-contorno);
+  --raio: 12px;
+  --raio-md: 8px;
+  --raio-sm: 6px;
+  --transicao-tecla: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.15s ease,
+    color 0.15s ease;
+
+  /* Cel-shading chapado (sem desfoque): faixa de sombra embaixo e brilho no
+     canto de cima, como o toldo e as letras da logo */
+  --cel: inset 0 -4px 0 0 rgba(17, 24, 39, 0.2), inset 3px 3px 0 0 rgba(255, 255, 255, 0.35);
+  --cel-sm: inset 0 -3px 0 0 rgba(17, 24, 39, 0.18), inset 2px 2px 0 0 rgba(255, 255, 255, 0.35);
+
+  /* Traços de gibi (SVG inline). Reflexo: dois riscos brancos em diagonal, como
+     o vidro da vitrine da logo. Hachura: riscos de nanquim bem deitados. */
+  --reflexo: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40' fill='none' stroke='%23ffffff' stroke-linecap='round'%3E%3Cpath d='M6 26 24 6' stroke-width='4'/%3E%3Cpath d='M14 34 34 12' stroke-width='3'/%3E%3C/svg%3E");
+  --hachura: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 16' fill='none' stroke='%23111827' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M2 14 14 2M10 14 22 2M18 14 30 2M26 14 38 2'/%3E%3C/svg%3E");
+  --hachura-clara: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 16' fill='none' stroke='%23ffffff' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M2 14 14 2M10 14 22 2M18 14 30 2M26 14 38 2'/%3E%3C/svg%3E");
+
+  /* Textura de linhas diagonais para fundos chapados (anil e amarelo) */
+  --linhas-claras: repeating-linear-gradient(
+    -55deg,
+    transparent 0 14px,
+    rgba(255, 255, 255, 0.06) 14px 16px
+  );
+  --linhas-escuras: repeating-linear-gradient(
+    -55deg,
+    transparent 0 14px,
+    rgba(17, 24, 39, 0.07) 14px 16px
+  );
+
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--fonte-texto);
+  font-size: var(--texto-md);
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--cor-tinta);
+  background: var(--cor-papel);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--fonte-titulo);
+  font-weight: 800;
+  color: var(--cor-anil);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin: 0 0 var(--esp-3);
+}
+
+h1 {
+  font-size: clamp(32px, 5vw, var(--texto-display));
+  letter-spacing: -0.03em;
+}
+h2 {
+  font-size: clamp(24px, 2.8vw, 32px);
+  font-weight: 700;
+}
+h3 {
+  font-size: var(--texto-xl);
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+p {
+  margin: 0 0 var(--esp-4);
+  max-width: 70ch;
+}
+
+a {
+  color: var(--cor-anil);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+
+/* Botão que se lê como link no meio de uma frase: abre algo na própria tela
+   (um modal), sem sair da página como um link faria */
+.link-em-texto {
+  display: inline;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-weight: 700;
+  color: var(--cor-anil);
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 3px solid var(--cor-ouro);
+  outline-offset: 2px;
+}
+
+/* Seções com âncora param abaixo do cabeçalho fixo, e não escondidas atrás dele */
+[id] {
+  scroll-margin-top: 96px;
+}
+
+/* Utilitários */
+.container {
+  width: 100%;
+  max-width: var(--largura-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.visualmente-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Faixa serrilhada reutilizável: listras diagonais de fita de obra, com contorno */
+.serrilha {
+  height: 8px;
+  width: 100%;
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--cor-anil) 0 10px,
+    var(--cor-ouro) 10px 20px
+  );
+  border-block: 2px solid var(--cor-contorno);
+  box-sizing: content-box;
+}
+
+/* ==========================================================================
+   Letreiro cel-shaded (marca): letras de gibi como as da logo.
+   O texto de verdade desenha o contorno grosso e a extrusão em preto; uma cópia
+   (data-texto) por cima pinta a cor, com faixa de sombra chapada embaixo e
+   riscos de brilho brancos em diagonal no alto.
+   Uso: <span class="letreiro" data-texto="Vitrine">Vitrine</span>
+   ========================================================================== */
+.letreiro {
+  --letreiro-luz: #3b5fc8;
+  --letreiro-sombra: #2b4aa6;
+  position: relative;
+  display: inline-block;
+  color: var(--cor-contorno);
+  -webkit-text-stroke: 0.09em var(--cor-contorno);
+  /* Sombra só para baixo, assentando o pé das letras */
+  text-shadow: 0 0.03em 0 var(--cor-contorno);
+}
+
+.letreiro::after {
+  /* O "/ ''" esconde a cópia dos leitores de tela: o nome é lido uma vez só */
+  content: attr(data-texto) / '';
+  position: absolute;
+  inset: 0;
+  -webkit-text-stroke: 0;
+  text-shadow: none;
+  color: transparent;
+  background:
+    /* Riscos de brilho em SVG (e não em gradiente): em tamanho pequeno, listras
+       de fração de pixel serrilhavam e o brilho ficava granulado */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 14' fill='none' stroke='%23fff' stroke-opacity='.95' stroke-linecap='round'%3E%3Cpath d='M6 12.5 10.5 1.5' stroke-width='2.4'/%3E%3Cpath d='M10.5 12.5 12.6 7.4' stroke-width='1.6'/%3E%3C/svg%3E")
+      0 0.12em / 0.66em 0.42em repeat-x,
+    linear-gradient(to bottom, var(--letreiro-luz) 0 58%, var(--letreiro-sombra) 58% 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.letreiro--ouro {
+  --letreiro-luz: #fbbf24;
+  --letreiro-sombra: #d98a06;
+}
+
+.letreiro--claro {
+  --letreiro-luz: #ffffff;
+  --letreiro-sombra: #d6dcef;
+}
+
+/* Estrelinha de brilho colada no alto da palavra, como na logo */
+.letreiro--brilho::before {
+  content: '';
+  position: absolute;
+  top: -0.12em;
+  left: 0.5em;
+  width: 0.46em;
+  height: 0.46em;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1.5c.9 5.6 4.9 9.6 10.5 10.5-5.6.9-9.6 4.9-10.5 10.5C11.1 16.9 7.1 12.9 1.5 12 7.1 11.1 11.1 7.1 12 1.5Z' fill='%23fff' stroke='%23111827' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E")
+    no-repeat center / contain;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   Brilhos de gibi nos cantos (mesma linguagem do letreiro)
+   Arco de luz acompanhando a curva do canto de cima + pontinho; nos botões
+   grandes, dois riscos diagonais no canto oposto. O desenho vem de uma máscara
+   SVG e a cor de --brilho-cor: branco no colorido, azul-claro no branco.
+   ========================================================================== */
+:is(
+    .botao:not(.botao--texto),
+    .tag,
+    .navbar__link--ativo,
+    .navbar__link--admin,
+    .navbar__cadastrar,
+    .categoria-filter__opcao,
+    .categorias__item,
+    .produto-card__orcamento,
+    .empreendedor-card__botao,
+    .footer__redes a,
+    .modal__fechar,
+    .navbar__toggle,
+    .navbar__avatar,
+    .detalhe__instagram,
+    .detalhe__disponivel,
+    .detalhe__situacao,
+    .admin__aba,
+    .horarios-editor__atalho,
+    .cadastro__etapas span,
+    .empreendedores__chamada-icone,
+    .contexto__icone,
+    .detalhe__outro-icone,
+    .detalhe__cta-icone,
+    .como-funciona__numero,
+    .sobre__ods-numero,
+    .pagina-erro__icone
+  ) {
+  position: relative;
+}
+
+:is(
+    .botao:not(.botao--texto),
+    .tag,
+    .navbar__link--ativo,
+    .navbar__link--admin,
+    .navbar__cadastrar,
+    .categoria-filter__opcao,
+    .categorias__item,
+    .produto-card__orcamento,
+    .empreendedor-card__botao,
+    .footer__redes a,
+    .modal__fechar,
+    .navbar__toggle,
+    .navbar__avatar,
+    .detalhe__instagram,
+    .detalhe__disponivel,
+    .detalhe__situacao,
+    .admin__aba,
+    .horarios-editor__atalho,
+    .cadastro__etapas span,
+    .empreendedores__chamada-icone,
+    .contexto__icone,
+    .detalhe__outro-icone,
+    .detalhe__cta-icone,
+    .como-funciona__numero,
+    .sobre__ods-numero,
+    .pagina-erro__icone,
+    .mapa__abrir
+  )::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: var(--brilho-tam, 12px);
+  height: var(--brilho-tam, 12px);
+  background: var(--brilho-cor, rgba(255, 255, 255, 0.9));
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 16v-5q0-8 8-8h4' fill='none' stroke='%23000' stroke-width='3.4' stroke-linecap='round'/%3E%3Ccircle cx='20.5' cy='3' r='1.9'/%3E%3C/svg%3E")
+    no-repeat center / contain;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 16v-5q0-8 8-8h4' fill='none' stroke='%23000' stroke-width='3.4' stroke-linecap='round'/%3E%3Ccircle cx='20.5' cy='3' r='1.9'/%3E%3C/svg%3E")
+    no-repeat center / contain;
+  pointer-events: none;
+}
+
+/* Riscos diagonais no canto oposto dos botões grandes */
+.botao--md:not(.botao--texto)::after {
+  content: '';
+  position: absolute;
+  top: 5px;
+  right: 8px;
+  width: 15px;
+  height: 11px;
+  background: var(--brilho-cor, rgba(255, 255, 255, 0.9));
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 16' fill='none' stroke='%23000' stroke-linecap='round'%3E%3Cpath d='M3 14 9 2' stroke-width='3'/%3E%3Cpath d='M10 14 14 6' stroke-width='2.4'/%3E%3C/svg%3E")
+    no-repeat center / contain;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 16' fill='none' stroke='%23000' stroke-linecap='round'%3E%3Cpath d='M3 14 9 2' stroke-width='3'/%3E%3Cpath d='M10 14 14 6' stroke-width='2.4'/%3E%3C/svg%3E")
+    no-repeat center / contain;
+  pointer-events: none;
+}
+
+.botao--md:not(.botao--texto) {
+  --brilho-tam: 15px;
+}
+
+.tag {
+  --brilho-tam: 7px;
+}
+
+/* Peças pequenas (selos redondos, numerais, ícones em caixinha): brilho menor */
+:is(
+    .navbar__avatar,
+    .detalhe__disponivel,
+    .detalhe__situacao,
+    .horarios-editor__atalho,
+    .cadastro__etapas span,
+    .como-funciona__numero,
+    .sobre__ods-numero,
+    .contexto__icone,
+    .detalhe__outro-icone,
+    .mapa__abrir
+  ) {
+  --brilho-tam: 9px;
+}
+
+/* Fundo branco: o brilho vira um traço azul-claro, senão sumiria */
+:is(
+    .botao--secundario,
+    .botao--perigo,
+    .botao--claro,
+    .navbar__link--admin:not(:hover):not(.navbar__link--ativo),
+    .categoria-filter__opcao:not(.categoria-filter__opcao--ativa),
+    .categorias__item:not(.categorias__item--ativo),
+    .footer__redes a:not(:hover),
+    .modal__fechar:not(:hover),
+    .mapa__abrir:not(:hover),
+    .detalhe__instagram,
+    .detalhe__disponivel,
+    .detalhe__situacao,
+    .admin__aba:not(.admin__aba--ativa),
+    .horarios-editor__atalho:not(:hover),
+    .cadastro__etapas li:not(.cadastro__etapa--ativa, .cadastro__etapa--feita) span,
+    .empreendedores__chamada-icone,
+    .detalhe__cta-icone
+  ) {
+  --brilho-cor: rgba(23, 52, 110, 0.3);
+}
+
+/* No menu de celular a aba ativa vira só texto amarelo: sem brilho */
+@media (max-width: 1023px) {
+  .navbar__link--ativo::before {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   Brilho nas caixas arredondadas maiores
+   Aqui o arco entra como camada de fundo (os pseudo-elementos dessas caixas já
+   têm outros usos). "html" na frente só dá peso para vencer o "background"
+   abreviado de cada componente, que carrega depois deste arquivo.
+   ========================================================================== */
+:root {
+  --arco-tinta: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 16v-5q0-8 8-8h4' fill='none' stroke='%2317346e' stroke-opacity='.28' stroke-width='3' stroke-linecap='round'/%3E%3Ccircle cx='20.5' cy='3' r='1.7' fill='%2317346e' fill-opacity='.28'/%3E%3C/svg%3E");
+  --arco-tinta-baixo: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M21 8v5q0 8-8 8H9' fill='none' stroke='%2317346e' stroke-opacity='.28' stroke-width='3' stroke-linecap='round'/%3E%3Ccircle cx='3.5' cy='21' r='1.7' fill='%2317346e' fill-opacity='.28'/%3E%3C/svg%3E");
+  --arco-branco: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 16v-5q0-8 8-8h4' fill='none' stroke='%23fff' stroke-opacity='.9' stroke-width='3' stroke-linecap='round'/%3E%3Ccircle cx='20.5' cy='3' r='1.7' fill='%23fff' fill-opacity='.9'/%3E%3C/svg%3E");
+}
+
+/* Caixas brancas ou claras: arco azul-claro no canto de cima */
+html
+  :is(
+    .caixa,
+    .contato__formulario,
+    .contato__caixa:not(:first-child),
+    .contato__horario,
+    .contato-form__destino,
+    .detalhe__contato,
+    .detalhe__horarios,
+    .detalhe__outro,
+    .detalhe__telefone-caixa,
+    .acordeao,
+    .login__caixa,
+    .cadastro__formulario,
+    .cadastro__caixa,
+    .meu-negocio__cartao,
+    .termos__documento,
+    .admin__metrica:not(:first-child),
+    .como-funciona,
+    .como-funciona__passo,
+    .sobre__caixa,
+    .sobre__passos li,
+    .sobre__citacao,
+    .contexto__lista,
+    .aceite,
+    .horarios-editor,
+    .empreendedor-form__grupo,
+    .produto-form__negocio,
+    .auditoria__filtros,
+    .usuarios__filtros
+  ) {
+  background-image: var(--arco-tinta);
+  background-repeat: no-repeat;
+  background-position: 6px 6px;
+  background-size: 18px 18px;
+}
+
+/* Caixas pequenas e campos: arco menor, colado no canto */
+html :is(.funcionalidades__item, .detalhe__chip, .campo__entrada:not(select)) {
+  background-image: var(--arco-tinta);
+  background-repeat: no-repeat;
+  background-position: 4px 4px;
+  background-size: 11px 11px;
+}
+
+/* Cards com foto no alto: o brilho vai no canto de baixo, que é branco */
+html :is(.produto-card, .empreendedor-card) {
+  background-image: var(--arco-tinta-baixo);
+  background-repeat: no-repeat;
+  background-position: right 6px bottom 6px;
+  background-size: 20px 20px;
+}
+
+/* Caixas coloridas (amarelo e anil): arco branco */
+html
+  :is(
+    .contato__caixa:first-child,
+    .admin__metrica:first-child,
+    .sobre__destaque,
+    .sobre__ods-item,
+    .produto-detalhe__preco-caixa,
+    .detalhe__confianca,
+    .modal__cabecalho,
+    .meu-negocio__indicador,
+    .footer__ods
+  ) {
+  background-image: var(--arco-branco);
+  background-repeat: no-repeat;
+  background-position: 6px 6px;
+  background-size: 18px 18px;
+}
+
+/* Menu da conta e caixa de checkbox: arco no canto de cima */
+html :is(.navbar__conta-menu, .campo--checkbox) {
+  background-image: var(--arco-tinta);
+  background-repeat: no-repeat;
+  background-position: 5px 5px;
+  background-size: 14px 14px;
+}
+
+/* ==========================================================================
+   Caixinhas de seleção (select) no padrão do sistema
+   O campo fechado já segue o tema; aqui entra o brilho junto da seta.
+   A lista que abre deixa de ser a nativa (azul do sistema operacional) nos
+   navegadores com "select personalizável" (Chrome/Edge 135+): ganha contorno,
+   sombra dura, opção marcada em amarelo e brilho no canto. Nos demais a lista
+   continua nativa, sem quebrar nada.
+   ========================================================================== */
+:root {
+  --seta-select: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23111827' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+}
+
+html :is(select.campo__entrada, select.vitrine__tipo, select.empreendedores__bairro) {
+  background-image: var(--arco-tinta), var(--seta-select);
+  background-repeat: no-repeat, no-repeat;
+  background-position: 4px 4px, right 0.6rem center;
+  background-size: 11px 11px, 22px 22px;
+}
+
+@supports (appearance: base-select) {
+  html :is(select.campo__entrada, select.vitrine__tipo, select.empreendedores__bairro),
+  ::picker(select) {
+    appearance: base-select;
+  }
+
+  /* A seta já vem do fundo do campo; a do navegador sairia dobrada */
+  select::picker-icon {
+    display: none;
+  }
+
+  ::picker(select) {
+    margin-top: 6px;
+    padding: 5px;
+    border: var(--borda);
+    border-radius: var(--raio-md);
+    background: var(--cor-branco) var(--arco-tinta) no-repeat 4px 4px / 11px 11px;
+    box-shadow: var(--sombra-botao);
+    color: var(--cor-tinta);
+  }
+
+  select option {
+    padding: 0.55rem 0.85rem;
+    border-radius: var(--raio-sm);
+    font-weight: 600;
+    color: var(--cor-tinta);
+  }
+
+  select option:hover,
+  select option:focus-visible {
+    background: var(--cor-ouro-claro);
+    outline: none;
+  }
+
+  select option:checked {
+    background: var(--cor-ouro);
+    font-weight: 700;
+  }
+
+  select option::checkmark {
+    color: var(--cor-anil);
+    font-weight: 800;
+  }
+}
+
+/* Fundos que já têm textura de linhas: o arco entra por cima dela */
+html .empreendedores__chamada {
+  background-image: var(--arco-branco), var(--linhas-escuras);
+  background-repeat: no-repeat, repeat;
+  background-position: 6px 6px, 0 0;
+  background-size: 18px 18px, auto;
+}
+
+html .sobre__ods {
+  background-image: var(--arco-branco), var(--linhas-claras);
+  background-repeat: no-repeat, repeat;
+  background-position: 6px 6px, 0 0;
+  background-size: 18px 18px, auto;
+}
+
+/* ==========================================================================
+   Títulos em cel-shade (h1 e h2), só com CSS, em dose leve
+   Contorno fino só por fora (quatro sombras duras, sem desfoque: um traço de
+   verdade cresceria para dentro e engoliria a letra), faixa de sombra chapada
+   na parte de baixo de cada linha, riscos de brilho finos e espaçados no alto
+   e um pouco de sombra no pé. Cores: --letra-luz/--letra-sombra (padrão: anil).
+   ========================================================================== */
+:is(h1, h2):not(.detalhe__horarios-titulo, .visualmente-oculto) {
+  --contorno-titulo: max(1px, 0.02em);
+  -webkit-text-fill-color: transparent;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cg stroke='%23fff' stroke-opacity='.75' stroke-linecap='round'%3E%3Cpath d='M30 46 38 22' stroke-width='3.4'/%3E%3Cpath d='M41 46 45 35' stroke-width='2.6'/%3E%3C/g%3E%3C/svg%3E"),
+    repeating-linear-gradient(
+      to bottom,
+      var(--letra-luz, #3b5fc8) 0 0.62lh,
+      var(--letra-sombra, #2b4aa6) 0.62lh 1lh
+    );
+  background-size:
+    2.4em 1lh,
+    100% 100%;
+  background-repeat: repeat, no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  filter: drop-shadow(var(--contorno-titulo) 0 0 var(--letra-contorno, var(--cor-contorno)))
+    drop-shadow(calc(var(--contorno-titulo) * -1) 0 0 var(--letra-contorno, var(--cor-contorno)))
+    drop-shadow(0 calc(var(--contorno-titulo) * -1) 0 var(--letra-contorno, var(--cor-contorno)))
+    drop-shadow(0 var(--contorno-titulo) 0 var(--letra-contorno, var(--cor-contorno)))
+    drop-shadow(0 0.02em 0 var(--letra-contorno, var(--cor-contorno)));
+}
+
+/* Títulos menores: contorno de 1px exato e brilho mais espaçado */
+h2:not(.detalhe__horarios-titulo, .visualmente-oculto) {
+  --contorno-titulo: 1px;
+  background-size:
+    3.2em 1lh,
+    100% 100%;
+}
+
+/* Títulos sobre fundo anil: contorno preto para destacar do azul */
+:is(.hero__titulo, .feira h2) {
+  --letra-luz: #ffffff;
+  --letra-sombra: #dfe4f3;
+  --letra-contorno: var(--cor-contorno);
+}
+
+/* Título dourado do bloco dos ODS */
+.sobre__ods h2 {
+  --letra-luz: var(--cor-ouro);
+  --letra-sombra: #e09a0e;
+  --letra-contorno: var(--cor-contorno);
+}
+
+/* Rótulo pequeno em caixa alta, usado em etiquetas e cabeçalhos de tabela */
+.rotulo {
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    /* Sem isto, animações infinitas repetiam o ciclo de 0,01ms milhares de vezes
+       por segundo e cada quadro mostrava um estado aleatório (efeito de espasmo) */
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

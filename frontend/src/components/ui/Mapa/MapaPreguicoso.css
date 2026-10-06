@@ -1,0 +1,14 @@
+/* Fica no pacote principal, junto do lugar onde o mapa vai entrar: o estilo do
+   Mapa viaja no arquivo que ainda está chegando */
+.mapa-espera {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 320px;
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura);
+  background: var(--cor-superficie-baixa);
+  color: var(--cor-cinza-claro);
+  font-size: var(--texto-sm);
+}

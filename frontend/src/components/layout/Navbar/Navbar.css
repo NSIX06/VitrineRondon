@@ -1,0 +1,554 @@
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--cor-branco);
+  border-bottom: var(--borda);
+}
+
+.navbar__conteudo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-4);
+  min-height: 72px;
+}
+
+/* Marca: ícone da barraca, divisor e nome em duas cores */
+.navbar__marca {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-3);
+  text-decoration: none;
+  color: var(--cor-anil);
+  flex-shrink: 0;
+}
+
+.navbar__logo {
+  width: 64px;
+  height: auto;
+}
+
+.navbar__divisor {
+  width: 3px;
+  height: 38px;
+  background: var(--cor-contorno);
+  border-radius: 2px;
+  transform: rotate(8deg);
+}
+
+.navbar__nome {
+  font-family: var(--fonte-titulo);
+  font-weight: 800;
+  font-size: 31px;
+  letter-spacing: 0;
+  line-height: 1;
+  /* Espaço para a extrusão e a estrelinha do letreiro não encostarem nas bordas */
+  padding-block: 0.25em 0.1em;
+}
+
+.navbar__menu {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-5);
+  flex: 1;
+  margin-left: var(--esp-6);
+}
+
+.navbar__links {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-1);
+  margin-inline: auto;
+}
+
+.navbar__acoes {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+}
+
+.navbar__link {
+  padding: 0.4rem 0.75rem;
+  /* "Contato e Ajuda" quebrava em duas linhas quando o admin, com mais botões, estava logado */
+  white-space: nowrap;
+  color: var(--cor-cinza);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 14px;
+  border: 2px solid transparent;
+  border-radius: var(--raio-sm);
+  transition: var(--transicao-tecla);
+}
+
+.navbar__link:hover {
+  color: var(--cor-tinta);
+  border-color: var(--cor-contorno);
+  background: var(--cor-superficie-baixa);
+}
+
+/* Aba ativa: adesivo amarelo colado no menu */
+.navbar__link--ativo,
+.navbar__link--ativo:hover {
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
+  border-color: var(--cor-contorno);
+  box-shadow: 3px 3px 0 0 var(--cor-contorno), var(--cel-sm);
+  transform: rotate(-1.5deg);
+}
+
+.navbar__link--admin {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.4rem 1rem;
+  border-color: var(--cor-contorno);
+  color: var(--cor-anil);
+  box-shadow: 3px 3px 0 0 var(--cor-contorno);
+}
+
+.navbar__link--admin:hover,
+.navbar__link--admin.navbar__link--ativo {
+  background: var(--cor-anil);
+  color: var(--cor-branco);
+  transform: translate(1px, 1px);
+  box-shadow: var(--sombra-dura-sm);
+}
+
+/* Avatar de visitante, como no mockup */
+.navbar__avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: var(--borda-fina);
+  box-shadow: var(--sombra-dura-sm);
+  background: var(--cor-anil);
+  color: var(--cor-branco);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Botão do menu móvel */
+.navbar__toggle {
+  display: none;
+  background: var(--cor-ouro);
+  border: var(--borda);
+  border-radius: var(--raio-md);
+  box-shadow: 3px 3px 0 0 var(--cor-contorno);
+  color: var(--cor-tinta);
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+}
+
+/* Entre 1024 e 1200 o nome da pessoa sai e sobra espaço para a ação do perfil,
+   que pode ser longa ("Cadastrar meu negócio") */
+@media (max-width: 1200px) {
+  .navbar__link {
+    padding-inline: 0.5rem;
+    font-size: 13px;
+  }
+
+  .navbar__menu {
+    margin-left: var(--esp-4);
+  }
+
+  .navbar__conta-nome {
+    display: none;
+  }
+}
+
+@media (max-width: 1023px) {
+  .navbar__toggle {
+    display: inline-flex;
+  }
+
+  /* Menu de tela cheia em azul-anil */
+  .navbar__menu {
+    display: none;
+    position: fixed;
+    inset: 0;
+    margin: 0;
+    padding: calc(64px + 12px + var(--esp-6)) var(--gutter) var(--esp-6);
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: var(--esp-5);
+    background: var(--cor-anil);
+    z-index: 1;
+    overflow-y: auto;
+  }
+
+  .navbar__menu--aberto {
+    display: flex;
+  }
+
+  .navbar__links {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--esp-2);
+    margin: 0;
+  }
+
+  .navbar__link {
+    font-family: var(--fonte-titulo);
+    font-size: 40px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--cor-branco);
+    padding: 0.2rem 0;
+    border: none;
+  }
+
+  .navbar__link:hover,
+  .navbar__link--ativo,
+  .navbar__link--ativo:hover {
+    background: none;
+    color: var(--cor-ouro);
+    box-shadow: none;
+    transform: none;
+  }
+
+  .navbar__link--admin {
+    font-family: var(--fonte-texto);
+    font-size: 16px;
+    padding: 0.6rem 1.2rem;
+    border: var(--borda);
+    background: var(--cor-branco);
+    color: var(--cor-anil);
+    box-shadow: 4px 4px 0 0 var(--cor-contorno);
+  }
+
+  .navbar__link--admin:hover,
+  .navbar__link--admin.navbar__link--ativo {
+    background: var(--cor-ouro);
+    color: var(--cor-tinta);
+  }
+
+  .navbar__avatar {
+    display: none;
+  }
+}
+
+@media (max-width: 400px) {
+  .navbar__nome {
+    font-size: 25px;
+  }
+
+  .navbar__logo {
+    width: 50px;
+  }
+}
+
+.navbar__link--entrar {
+  border-color: transparent;
+}
+
+.navbar__cadastrar {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 1rem;
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
+  border: var(--borda-fina);
+  border-radius: var(--raio-sm);
+  box-shadow: 3px 3px 0 0 var(--cor-contorno), var(--cel-sm);
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: var(--transicao-tecla);
+}
+
+.navbar__cadastrar:hover {
+  background: var(--cor-mostarda);
+  transform: translate(1px, 1px);
+  box-shadow: var(--sombra-dura-sm), var(--cel-sm);
+}
+
+/* Palavras que se alternam: uma janela de uma linha e a pilha deslizando por trás.
+   A largura é a da palavra mais longa, então o cabeçalho não pula na troca. */
+.navbar__cadastrar-janela {
+  display: block;
+  /* Folga para as pernas do "p" e do "ç" não aparecerem na palavra vizinha */
+  height: 1.4em;
+  overflow: hidden;
+  /* A palavra entra e sai esmaecendo na borda, em vez de ser cortada seca */
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent);
+}
+
+.navbar__cadastrar-palavras {
+  display: flex;
+  flex-direction: column;
+  animation: navbar-alternar 5s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+.navbar__cadastrar-palavras > span {
+  display: block;
+  height: 1.4em;
+  line-height: 1.4em;
+  text-align: center;
+}
+
+@keyframes navbar-alternar {
+  0%,
+  42% {
+    transform: translateY(0);
+  }
+
+  50%,
+  92% {
+    transform: translateY(-1.4em);
+  }
+
+  100% {
+    transform: translateY(-2.8em);
+  }
+}
+
+/* Pausa enquanto a pessoa aponta ou foca o botão: dá para ler com calma */
+.navbar__cadastrar:hover .navbar__cadastrar-palavras,
+.navbar__cadastrar:focus-visible .navbar__cadastrar-palavras,
+.navbar__cadastrar:hover .navbar__cadastrar-palavras > span,
+.navbar__cadastrar:focus-visible .navbar__cadastrar-palavras > span {
+  animation-play-state: paused;
+}
+
+/* Quem pede menos movimento (inclusive pelo Windows, em "Efeitos de animação")
+   vê as palavras trocarem por esmaecimento, no mesmo lugar, sem deslizar */
+@media (prefers-reduced-motion: reduce) {
+  .navbar__cadastrar-palavras {
+    animation: none;
+    display: grid;
+  }
+
+  .navbar__cadastrar-palavras > span {
+    grid-area: 1 / 1;
+    animation: navbar-palavra-a 5s ease-in-out infinite;
+    /* Isento da regra global que encurta animações neste modo: o esmaecimento
+       lento, sem deslocamento, é justamente a versão tranquila da troca */
+    animation-duration: 5s !important;
+    animation-iteration-count: infinite !important;
+  }
+
+  .navbar__cadastrar-palavras > span:nth-child(2) {
+    animation-name: navbar-palavra-b;
+  }
+
+  .navbar__cadastrar-palavras > span:nth-child(3) {
+    display: none;
+  }
+}
+
+/* Uma palavra sai por completo antes de a outra entrar: nunca ficam sobrepostas */
+@keyframes navbar-palavra-a {
+  0%,
+  40% {
+    opacity: 1;
+  }
+
+  45%,
+  95% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes navbar-palavra-b {
+  0%,
+  45% {
+    opacity: 0;
+  }
+
+  50%,
+  90% {
+    opacity: 1;
+  }
+
+  95%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.navbar__conta {
+  position: relative;
+}
+
+.navbar__conta-botao {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.25rem 0.5rem 0.25rem 0.25rem;
+  background: none;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  color: var(--cor-anil);
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.navbar__conta-botao:hover {
+  border-color: var(--cor-contorno);
+  background: var(--cor-superficie-baixa);
+}
+
+.navbar__conta-nome {
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.navbar__conta-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 240px;
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-radius: var(--raio);
+  overflow: hidden;
+  box-shadow: var(--sombra-dura);
+  z-index: 60;
+}
+
+.navbar__conta-menu--aberta {
+  display: block;
+}
+
+.navbar__conta-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--esp-3);
+  background: var(--cor-superficie-baixa);
+  border-bottom: var(--borda);
+  font-size: var(--texto-sm);
+}
+
+.navbar__conta-info strong {
+  color: var(--cor-anil);
+}
+
+.navbar__conta-info span {
+  color: var(--cor-cinza);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.navbar__conta-perfil {
+  align-self: flex-start;
+  margin-top: 4px;
+  padding: 1px 6px;
+  background: var(--cor-ouro);
+  border: var(--borda-fina);
+  border-radius: 4px;
+  transform: rotate(-1.5deg);
+  color: var(--cor-tinta) !important;
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.navbar__conta-item {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  width: 100%;
+  padding: var(--esp-3);
+  background: none;
+  border: none;
+  border-bottom: 2px dashed var(--cor-superficie-alta);
+  color: var(--cor-tinta);
+  font-weight: 600;
+  font-size: 14px;
+  text-align: left;
+  text-decoration: none;
+}
+
+.navbar__conta-item:last-child {
+  border-bottom: none;
+}
+
+.navbar__conta-item:hover {
+  background: var(--cor-superficie-baixa);
+  color: var(--cor-anil);
+}
+
+.navbar__sair:hover {
+  background: var(--cor-lacre-fundo);
+  color: var(--cor-lacre-escuro);
+}
+
+@media (max-width: 1023px) {
+  .navbar__acoes {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--esp-3);
+    width: 100%;
+  }
+
+  .navbar__link--entrar {
+    font-family: var(--fonte-titulo);
+    font-size: 40px;
+    color: var(--cor-branco);
+  }
+
+  .navbar__cadastrar {
+    justify-content: center;
+    padding: 0.7rem 1.2rem;
+    font-size: 16px;
+    border-width: 3px;
+    box-shadow: 4px 4px 0 0 var(--cor-contorno);
+  }
+
+  /* No celular o menu da conta fica sempre aberto dentro do painel */
+  .navbar__conta-botao {
+    display: none;
+  }
+
+  .navbar__conta-menu {
+    /* No celular o painel já está aberto: o menu aparece sempre */
+    display: block;
+    position: static;
+    min-width: 0;
+    box-shadow: none;
+    border-color: rgba(255, 255, 255, 0.4);
+    background: transparent;
+  }
+
+  .navbar__conta-info {
+    background: rgba(255, 255, 255, 0.08);
+    border-bottom-color: rgba(255, 255, 255, 0.3);
+    color: var(--cor-branco);
+  }
+
+  .navbar__conta-info strong {
+    color: var(--cor-ouro);
+  }
+
+  .navbar__conta-info span {
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .navbar__conta-item {
+    color: var(--cor-branco);
+    border-bottom-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .navbar__conta-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--cor-ouro);
+  }
+}

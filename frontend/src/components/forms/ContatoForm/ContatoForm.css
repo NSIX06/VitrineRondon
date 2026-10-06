@@ -1,0 +1,180 @@
+/* Estilos específicos do ContatoForm; os campos usam as classes globais de .formulario */
+.contato-form {
+  /* As colunas dependem do espaço do formulário, e não da tela: no tablet o
+     formulário já é estreito demais para dividir, mesmo com a tela larga */
+  container-type: inline-size;
+}
+
+.contato-form .status {
+  margin-block: 0;
+}
+
+/* Duas colunas: quem escreve à esquerda, a mensagem à direita */
+.contato-form__colunas {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: var(--esp-6);
+  align-items: stretch;
+}
+
+.contato-form__coluna {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  min-width: 0;
+}
+
+.contato-form__coluna .campo {
+  margin: 0;
+}
+
+/* A mensagem cresce para acompanhar a altura da coluna ao lado */
+.contato-form__coluna--mensagem {
+  gap: var(--esp-4);
+}
+
+.contato-form__campo-mensagem {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.contato-form__campo-mensagem textarea {
+  flex: 1;
+  min-height: 220px;
+  resize: vertical;
+}
+
+.contato-form__rodape-mensagem {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--esp-3);
+  min-height: 1.25rem;
+}
+
+.contato-form__contador {
+  font-size: var(--texto-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--cor-cinza-claro);
+  white-space: nowrap;
+}
+
+.contato-form__contador--alerta {
+  color: var(--cor-lacre-escuro);
+  font-weight: 700;
+}
+
+/* Confirmação visual de campo preenchido corretamente */
+.contato-form__caixa {
+  position: relative;
+}
+
+.contato-form__entrada--ok {
+  border-color: var(--cor-sucesso);
+  padding-right: 2.25rem;
+}
+
+.contato-form__ok {
+  position: absolute;
+  right: 0.7rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--cor-sucesso);
+  pointer-events: none;
+}
+
+/* Cartão do destinatário. A altura fica reservada para o conteúdo mais longo
+   (negócio com situação, bairro, próxima abertura e WhatsApp): sem isso, trocar
+   o destinatário encolhia ou esticava o quadro e o formulário inteiro pulava */
+.contato-form__destino {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 7.6rem;
+  padding: var(--esp-3) var(--esp-4);
+  background: var(--cor-ouro-claro);
+  border: var(--borda-fina);
+  border-left: 6px solid var(--cor-mostarda);
+  border-radius: var(--raio-md);
+  font-size: var(--texto-sm);
+}
+
+.contato-form__destino strong {
+  color: var(--cor-anil);
+  font-size: var(--texto-md);
+}
+
+.contato-form__destino-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-2);
+  flex-wrap: wrap;
+}
+
+.contato-form__destino-info {
+  color: var(--cor-cinza);
+  line-height: 1.5;
+}
+
+.contato-form__atende {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  color: var(--cor-lacre-escuro);
+}
+
+.contato-form__atende--sim {
+  color: var(--cor-sucesso-tinta);
+}
+
+.contato-form__ponto {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--cor-lacre);
+}
+
+.contato-form__atende--sim .contato-form__ponto {
+  background: var(--cor-whatsapp);
+}
+
+.contato-form__whatsapp {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  font-weight: 700;
+  color: var(--cor-whatsapp-tinta);
+}
+
+.contato-form__acoes {
+  justify-content: flex-end;
+  margin: 0;
+}
+
+.contato-form--enviado {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--esp-4);
+}
+
+@container (max-width: 760px) {
+  .contato-form__colunas {
+    grid-template-columns: 1fr;
+    gap: var(--esp-4);
+  }
+
+  .contato-form__campo-mensagem textarea {
+    min-height: 160px;
+  }
+
+  .contato-form__acoes .botao {
+    width: 100%;
+    justify-content: center;
+  }
+}

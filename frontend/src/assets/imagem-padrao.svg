@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <rect width="400" height="300" fill="#EBEEF4"/>
+  <g transform="translate(140 80) scale(1.7)">
+    <rect x="8" y="24" width="46" height="30" rx="1.5" fill="#17346E"/>
+    <rect x="14" y="30" width="34" height="19" fill="#DCE6F5"/>
+    <path d="M24 49l10-19h3l-10 19zM30 49l10-19h1.5l-10 19z" fill="#17346E" opacity=".55"/>
+    <path d="M4 14h54l3 9H1z" fill="#FFC93C"/>
+    <path d="M12.5 14l-2.5 9h7l2.5-9zm18 0l-2.5 9h7l2.5-9zm18 0l-2.5 9h7l2.5-9z" fill="#17346E"/>
+  </g>
+  <text x="200" y="230" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700" fill="#17346E" letter-spacing="1">SEM IMAGEM</text>
+</svg>

@@ -1,0 +1,84 @@
+.acordeao {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: var(--borda);
+  border-radius: var(--raio);
+  overflow: hidden;
+  background: var(--cor-branco);
+  box-shadow: var(--sombra-dura);
+}
+
+.acordeao__item + .acordeao__item {
+  border-top: var(--borda-fina);
+}
+
+.acordeao__titulo {
+  margin: 0;
+  font-size: inherit;
+}
+
+.acordeao__botao {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-4);
+  width: 100%;
+  padding: var(--esp-4) var(--esp-5);
+  background: none;
+  border: none;
+  border-left: 5px solid transparent;
+  text-align: left;
+  font: inherit;
+  font-weight: 700;
+  font-size: var(--texto-md);
+  color: var(--cor-anil);
+  cursor: pointer;
+}
+
+.acordeao__botao:hover {
+  background: var(--cor-superficie-baixa);
+}
+
+.acordeao__item--aberto .acordeao__botao {
+  border-left-color: var(--cor-mostarda);
+  background: var(--cor-ouro-claro);
+  color: var(--cor-tinta);
+}
+
+.acordeao__texto {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.acordeao__rotulo {
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--cor-cinza-claro);
+}
+
+.acordeao__seta {
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.acordeao__item--aberto .acordeao__seta {
+  transform: rotate(180deg);
+}
+
+.acordeao__painel {
+  padding: 0 var(--esp-5) var(--esp-5);
+  background: var(--cor-superficie-baixa);
+  border-left: 5px solid var(--cor-mostarda);
+}
+
+.acordeao__conteudo {
+  margin: 0;
+  max-width: 70ch;
+  color: var(--cor-tinta);
+  line-height: 1.65;
+  /* Mantém as quebras de linha que a administração digitou, sem aceitar HTML */
+  white-space: pre-line;
+}

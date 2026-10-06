@@ -1,0 +1,189 @@
+// Schema do banco de dados do VitrineLocal
+// Banco: MySQL (vitrine_db)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// Microempreendedor cadastrado na vitrine
+model Empreendedor {
+  id          Int       @id @default(autoincrement())
+  nomeNegocio String    @map("nome_negocio") @db.VarChar(150)
+  responsavel String    @db.VarChar(150)
+  descricao   String?   @db.Text
+  categoria   String    @default("Geral") @db.VarChar(50)
+  cidade      String    @db.VarChar(100)
+  // Localização (opcional): permite exibir o negócio no mapa
+  endereco       String?  @db.VarChar(200)
+  numero         String?  @db.VarChar(20)
+  complemento    String?  @db.VarChar(100)
+  bairro         String?  @db.VarChar(100)
+  estado         String   @default("MT") @db.VarChar(2)
+  cep            String?  @db.VarChar(9)
+  latitude       Float?
+  longitude      Float?
+  exibirEndereco Boolean  @default(true) @map("exibir_endereco")
+  // Dono do negócio (opcional: cadastros antigos ficam sem dono até um admin vincular)
+  usuarioId   Int?      @unique @map("usuario_id")
+  usuario     Usuario?  @relation(fields: [usuarioId], references: [id], onDelete: SetNull)
+  whatsapp    String    @db.VarChar(30)
+  instagram   String?   @db.VarChar(100)
+  fotoUrl     String?   @map("foto_url") @db.VarChar(500)
+  ativo       Boolean   @default(true)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  produtos    Produto[]
+  // Horário de atendimento: sem nenhum intervalo, a página mostra "Indisponível"
+  horarios    HorarioAtendimento[]
+  contatos    Contato[]
+
+  // A vitrine filtra sempre por negócio ativo, e daí por categoria ou bairro.
+  // "cidade" fica de fora de propósito: a consulta usa LIKE com % na frente,
+  // que o MySQL não resolve por índice.
+  @@index([ativo, categoria])
+  @@index([ativo, bairro])
+  @@map("empreendedores")
+}
+
+// Produto ou serviço oferecido por um empreendedor
+model Produto {
+  id             Int          @id @default(autoincrement())
+  nome           String       @db.VarChar(150)
+  descricao      String?      @db.Text
+  preco          Float
+  tipo           String       @default("produto") @db.VarChar(20) // "produto" | "servico"
+  imagem         String?      @db.VarChar(500)
+  disponivel     Boolean      @default(true)
+  empreendedorId Int          @map("empreendedor_id")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+  empreendedor   Empreendedor @relation(fields: [empreendedorId], references: [id], onDelete: Cascade)
+
+  @@index([empreendedorId])
+  // Quem não é dono nem admin só enxerga item disponível, e a vitrine separa
+  // produto de serviço
+  @@index([disponivel, tipo])
+  @@map("produtos")
+}
+
+// Mensagem enviada pela comunidade (opcionalmente direcionada a um empreendedor)
+model Contato {
+  id             Int           @id @default(autoincrement())
+  nome           String        @db.VarChar(150)
+  email          String        @db.VarChar(150)
+  telefone       String?       @db.VarChar(30)
+  mensagem       String        @db.Text
+  lido           Boolean       @default(false)
+  empreendedorId Int?          @map("empreendedor_id")
+  createdAt      DateTime      @default(now()) @map("created_at")
+  empreendedor   Empreendedor? @relation(fields: [empreendedorId], references: [id], onDelete: SetNull)
+
+  @@map("contatos")
+}
+
+// Conta de acesso. Perfis: COMUM | EMPREENDEDOR | ADMIN
+model Usuario {
+  id        Int      @id @default(autoincrement())
+  nome      String   @db.VarChar(150)
+  email     String   @unique @db.VarChar(150)
+  telefone  String   @db.VarChar(30)
+  senhaHash String   @map("senha_hash") @db.VarChar(100)
+  perfil    String   @default("COMUM") @db.VarChar(20)
+  ativo     Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  empreendedor Empreendedor?
+  aceites      AceiteTermos[]
+  logs         LogAuditoria[]
+
+  @@map("usuarios")
+}
+
+// Histórico de aceites dos termos. Nunca é sobrescrito: cada versão aceita gera uma linha.
+model AceiteTermos {
+  id        Int      @id @default(autoincrement())
+  usuarioId Int      @map("usuario_id")
+  tipoTermo String   @map("tipo_termo") @db.VarChar(30) // TERMOS_DE_USO | POLITICA_PRIVACIDADE
+  versao    String   @db.VarChar(20)
+  aceito    Boolean  @default(true)
+  ip        String?  @db.VarChar(60)
+  userAgent String?  @map("user_agent") @db.VarChar(300)
+  criadoEm  DateTime @default(now()) @map("created_at")
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId])
+  @@map("aceites_termos")
+}
+
+// Auditoria. Escrita apenas pelo backend; nunca guarda senha ou token.
+model LogAuditoria {
+  id            Int      @id @default(autoincrement())
+  usuarioId     Int?     @map("usuario_id")
+  usuarioNome   String?  @map("usuario_nome") @db.VarChar(150)
+  acao          String   @db.VarChar(50)
+  tipoEntidade  String?  @map("tipo_entidade") @db.VarChar(50)
+  entidadeId    Int?     @map("entidade_id")
+  descricao     String?  @db.Text
+  valoresAntes  Json?    @map("valores_antes")
+  valoresDepois Json?    @map("valores_depois")
+  ip            String?  @db.VarChar(60)
+  userAgent     String?  @map("user_agent") @db.VarChar(300)
+  status        String   @default("SUCESSO") @db.VarChar(20) // SUCESSO | ERRO
+  erroMensagem  String?  @map("erro_mensagem") @db.Text
+  criadoEm      DateTime @default(now()) @map("created_at")
+  usuario       Usuario? @relation(fields: [usuarioId], references: [id], onDelete: SetNull)
+
+  @@index([usuarioId])
+  @@index([acao])
+  @@index([tipoEntidade])
+  @@index([criadoEm])
+  @@map("logs_auditoria")
+}
+
+// Configurações do site editáveis pela administração (ex.: banner da página inicial).
+// Chave e valor em texto; cada chave tem seu próprio schema de validação na API.
+model Configuracao {
+  chave     String   @id @db.VarChar(60)
+  valor     String?  @db.Text
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("configuracoes")
+}
+
+// Intervalos de atendimento informados pelo empreendedor.
+// Um dia pode ter vários (ex.: 08:00-12:00 e 13:00-17:00). "Aberto agora" é
+// calculado a partir daqui, no fuso de Rondonópolis (America/Cuiaba).
+model HorarioAtendimento {
+  id             Int          @id @default(autoincrement())
+  empreendedorId Int          @map("empreendedor_id")
+  diaSemana      Int          @map("dia_semana") @db.TinyInt // 0 = domingo ... 6 = sábado
+  abre           String       @db.VarChar(5) // "08:00"
+  fecha          String       @db.VarChar(5) // "12:00"
+  empreendedor   Empreendedor @relation(fields: [empreendedorId], references: [id], onDelete: Cascade)
+
+  @@index([empreendedorId, diaSemana])
+  @@map("horarios_atendimento")
+}
+
+// Pergunta frequente da central de ajuda. A área pública mostra só as ativas;
+// a administração vê e edita todas.
+model PerguntaFrequente {
+  id        Int      @id @default(autoincrement())
+  pergunta  String   @db.VarChar(300)
+  resposta  String   @db.Text
+  categoria String?  @db.VarChar(80)
+  ordem     Int      @default(0)
+  ativo     Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // A leitura pública filtra por ativo e ordena por ordem
+  @@index([ativo, ordem])
+  @@map("perguntas_frequentes")
+}

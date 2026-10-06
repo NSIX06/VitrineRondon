@@ -1,0 +1,149 @@
+.empreendedores {
+  padding-top: 0;
+}
+
+.empreendedores__filtros {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  margin-bottom: var(--esp-5);
+}
+
+.empreendedores__resumo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-3);
+  flex-wrap: wrap;
+  padding-bottom: var(--esp-3);
+  margin-bottom: var(--esp-5);
+  border-bottom: 2px dashed var(--cor-contorno);
+}
+
+.empreendedores__contagem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--cor-anil);
+}
+
+.empreendedores__contagem::before {
+  content: '';
+  width: 12px;
+  height: 12px;
+  background: var(--cor-ouro);
+  border: 2px solid var(--cor-contorno);
+  border-radius: 3px;
+  transform: rotate(-8deg);
+}
+
+/* Chamada para cadastro no fim da lista */
+.empreendedores__chamada {
+  margin-top: var(--esp-7);
+  position: relative;
+  padding: var(--esp-5);
+  background: var(--linhas-escuras), var(--cor-ouro);
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-5);
+  flex-wrap: wrap;
+}
+
+.empreendedores__chamada::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  width: 26px;
+  height: 26px;
+  background: var(--reflexo) no-repeat center / contain;
+  pointer-events: none;
+}
+
+.empreendedores__chamada-texto {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--esp-4);
+}
+
+.empreendedores__chamada-icone {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-radius: var(--raio-md);
+  box-shadow: var(--sombra-dura-sm);
+  transform: rotate(-3deg);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cor-anil);
+}
+
+.empreendedores__chamada h3 {
+  margin-bottom: var(--esp-1);
+}
+
+.empreendedores__chamada p {
+  margin: 0;
+  color: var(--cor-tinta);
+  max-width: 60ch;
+}
+
+/* Busca + filtro de bairro na mesma linha */
+.empreendedores__busca {
+  display: flex;
+  gap: var(--esp-3);
+  align-items: stretch;
+}
+
+.empreendedores__busca .search-bar {
+  flex: 1;
+}
+
+.empreendedores__bairro {
+  min-width: 220px;
+  padding: 0.7rem 2.4rem 0.7rem 1rem;
+  border: var(--borda);
+  border-radius: var(--raio-md);
+  box-shadow: var(--sombra-botao);
+  background: var(--cor-branco);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--cor-tinta);
+  appearance: none;
+}
+
+@media (max-width: 600px) {
+  .empreendedores__busca {
+    flex-direction: column;
+  }
+  .empreendedores__bairro {
+    min-width: 0;
+  }
+}
+
+/* Enquanto um filtro novo carrega, a lista anterior fica visível e esmaecida */
+.empreendedores__resultados {
+  transition: opacity 0.2s ease;
+}
+.empreendedores__resultados--atualizando {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* Sobre o cartão amarelo, o botão amarelo sumiria: vira tecla anil */
+.empreendedores__chamada .botao--destaque {
+  background: var(--cor-anil);
+  color: var(--cor-branco);
+}
+.empreendedores__chamada .botao--destaque:hover:not(:disabled) {
+  background: var(--cor-anil-escuro);
+}
