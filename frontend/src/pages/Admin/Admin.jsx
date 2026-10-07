@@ -18,6 +18,8 @@ import PainelFaq from '../../components/admin/PainelFaq/PainelFaq'
 import BannerForm from '../../components/admin/BannerForm/BannerForm'
 import PainelAssinaturas from '../../components/admin/PainelAssinaturas/PainelAssinaturas'
 import PainelDivulgacoes from '../../components/admin/PainelDivulgacoes/PainelDivulgacoes'
+import { formatarPreco } from '../../services/formatos'
+import TagTipo from '../../components/ui/Tag/TagTipo'
 import './Admin.css'
 import Voltar from '../../components/ui/Voltar/Voltar'
 
@@ -36,7 +38,6 @@ const ABAS = [
 const plural = (quantidade, singular, pluralizado) =>
   `${quantidade} ${quantidade === 1 ? singular : pluralizado}`
 
-const formatadorPreco = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
 const formatadorData = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' })
 
 /** Busca as três listas do painel de uma vez */
@@ -184,15 +185,13 @@ function Admin() {
       chave: 'tipo',
       titulo: 'Tipo',
       render: (p) => (
-        <Tag variante={p.tipo === 'servico' ? 'servico' : 'produto'}>
-          {p.tipo === 'servico' ? 'Serviço' : 'Produto'}
-        </Tag>
+        <TagTipo tipo={p.tipo} />
       ),
     },
     {
       chave: 'preco',
       titulo: 'Preço',
-      render: (p) => <span className="admin__preco">{formatadorPreco.format(p.preco)}</span>,
+      render: (p) => <span className="admin__preco">{formatarPreco(p.preco)}</span>,
     },
     {
       chave: 'empreendedor',
@@ -386,11 +385,7 @@ function Admin() {
           <StatusMessage
             tipo="erro"
             titulo="Não foi possível carregar os dados"
-            acao={
-              <Button variante="secundario" tamanho="sm" onClick={tentarNovamente}>
-                Tentar novamente
-              </Button>
-            }
+            aoTentarDeNovo={tentarNovamente}
           >
             <p>{erroCarregamento}</p>
           </StatusMessage>

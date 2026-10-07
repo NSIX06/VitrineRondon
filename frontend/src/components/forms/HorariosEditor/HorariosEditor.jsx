@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import Icone from '../../ui/Icone/Icone'
 import {
   DIAS,
@@ -8,6 +7,7 @@ import {
   paraMinutos,
   situacaoAtendimento,
 } from '../../../services/horarios'
+import { useRelogio } from '../../../hooks/useRelogio'
 import './HorariosEditor.css'
 
 // O exemplo mais comum no comércio de bairro: manhã e tarde com pausa para o almoço
@@ -34,11 +34,7 @@ const MAXIMO_POR_DIA = 4
  */
 function HorariosEditor({ valor = [], onChange, errosServidor = {} }) {
   // Relógio da prévia: recalcula a cada 30 segundos
-  const [agora, setAgora] = useState(() => new Date())
-  useEffect(() => {
-    const relogio = setInterval(() => setAgora(new Date()), 30000)
-    return () => clearInterval(relogio)
-  }, [])
+  const agora = useRelogio()
 
   const erros = { ...errosServidor, ...errosDosHorarios(valor) }
   const comIndice = valor.map((h, indice) => ({ ...h, indice }))

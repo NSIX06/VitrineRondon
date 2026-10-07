@@ -1,25 +1,27 @@
-.vitrine {
+/* Listagens com filtro na URL (Vitrine e Empreendedores) */
+.listagem {
   padding-top: 0;
 }
 
-.vitrine__filtros {
+.listagem__filtros {
   display: flex;
   flex-direction: column;
   gap: var(--esp-4);
   margin-bottom: var(--esp-5);
 }
 
-.vitrine__busca {
+/* Busca + um seletor (tipo ou bairro) na mesma linha */
+.listagem__busca {
   display: flex;
   gap: var(--esp-3);
   align-items: stretch;
 }
 
-.vitrine__busca .search-bar {
+.listagem__busca .search-bar {
   flex: 1;
 }
 
-.vitrine__tipo {
+.listagem__seletor {
   min-width: 220px;
   padding: 0.7rem 2.4rem 0.7rem 1rem;
   border: var(--borda);
@@ -32,7 +34,7 @@
   appearance: none;
 }
 
-.vitrine__resumo {
+.listagem__resumo {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -43,7 +45,7 @@
   border-bottom: 2px dashed var(--cor-contorno);
 }
 
-.vitrine__contagem {
+.listagem__contagem {
   display: inline-flex;
   align-items: center;
   gap: var(--esp-2);
@@ -52,7 +54,7 @@
   color: var(--cor-anil);
 }
 
-.vitrine__contagem::before {
+.listagem__contagem::before {
   content: '';
   width: 12px;
   height: 12px;
@@ -63,19 +65,20 @@
 }
 
 @media (max-width: 600px) {
-  .vitrine__busca {
+  .listagem__busca {
     flex-direction: column;
   }
-  .vitrine__tipo {
+  .listagem__seletor {
     min-width: 0;
   }
 }
 
 /* Enquanto um filtro novo carrega, a lista anterior fica visível e esmaecida */
-.vitrine__resultados {
+.listagem__resultados {
   transition: opacity 0.2s ease;
 }
-.vitrine__resultados--atualizando {
+
+.listagem__resultados--atualizando {
   opacity: 0.55;
   pointer-events: none;
 }

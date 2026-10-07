@@ -1,15 +1,15 @@
-import { useCallback, useRef } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useCallback } from 'react'
 import { useConsulta } from '../../hooks/useConsulta'
+import { useFiltrosNaUrl } from '../../hooks/useFiltrosNaUrl'
 import Spinner from '../../components/ui/Spinner/Spinner'
 import StatusMessage from '../../components/ui/StatusMessage/StatusMessage'
 import Button from '../../components/ui/Button/Button'
 import ProdutoCard from '../../components/cards/ProdutoCard/ProdutoCard'
 import SearchBar from '../../components/filters/SearchBar/SearchBar'
 import CategoriaFilter from '../../components/filters/CategoriaFilter/CategoriaFilter'
-import './Vitrine.css'
 import Voltar from '../../components/ui/Voltar/Voltar'
 import Paginacao from '../../components/ui/Paginacao/Paginacao'
+import '../listagem.css'
 
 // Quantos itens por página: três fileiras da grade em tela larga
 const POR_PAGINA = 9
@@ -22,11 +22,9 @@ const TIPOS = [
 
 function Vitrine() {
   // Os filtros vivem na URL: dá para compartilhar o link e usar o botão voltar
-  const [searchParams, setSearchParams] = useSearchParams()
-  const categoria = searchParams.get('categoria') || ''
-  const busca = searchParams.get('busca') || ''
-  const tipo = searchParams.get('tipo') || ''
-  const pagina = Number(searchParams.get('pagina')) || 1
+  const { filtros, pagina, atualizarFiltro, irParaPagina, limparFiltros, temFiltro, topoDaLista } =
+    useFiltrosNaUrl(['categoria', 'busca', 'tipo'])
+  const { categoria, busca, tipo } = filtros
 
   // Sem apagar a tela: ao trocar filtro, a lista anterior fica até a nova chegar
   const { dados, carregando, atualizando, erro, recarregar } = useConsulta('/produtos', {
@@ -39,44 +37,7 @@ function Vitrine() {
   const produtos = dados?.data ?? []
   const paginacao = dados?.paginacao
 
-  // Atualiza um parâmetro da URL removendo-o quando vazio
-  const atualizarFiltro = useCallback(
-    (chave, valor) => {
-      setSearchParams(
-        (anterior) => {
-          const proximo = new URLSearchParams(anterior)
-          if (valor) proximo.set(chave, valor)
-          else proximo.delete(chave)
-          // Filtro novo, contagem nova: a página 3 do resultado antigo pode
-          // nem existir no novo
-          proximo.delete('pagina')
-          return proximo
-        },
-        // Filtrar não é mudar de página: a rolagem fica onde está
-        { replace: true, preventScrollReset: true }
-      )
-    },
-    [setSearchParams]
-  )
-
   const aoBuscar = useCallback((termo) => atualizarFiltro('busca', termo), [atualizarFiltro])
-
-  // Trocar de página leva ao começo da lista, não ao topo da tela inteira
-  const topoDaLista = useRef(null)
-  const irParaPagina = (novaPagina) => {
-    setSearchParams(
-      (anterior) => {
-        const proximo = new URLSearchParams(anterior)
-        if (novaPagina > 1) proximo.set('pagina', String(novaPagina))
-        else proximo.delete('pagina')
-        return proximo
-      },
-      { preventScrollReset: true }
-    )
-    topoDaLista.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }
-  const limparFiltros = () => setSearchParams({}, { replace: true, preventScrollReset: true })
-  const temFiltro = Boolean(categoria || busca || tipo)
 
   return (
     <>
@@ -89,9 +50,9 @@ function Vitrine() {
         </div>
       </header>
 
-      <section className="container secao vitrine">
-        <div className="vitrine__filtros">
-          <div className="vitrine__busca">
+      <section className="container secao listagem">
+        <div className="listagem__filtros">
+          <div className="listagem__busca">
             <SearchBar
               valor={busca}
               onBuscar={aoBuscar}
@@ -102,7 +63,7 @@ function Vitrine() {
             </label>
             <select
               id="filtro-tipo"
-              className="vitrine__tipo"
+              className="listagem__seletor"
               value={tipo}
               onChange={(evento) => atualizarFiltro('tipo', evento.target.value)}
             >
@@ -125,11 +86,7 @@ function Vitrine() {
           <StatusMessage
             tipo="erro"
             titulo="Não foi possível carregar a vitrine"
-            acao={
-              <Button variante="secundario" tamanho="sm" onClick={recarregar}>
-                Tentar novamente
-              </Button>
-            }
+            aoTentarDeNovo={recarregar}
           >
             <p>{erro.message}</p>
           </StatusMessage>
@@ -153,11 +110,11 @@ function Vitrine() {
         {!carregando && produtos.length > 0 && (
           <div
             ref={topoDaLista}
-            className={`vitrine__resultados ${atualizando ? 'vitrine__resultados--atualizando' : ''}`}
+            className={`listagem__resultados ${atualizando ? 'listagem__resultados--atualizando' : ''}`}
             aria-busy={atualizando}
           >
-            <div className="vitrine__resumo">
-              <span className="vitrine__contagem" aria-live="polite">
+            <div className="listagem__resumo">
+              <span className="listagem__contagem" aria-live="polite">
                 {atualizando ? (
                   'Atualizando...'
                 ) : (

@@ -8,6 +8,7 @@ import Spinner from '../../ui/Spinner/Spinner'
 import StatusMessage from '../../ui/StatusMessage/StatusMessage'
 import ConfirmModal from '../../ui/ConfirmModal/ConfirmModal'
 import DataTable from '../../tables/DataTable/DataTable'
+import '../painel-filtros.css'
 import './PainelUsuarios.css'
 
 const formatadorData = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short' })
@@ -132,8 +133,8 @@ function PainelUsuarios({ aoAlterar }) {
 
   return (
     <div className="usuarios">
-      <div className="usuarios__filtros">
-        <div className="campo usuarios__campo usuarios__campo--busca">
+      <div className="painel-filtros">
+        <div className="campo painel-filtros__campo painel-filtros__campo--busca">
           <label className="campo__rotulo" htmlFor="usuarios-busca">
             Buscar
           </label>
@@ -148,7 +149,7 @@ function PainelUsuarios({ aoAlterar }) {
           />
         </div>
 
-        <div className="campo usuarios__campo">
+        <div className="campo painel-filtros__campo">
           <label className="campo__rotulo" htmlFor="usuarios-perfil">
             Perfil
           </label>
@@ -166,7 +167,7 @@ function PainelUsuarios({ aoAlterar }) {
           </select>
         </div>
 
-        <div className="campo usuarios__campo">
+        <div className="campo painel-filtros__campo">
           <label className="campo__rotulo" htmlFor="usuarios-situacao">
             Situação
           </label>
@@ -190,8 +191,8 @@ function PainelUsuarios({ aoAlterar }) {
         </StatusMessage>
       )}
 
-      <div className="usuarios__barra">
-        <span className="usuarios__total">
+      <div className="painel-barra">
+        <span className="painel-barra__total">
           {usuarios.length} {usuarios.length === 1 ? 'conta' : 'contas'}
           {temFiltro && ' com os filtros aplicados'}
         </span>
@@ -213,18 +214,10 @@ function PainelUsuarios({ aoAlterar }) {
         <StatusMessage
           tipo="erro"
           titulo="Não foi possível carregar as contas"
-          acao={
-            <Button
-              variante="secundario"
-              tamanho="sm"
-              onClick={() => {
-                setCarregando(true)
-                buscar()
-              }}
-            >
-              Tentar novamente
-            </Button>
-          }
+          aoTentarDeNovo={() => {
+            setCarregando(true)
+            buscar()
+          }}
         >
           <p>{erro}</p>
         </StatusMessage>

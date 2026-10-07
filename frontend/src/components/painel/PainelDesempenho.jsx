@@ -5,9 +5,9 @@ import Button from '../ui/Button/Button'
 import Icone from '../ui/Icone/Icone'
 import Spinner from '../ui/Spinner/Spinner'
 import StatusMessage from '../ui/StatusMessage/StatusMessage'
+import { formatarNumero } from '../../services/formatos'
 import './Painel.css'
 
-const numero = new Intl.NumberFormat('pt-BR')
 const diaCurto = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: '2-digit', timeZone: 'UTC' })
 const diaLongo = new Intl.DateTimeFormat('pt-BR', { weekday: 'short', day: '2-digit', month: 'short', timeZone: 'UTC' })
 
@@ -25,7 +25,7 @@ function Cartoes({ totais, ampliado }) {
       {cartoes.map((c) => (
         <li key={c.rotulo} className="desempenho__cartao">
           <Icone nome={c.icone} tamanho={20} />
-          <strong>{numero.format(c.valor)}</strong>
+          <strong>{formatarNumero(c.valor)}</strong>
           <span>{c.rotulo}</span>
         </li>
       ))}
@@ -59,7 +59,7 @@ function GraficoVisitas({ serie }) {
             <g key={v}>
               <line x1="0" x2={largura} y1={y(v)} y2={y(v)} className="desempenho__grade" />
               <text x="-8" y={y(v) + 4} textAnchor="end" className="desempenho__eixo">
-                {numero.format(Math.round(v))}
+                {formatarNumero(Math.round(v))}
               </text>
             </g>
           ))}
@@ -107,9 +107,9 @@ function GraficoVisitas({ serie }) {
             role="status"
           >
             <strong>{diaLongo.format(new Date(ativo.dia))}</strong>
-            <span>{numero.format(ativo.VISUALIZACAO_PERFIL)} visitas</span>
+            <span>{formatarNumero(ativo.VISUALIZACAO_PERFIL)} visitas</span>
             <span>
-              {numero.format(ativo.CLIQUE_WHATSAPP + ativo.CLIQUE_TELEFONE + ativo.CLIQUE_ENDERECO + ativo.CLIQUE_INSTAGRAM)}{' '}
+              {formatarNumero(ativo.CLIQUE_WHATSAPP + ativo.CLIQUE_TELEFONE + ativo.CLIQUE_ENDERECO + ativo.CLIQUE_INSTAGRAM)}{' '}
               cliques de contato
             </span>
           </div>
@@ -193,7 +193,7 @@ function PainelDesempenho() {
                 {dados.produtosMaisVistos.map((p) => (
                   <li key={p.id}>
                     <span>{p.nome}</span>
-                    <strong>{numero.format(p.visualizacoes)}</strong>
+                    <strong>{formatarNumero(p.visualizacoes)}</strong>
                   </li>
                 ))}
               </ol>

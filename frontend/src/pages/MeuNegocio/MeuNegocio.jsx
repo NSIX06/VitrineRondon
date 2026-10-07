@@ -13,14 +13,14 @@ import Icone from '../../components/ui/Icone/Icone'
 import DataTable from '../../components/tables/DataTable/DataTable'
 import ProdutoForm from '../../components/forms/ProdutoForm/ProdutoForm'
 import EmpreendedorForm from '../../components/forms/EmpreendedorForm/EmpreendedorForm'
+import { formatarPreco } from '../../services/formatos'
+import TagTipo from '../../components/ui/Tag/TagTipo'
 import './MeuNegocio.css'
 import Voltar from '../../components/ui/Voltar/Voltar'
 import SeloDestaque from '../../components/ui/SeloDestaque/SeloDestaque'
 import PainelPlano from '../../components/painel/PainelPlano'
 import PainelDesempenho from '../../components/painel/PainelDesempenho'
 import PainelDivulgacao from '../../components/painel/PainelDivulgacao'
-
-const formatadorPreco = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
 
 const ABAS = [
   { id: 'catalogo', rotulo: 'Catálogo', icone: 'inventory_2' },
@@ -165,15 +165,13 @@ function MeuNegocio() {
       chave: 'tipo',
       titulo: 'Tipo',
       render: (p) => (
-        <Tag variante={p.tipo === 'servico' ? 'servico' : 'produto'}>
-          {p.tipo === 'servico' ? 'Serviço' : 'Produto'}
-        </Tag>
+        <TagTipo tipo={p.tipo} />
       ),
     },
     {
       chave: 'preco',
       titulo: 'Preço',
-      render: (p) => <span className="meu-negocio__preco">{formatadorPreco.format(p.preco)}</span>,
+      render: (p) => <span className="meu-negocio__preco">{formatarPreco(p.preco)}</span>,
     },
   ]
 
@@ -191,7 +189,7 @@ function MeuNegocio() {
         <StatusMessage
           tipo="erro"
           titulo="Não foi possível carregar"
-          acao={<Button onClick={carregar} tamanho="sm">Tentar novamente</Button>}
+          aoTentarDeNovo={carregar}
         >
           {erroCarregamento}
         </StatusMessage>

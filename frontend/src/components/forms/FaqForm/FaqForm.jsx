@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Button from '../../ui/Button/Button'
 import StatusMessage from '../../ui/StatusMessage/StatusMessage'
 import { LIMITES_FAQ, validarFaq } from '../../../services/faq'
+import { errosDoServidor } from '../../../services/validacoes'
 import './FaqForm.css'
 
 const VAZIO = { pergunta: '', resposta: '', categoria: '', ordem: '0', ativo: true }
@@ -53,13 +54,8 @@ function FaqForm({ inicial, categorias = [], onSubmit, onCancelar }) {
         ativo: valores.ativo,
       })
     } catch (erro) {
-      if (erro.data?.errors?.length) {
-        const mapa = {}
-        erro.data.errors.forEach(({ campo, mensagem }) => {
-          mapa[campo] = mensagem
-        })
-        setErrosCampos(mapa)
-      }
+      const erros = errosDoServidor(erro)
+      if (erros) setErrosCampos(erros)
       setErroGeral(erro.message || 'Não foi possível salvar. Tente novamente.')
     } finally {
       setSalvando(false)

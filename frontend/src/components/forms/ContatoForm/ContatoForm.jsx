@@ -4,6 +4,7 @@ import Icone from '../../ui/Icone/Icone'
 import StatusMessage from '../../ui/StatusMessage/StatusMessage'
 import { linkWhatsapp } from '../../../services/whatsapp'
 import { detalheDaSituacao, situacaoAtendimento } from '../../../services/horarios'
+import { errosDoServidor } from '../../../services/validacoes'
 import './ContatoForm.css'
 
 const estadoInicial = {
@@ -97,13 +98,8 @@ function ContatoForm({ empreendedores = [], empreendedorInicial = '', onSubmit }
       setErrosCampos({})
       setTocados({})
     } catch (erro) {
-      if (erro.data?.errors?.length) {
-        const mapa = {}
-        erro.data.errors.forEach(({ campo, mensagem }) => {
-          mapa[campo] = mensagem
-        })
-        setErrosCampos(mapa)
-      }
+      const erros = errosDoServidor(erro)
+      if (erros) setErrosCampos(erros)
       setErroGeral(erro.message || 'Não foi possível enviar. Tente novamente.')
     } finally {
       setEnviando(false)

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Button from '../../ui/Button/Button'
 import StatusMessage from '../../ui/StatusMessage/StatusMessage'
 import CampoImagem from '../CampoImagem/CampoImagem'
+import { errosDoServidor } from '../../../services/validacoes'
 import './ProdutoForm.css'
 
 const estadoInicialPadrao = {
@@ -99,14 +100,8 @@ function ProdutoForm({ initialData, empreendedores = [], negocioFixo, onSubmit, 
     try {
       await onSubmit(dados)
     } catch (erro) {
-      // Erros de validação do backend vêm como lista { campo, mensagem }
-      if (erro.data?.errors?.length) {
-        const mapa = {}
-        erro.data.errors.forEach(({ campo, mensagem }) => {
-          mapa[campo] = mensagem
-        })
-        setErrosCampos(mapa)
-      }
+      const erros = errosDoServidor(erro)
+      if (erros) setErrosCampos(erros)
       setErroGeral(erro.message || 'Não foi possível salvar. Tente novamente.')
     } finally {
       setSalvando(false)

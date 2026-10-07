@@ -5,20 +5,10 @@ import { dataLonga } from '../../services/planos'
 import Spinner from '../ui/Spinner/Spinner'
 import StatusMessage from '../ui/StatusMessage/StatusMessage'
 import Tag from '../ui/Tag/Tag'
+import { formatarNumero } from '../../services/formatos'
+import { STATUS_DIVULGACAO, TIPOS_DIVULGACAO } from '../../services/divulgacoes'
 import './Painel.css'
 
-const TIPOS = {
-  NEGOCIO: 'Seu negócio',
-  PRODUTO: 'Produto',
-  SERVICO: 'Serviço',
-  CAMPANHA: 'Campanha',
-  INSTITUCIONAL: 'Conteúdo institucional',
-}
-const STATUS = {
-  PLANEJADA: { rotulo: 'No calendário', variante: 'neutra' },
-  PUBLICADA: { rotulo: 'Publicada', variante: 'ouro' },
-}
-const numero = new Intl.NumberFormat('pt-BR')
 
 /**
  * Divulgação nas redes oficiais (benefício do Destaque): consentimento de uso
@@ -89,18 +79,18 @@ function PainelDivulgacao({ negocio, aoAtualizar }) {
       ) : (
         <ul className="divulgacoes">
           {divulgacoes.map((d) => {
-            const status = STATUS[d.status] ?? STATUS.PLANEJADA
+            const status = STATUS_DIVULGACAO[d.status] ?? STATUS_DIVULGACAO.PLANEJADA
             return (
               <li key={d.id} className="divulgacoes__item">
                 <div>
                   <span className="painel__rotulo">
-                    {TIPOS[d.tipo] ?? d.tipo}
+                    {TIPOS_DIVULGACAO[d.tipo] ?? d.tipo}
                     {d.canal ? ` · ${d.canal}` : ''}
                   </span>
                   <strong className="divulgacoes__titulo">{d.titulo}</strong>
                   <span className="painel__detalhe">
                     {d.publicadaEm ? `Publicada em ${dataLonga(d.publicadaEm)}` : 'Data a definir'}
-                    {typeof d.alcance === 'number' ? ` · alcance de ${numero.format(d.alcance)} pessoas` : ''}
+                    {typeof d.alcance === 'number' ? ` · alcance de ${formatarNumero(d.alcance)} pessoas` : ''}
                   </span>
                 </div>
                 <div className="divulgacoes__lado">

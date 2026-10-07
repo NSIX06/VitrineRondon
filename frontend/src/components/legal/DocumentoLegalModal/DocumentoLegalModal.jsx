@@ -36,11 +36,7 @@ function DocumentoLegalModal({ tipo, aoFechar }) {
         <StatusMessage
           tipo="erro"
           titulo="Não foi possível carregar o documento"
-          acao={
-            <Button variante="secundario" tamanho="sm" onClick={recarregar}>
-              Tentar novamente
-            </Button>
-          }
+          aoTentarDeNovo={recarregar}
         >
           <p>{erro.message}</p>
         </StatusMessage>

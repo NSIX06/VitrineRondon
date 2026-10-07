@@ -1,10 +1,10 @@
 // Formatação dos planos e assinaturas, num lugar só para a página de planos,
 // o painel do empreendedor e o painel da administração falarem igual.
+import { formatarPreco } from './formatos'
 
-const formatadorPreco = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
 const formatadorData = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'long' })
 
-export const precoEmReais = (centavos) => formatadorPreco.format((centavos ?? 0) / 100)
+export const precoEmReais = (centavos) => formatarPreco((centavos ?? 0) / 100)
 
 export const dataLonga = (valor) => (valor ? formatadorData.format(new Date(valor)) : '—')
 

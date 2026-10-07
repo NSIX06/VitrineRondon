@@ -1,0 +1,45 @@
+/* Filtros e barra de total das tabelas do painel (auditoria e contas) */
+.painel-filtros {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--esp-3);
+  padding: var(--esp-4);
+  background: var(--cor-superficie-baixa);
+  border: var(--borda);
+  border-radius: var(--raio);
+}
+
+.painel-filtros__campo {
+  margin: 0;
+}
+
+/* A busca ocupa a linha inteira quando há espaço */
+.painel-filtros__campo--busca {
+  grid-column: 1 / -1;
+}
+
+@media (min-width: 900px) {
+  .painel-filtros__campo--busca {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 720px) {
+  .painel-filtros {
+    padding: var(--esp-3);
+  }
+}
+
+.painel-barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-4);
+  flex-wrap: wrap;
+}
+
+.painel-barra__total {
+  font-size: var(--texto-sm);
+  font-weight: 700;
+  color: var(--cor-cinza);
+}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useConsulta } from '../../hooks/useConsulta'
 import { linkWhatsapp, numeroInternacional } from '../../services/whatsapp'
@@ -19,6 +19,7 @@ import SeloDestaque from '../../components/ui/SeloDestaque/SeloDestaque'
 import { METRICAS, registrarMetrica } from '../../services/metricas'
 import ProdutoCard from '../../components/cards/ProdutoCard/ProdutoCard'
 import imagemPadrao from '../../assets/imagem-padrao.svg'
+import { useRelogio } from '../../hooks/useRelogio'
 import './EmpreendedorDetalhe.css'
 import Voltar from '../../components/ui/Voltar/Voltar'
 import { urlImagem } from '../../services/imagens'
@@ -54,14 +55,8 @@ function EmpreendedorDetalhe() {
     if (negocioId) registrarMetrica(negocioId, METRICAS.VISUALIZACAO_PERFIL)
   }, [negocioId])
   const contar = (tipo) => () => registrarMetrica(negocioId, tipo)
-  // Relógio da página: o selo troca sozinho quando o horário de atendimento
-  // começa ou termina, sem precisar recarregar
-  const [agora, setAgora] = useState(() => new Date())
-
-  useEffect(() => {
-    const relogio = setInterval(() => setAgora(new Date()), 30000)
-    return () => clearInterval(relogio)
-  }, [])
+  // O selo de atendimento troca sozinho quando o horário começa ou termina
+  const agora = useRelogio()
 
   if (carregando) return <Spinner texto="Carregando o negócio..." />
 

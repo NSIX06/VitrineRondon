@@ -8,6 +8,7 @@ import CampoImagem from '../CampoImagem/CampoImagem'
 import { errosDosHorarios } from '../../../services/horarios'
 import { CATEGORIAS } from '../../../services/constantes'
 import { geocodificarEndereco, montarEnderecoTexto } from '../../../services/geocodificacao'
+import { errosDoServidor } from '../../../services/validacoes'
 import './EmpreendedorForm.css'
 
 const estadoInicialPadrao = {
@@ -210,13 +211,8 @@ function EmpreendedorForm({ initialData, onSubmit, onCancelar, textoEnviar, text
     try {
       await onSubmit(dados)
     } catch (erro) {
-      if (erro.data?.errors?.length) {
-        const mapa = {}
-        erro.data.errors.forEach(({ campo, mensagem }) => {
-          mapa[campo] = mensagem
-        })
-        setErrosCampos(mapa)
-      }
+      const erros = errosDoServidor(erro)
+      if (erros) setErrosCampos(erros)
       setErroGeral(erro.message || 'Não foi possível salvar. Tente novamente.')
     } finally {
       setSalvando(false)

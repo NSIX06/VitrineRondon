@@ -9,13 +9,13 @@ import Tag from '../../components/ui/Tag/Tag'
 import Icone from '../../components/ui/Icone/Icone'
 import EmpreendedorCard from '../../components/cards/EmpreendedorCard/EmpreendedorCard'
 import imagemPadrao from '../../assets/imagem-padrao.svg'
+import { formatarPreco } from '../../services/formatos'
+import TagTipo from '../../components/ui/Tag/TagTipo'
 import './ProdutoDetalhe.css'
 import Voltar from '../../components/ui/Voltar/Voltar'
 import { urlImagem } from '../../services/imagens'
 import { METRICAS, registrarMetrica } from '../../services/metricas'
 import SeloDestaque from '../../components/ui/SeloDestaque/SeloDestaque'
-
-const formatadorPreco = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
 
 function linkDoItem(numero, nomeNegocio, nomeItem) {
   return linkWhatsapp(
@@ -87,7 +87,7 @@ function ProdutoDetalhe() {
             }}
           />
           <div className="produto-detalhe__tags">
-            <Tag variante={ehServico ? 'servico' : 'produto'}>{ehServico ? 'Serviço' : 'Produto'}</Tag>
+            <TagTipo tipo={tipo} />
             {!disponivel && <Tag variante="alerta">Indisponível</Tag>}
           </div>
         </div>
@@ -102,7 +102,7 @@ function ProdutoDetalhe() {
 
           <div className="produto-detalhe__preco-caixa">
             <span className="produto-detalhe__a-partir">{ehServico ? 'A partir de' : 'Preço'}</span>
-            <span className="produto-detalhe__preco">{formatadorPreco.format(preco)}</span>
+            <span className="produto-detalhe__preco">{formatarPreco(preco)}</span>
           </div>
 
           <div className="produto-detalhe__acoes">

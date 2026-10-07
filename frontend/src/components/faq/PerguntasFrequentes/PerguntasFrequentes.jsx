@@ -56,11 +56,7 @@ function PerguntasFrequentes() {
         <StatusMessage
           tipo="erro"
           titulo="Não foi possível carregar as perguntas"
-          acao={
-            <Button variante="secundario" tamanho="sm" onClick={recarregar}>
-              Tentar novamente
-            </Button>
-          }
+          aoTentarDeNovo={recarregar}
         >
           <p>{erro.message}</p>
         </StatusMessage>

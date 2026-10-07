@@ -9,10 +9,9 @@ import Spinner from '../../ui/Spinner/Spinner'
 import StatusMessage from '../../ui/StatusMessage/StatusMessage'
 import Tag from '../../ui/Tag/Tag'
 import DataTable from '../../tables/DataTable/DataTable'
+import { STATUS_DIVULGACAO, TIPOS_DIVULGACAO } from '../../../services/divulgacoes'
 import '../../painel/Painel.css'
 
-const TIPOS = { NEGOCIO: 'Negócio', PRODUTO: 'Produto', SERVICO: 'Serviço', CAMPANHA: 'Campanha', INSTITUCIONAL: 'Institucional' }
-const STATUS = { PLANEJADA: 'Planejada', PUBLICADA: 'Publicada', CANCELADA: 'Cancelada' }
 const VAZIO = { empreendedorId: '', tipo: 'NEGOCIO', titulo: '', canal: 'Instagram', status: 'PLANEJADA', link: '', alcance: '' }
 
 /** Formulário de divulgação (registro; nada é publicado automaticamente) */
@@ -92,7 +91,7 @@ function FormDivulgacao({ inicial, negocios, aoSalvar, aoCancelar }) {
         <div className="campo">
           <label className="campo__rotulo" htmlFor="div-tipo">Tipo</label>
           <select id="div-tipo" name="tipo" className="campo__entrada" value={valores.tipo} onChange={alterar}>
-            {Object.entries(TIPOS).map(([valor, rotulo]) => (
+            {Object.entries(TIPOS_DIVULGACAO).map(([valor, rotulo]) => (
               <option key={valor} value={valor}>{rotulo}</option>
             ))}
           </select>
@@ -104,7 +103,7 @@ function FormDivulgacao({ inicial, negocios, aoSalvar, aoCancelar }) {
         <div className="campo">
           <label className="campo__rotulo" htmlFor="div-status">Status</label>
           <select id="div-status" name="status" className="campo__entrada" value={valores.status} onChange={alterar}>
-            {Object.entries(STATUS).map(([valor, rotulo]) => (
+            {Object.entries(STATUS_DIVULGACAO).map(([valor, { rotulo }]) => (
               <option key={valor} value={valor}>{rotulo}</option>
             ))}
           </select>
@@ -188,11 +187,14 @@ function PainelDivulgacoes({ empreendedores = [] }) {
   const colunas = [
     { chave: 'negocio', titulo: 'Negócio', render: (d) => d.empreendedor?.nomeNegocio },
     { chave: 'titulo', titulo: 'Título' },
-    { chave: 'tipo', titulo: 'Tipo', render: (d) => `${TIPOS[d.tipo] ?? d.tipo}${d.canal ? ` · ${d.canal}` : ''}` },
+    { chave: 'tipo', titulo: 'Tipo', render: (d) => `${TIPOS_DIVULGACAO[d.tipo] ?? d.tipo}${d.canal ? ` · ${d.canal}` : ''}` },
     {
       chave: 'status',
       titulo: 'Status',
-      render: (d) => <Tag variante={d.status === 'PUBLICADA' ? 'ouro' : d.status === 'CANCELADA' ? 'alerta' : 'neutra'}>{STATUS[d.status]}</Tag>,
+      render: (d) => {
+        const status = STATUS_DIVULGACAO[d.status] ?? { rotulo: d.status, variante: 'neutra' }
+        return <Tag variante={status.variante}>{status.rotulo}</Tag>
+      },
     },
     { chave: 'publicadaEm', titulo: 'Publicada em', render: (d) => (d.publicadaEm ? dataLonga(d.publicadaEm) : '—') },
     { chave: 'alcance', titulo: 'Alcance', render: (d) => d.alcance ?? '—' },

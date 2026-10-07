@@ -3,7 +3,7 @@ import Button from '../../ui/Button/Button'
 import StatusMessage from '../../ui/StatusMessage/StatusMessage'
 import AceiteTermos from '../AceiteTermos/AceiteTermos'
 import CampoSenha from '../CampoSenha/CampoSenha'
-import { validarAceites } from '../../../services/validacoes'
+import { validarAceites, errosDoServidor } from '../../../services/validacoes'
 import './ContaForm.css'
 
 const estadoInicial = {
@@ -76,14 +76,8 @@ function ContaForm({ onSubmit, textoBotao = 'Criar conta', valoresIniciais, vers
         aceites,
       })
     } catch (erro) {
-      if (erro.data?.errors?.length) {
-        const mapa = {}
-        erro.data.errors.forEach(({ campo, mensagem }) => {
-          // O backend pode devolver "conta.email"; aqui o campo é só "email"
-          mapa[campo.replace(/^conta\./, '').replace(/^aceites\./, '')] = mensagem
-        })
-        setErrosCampos(mapa)
-      }
+      const erros = errosDoServidor(erro, ['conta.', 'aceites.'])
+      if (erros) setErrosCampos(erros)
       setErroGeral(erro.message || 'Não foi possível concluir. Tente novamente.')
     } finally {
       setEnviando(false)

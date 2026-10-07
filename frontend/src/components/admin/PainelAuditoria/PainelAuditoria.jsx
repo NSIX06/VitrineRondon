@@ -7,6 +7,7 @@ import Icone from '../../ui/Icone/Icone'
 import Spinner from '../../ui/Spinner/Spinner'
 import StatusMessage from '../../ui/StatusMessage/StatusMessage'
 import DataTable from '../../tables/DataTable/DataTable'
+import '../painel-filtros.css'
 import './PainelAuditoria.css'
 
 const formatadorData = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'medium' })
@@ -205,8 +206,8 @@ function PainelAuditoria() {
 
   return (
     <div className="auditoria" ref={topoRef}>
-      <div className="auditoria__filtros">
-        <div className="campo auditoria__campo auditoria__campo--busca">
+      <div className="painel-filtros">
+        <div className="campo painel-filtros__campo painel-filtros__campo--busca">
           <label className="campo__rotulo" htmlFor="auditoria-busca">
             Buscar
           </label>
@@ -221,7 +222,7 @@ function PainelAuditoria() {
           />
         </div>
 
-        <div className="campo auditoria__campo">
+        <div className="campo painel-filtros__campo">
           <label className="campo__rotulo" htmlFor="auditoria-acao">
             Ação
           </label>
@@ -241,7 +242,7 @@ function PainelAuditoria() {
           </select>
         </div>
 
-        <div className="campo auditoria__campo">
+        <div className="campo painel-filtros__campo">
           <label className="campo__rotulo" htmlFor="auditoria-entidade">
             Registro
           </label>
@@ -261,7 +262,7 @@ function PainelAuditoria() {
           </select>
         </div>
 
-        <div className="campo auditoria__campo">
+        <div className="campo painel-filtros__campo">
           <label className="campo__rotulo" htmlFor="auditoria-usuario">
             Pessoa
           </label>
@@ -281,7 +282,7 @@ function PainelAuditoria() {
           </select>
         </div>
 
-        <div className="campo auditoria__campo">
+        <div className="campo painel-filtros__campo">
           <label className="campo__rotulo" htmlFor="auditoria-status">
             Situação
           </label>
@@ -298,7 +299,7 @@ function PainelAuditoria() {
           </select>
         </div>
 
-        <div className="campo auditoria__campo">
+        <div className="campo painel-filtros__campo">
           <label className="campo__rotulo" htmlFor="auditoria-de">
             De
           </label>
@@ -312,7 +313,7 @@ function PainelAuditoria() {
           />
         </div>
 
-        <div className="campo auditoria__campo">
+        <div className="campo painel-filtros__campo">
           <label className="campo__rotulo" htmlFor="auditoria-ate">
             Até
           </label>
@@ -327,8 +328,8 @@ function PainelAuditoria() {
         </div>
       </div>
 
-      <div className="auditoria__barra">
-        <span className="auditoria__total">
+      <div className="painel-barra">
+        <span className="painel-barra__total">
           {paginacao.total} {paginacao.total === 1 ? 'registro' : 'registros'}
           {temFiltro ? ' com os filtros aplicados' : ' na trilha de auditoria'}
           {opcoes?.resumo?.erros > 0 && !temFiltro && `, ${opcoes.resumo.erros} com erro`}
@@ -365,18 +366,10 @@ function PainelAuditoria() {
         <StatusMessage
           tipo="erro"
           titulo="Não foi possível consultar a auditoria"
-          acao={
-            <Button
-              variante="secundario"
-              tamanho="sm"
-              onClick={() => {
-                setCarregando(true)
-                buscar()
-              }}
-            >
-              Tentar novamente
-            </Button>
-          }
+          aoTentarDeNovo={() => {
+            setCarregando(true)
+            buscar()
+          }}
         >
           <p>{erro}</p>
         </StatusMessage>

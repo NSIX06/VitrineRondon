@@ -5,12 +5,9 @@ import SeloDestaque from '../../ui/SeloDestaque/SeloDestaque'
 import { METRICAS, registrarMetrica } from '../../../services/metricas'
 import imagemPadrao from '../../../assets/imagem-padrao.svg'
 import { urlImagem } from '../../../services/imagens'
+import { formatarPreco } from '../../../services/formatos'
+import TagTipo from '../../ui/Tag/TagTipo'
 import './ProdutoCard.css'
-
-const formatadorPreco = new Intl.NumberFormat('pt-BR', {
-  style: 'currency',
-  currency: 'BRL',
-})
 
 /**
  * Card de produto ou serviço. O card inteiro é clicável e leva à página do item
@@ -20,7 +17,6 @@ const formatadorPreco = new Intl.NumberFormat('pt-BR', {
  */
 function ProdutoCard({ produto, linkWhatsapp }) {
   const { id, nome, descricao, preco, tipo, imagem, disponivel, empreendedor } = produto
-  const ehServico = tipo === 'servico'
 
   const tratarErroImagem = (evento) => {
     evento.currentTarget.src = imagemPadrao
@@ -38,9 +34,7 @@ function ProdutoCard({ produto, linkWhatsapp }) {
           onError={tratarErroImagem}
         />
         <div className="produto-card__tags">
-          <Tag variante={ehServico ? 'servico' : 'produto'}>
-            {ehServico ? 'Serviço' : 'Produto'}
-          </Tag>
+          <TagTipo tipo={tipo} />
           {!disponivel && <Tag variante="alerta">Indisponível</Tag>}
           {empreendedor?.emDestaque && <SeloDestaque compacto claro />}
         </div>
@@ -59,7 +53,7 @@ function ProdutoCard({ produto, linkWhatsapp }) {
         <div className="produto-card__rodape produto-card__rodape--orcamento">
           <div className="produto-card__linha-preco">
             <span className="produto-card__a-partir">A partir de</span>
-            <span className="produto-card__preco">{formatadorPreco.format(preco)}</span>
+            <span className="produto-card__preco">{formatarPreco(preco)}</span>
           </div>
           <a
             className="produto-card__orcamento"
@@ -74,7 +68,7 @@ function ProdutoCard({ produto, linkWhatsapp }) {
         </div>
       ) : (
         <div className="produto-card__rodape">
-          <span className="produto-card__preco">{formatadorPreco.format(preco)}</span>
+          <span className="produto-card__preco">{formatarPreco(preco)}</span>
           {empreendedor && (
             <Link to={`/empreendedores/${empreendedor.id}`} className="produto-card__empreendedor">
               <Icone nome="storefront" tamanho={16} />

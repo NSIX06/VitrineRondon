@@ -1,11 +1,14 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import api, { ORIGEM_API } from '../../frontend/src/services/api.js'
 import {
+  TAMANHO_MAXIMO_IMAGEM,
+  TIPOS_IMAGEM,
   ehImagemEnviada,
   ehLinkDeImagem,
   problemaNoArquivo,
   urlImagem,
 } from '../../frontend/src/services/imagens.js'
+import { TAMANHO_MAXIMO, TIPOS_ACEITOS } from '../../backend/src/services/imagens.js'
 
 const ENVIADA = '/uploads/3f2b8c1e-9a4d-4e7f-8b2a-1c5d6e7f8a9b.webp'
 
@@ -84,5 +87,12 @@ describe('api.enviarImagem', () => {
     expect(opcoes.headers['Content-Type']).toBe('image/png')
     expect(opcoes.body).toBe(foto)
     expect(resposta.data.url).toBe(ENVIADA)
+  })
+})
+
+describe('frontend e backend aceitam as mesmas imagens', () => {
+  it('mesmos formatos e mesmo tamanho máximo: a tela não barra o que a API aceita, nem o contrário', () => {
+    expect([...TIPOS_IMAGEM].sort()).toEqual([...TIPOS_ACEITOS].sort())
+    expect(TAMANHO_MAXIMO_IMAGEM).toBe(TAMANHO_MAXIMO)
   })
 })

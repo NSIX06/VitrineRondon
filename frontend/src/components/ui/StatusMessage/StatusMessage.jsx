@@ -1,3 +1,4 @@
+import Button from '../Button/Button'
 import './StatusMessage.css'
 
 /**
@@ -5,10 +6,19 @@ import './StatusMessage.css'
  * - `tipo`: "sucesso" | "erro" | "aviso" | "info" | "vazio"
  * - `titulo` opcional; `children` é o corpo da mensagem.
  * - `onFechar` opcional exibe um botão de fechar.
- * - `acao` opcional: elemento renderizado abaixo do texto (ex.: botão de tentar novamente).
+ * - `acao` opcional: elemento renderizado abaixo do texto.
+ * - `aoTentarDeNovo` opcional: atalho para a ação mais comum, o botão
+ *   "Tentar novamente" de uma leitura que falhou.
  */
-function StatusMessage({ tipo = 'info', titulo, children, onFechar, acao }) {
+function StatusMessage({ tipo = 'info', titulo, children, onFechar, acao, aoTentarDeNovo }) {
   const ehVazio = tipo === 'vazio'
+  if (!acao && aoTentarDeNovo) {
+    acao = (
+      <Button variante="secundario" tamanho="sm" onClick={aoTentarDeNovo}>
+        Tentar novamente
+      </Button>
+    )
+  }
   return (
     <div
       className={`status status--${tipo}`}

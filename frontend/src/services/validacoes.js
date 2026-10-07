@@ -9,3 +9,19 @@ export function validarAceites(valores) {
   }
   return erros
 }
+
+/**
+ * Erros de validação do servidor ({ campo, mensagem }[]) no formato dos
+ * formulários: { campo: mensagem }. Devolve null quando o erro não traz campos.
+ * `prefixos` tira o grupo do nome, como "conta." em "conta.email".
+ */
+export function errosDoServidor(erro, prefixos = []) {
+  const lista = erro?.data?.errors
+  if (!lista?.length) return null
+  const mapa = {}
+  for (const { campo, mensagem } of lista) {
+    const prefixo = prefixos.find((p) => campo.startsWith(p))
+    mapa[prefixo ? campo.slice(prefixo.length) : campo] = mensagem
+  }
+  return mapa
+}

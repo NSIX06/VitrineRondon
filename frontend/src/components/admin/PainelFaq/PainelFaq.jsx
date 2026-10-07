@@ -119,11 +119,7 @@ function PainelFaq() {
         <StatusMessage
           tipo="erro"
           titulo="Não foi possível carregar as perguntas"
-          acao={
-            <Button variante="secundario" tamanho="sm" onClick={buscar}>
-              Tentar novamente
-            </Button>
-          }
+          aoTentarDeNovo={buscar}
         >
           <p>{erro}</p>
         </StatusMessage>
