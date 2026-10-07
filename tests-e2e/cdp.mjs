@@ -16,6 +16,28 @@ export const CARLOS = { email: 'carlos@silvareparos.com.br', senha: 'Carlos@2026
 // Dona do Ateliê Fio & Arte (plano Destaque no seed); mesma senha de demonstração
 export const MARIA = { email: 'maria@ateliefioearte.com.br', senha: 'Carlos@2026' }
 
+/**
+ * Placar de uma suíte: `checar` imprime cada verificação e `encerrar` mostra o
+ * total e define o código de saída (1 se algo falhou).
+ * - `extraNoOk`: mostra o detalhe também nas verificações que passaram
+ * - `encerrar({ forcar: true })` sai na hora com process.exit
+ */
+export function criarPlacar({ extraNoOk = false } = {}) {
+  let ok = 0
+  let falhas = 0
+  return {
+    checar(nome, condicao, extra = '') {
+      if (condicao) { ok++; console.log(`  OK   ${nome}${extraNoOk && extra ? ` ${extra}` : ''}`) }
+      else { falhas++; console.log(`  FALHA ${nome} ${extra}`) }
+    },
+    encerrar({ forcar = false } = {}) {
+      console.log(`\n=== ${ok} verificações OK, ${falhas} falhas ===`)
+      if (forcar) process.exit(falhas === 0 ? 0 : 1)
+      process.exitCode = falhas === 0 ? 0 : 1
+    },
+  }
+}
+
 /** Porta livre de verdade: sortear sem checar fazia o driver conversar com um
  *  navegador de outra execução e travar esperando respostas. */
 function portaLivre() {

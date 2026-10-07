@@ -7,17 +7,12 @@
 // testes no backend/.env e de internet para abrir o checkout.
 import { execFileSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
-import { APP, CARLOS, MARIA, abrirNavegador, cabecalhoAdmin, entrarNoSistema, helpers } from './cdp.mjs'
+import { APP, CARLOS, MARIA, abrirNavegador, cabecalhoAdmin, entrarNoSistema, helpers, criarPlacar } from './cdp.mjs'
 
 const API = 'http://localhost:3001/api'
 const BACKEND = fileURLToPath(new URL('../backend/', import.meta.url))
 
-let ok = 0
-let falhas = 0
-const checar = (nome, condicao, extra = '') => {
-  if (condicao) { ok++; console.log(`  OK   ${nome}`) }
-  else { falhas++; console.log(`  FALHA ${nome} ${extra}`) }
-}
+const { checar, encerrar } = criarPlacar()
 
 const semear = () => execFileSync('node', ['prisma/seed.js'], { cwd: BACKEND, stdio: 'ignore' })
 
@@ -129,8 +124,7 @@ async function main() {
     semear()
   }
 
-  console.log(`\n=== ${ok} verificações OK, ${falhas} falhas ===`)
-  process.exitCode = falhas === 0 ? 0 : 1
+  encerrar()
 }
 
 main().catch((e) => { console.error('ERRO:', e.message); process.exitCode = 1 })

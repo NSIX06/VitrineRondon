@@ -1,13 +1,8 @@
 // Telas no celular (390px), termos em modal no cadastro e o painel sem
 // informação repetida.
-import { APP, abrirNavegador, helpers, entrarNoSistema } from './cdp.mjs'
+import { APP, abrirNavegador, helpers, entrarNoSistema, criarPlacar } from './cdp.mjs'
 
-let ok = 0
-let falhas = 0
-const checar = (nome, condicao, extra = '') => {
-  if (condicao) { ok++; console.log(`  OK   ${nome}`) }
-  else { falhas++; console.log(`  FALHA ${nome} ${extra}`) }
-}
+const { checar, encerrar } = criarPlacar()
 
 async function main() {
   const nav = await abrirNavegador({ largura: 390, altura: 844 })
@@ -88,8 +83,7 @@ async function main() {
     fechar()
   }
 
-  console.log(`\n=== ${ok} verificações OK, ${falhas} falhas ===`)
-  process.exitCode = falhas === 0 ? 0 : 1
+  encerrar()
 }
 
 main().catch((e) => { console.error('ERRO:', e.message); process.exitCode = 1 })

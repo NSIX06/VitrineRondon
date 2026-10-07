@@ -1,14 +1,9 @@
 // A tela de erro não pode mostrar pilha de chamadas nem caminho de arquivo.
 // A falha é provocada de fora, bloqueando o arquivo da tela no navegador: nada
 // de código de teste dentro do site.
-import { APP, abrirNavegador, helpers } from './cdp.mjs'
+import { APP, abrirNavegador, helpers, criarPlacar } from './cdp.mjs'
 
-let ok = 0
-let falhas = 0
-const checar = (nome, condicao, extra = '') => {
-  if (condicao) { ok++; console.log(`  OK   ${nome}`) }
-  else { falhas++; console.log(`  FALHA ${nome} ${extra}`) }
-}
+const { checar, encerrar } = criarPlacar()
 
 const VAZAMENTOS = [
   ['pilha de chamadas', /\bat [A-Za-z_$]/],
@@ -64,8 +59,7 @@ async function main() {
     fechar()
   }
 
-  console.log(`\n=== ${ok} verificações OK, ${falhas} falhas ===`)
-  process.exit(falhas === 0 ? 0 : 1)
+  encerrar({ forcar: true })
 }
 
 main().catch((e) => { console.error('ERRO:', e.message); process.exit(1) })

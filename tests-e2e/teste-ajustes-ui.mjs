@@ -1,13 +1,8 @@
 // Mapa com Leaflet, ver a senha no login e no cadastro, e setas de voltar.
-import { APP, abrirNavegador, helpers } from './cdp.mjs'
+import { APP, abrirNavegador, helpers, criarPlacar } from './cdp.mjs'
 
 const API = 'http://localhost:3001/api'
-let ok = 0
-let falhas = 0
-const checar = (nome, condicao, extra = '') => {
-  if (condicao) { ok++; console.log(`  OK   ${nome}`) }
-  else { falhas++; console.log(`  FALHA ${nome} ${extra}`) }
-}
+const { checar, encerrar } = criarPlacar()
 
 async function main() {
   const negocios = (await (await fetch(`${API}/empreendedores`)).json()).data
@@ -161,8 +156,7 @@ async function main() {
     fechar()
   }
 
-  console.log(`\n=== ${ok} verificações OK, ${falhas} falhas ===`)
-  process.exit(falhas === 0 ? 0 : 1)
+  encerrar({ forcar: true })
 }
 
 main().catch((e) => { console.error('ERRO:', e.message); process.exit(1) })

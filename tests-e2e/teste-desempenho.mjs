@@ -2,15 +2,11 @@
 // Roda sobre o build de produção: `npm run build` dentro de frontend/.
 import { readFileSync, readdirSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
+import { criarPlacar } from './cdp.mjs'
 
 const DIST = join(import.meta.dirname, '..', 'frontend', 'dist')
 const API = 'http://localhost:3001/api'
-let ok = 0
-let falhas = 0
-const checar = (nome, condicao, extra = '') => {
-  if (condicao) { ok++; console.log(`  OK   ${nome} ${extra}`) }
-  else { falhas++; console.log(`  FALHA ${nome} ${extra}`) }
-}
+const { checar, encerrar } = criarPlacar({ extraNoOk: true })
 const kb = (bytes) => `${(bytes / 1024).toFixed(1)} kB`
 
 if (!existsSync(join(DIST, 'index.html'))) {
@@ -48,7 +44,6 @@ try {
   checar('a API responde comprimida', false, `backend fora do ar? ${erro.message}`)
 }
 
-console.log(`\n=== ${ok} verificações OK, ${falhas} falhas ===`)
 // Sem process.exit: encerrar no meio do fechamento da conexão derruba o Node
 // com um erro interno, mesmo com tudo passando
-process.exitCode = falhas === 0 ? 0 : 1
+encerrar()

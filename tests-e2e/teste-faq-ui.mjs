@@ -1,15 +1,10 @@
 // Central de ajuda, paginação, formulário de contato estável e tabela da
 // auditoria. Cobre o checklist manual do módulo de perguntas frequentes:
 // quem vê o quê, o CRUD pela tela, busca, filtro e a trava da rota.
-import { APP, abrirNavegador, helpers, entrarNoSistema, cabecalhoAdmin, CARLOS } from './cdp.mjs'
+import { APP, abrirNavegador, helpers, entrarNoSistema, cabecalhoAdmin, CARLOS, criarPlacar } from './cdp.mjs'
 
 const API = 'http://localhost:3001/api'
-let ok = 0
-let falhas = 0
-const checar = (nome, condicao, extra = '') => {
-  if (condicao) { ok++; console.log(`  OK   ${nome}`) }
-  else { falhas++; console.log(`  FALHA ${nome} ${extra}`) }
-}
+const { checar, encerrar } = criarPlacar()
 
 const PERGUNTA_TESTE = 'Pergunta criada pelo teste da tela?'
 
@@ -107,7 +102,7 @@ async function main() {
     checar('o botão voltar retorna à página anterior da lista', true)
 
     await abrir('/vitrine?pagina=2', '.grade-cards')
-    await evaluate("__q('.vitrine__tipo').value; __set('.vitrine__tipo', 'servico')")
+    await evaluate("__set('#filtro-tipo', 'servico')")
     await esperar(800)
     checar('trocar o filtro volta para a primeira página', !(await evaluate("location.search.includes('pagina')")))
 
@@ -186,8 +181,7 @@ async function main() {
     fechar()
   }
 
-  console.log(`\n=== ${ok} verificações OK, ${falhas} falhas ===`)
-  process.exitCode = falhas === 0 ? 0 : 1
+  encerrar()
 }
 
 main().catch((e) => { console.error('ERRO:', e.message); process.exitCode = 1 })
