@@ -1,6 +1,6 @@
-# Publicando o VitrineLocal no Render
+# Publicando o VitrineRondon no Render
 
-Este guia coloca o projeto no ar usando três serviços gratuitos:
+Este guia coloca o projeto no ar usando serviços gratuitos:
 
 | Peça | Onde fica | Por quê |
 |---|---|---|
@@ -8,6 +8,7 @@ Este guia coloca o projeto no ar usando três serviços gratuitos:
 | Site (React) | **Render**, static site gratuito | CDN, não dorme |
 | Banco MySQL | **Aiven**, plano gratuito | O Render não oferece MySQL gerenciado, e MySQL dentro do Render exige plano pago com disco |
 | Fotos enviadas | **Cloudinary**, plano gratuito | O disco do Render gratuito é apagado a cada deploy, reinício ou pausa |
+| Assinaturas | **AbacatePay**, em Dev mode | Checkout dos planos; em Dev mode nada é cobrado |
 
 Tempo estimado: 30 a 40 minutos na primeira vez.
 
@@ -52,6 +53,10 @@ demonstração. Roda uma vez só; o `backend/.env` de desenvolvimento não é al
    npm run aiven:criar-usuario   # cria a conta vitrine_app só com SELECT/INSERT/UPDATE/DELETE
    npm run aiven:seed            # opcional: dados de demonstração e o usuário administrador
    ```
+
+   Se você não rodar o seed, crie os planos à venda com `npm run aiven:planos` (não apaga nada).
+   O seed já os cria, junto com assinaturas e números de desempenho **de exemplo** para a
+   demonstração (roteiro em [DEMO.md](../DEMO.md)).
 
    > O seed **apaga as tabelas** antes de inserir. Rode só agora, com o banco vazio, nunca depois
    > que o site estiver em uso. Sem o seed, não existe usuário administrador: crie a conta pelo
@@ -98,9 +103,11 @@ Confira antes que nenhum `.env` com senha entrou no commit (`git status` não de
    | `DATABASE_URL_MIGRACAO` | API | A URL do `avnadmin`, igual à do `.env.aiven` |
    | `CORS_ORIGINS` | API | `https://vitrinelocal.onrender.com` (endereço do site, sem barra no fim) |
    | `CLOUDINARY_URL` | API | A variável copiada do Cloudinary |
+   | `ABACATEPAY_API_KEY` | API | A chave de **Dev mode** do AbacatePay (começa com `abc_dev_`). A API recusa chave de produção |
+   | `APP_URL` | API | `https://vitrinelocal.onrender.com` (endereço do site, sem barra no fim): o checkout volta para cá |
    | `VITE_API_URL` | Site | `https://vitrinelocal-api.onrender.com/api` |
 
-   O `JWT_SECRET` é gerado sozinho pelo Render.
+   O `JWT_SECRET` e o `ABACATEPAY_WEBHOOK_SECRET` são gerados sozinhos pelo Render.
 
 4. Clique em **Apply**. O primeiro deploy leva alguns minutos. As migrations rodam no build da API:
    se alguma falhar, o build para e nada é publicado.
@@ -111,17 +118,44 @@ Se o nome `vitrinelocal` ou `vitrinelocal-api` já estiver em uso no Render, ele
 sufixo (ex.: `vitrinelocal-a1b2.onrender.com`). Veja o endereço real no topo de cada serviço e
 corrija:
 
-- na **API** → Environment → `CORS_ORIGINS` com o endereço do site. A API reinicia sozinha;
+- na **API** → Environment → `CORS_ORIGINS` e `APP_URL` com o endereço do site. A API reinicia sozinha;
 - no **site** → Environment → `VITE_API_URL` com o endereço da API mais `/api`, e depois
   **Manual Deploy → Deploy latest commit**, porque esse valor entra no build do site.
 
-## 6. Conferir
+## 6. Avisos de pagamento (webhook do AbacatePay)
+
+Sem o webhook, o plano só é ativado quando o empreendedor abre "Meu negócio" (a API consulta o
+gateway). Com ele, o AbacatePay avisa a API assim que o pagamento é aprovado, renovado, recusado ou
+cancelado.
+
+1. No Render, abra a **API → Environment** e copie o valor de `ABACATEPAY_WEBHOOK_SECRET`.
+2. Cole no seu `backend/.env`, na variável de mesmo nome (a `ABACATEPAY_API_KEY` de Dev mode já
+   deve estar lá).
+3. Na pasta `backend`, com o endereço real da API:
+
+   ```bash
+   npm run abacatepay:webhook -- https://vitrinelocal-api.onrender.com
+   ```
+
+   O script cadastra o webhook no AbacatePay com os quatro eventos de assinatura, ou avisa se já
+   existe um para esse endereço. Rodar de novo não duplica. Para trocar o segredo, apague o webhook
+   no painel do AbacatePay e rode o comando outra vez.
+
+A API confere o segredo na URL e a assinatura HMAC de cada aviso; qualquer outro pedido recebe `401`.
+
+## 7. Conferir
 
 1. Abra `https://vitrinelocal-api.onrender.com/api/health`. Deve responder
    `"banco":"ok"`. (Se estiver dormindo, espere cerca de 1 minuto.)
 2. Abra o site e navegue pela Vitrine e pelos Empreendedores.
 3. Entre como administrador (o e-mail e a senha do seed) e troque a foto de um item pelo
    computador. O endereço da imagem salva deve começar com `https://res.cloudinary.com/`.
+4. Abra **Planos**: o aviso "Ambiente de testes" deve aparecer. Entre como um empreendedor, assine um
+   plano e pague com o cartão `4242 4242 4242 4242` (ou "Simular Pagamento"). Ao voltar, "Meu
+   negócio" deve mostrar o plano **Ativa**.
+
+> Em produção (`NODE_ENV=production`, que o `render.yaml` define), os botões "Simular aprovação" e
+> "Simular falha" do Admin não existem. A ativação vem do pagamento de teste no checkout.
 
 ## Problemas comuns
 
@@ -133,6 +167,9 @@ corrija:
 | Health check falha logo depois do deploy | `DATABASE_URL` errada, ou a conta `vitrine_app` não foi criada (passo 2) |
 | Envio de foto dá erro | `CLOUDINARY_URL` ausente ou copiada incompleta |
 | Primeira visita demora cerca de 1 minuto | A API estava dormindo (plano gratuito) |
+| Assinar um plano dá erro | `ABACATEPAY_API_KEY` ausente ou de produção; o motivo exato está nos **Logs** da API |
+| Depois de pagar, o checkout volta para `localhost` | `APP_URL` não foi preenchida com o endereço do site |
+| O log da API mostra "Webhook recusado" | O webhook foi cadastrado com um segredo diferente do `ABACATEPAY_WEBHOOK_SECRET` do Render. Apague o webhook no painel do AbacatePay, copie o segredo do Render para o `.env` e rode o script de novo |
 
 ## Atualizações depois do primeiro deploy
 

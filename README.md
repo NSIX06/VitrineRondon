@@ -1,4 +1,7 @@
-# VitrineLocal
+# VitrineRondon
+
+> O projeto começou como **VitrineLocal**. A marca visível mudou para VitrineRondon; pastas, pacotes,
+> chaves internas e os e-mails das contas de exemplo mantêm o nome antigo de propósito.
 
 Vitrine digital para micro e pequenos empreendedores de Rondonópolis-MT. Artesãos, doceiras, eletricistas, brechós e salões criam a própria conta, cadastram o negócio, a localização e seus produtos ou serviços; a comunidade navega por categoria, bairro e busca, vê o negócio no mapa e entra em contato direto pelo WhatsApp.
 
@@ -19,12 +22,14 @@ O sistema é multiusuário: cada empreendedor administra apenas o próprio negó
 - [Termos de uso e privacidade](#termos-de-uso-e-privacidade)
 - [Auditoria](#auditoria)
 - [Central de ajuda (FAQ)](#central-de-ajuda-faq)
+- [Planos e assinaturas](#planos-e-assinaturas)
 - [API](#api)
 - [Funcionalidades e requisitos atendidos](#funcionalidades-e-requisitos-atendidos)
 - [Testes](#testes)
 - [Tratamento de erros](#tratamento-de-erros)
 - [Desempenho](#desempenho)
 - [Publicação no Render](#publicação-no-render)
+- [Branches](#branches)
 - [Solução de problemas](#solução-de-problemas)
 
 ## Stack
@@ -34,6 +39,8 @@ O sistema é multiusuário: cada empreendedor administra apenas o próprio negó
 | Banco de dados | MySQL 8 (`vitrine_db`) |
 | Backend | Node.js, Express 5, Prisma ORM 6, Zod 4, cors, compression, dotenv, nodemon |
 | Frontend | React 19, Vite, React Router 7, Fetch nativo, Leaflet + react-leaflet (mapas) |
+| Pagamentos | AbacatePay (API v2, em modo de testes), atrás de uma camada própria em `services/pagamento/` |
+| Imagens | sharp (conversão para WebP) e Cloudinary em produção |
 | Portas | Backend `3001`, frontend `5173` |
 
 ## Pré-requisitos
@@ -124,6 +131,11 @@ TERMOS_VERSAO="1.1"
 UPLOADS_DIR="uploads"
 CLOUDINARY_URL=""
 
+# Assinaturas (AbacatePay). Só a chave de TESTE, que começa com abc_dev_
+ABACATEPAY_API_KEY=""
+ABACATEPAY_WEBHOOK_SECRET=""
+APP_URL="http://localhost:5173"
+
 # Usadas apenas pelo seed
 ADMIN_NOME="Administrador"
 ADMIN_EMAIL="admin@vitrinelocal.com.br"
@@ -141,10 +153,17 @@ DEMO_EMPREENDEDOR_SENHA="defina-uma-senha-forte"
 | `UPLOADS_DIR` | não | Padrão `uploads` (relativo à pasta `backend`). Onde ficam as fotos enviadas quando não há Cloudinary |
 | `CLOUDINARY_URL` | em produção | `cloudinary://CHAVE:SEGREDO@CONTA`. Com ela, as fotos enviadas vão para o Cloudinary em vez da pasta local (o disco do Render gratuito é apagado a cada deploy) |
 | `CLOUDINARY_PASTA` | não | Padrão `vitrinelocal`. Pasta das fotos dentro da conta do Cloudinary |
+| `ABACATEPAY_API_KEY` | para assinar planos | Chave do AbacatePay em **Dev mode** (`abc_dev_...`). Sem ela a vitrine funciona e só a assinatura responde erro. Uma chave de produção é recusada |
+| `ABACATEPAY_PERMITIR_PRODUCAO` | não | `true` libera a chave de produção, que **cobra de verdade**. Fica desligada no projeto |
+| `ABACATEPAY_WEBHOOK_SECRET` | em produção | Segredo longo, inventado por você, que o AbacatePay manda na URL do webhook. No localhost não é usado |
+| `ABACATEPAY_BASE_URL` | não | Padrão `https://api.abacatepay.com/v2` |
+| `PAGAMENTO_PROVEDOR` | não | Padrão `abacatepay`. Troca o gateway sem mexer no resto (ver [Planos e assinaturas](#planos-e-assinaturas)) |
+| `APP_URL` | sim, com assinaturas | Endereço do site. O checkout volta para `APP_URL/meu-negocio` depois do pagamento |
+| `CORS_ORIGINS` | em produção | Endereços do site que podem chamar a API, separados por vírgula |
 | `BANCO_HOST_CONTA` | não | Padrão `localhost`. De onde a conta da aplicação pode entrar no MySQL; num banco na nuvem use `%` |
 | `ADMIN_SENHA`, `DEMO_EMPREENDEDOR_SENHA` | só para o seed | O seed aborta se faltarem |
 
-Nenhuma chave de API vai para o frontend: o mapa (Leaflet com ladrilhos do OpenStreetMap) e a
+Nenhuma chave de API vai para o frontend: o pagamento acontece na página do AbacatePay, e o mapa (Leaflet com ladrilhos do OpenStreetMap) e a
 geocodificação do Nominatim são usados em modo aberto, sem credencial.
 
 **Por que duas contas.** Se alguém explorar uma falha na API, só consegue o que a conta da API
@@ -183,15 +202,17 @@ VitrineLocal/
 ├── package.json              scripts de orquestração (install:all, prisma:*, dev:*)
 ├── TERMOS_DE_USO.md          documento servido pela API e pela página /termos
 ├── POLITICA_DE_PRIVACIDADE.md  idem, para /privacidade
+├── DEMO.md                   roteiro da demonstração das assinaturas
 ├── docs/                     coleções do Thunder Client e do Postman + roteiro de testes da API
 ├── tests/                    testes de unidade (Vitest), um .test.js por módulo
 ├── tests-e2e/                driver do Chrome DevTools Protocol e suítes de ponta a ponta
 ├── backend/
 │   ├── prisma/
-│   │   ├── schema.prisma     modelo de dados (6 tabelas)
+│   │   ├── schema.prisma     modelo de dados (13 tabelas)
 │   │   ├── migrations/       init, localização, autenticação/termos/auditoria,
 │   │   │                     banner, horários de atendimento, índices de busca,
-│   │   │                     perguntas frequentes
+│   │   │                     perguntas frequentes, assinaturas
+│   │   ├── planos.js         os dois planos à venda (preço, benefícios, recursos)
 │   │   ├── reversoes/        SQL para desfazer uma migration (o Prisma só anda para frente)
 │   │   └── seed.js           dados iniciais (senhas vêm do .env)
 │   └── src/
@@ -199,11 +220,14 @@ VitrineLocal/
 │       ├── server.js         conecta ao banco e sobe na PORT
 │       ├── config/prisma.js  singleton do PrismaClient
 │       ├── controllers/      empreendedor, produto, contato, auth, usuario, auditoria, configuracao,
-│       │                     faq
+│       │                     faq, upload, assinatura, metrica, divulgacao
 │       ├── middlewares/      auth.js (JWT e perfis), errorHandler.js, validate.js
 │       ├── utils/            erros.js (mensagens exibíveis), paginacao.js (página opcional das listas)
 │       ├── services/         auditoria.js (registro central), termos.js (documentos e aceites),
-│       │                     horarios.js (validação da semana de atendimento)
+│       │                     horarios.js (validação da semana de atendimento),
+│       │                     imagens.js (envio, WebP e Cloudinary), assinaturas.js (estados da
+│       │                     assinatura), metricas.js (desempenho sem identificar ninguém),
+│       │                     pagamento/ (camada do gateway: index.js + abacatepay.js)
 │       └── routes/           index.js + um roteador por entidade
 └── frontend/
     └── src/
@@ -219,26 +243,30 @@ VitrineLocal/
         │   ├── layout/       Navbar (estados por perfil), Footer
         │   ├── ui/           Button, Modal, ConfirmModal, StatusMessage, Spinner, Tag, Icone, Fonte,
         │   │                 Mapa (Leaflet, carregado sob demanda), Voltar e Avançar,
-        │   │                 Paginacao, Acordeao, PaginaErro
+        │   │                 Paginacao, Acordeao, PaginaErro, SeloDestaque
         │   ├── cards/        ProdutoCard, EmpreendedorCard
         │   ├── forms/        ProdutoForm, EmpreendedorForm, ContatoForm, ContaForm, AceiteTermos,
         │   │                 HorariosEditor, CampoSenha (com o botão de ver a senha), FaqForm
-        │   ├── admin/        PainelAuditoria, PainelUsuarios, PainelFaq, BannerForm
+        │   ├── admin/        PainelAuditoria, PainelUsuarios, PainelFaq, BannerForm,
+        │   │                 PainelAssinaturas, PainelDivulgacoes
+        │   ├── painel/       PainelPlano, PainelDesempenho, PainelDivulgacao (abas do "Meu negócio")
         │   ├── faq/          PerguntasFrequentes (a central de ajuda da página de Contato)
         │   ├── tables/       DataTable
         │   └── filters/      SearchBar, CategoriaFilter
         └── pages/            Home, Vitrine, ProdutoDetalhe, Empreendedores, EmpreendedorDetalhe,
-                              Contato, Sobre, Login, Cadastro, Termos, MeuNegocio, Admin
+                              Contato, Sobre, Login, Cadastro, Termos, MeuNegocio, Admin, Planos
 ```
 
 Cada componente e página mora na própria pasta com o `.jsx` e o `.css` ao lado.
 
 ## Modelo de dados
 
-Nove tabelas. Sete são relacionadas entre si; as outras duas guardam configurações do site e as perguntas da central de ajuda. Uma conta pode ter um negócio; um negócio tem muitos produtos (exclusão
+Treze tabelas. Onze são relacionadas entre si; as outras duas guardam configurações do site e as perguntas da central de ajuda. Uma conta pode ter um negócio; um negócio tem muitos produtos (exclusão
 em cascata), tem seus intervalos de horário de atendimento (também em cascata) e pode receber
 muitas mensagens. Os aceites de termos seguem a conta em cascata, mas os
 logs de auditoria sobrevivem à exclusão da conta: apagar um usuário não pode apagar o histórico.
+As assinaturas, divulgações e métricas seguem o negócio em cascata; um plano não pode ser apagado
+enquanto houver assinatura dele.
 
 ```mermaid
 erDiagram
@@ -248,6 +276,10 @@ erDiagram
     EMPREENDEDORES ||--o{ PRODUTOS : "oferece"
     EMPREENDEDORES ||--o{ CONTATOS : "recebe"
     EMPREENDEDORES ||--o{ HORARIOS_ATENDIMENTO : "atende em"
+    EMPREENDEDORES ||--o{ ASSINATURAS : "assina"
+    PLANOS ||--o{ ASSINATURAS : "é assinado em"
+    EMPREENDEDORES ||--o{ DIVULGACOES : "é divulgado em"
+    EMPREENDEDORES ||--o{ METRICAS_DIARIAS : "tem"
 
     USUARIOS {
         int id PK
@@ -310,8 +342,58 @@ erDiagram
         varchar instagram
         varchar foto_url
         boolean ativo
+        varchar plano_atual "NENHUM | ESSENCIAL | DESTAQUE (cópia da assinatura ativa)"
+        boolean em_destaque "cópia: ordena a vitrine sem juntar tabelas"
+        boolean autoriza_divulgacao
+        datetime autoriza_divulgacao_em
         datetime created_at
         datetime updated_at
+    }
+
+    PLANOS {
+        int id PK
+        varchar nome UK "ESSENCIAL | DESTAQUE"
+        varchar titulo
+        int preco_centavos "5000 = R$ 50,00"
+        varchar ciclo "MONTHLY"
+        boolean destaque
+        boolean metricas_ampliadas
+        boolean divulgacao
+        varchar gateway_produto_id "produto no AbacatePay"
+    }
+
+    ASSINATURAS {
+        int id PK
+        int empreendedor_id FK "ON DELETE CASCADE"
+        int plano_id FK
+        varchar status "PENDENTE | ATIVA | INADIMPLENTE | CANCELADA"
+        varchar gateway_checkout_id UK "bill_..."
+        varchar gateway_assinatura_id UK "subs_..."
+        varchar checkout_url
+        datetime inicio_em
+        datetime proxima_cobranca
+        datetime cancelada_em
+    }
+
+    DIVULGACOES {
+        int id PK
+        int empreendedor_id FK "ON DELETE CASCADE"
+        varchar tipo "NEGOCIO | PRODUTO | SERVICO | CAMPANHA | INSTITUCIONAL"
+        varchar titulo
+        varchar canal
+        varchar status "PLANEJADA | PUBLICADA | CANCELADA"
+        datetime publicada_em
+        varchar link
+        int alcance
+    }
+
+    METRICAS_DIARIAS {
+        int id PK
+        int empreendedor_id FK "ON DELETE CASCADE"
+        date dia "fuso de Rondonópolis"
+        varchar tipo "VISUALIZACAO_PERFIL, CLIQUE_WHATSAPP..."
+        int referencia_id "produto, ou 0 para o negócio"
+        int quantidade
     }
 
     PRODUTOS {
@@ -432,7 +514,7 @@ logs: registrar cada leitura encheria a tabela e esconderia os eventos que impor
 > Como administrador, quero cadastrar e manter o FAQ no próprio sistema, sem precisar de alteração
 > de código ou novo deploy.
 
-**Onde fica.** No item **Contato e Ajuda** do menu, antes do formulário: quem abre a página vê primeiro se a
+**Onde fica.** No item **Contato** do menu, antes do formulário: quem abre a página vê primeiro se a
 dúvida já tem resposta e, se não tiver, escreve logo abaixo. As perguntas abrem uma por vez, há busca
 que olha pergunta e resposta (sem diferenciar acento: "endereco" encontra "endereço") e filtro por
 assunto. Quem é administrador vê o atalho "Administrar perguntas", que abre o painel direto na aba
@@ -465,9 +547,88 @@ zero, reaplicar (sem efeito), reverter e aplicar de novo deixaram o banco idênt
 | Leitura só para usuário autenticado | Leitura pública (confirmado) | A vitrine não pede conta para navegar, e o cadastro público não cria conta de consulta. Exigir login esconderia o FAQ de quase todo mundo |
 | Permissão `faq.gerenciar` | Perfil ADMIN | O projeto controla acesso por perfil, sem tabela de permissões |
 | Campos `criadoEm` e `atualizadoEm` | `createdAt` e `updatedAt` (colunas `created_at` e `updated_at`) | Mesmo padrão das outras tabelas |
-| Item próprio no menu | Item "Contato e Ajuda" | O FAQ e o formulário ficam na mesma página, e o nome do menu diz as duas coisas |
+| Item próprio no menu | Item "Contato" | O FAQ e o formulário ficam na mesma página (o nome encurtou para caber o item Planos) |
 | Proteção CSRF | Não se aplica | A sessão vai no cabeçalho `Authorization`, não em cookie |
 | Exportar para Excel, CSV ou PDF | Não feito | O projeto não tem exportação; o próprio pedido condicionava isso a ela existir |
+
+## Planos e assinaturas
+
+> **Ambiente de testes.** Os pagamentos usam o AbacatePay em **Dev mode**: nenhum cartão é cobrado.
+> O roteiro da apresentação está em [DEMO.md](DEMO.md).
+
+O cadastro na vitrine continua **gratuito e sem comissão**. Os planos são opcionais:
+
+| | Essencial | Destaque |
+|---|---|---|
+| Preço | R$ 50 por mês | R$ 75 por mês |
+| Estatísticas do perfil | totais do período | totais, gráfico por dia e produtos mais vistos |
+| Selo "Negócio em Destaque" | | ✓ |
+| Prioridade na ordem das listas e da busca | | ✓ |
+| Espaço na seção "Negócios em Destaque" da Home | | ✓ |
+| Possibilidade de divulgação nas redes oficiais | | ✓ |
+
+Os planos ficam em [backend/prisma/planos.js](backend/prisma/planos.js) (`npm run planos:semear`
+atualiza o banco sem apagar nada). A vitrine decide pelos recursos do plano (`destaque`,
+`metricasAmpliadas`, `divulgacao`), não pelo nome dele.
+
+**Transparência.** A página `/planos`, os Termos (seção 5) e a FAQ dizem a mesma coisa: o plano aumenta
+a oportunidade de exposição, mas **não garante** visitas, contatos ou vendas. Quem não assina
+continua na busca, nas listas e no mapa: o Destaque muda a ordem e dá o selo, nunca esconde ninguém.
+
+**Fluxo da assinatura.**
+
+1. O empreendedor escolhe o plano em `/planos`. A API cria (uma vez só) o produto mensal no AbacatePay e
+   um checkout de assinatura, e grava a assinatura como `PENDENTE`.
+2. O navegador vai para a página de pagamento do AbacatePay. Em Dev mode vale o cartão
+   `4242 4242 4242 4242` ou o botão "Simular Pagamento".
+3. O pagamento chega à API por dois caminhos, que convergem na mesma função idempotente
+   (`aplicarEvento`):
+   - **webhook** `POST /api/webhooks/abacatepay`, conferido pelo segredo na URL e pela assinatura
+     HMAC-SHA256 do corpo (`X-Webhook-Signature`); qualquer outro pedido recebe `401`;
+   - **conciliação**: ao abrir "Meu negócio" com checkout pendente, a API consulta o gateway. É o que
+     ativa o plano no localhost, onde o AbacatePay não alcança o webhook.
+4. A assinatura vira `ATIVA`, com início e próxima cobrança, e o negócio ganha os recursos na hora.
+
+| Status | Quando | Benefícios |
+|---|---|---|
+| `PENDENTE` | checkout criado, sem pagamento | não |
+| `ATIVA` | pagamento aprovado ou renovação paga | sim |
+| `INADIMPLENTE` | renovação recusada | não, até pagar |
+| `CANCELADA` | cancelada pelo empreendedor ou substituída por troca de plano | não |
+
+**Regras que o servidor garante:**
+
+- Só a assinatura `ATIVA` dá benefício. O plano é copiado para o negócio (`planoAtual`, `emDestaque`)
+  a cada mudança, na mesma transação.
+- O mesmo aviso repetido (o gateway reenvia) não muda nada; um aviso atrasado de ativação não
+  ressuscita uma assinatura cancelada.
+- Um checkout em andamento por negócio: abrir outro cancela o anterior não pago.
+- **Troca de plano** é uma assinatura nova. O plano atual vale até o novo ser pago; então o antigo é
+  cancelado aqui e no gateway. Não há duas cobranças ativas.
+- Os ids do gateway e o link de pagamento de checkouts antigos nunca saem da API.
+- Uma chave de produção é recusada, a menos que `ABACATEPAY_PERMITIR_PRODUCAO=true`.
+- Toda mudança de status entra na auditoria, com a origem (`WEBHOOK`, `CONCILIACAO`, `SIMULACAO`).
+
+**Demonstração sem internet.** Fora de produção, o admin tem "Simular aprovação" e "Simular falha" na
+aba Assinaturas. Elas aplicam o mesmo tratamento do webhook. Em produção, essas rotas respondem `404`.
+
+**Trocar de gateway.** O resto do sistema só conversa com
+[services/pagamento/index.js](backend/src/services/pagamento/index.js). Outro gateway (Asaas, Mercado
+Pago) é um arquivo novo na mesma pasta, com as mesmas funções (`criarCheckoutAssinatura`,
+`consultarPorCheckout`, `cancelarAssinatura`, `webhookAutentico`, `interpretarWebhook`), e
+`PAGAMENTO_PROVEDOR` apontando para ele.
+
+**Desempenho do negócio, sem cookies.** O site conta visitas ao perfil, visualizações de produto e
+cliques em WhatsApp, telefone, endereço e Instagram. O banco guarda só "negócio, dia, tipo,
+quantidade": nenhum cookie, nenhum IP gravado. Para a mesma pessoa recarregando a página não inflar os
+números, a memória do servidor guarda por 30 minutos um hash anônimo (IP + navegador + um sal sorteado
+na subida), que nunca vai para o banco. O dono e a administração não contam. As aparições na seção de
+destaques são contadas pelo servidor. O Essencial vê os totais; o Destaque vê também a série diária e
+os produtos mais vistos.
+
+**Divulgação nas redes.** Não há integração com redes sociais. A equipe publica e registra no painel
+(aba Divulgações). Só entram negócios com plano que inclui divulgação **e** com o consentimento
+marcado pelo dono (gravado com data), e o dono acompanha a lista na aba Divulgação do "Meu negócio".
 
 ## API
 
@@ -510,6 +671,31 @@ pertence; o administrador também passa em todas as rotas de dono.
 | PATCH | `/contatos/:id/lido` | admin | Marca como lida. Corpo opcional `{ "lido": false }` desmarca |
 | DELETE | `/contatos/:id` | admin | Exclui |
 | GET | `/faq` | público | Perguntas ativas, por `ordem` e depois pela pergunta |
+| GET | `/empreendedores/destaques` | público | Até `limite` (padrão 3) negócios com Destaque, em ordem sorteada. Filtro opcional `categoria` |
+| POST | `/metricas` | público | Registra um evento de desempenho `{ empreendedorId, tipo, produtoId? }`. Sempre `204`; limite de 120 a cada 15 minutos |
+
+### Planos, assinaturas e desempenho
+
+| Método | Rota | Acesso | Descrição |
+|---|---|---|---|
+| GET | `/planos` | público | Planos à venda, com benefícios e `modoTeste` |
+| GET | `/assinaturas/minha` | dono | Assinatura atual, troca pendente e plano do negócio. Concilia checkouts pendentes com o gateway |
+| POST | `/assinaturas` | dono | Assina `{ "plano": "ESSENCIAL" }`. Devolve `checkoutUrl`. `409` se o plano já está ativo |
+| PUT | `/assinaturas/minha` | dono | Troca de plano (novo checkout; o atual vale até o pagamento) |
+| DELETE | `/assinaturas/minha` | dono | Cancela. O negócio continua na vitrine, sem os benefícios |
+| GET | `/assinaturas` | admin | Assinaturas recentes e se a simulação está disponível |
+| POST | `/assinaturas/:id/simular-aprovacao` | admin | Fora de produção: aplica o pagamento aprovado. Em produção, `404` |
+| POST | `/assinaturas/:id/simular-falha` | admin | Fora de produção: aplica a cobrança recusada. Em produção, `404` |
+| POST | `/webhooks/abacatepay` | gateway | Aviso do AbacatePay. Exige `?webhookSecret=` e `X-Webhook-Signature`; senão `401` |
+| GET | `/metricas/meu-negocio` | dono | Desempenho do período (`dias`, de 7 a 90). `disponivel: false` sem plano |
+| GET | `/divulgacoes/minhas` | dono | Divulgações do próprio negócio |
+| GET | `/divulgacoes` | admin | Todas as divulgações |
+| POST | `/divulgacoes` | admin | Registra. Exige plano com divulgação e consentimento do negócio (`409` sem eles) |
+| PUT | `/divulgacoes/:id` | admin | Atualiza só os campos enviados |
+| DELETE | `/divulgacoes/:id` | admin | Exclui |
+
+O consentimento para divulgação é o campo `autorizaDivulgacao` em `PUT /empreendedores/:id`; a data
+é gravada pelo servidor.
 
 **Imagens.** Os campos `imagem` (produto), `fotoUrl` (negócio) e `imagemUrl` (banner) aceitam um
 link `http(s)` completo, como sempre, ou o caminho devolvido por `POST /uploads/imagem`
@@ -599,8 +785,8 @@ Registro inexistente retorna `404`; JSON malformado ou chave estrangeira inváli
 ## Funcionalidades e requisitos atendidos
 
 **CRUD completo pela interface** em dois lugares:
-- `/admin`, para a administração: abas Produtos e Empreendedores com tabela, botão Novo (Modal com formulário vazio, `POST`), Editar (Modal preenchido, `PUT`) e Excluir (ConfirmModal, `DELETE`); aba Mensagens com marcar como lida ou não lida (`PATCH`) e excluir; abas Contas e Auditoria.
-- `/meu-negocio`, para o empreendedor: mesmo ciclo completo sobre o próprio catálogo, sem enxergar o de ninguém.
+- `/admin`, para a administração: abas Produtos e Empreendedores com tabela, botão Novo (Modal com formulário vazio, `POST`), Editar (Modal preenchido, `PUT`) e Excluir (ConfirmModal, `DELETE`); aba Mensagens com marcar como lida ou não lida (`PATCH`) e excluir; abas Assinaturas, Divulgações, Contas, FAQ e Auditoria.
+- `/meu-negocio`, para o empreendedor: mesmo ciclo completo sobre o próprio catálogo, sem enxergar o de ninguém, e as abas Plano, Desempenho e Divulgação.
 - Após cada operação a lista é recarregada e um `StatusMessage` informa o resultado.
 
 **Marketplace multiusuário:**
@@ -657,7 +843,9 @@ direto em vez de animar. Nos dois casos, a troca pausa com o mouse ou o foco sob
 - `ProdutoForm` e `EmpreendedorForm` servem para criar e editar. `ProdutoCard` e `EmpreendedorCard` aparecem na Home, na Vitrine, na lista de empreendedores e no detalhe.
 - Todas as páginas têm estados de carregando, erro e vazio.
 
-**Banco relacional** com seis tabelas, chaves estrangeiras e regras de exclusão definidas no Prisma, incluindo a diferença deliberada entre cascata (aceites seguem a conta) e preservação (logs sobrevivem à conta).
+**Planos e assinaturas:** descritos em [Planos e assinaturas](#planos-e-assinaturas).
+
+**Banco relacional** com treze tabelas, chaves estrangeiras e regras de exclusão definidas no Prisma, incluindo a diferença deliberada entre cascata (aceites seguem a conta) e preservação (logs sobrevivem à conta).
 
 **Público:** vitrine com busca, filtro por categoria, tipo e bairro; página do item (`/produtos/:id`); página do empreendedor com endereço, mapa e botão de WhatsApp (`https://wa.me/55<numero>`); formulário de contato; layout responsivo.
 
@@ -705,7 +893,7 @@ Prefeitura de Rondonópolis em domínio público. O crédito aparece ao lado da 
 ### Unidade (sem banco, sem rede, sem servidor)
 
 Cada função do sistema tem o seu arquivo `.test.js` em [`tests/`](tests/), separado por lado:
-`tests/backend/` e `tests/frontend/`. São 466 verificações em 23 arquivos, rodando com Vitest.
+`tests/backend/` e `tests/frontend/`. São 614 verificações em 31 arquivos, rodando com Vitest.
 
 ```bash
 npm test            # roda tudo uma vez
@@ -714,7 +902,8 @@ npm run test:watch  # reexecuta a cada arquivo salvo
 
 O [`tests/README.md`](tests/README.md) tem a tabela do que cada arquivo cobre. Em resumo: validação
 de cada cadastro, regras de sessão e perfil, limite de tentativas de login, cálculo de "aberto
-agora", limpeza da auditoria, tratamento de erros e o filtro que impede vazamento de dado técnico nas
+agora", limpeza da auditoria, a máquina de estados das assinaturas (com um banco falso em memória),
+a autenticidade do webhook, a contagem de métricas sem identificar ninguém, tratamento de erros e o filtro que impede vazamento de dado técnico nas
 mensagens. Três testes comparam as duas pontas de propósito — categorias, perfis e horários precisam
 combinar entre frontend e backend.
 
@@ -743,9 +932,15 @@ node teste-erros-ui.mjs       # a tela de erro não mostra pilha de chamadas nem
 node teste-desempenho.mjs     # o que a primeira tela baixa e a compressão da API
 node teste-faq-ui.mjs         # central de ajuda, paginação, contato estável e permissões na tela
 node teste-celular-ui.mjs     # telas a 390px, termos em modal no cadastro e o painel sem repetições
+node teste-planos-ui.mjs      # selo e ordem na vitrine, /planos, painéis e troca de plano no checkout
 ```
 
-Ou, da raiz, `npm run test:e2e` roda as cinco em sequência. Se o frontend estiver em outra porta, informe:
+O `teste-planos-ui.mjs` roda o seed no começo e no fim (parte sempre do cenário do
+[DEMO.md](DEMO.md) e deixa o banco pronto para a demonstração). Ele abre o checkout de testes do
+AbacatePay, então precisa da `ABACATEPAY_API_KEY` de Dev mode e de internet; a aprovação do
+pagamento vem da simulação do admin, que aplica o mesmo tratamento do aviso do gateway.
+
+Ou, da raiz, `npm run test:e2e` roda as seis em sequência. Se o frontend estiver em outra porta, informe:
 `APP_URL=http://localhost:5174 npm run test:e2e`. O `teste-erros-ui.mjs` derruba de fora o
 arquivo de uma tela, para provocar a falha sem nenhum código de teste dentro do site.
 
@@ -830,8 +1025,21 @@ tela piscar "Carregando" a cada navegação.
 O projeto sobe no Render pelo Blueprint [`render.yaml`](render.yaml), que cria a API (web service) e o
 site (static site), os dois no plano gratuito. O MySQL fica no Aiven e as fotos enviadas no
 Cloudinary, também gratuitos. O passo a passo completo, com a preparação do banco pela sua máquina
-(`npm run aiven:migrar`, `aiven:criar-usuario` e `aiven:seed`), está em
-[docs/DEPLOY_RENDER.md](docs/DEPLOY_RENDER.md).
+(`npm run aiven:migrar`, `aiven:criar-usuario` e `aiven:seed`) e o cadastro do webhook do AbacatePay
+(`npm run abacatepay:webhook`), está em [docs/DEPLOY_RENDER.md](docs/DEPLOY_RENDER.md).
+
+## Branches
+
+| Branch | Papel |
+|---|---|
+| `dev` | Desenvolvimento. Todo trabalho novo entra aqui, em commits pequenos |
+| `qa` | Conferência: recebe a `dev` quando uma etapa fica pronta, para testar antes de publicar |
+| `prod` | Versão aprovada, que recebe a `qa` |
+| `main` | É dela que o Render publica hoje. A configuração do Render não foi alterada |
+
+O caminho é `dev → qa → prod`, sempre por merge, sem commit direto em `qa` ou `prod`. Enquanto o
+Render continuar apontando para a `main`, o que chega em `prod` também precisa ir para a `main`
+para ser publicado. Apontar o Render para a `prod` é uma troca no painel dele, que não foi feita.
 
 ## Solução de problemas
 
@@ -878,4 +1086,6 @@ reinicie o backend, que zera a contagem. Em produção o limite vale para todos.
 | Negócio aparece como "Indisponível para atendimento" | Está fora do horário informado, ou o dono ainda não informou o horário | Confira o horário em "Meu negócio", em Editar dados. A página diz quando o negócio abre de novo |
 | Cadastro de negócio recusa a categoria | Só valem Artesanato, Alimentação, Serviços, Moda e Beleza | Escolha uma delas; não existe mais a categoria "Geral" |
 | A rolagem da roda do mouse vai aos saltos e nada no site desliza | Os "Efeitos de animação" do Windows estão desligados. Com isso, navegadores baseados no Chromium desligam a rolagem suave em todos os sites e pedem menos movimento a eles | Ligue em Configurações > Acessibilidade > Efeitos visuais > Efeitos de animação |
+| Assinar um plano dá erro (a API responde `502`) | Falta `ABACATEPAY_API_KEY`, a chave não é a de Dev mode (`abc_dev_`), falta permissão na chave ou o AbacatePay está fora do ar | O motivo exato fica no log do backend. O escopo da chave está descrito em `backend/.env.example` |
+| Paguei e o painel ainda mostra o plano antigo | O aviso do pagamento ainda não chegou | Abra "Meu negócio" de novo: a conciliação consulta o gateway. Na demonstração, use "Simular aprovação" no Admin |
 | `npm audit` aponta `deepmerge-ts` (alta) | Dependência transitiva do CLI do Prisma, usada só em desenvolvimento | Não afeta a API em execução. Não rode `npm audit fix --force`, pois ele rebaixa o Prisma |
