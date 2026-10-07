@@ -20,7 +20,8 @@
     "aiven:criar-usuario": "node --env-file=.env.aiven scripts/criar-usuario-banco.js",
     "aiven:seed": "node --env-file=.env.aiven prisma/seed.js",
     "planos:semear": "node scripts/semear-planos.js",
-    "aiven:planos": "node --env-file=.env.aiven scripts/semear-planos.js"
+    "aiven:planos": "node --env-file=.env.aiven scripts/semear-planos.js",
+    "abacatepay:webhook": "node scripts/abacatepay-webhook.js"
   },
   "prisma": {
     "seed": "node prisma/seed.js"

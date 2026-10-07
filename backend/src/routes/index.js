@@ -10,6 +10,7 @@ import usuarioRoutes from './usuarioRoutes.js';
 import configuracaoRoutes from './configuracaoRoutes.js';
 import faqRoutes from './faqRoutes.js';
 import uploadRoutes from './uploadRoutes.js';
+import assinaturaRoutes, { planoRoutes } from './assinaturaRoutes.js';
 import { verificarSaude } from '../controllers/saudeController.js';
 
 const router = Router();
@@ -27,5 +28,7 @@ router.use('/usuarios', usuarioRoutes);
 router.use('/configuracoes', configuracaoRoutes);
 router.use('/faq', faqRoutes);
 router.use('/uploads', uploadRoutes);
+router.use('/planos', planoRoutes);
+router.use('/assinaturas', assinaturaRoutes);
 
 export default router;

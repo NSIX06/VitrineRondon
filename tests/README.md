@@ -30,6 +30,8 @@ npx vitest run tests/backend/horarios.test.js   # um arquivo só
 | `faq.test.js` | `controllers/faqController.js` | público só com ativas e em ordem, id gerado no cadastro, edição que não reativa sozinha, limites de 300 caracteres e auditoria |
 | `paginacao.test.js` | `utils/paginacao.js` | sem página a lista vem inteira; página e tamanho inválidos são recusados com 400 |
 | `planos.test.js` | `prisma/planos.js` | preços em centavos, só o Destaque liga selo, métricas ampliadas e divulgação, nenhum texto promete resultado, e o seed atualiza sem apagar nem desligar o plano do gateway |
+| `assinaturas.test.js` | `services/assinaturas.js` | pagamento ativa e liga o destaque, falha e cancelamento tiram o destaque sem tirar o negócio da vitrine, evento repetido não muda nada, troca de plano nos dois sentidos, conciliação no localhost e simulação bloqueada em produção |
+| `pagamento-abacatepay.test.js` | `services/pagamento/abacatepay.js` | chave de produção recusada sem liberação, chamadas no formato da API v2, produto sem duplicar, webhook só com segredo e HMAC válidos e tradução dos eventos |
 | `imagens.test.js` | `services/imagens.js` | envio vira WebP de até 1600 px sem metadados, arquivo que não é imagem é recusado, caminho forjado nunca é aceito nem apagado, e a imagem só sai do disco quando nenhum cadastro a usa |
 
 ### `frontend/`

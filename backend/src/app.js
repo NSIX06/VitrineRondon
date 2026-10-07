@@ -4,6 +4,7 @@ import compression from 'compression';
 import cors from 'cors';
 import helmet from 'helmet';
 import routes from './routes/index.js';
+import webhookRoutes from './routes/webhookRoutes.js';
 import { autenticarOpcional } from './middlewares/auth.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { limitePadrao } from './middlewares/rateLimit.js';
@@ -74,6 +75,11 @@ app.use(
     maxAge: 86400,
   })
 );
+
+// Webhooks dos gateways antes do express.json: a assinatura HMAC confere o
+// corpo cru, byte a byte. Não passam pelo rate limit (o gateway reenvia em
+// rajada quando algo falha); a autenticidade é provada pelo segredo + HMAC.
+app.use('/api/webhooks', webhookRoutes);
 
 // Limite de tamanho do corpo: sem isso um POST gigante consome memória à vontade
 app.use(express.json({ limit: '256kb' }));

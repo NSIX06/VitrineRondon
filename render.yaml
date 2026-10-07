@@ -43,6 +43,15 @@ services:
         sync: false
       - key: CLOUDINARY_PASTA
         value: vitrinelocal
+      # Assinaturas em sandbox: chave de TESTE do AbacatePay (abc_dev_...)
+      - key: ABACATEPAY_API_KEY
+        sync: false
+      # Segredo do webhook; o mesmo vai no "npm run abacatepay:webhook"
+      - key: ABACATEPAY_WEBHOOK_SECRET
+        generateValue: true
+      # Endereço do site (para onde o checkout volta), sem barra no fim
+      - key: APP_URL
+        sync: false
 
   # Site (React + Vite), servido pela CDN do Render. Gratuito e não dorme.
   - type: web
