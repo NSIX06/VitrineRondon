@@ -33,7 +33,7 @@ export const atualizarProdutoSchema = produtoSchema.omit({ empreendedorId: true 
 
 // Campos do empreendedor incluídos nas listagens de produtos
 const empreendedorResumo = {
-  select: { id: true, nomeNegocio: true, whatsapp: true, cidade: true, bairro: true },
+  select: { id: true, nomeNegocio: true, whatsapp: true, cidade: true, bairro: true, emDestaque: true },
 };
 
 /** Id do negócio do usuário autenticado (null se ele não tiver um) */
@@ -89,7 +89,9 @@ export async function listarProdutos(req, res, next) {
     const paginacao = lerPaginacao(req.query);
     const consulta = {
       where,
-      orderBy: { createdAt: 'desc' },
+      // Itens de negócios em destaque primeiro, depois os demais, mais novos antes.
+      // Só ordem: nenhum item sai da lista.
+      orderBy: [{ empreendedor: { emDestaque: 'desc' } }, { createdAt: 'desc' }],
       include: { empreendedor: empreendedorResumo },
     };
 

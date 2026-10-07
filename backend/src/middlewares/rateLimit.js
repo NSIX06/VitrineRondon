@@ -46,6 +46,19 @@ export const limiteUpload = rateLimit({
 });
 
 /**
+ * Eventos de métricas vindos do site (visualização, clique). Cada página manda
+ * poucos; o teto barra script tentando inflar os números de um negócio.
+ */
+export const limiteMetricas = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 120,
+  skip: ignorarMaquinaLocal,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  handler: recusar('Muitas requisições. Tente novamente em alguns minutos.'),
+});
+
+/**
  * Limite apertado para login e cadastro: é o que impede força bruta de senha.
  * Só conta as tentativas que falharam, então quem acerta a senha não é punido.
  */

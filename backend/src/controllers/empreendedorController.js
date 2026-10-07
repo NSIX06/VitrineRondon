@@ -7,6 +7,7 @@ import { horariosSchema, incluirHorarios, comHorariosParaPrisma } from '../servi
 import { erroHttp, parseId } from '../utils/erros.js';
 import { lerPaginacao, resumoPaginacao } from '../utils/paginacao.js';
 import { apagarSeOrfa, apagarSeTrocou, campoImagem } from '../services/imagens.js';
+import { registrarImpressoes } from '../services/metricas.js';
 
 // Mesma lista do frontend (services/constantes.js). Validar aqui impede que um
 // negócio fique numa categoria sem filtro na vitrine.
@@ -59,6 +60,9 @@ const empreendedorSchema = z.object({
   instagram: z.string().trim().max(100).optional().nullable(),
   fotoUrl: campoImagem('URL da foto inválida').optional().nullable(),
   ativo: z.boolean().optional(),
+  // Consentimento para a divulgação nas redes oficiais (benefício do Destaque).
+  // planoAtual e emDestaque não entram aqui: só o serviço de assinaturas os muda.
+  autorizaDivulgacao: z.boolean().optional(),
 });
 
 // Os valores padrão ficam só no cadastro. No Zod 4, .partial() preserva os
@@ -87,6 +91,26 @@ async function carregarComoDono(req, id) {
   return registro;
 }
 
+// Plano e consentimento são informação comercial do negócio: só o dono e a
+// administração veem. O público vê só "emDestaque" (que liga o selo).
+const CAMPOS_PRIVADOS = { planoAtual: true, autorizaDivulgacao: true, autorizaDivulgacaoEm: true };
+
+/** O consentimento de divulgação guarda quando foi dado */
+function comDataDoConsentimento(dados) {
+  if (!('autorizaDivulgacao' in dados)) return dados;
+  return { ...dados, autorizaDivulgacaoEm: dados.autorizaDivulgacao ? new Date() : null };
+}
+
+/** Embaralha (Fisher-Yates) para a seção de destaques não favorecer sempre os mesmos */
+export function embaralhar(lista, aleatorio = Math.random) {
+  const copia = [...lista];
+  for (let i = copia.length - 1; i > 0; i--) {
+    const j = Math.floor(aleatorio() * (i + 1));
+    [copia[i], copia[j]] = [copia[j], copia[i]];
+  }
+  return copia;
+}
+
 /** Visitante e usuário comum só enxergam negócios ativos */
 function filtroVisibilidade(req) {
   return ehAdmin(req.usuario) ? {} : { ativo: true };
@@ -110,10 +134,13 @@ export async function listarEmpreendedores(req, res, next) {
     }
 
     const paginacao = lerPaginacao(req.query);
+    // Destaques primeiro, depois os demais em ordem alfabética. É só ordem:
+    // nenhum negócio sai da lista por não ter plano.
     const consulta = {
       where,
-      orderBy: { nomeNegocio: 'asc' },
+      orderBy: [{ emDestaque: 'desc' }, { nomeNegocio: 'asc' }],
       include: { _count: { select: { produtos: true } }, horarios: incluirHorarios },
+      ...(ehAdmin(req.usuario) ? {} : { omit: CAMPOS_PRIVADOS }),
     };
 
     if (!paginacao.ativa) {
@@ -126,6 +153,28 @@ export async function listarEmpreendedores(req, res, next) {
       prisma.empreendedor.findMany({ ...consulta, skip: paginacao.skip, take: paginacao.take }),
     ]);
     res.json({ success: true, total, data: empreendedores, paginacao: resumoPaginacao(paginacao, total) });
+  } catch (erro) {
+    next(erro);
+  }
+}
+
+// GET /api/empreendedores/destaques?categoria=&limite=
+// Seção "Negócios em Destaque": só negócios com plano de destaque ativo, em
+// ordem embaralhada a cada consulta (rodízio justo entre os destaques). Cada
+// negócio mostrado conta uma impressão em destaque para o painel dele.
+export async function listarDestaques(req, res, next) {
+  try {
+    const limite = Math.min(Math.max(Number.parseInt(req.query.limite, 10) || 6, 1), 12);
+    const where = { ativo: true, emDestaque: true };
+    if (req.query.categoria) where.categoria = String(req.query.categoria);
+    const todos = await prisma.empreendedor.findMany({
+      where,
+      include: { _count: { select: { produtos: true } } },
+      omit: CAMPOS_PRIVADOS,
+    });
+    const escolhidos = embaralhar(todos).slice(0, limite);
+    await registrarImpressoes(req, escolhidos.map((e) => e.id));
+    res.json({ success: true, total: escolhidos.length, data: escolhidos });
   } catch (erro) {
     next(erro);
   }
@@ -158,7 +207,7 @@ export async function criarMeuNegocio(req, res, next) {
     // Cadastrar o negócio promove a conta comum a EMPREENDEDOR
     const { empreendedor, perfilAnterior } = await prisma.$transaction(async (tx) => {
       const criado = await tx.empreendedor.create({
-        data: { ...comHorariosParaPrisma(req.body), usuarioId: req.usuario.id },
+        data: { ...comHorariosParaPrisma(comDataDoConsentimento(req.body)), usuarioId: req.usuario.id },
         include: { horarios: incluirHorarios },
       });
       const usuario = await tx.usuario.findUnique({
@@ -223,9 +272,10 @@ export async function buscarEmpreendedor(req, res, next) {
       return res.status(404).json({ success: false, message: 'Empreendedor não encontrado' });
     }
 
-    // Visitante não vê itens indisponíveis
+    // Visitante não vê itens indisponíveis nem o plano do negócio
     if (!ehAdmin(req.usuario) && !dono) {
       empreendedor.produtos = empreendedor.produtos.filter((produto) => produto.disponivel);
+      for (const campo of Object.keys(CAMPOS_PRIVADOS)) delete empreendedor[campo];
     }
 
     res.json({ success: true, data: empreendedor });
@@ -238,7 +288,7 @@ export async function buscarEmpreendedor(req, res, next) {
 export async function criarEmpreendedor(req, res, next) {
   try {
     const empreendedor = await prisma.empreendedor.create({
-      data: comHorariosParaPrisma(req.body),
+      data: comHorariosParaPrisma(comDataDoConsentimento(req.body)),
       include: { horarios: incluirHorarios },
     });
     await registrarLog(req, {
@@ -266,7 +316,7 @@ export async function atualizarEmpreendedor(req, res, next) {
 
     const empreendedor = await prisma.empreendedor.update({
       where: { id },
-      data: comHorariosParaPrisma(req.body, { edicao: true }),
+      data: comHorariosParaPrisma(comDataDoConsentimento(req.body), { edicao: true }),
       include: { horarios: incluirHorarios },
     });
     if ('fotoUrl' in req.body) await apagarSeTrocou(prisma, antes.fotoUrl, empreendedor.fotoUrl);

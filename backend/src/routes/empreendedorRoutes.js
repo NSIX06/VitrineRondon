@@ -5,6 +5,7 @@ import { validateBody } from '../middlewares/validate.js';
 import { autenticar, exigirPerfil, PERFIS } from '../middlewares/auth.js';
 import {
   listarEmpreendedores,
+  listarDestaques,
   buscarEmpreendedor,
   criarEmpreendedor,
   atualizarEmpreendedor,
@@ -21,6 +22,8 @@ const router = Router();
 router.get('/meu', autenticar, meuNegocio);
 router.post('/meu', autenticar, validateBody(criarEmpreendedorSchema), criarMeuNegocio);
 
+// Antes de /:id, para "destaques" não ser lido como id
+router.get('/destaques', listarDestaques);
 router.get('/', listarEmpreendedores);
 router.get('/:id', buscarEmpreendedor);
 
