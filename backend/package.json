@@ -18,7 +18,9 @@
     "render:build": "prisma generate && node scripts/prisma-admin.js migrate deploy",
     "aiven:migrar": "node --env-file=.env.aiven scripts/prisma-admin.js migrate deploy",
     "aiven:criar-usuario": "node --env-file=.env.aiven scripts/criar-usuario-banco.js",
-    "aiven:seed": "node --env-file=.env.aiven prisma/seed.js"
+    "aiven:seed": "node --env-file=.env.aiven prisma/seed.js",
+    "planos:semear": "node scripts/semear-planos.js",
+    "aiven:planos": "node --env-file=.env.aiven scripts/semear-planos.js"
   },
   "prisma": {
     "seed": "node prisma/seed.js"

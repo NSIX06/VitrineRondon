@@ -6,6 +6,7 @@
 import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import { semearPlanos } from './planos.js';
 
 const prisma = new PrismaClient();
 
@@ -268,9 +269,17 @@ async function main() {
   await prisma.perguntaFrequente.deleteMany();
   await prisma.aceiteTermos.deleteMany();
   await prisma.contato.deleteMany();
+  await prisma.metricaDiaria.deleteMany();
+  await prisma.divulgacao.deleteMany();
+  await prisma.assinatura.deleteMany();
   await prisma.produto.deleteMany();
   await prisma.empreendedor.deleteMany();
   await prisma.usuario.deleteMany();
+
+  // Planos não são apagados: atualizar mantém o vínculo com o produto já
+  // criado no gateway de pagamento
+  console.log('Conferindo planos de assinatura...');
+  await semearPlanos(prisma);
 
   console.log('Criando usuários...');
   const adminEmail = process.env.ADMIN_EMAIL || 'admin@vitrinelocal.com.br';

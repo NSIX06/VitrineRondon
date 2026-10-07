@@ -1,0 +1,3 @@
+# Migrations do Prisma sempre com LF: o checksum é calculado sobre o arquivo,
+# e uma conversão para CRLF no Windows faria o Prisma recusar a migration
+*.sql text eol=lf

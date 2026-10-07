@@ -29,6 +29,7 @@ npx vitest run tests/backend/horarios.test.js   # um arquivo só
 | `schemas-admin.test.js` | contato, usuário e configuração | mensagem da comunidade, moderação de conta e banner da home |
 | `faq.test.js` | `controllers/faqController.js` | público só com ativas e em ordem, id gerado no cadastro, edição que não reativa sozinha, limites de 300 caracteres e auditoria |
 | `paginacao.test.js` | `utils/paginacao.js` | sem página a lista vem inteira; página e tamanho inválidos são recusados com 400 |
+| `planos.test.js` | `prisma/planos.js` | preços em centavos, só o Destaque liga selo, métricas ampliadas e divulgação, nenhum texto promete resultado, e o seed atualiza sem apagar nem desligar o plano do gateway |
 | `imagens.test.js` | `services/imagens.js` | envio vira WebP de até 1600 px sem metadados, arquivo que não é imagem é recusado, caminho forjado nunca é aceito nem apagado, e a imagem só sai do disco quando nenhum cadastro a usa |
 
 ### `frontend/`

@@ -12,41 +12,55 @@ datasource db {
 
 // Microempreendedor cadastrado na vitrine
 model Empreendedor {
-  id          Int       @id @default(autoincrement())
-  nomeNegocio String    @map("nome_negocio") @db.VarChar(150)
-  responsavel String    @db.VarChar(150)
-  descricao   String?   @db.Text
-  categoria   String    @default("Geral") @db.VarChar(50)
-  cidade      String    @db.VarChar(100)
+  id                   Int                  @id @default(autoincrement())
+  nomeNegocio          String               @map("nome_negocio") @db.VarChar(150)
+  responsavel          String               @db.VarChar(150)
+  descricao            String?              @db.Text
+  categoria            String               @default("Geral") @db.VarChar(50)
+  cidade               String               @db.VarChar(100)
   // Localização (opcional): permite exibir o negócio no mapa
-  endereco       String?  @db.VarChar(200)
-  numero         String?  @db.VarChar(20)
-  complemento    String?  @db.VarChar(100)
-  bairro         String?  @db.VarChar(100)
-  estado         String   @default("MT") @db.VarChar(2)
-  cep            String?  @db.VarChar(9)
-  latitude       Float?
-  longitude      Float?
-  exibirEndereco Boolean  @default(true) @map("exibir_endereco")
+  endereco             String?              @db.VarChar(200)
+  numero               String?              @db.VarChar(20)
+  complemento          String?              @db.VarChar(100)
+  bairro               String?              @db.VarChar(100)
+  estado               String               @default("MT") @db.VarChar(2)
+  cep                  String?              @db.VarChar(9)
+  latitude             Float?
+  longitude            Float?
+  exibirEndereco       Boolean              @default(true) @map("exibir_endereco")
   // Dono do negócio (opcional: cadastros antigos ficam sem dono até um admin vincular)
-  usuarioId   Int?      @unique @map("usuario_id")
-  usuario     Usuario?  @relation(fields: [usuarioId], references: [id], onDelete: SetNull)
-  whatsapp    String    @db.VarChar(30)
-  instagram   String?   @db.VarChar(100)
-  fotoUrl     String?   @map("foto_url") @db.VarChar(500)
-  ativo       Boolean   @default(true)
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
-  produtos    Produto[]
+  usuarioId            Int?                 @unique @map("usuario_id")
+  usuario              Usuario?             @relation(fields: [usuarioId], references: [id], onDelete: SetNull)
+  whatsapp             String               @db.VarChar(30)
+  instagram            String?              @db.VarChar(100)
+  fotoUrl              String?              @map("foto_url") @db.VarChar(500)
+  ativo                Boolean              @default(true)
+  // Plano em vigor, copiado da assinatura ATIVA para a vitrine não precisar
+  // juntar tabelas a cada listagem. Só o serviço de assinaturas escreve aqui.
+  // Sem assinatura o negócio continua visível normalmente (NENHUM).
+  planoAtual           String               @default("NENHUM") @map("plano_atual") @db.VarChar(20) // NENHUM | nome do plano
+  emDestaque           Boolean              @default(false) @map("em_destaque")
+  // Consentimento para a VitrineRondon usar nome, fotos e produtos em
+  // divulgações nas redes oficiais (benefício do plano Destaque)
+  autorizaDivulgacao   Boolean              @default(false) @map("autoriza_divulgacao")
+  autorizaDivulgacaoEm DateTime?            @map("autoriza_divulgacao_em")
+  createdAt            DateTime             @default(now()) @map("created_at")
+  updatedAt            DateTime             @updatedAt @map("updated_at")
+  produtos             Produto[]
   // Horário de atendimento: sem nenhum intervalo, a página mostra "Indisponível"
-  horarios    HorarioAtendimento[]
-  contatos    Contato[]
+  horarios             HorarioAtendimento[]
+  contatos             Contato[]
+  assinaturas          Assinatura[]
+  divulgacoes          Divulgacao[]
+  metricas             MetricaDiaria[]
 
   // A vitrine filtra sempre por negócio ativo, e daí por categoria ou bairro.
   // "cidade" fica de fora de propósito: a consulta usa LIKE com % na frente,
   // que o MySQL não resolve por índice.
   @@index([ativo, categoria])
   @@index([ativo, bairro])
+  // Ordenação "destaques primeiro" nas listagens
+  @@index([ativo, emDestaque])
   @@map("empreendedores")
 }
 
@@ -186,4 +200,98 @@ model PerguntaFrequente {
   // A leitura pública filtra por ativo e ordena por ordem
   @@index([ativo, ordem])
   @@map("perguntas_frequentes")
+}
+
+// ---------------------------------------------------------------------------
+// Assinaturas
+// ---------------------------------------------------------------------------
+
+// Planos à venda. Vêm sempre desta tabela (nunca fixos no código): um plano
+// novo, anual ou gratuito é uma linha a mais, não uma mudança de regra.
+model Plano {
+  id                Int          @id @default(autoincrement())
+  nome              String       @unique @db.VarChar(30) // ESSENCIAL | DESTAQUE | ...
+  titulo            String       @db.VarChar(60) // "VitrineRondon Essencial"
+  chamada           String?      @db.VarChar(160) // frase curta da página de planos
+  descricao         String?      @db.Text
+  precoCentavos     Int          @map("preco_centavos") // 5000 = R$ 50,00
+  ciclo             String       @default("MONTHLY") @db.VarChar(20) // ciclo do gateway
+  // O que o plano libera. A vitrine decide pelo plano, não pelo nome dele.
+  destaque          Boolean      @default(false) // selo, prioridade e seção de destaques
+  metricasAmpliadas Boolean      @default(false) @map("metricas_ampliadas")
+  divulgacao        Boolean      @default(false) // pode entrar no calendário de divulgação
+  ordem             Int          @default(0)
+  ativo             Boolean      @default(true)
+  // Produto correspondente no gateway (AbacatePay), criado na primeira venda
+  gatewayProdutoId  String?      @map("gateway_produto_id") @db.VarChar(100)
+  createdAt         DateTime     @default(now()) @map("created_at")
+  updatedAt         DateTime     @updatedAt @map("updated_at")
+  assinaturas       Assinatura[]
+
+  @@map("planos")
+}
+
+// Assinatura de um negócio. O status só muda pelo serviço de assinaturas
+// (webhook, conciliação com o gateway ou simulação fora de produção).
+model Assinatura {
+  id                  Int          @id @default(autoincrement())
+  empreendedorId      Int          @map("empreendedor_id")
+  planoId             Int          @map("plano_id")
+  status              String       @default("PENDENTE") @db.VarChar(20) // PENDENTE | ATIVA | INADIMPLENTE | CANCELADA
+  // No AbacatePay o checkout (bill_...) nasce antes; a assinatura (subs_...)
+  // só passa a existir depois do primeiro pagamento
+  gatewayCheckoutId   String?      @unique @map("gateway_checkout_id") @db.VarChar(100)
+  gatewayAssinaturaId String?      @unique @map("gateway_assinatura_id") @db.VarChar(100)
+  checkoutUrl         String?      @map("checkout_url") @db.VarChar(500)
+  inicioEm            DateTime?    @map("inicio_em")
+  proximaCobranca     DateTime?    @map("proxima_cobranca")
+  canceladaEm         DateTime?    @map("cancelada_em")
+  criadoEm            DateTime     @default(now()) @map("created_at")
+  atualizadoEm        DateTime     @updatedAt @map("updated_at")
+  empreendedor        Empreendedor @relation(fields: [empreendedorId], references: [id], onDelete: Cascade)
+  plano               Plano        @relation(fields: [planoId], references: [id])
+
+  @@index([empreendedorId, status])
+  @@index([planoId])
+  @@map("assinaturas")
+}
+
+// Divulgação nas redes oficiais (só registro nesta fase, sem integração).
+// Não há cota de posts: entra conforme calendário, critérios e aprovação.
+model Divulgacao {
+  id             Int          @id @default(autoincrement())
+  empreendedorId Int          @map("empreendedor_id")
+  tipo           String       @db.VarChar(30) // NEGOCIO | PRODUTO | SERVICO | CAMPANHA | INSTITUCIONAL
+  titulo         String       @db.VarChar(150)
+  canal          String?      @db.VarChar(40) // Instagram, Facebook...
+  status         String       @default("PLANEJADA") @db.VarChar(20) // PLANEJADA | PUBLICADA | CANCELADA
+  publicadaEm    DateTime?    @map("publicada_em")
+  link           String?      @db.VarChar(500)
+  alcance        Int?
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+  empreendedor   Empreendedor @relation(fields: [empreendedorId], references: [id], onDelete: Cascade)
+
+  @@index([empreendedorId])
+  @@map("divulgacoes")
+}
+
+// Desempenho do negócio, somado por dia. Não guarda quem visitou (sem
+// cookies nem IP): só quantas vezes cada coisa aconteceu.
+model MetricaDiaria {
+  id             Int          @id @default(autoincrement())
+  empreendedorId Int          @map("empreendedor_id")
+  dia            DateTime     @db.Date
+  // VISUALIZACAO_PERFIL | CLIQUE_WHATSAPP | CLIQUE_TELEFONE | CLIQUE_ENDERECO |
+  // CLIQUE_INSTAGRAM | VISUALIZACAO_PRODUTO | IMPRESSAO_DESTAQUE
+  tipo           String       @db.VarChar(30)
+  // Produto, quando o evento é de um item; 0 para o negócio como um todo
+  // (0 e não nulo: o MySQL não trata nulos como iguais na chave única)
+  referenciaId   Int          @default(0) @map("referencia_id")
+  quantidade     Int          @default(0)
+  empreendedor   Empreendedor @relation(fields: [empreendedorId], references: [id], onDelete: Cascade)
+
+  @@unique([empreendedorId, dia, tipo, referenciaId])
+  @@index([empreendedorId, dia])
+  @@map("metricas_diarias")
 }
