@@ -83,10 +83,13 @@ Contas criadas pelo seed:
 | Conta | Perfil | Serve para |
 |---|---|---|
 | `ADMIN_EMAIL` do `.env` | ADMIN | Painel de administração, contas e auditoria |
-| `carlos@silvareparos.com.br` | EMPREENDEDOR | Área "Meu negócio" com catálogo próprio |
+| `carlos@silvareparos.com.br` | EMPREENDEDOR | Silva Reparos, no plano **Essencial**: é quem assina o Destaque na demonstração |
+| `maria@ateliefioearte.com.br` | EMPREENDEDOR | Ateliê Fio & Arte, no plano **Destaque**, com divulgação nas redes |
 
-As senhas são as que você definir no `.env`. Quatro dos cinco negócios do seed não têm dono, para
-mostrar a vitrine com cadastros feitos pela administração.
+As senhas são as que você definir no `.env` (as duas contas de empreendedor usam
+`DEMO_EMPREENDEDOR_SENHA`). Três dos cinco negócios do seed não têm dono, para mostrar a vitrine
+com cadastros feitos pela administração. As assinaturas e os números de desempenho do seed são de
+**demonstração**: nunca passaram pelo gateway. O roteiro da apresentação está em [DEMO.md](DEMO.md).
 
 Para subir os dois com um único comando, instale o `concurrently` na raiz e adicione o script:
 

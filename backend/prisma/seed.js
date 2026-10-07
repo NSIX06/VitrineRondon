@@ -7,11 +7,13 @@ import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { semearPlanos } from './planos.js';
+import { PREFIXO_DEMO, STATUS, proximaCobrancaApos, sincronizarNegocio } from '../src/services/assinaturas.js';
+import { TIPOS, diaLocal } from '../src/services/metricas.js';
 
 const prisma = new PrismaClient();
 
 // Versão vigente dos termos (cabeçalho de TERMOS_DE_USO.md e POLITICA_DE_PRIVACIDADE.md)
-const TERMOS_VERSAO = process.env.TERMOS_VERSAO || '1.0';
+const TERMOS_VERSAO = process.env.TERMOS_VERSAO || '1.1';
 
 const CIDADE = 'Rondonópolis';
 
@@ -253,6 +255,106 @@ const perguntasFrequentes = [
   },
 ];
 
+// ---------------------------------------------------------------------------
+// Demonstração das assinaturas (roteiro em DEMO.md)
+// Ateliê Fio & Arte: plano Destaque ativo, com divulgação nas redes.
+// Silva Reparos: plano Essencial ativo; na apresentação, o dono assina o
+// Destaque pelo checkout de testes e o negócio sobe na vitrine.
+// As assinaturas nunca passaram pelo gateway: os ids "demo_" deixam a
+// simulação do admin encontrá-las e o cancelamento não chama o AbacatePay.
+// Os números de desempenho são de exemplo, para o painel não abrir vazio.
+// ---------------------------------------------------------------------------
+const DIA_MS = 24 * 60 * 60 * 1000;
+const diasAtras = (n) => new Date(Date.now() - n * DIA_MS);
+
+/** Sorteio previsível: o seed gera sempre os mesmos números */
+function sorteador(semente) {
+  let estado = semente;
+  return (minimo, maximo) => {
+    estado = (estado * 1103515245 + 12345) % 2147483648;
+    return minimo + (estado % (maximo - minimo + 1));
+  };
+}
+
+async function criarAssinaturaDemo(empreendedorId, nomePlano, iniciadaHaDias) {
+  const plano = await prisma.plano.findUnique({ where: { nome: nomePlano } });
+  const inicioEm = diasAtras(iniciadaHaDias);
+  const assinatura = await prisma.assinatura.create({
+    data: {
+      empreendedorId,
+      planoId: plano.id,
+      status: STATUS.ATIVA,
+      gatewayCheckoutId: `${PREFIXO_DEMO}bill_${empreendedorId}`,
+      gatewayAssinaturaId: `${PREFIXO_DEMO}subs_${empreendedorId}`,
+      inicioEm,
+      proximaCobranca: proximaCobrancaApos(inicioEm, plano.ciclo),
+      criadoEm: inicioEm,
+    },
+  });
+  await sincronizarNegocio(prisma, empreendedorId);
+  return assinatura;
+}
+
+/** Últimos 30 dias de visitas e cliques, com mais movimento no fim de semana */
+async function criarMetricasDemo(empreendedor, { escala, emDestaqueHaDias = 0, semente }) {
+  const sortear = sorteador(semente);
+  const linhas = [];
+  for (let n = 29; n >= 0; n -= 1) {
+    const dia = diaLocal(diasAtras(n));
+    const fimDeSemana = [0, 6].includes(dia.getUTCDay());
+    const destaque = n < emDestaqueHaDias;
+    const visitas = Math.round(sortear(3, 9) * escala * (fimDeSemana ? 1.4 : 1) * (destaque ? 1.3 : 1));
+    const conta = (tipo, quantidade, referenciaId = 0) => {
+      if (quantidade > 0) linhas.push({ empreendedorId: empreendedor.id, dia, tipo, referenciaId, quantidade });
+    };
+    conta(TIPOS.VISUALIZACAO_PERFIL, visitas);
+    conta(TIPOS.CLIQUE_WHATSAPP, Math.round(visitas * sortear(10, 25) / 100));
+    conta(TIPOS.CLIQUE_ENDERECO, sortear(0, 2));
+    if (empreendedor.instagram) conta(TIPOS.CLIQUE_INSTAGRAM, sortear(0, 2));
+    if (destaque) conta(TIPOS.IMPRESSAO_DESTAQUE, sortear(25, 60));
+    empreendedor.produtos.forEach((produto, i) => {
+      conta(TIPOS.VISUALIZACAO_PRODUTO, Math.max(0, sortear(0, 6) - i), produto.id);
+    });
+  }
+  await prisma.metricaDiaria.createMany({ data: linhas });
+  return linhas.length;
+}
+
+async function semearDemonstracao({ atelie, silva }) {
+  await criarAssinaturaDemo(atelie.id, 'DESTAQUE', 12);
+  await criarAssinaturaDemo(silva.id, 'ESSENCIAL', 20);
+
+  await prisma.empreendedor.update({
+    where: { id: atelie.id },
+    data: { autorizaDivulgacao: true, autorizaDivulgacaoEm: diasAtras(12) },
+  });
+  await prisma.divulgacao.createMany({
+    data: [
+      {
+        empreendedorId: atelie.id,
+        tipo: 'PRODUTO',
+        titulo: 'Tapete de crochê redondo no feed oficial',
+        canal: 'Instagram',
+        status: 'PUBLICADA',
+        publicadaEm: diasAtras(5),
+        alcance: 640,
+      },
+      {
+        empreendedorId: atelie.id,
+        tipo: 'SERVICO',
+        titulo: 'Oficina de crochê para iniciantes nos stories',
+        canal: 'Instagram',
+        status: 'PLANEJADA',
+      },
+    ],
+  });
+
+  const metricas =
+    (await criarMetricasDemo(atelie, { escala: 1.6, emDestaqueHaDias: 12, semente: 7 })) +
+    (await criarMetricasDemo(silva, { escala: 1, semente: 11 }));
+  console.log(`  - Destaque: ${atelie.nomeNegocio} | Essencial: ${silva.nomeNegocio} | ${metricas} linhas de métricas`);
+}
+
 /** Grava o aceite dos dois termos para um usuário (uma linha por documento) */
 async function registrarAceites(usuarioId) {
   await prisma.aceiteTermos.createMany({
@@ -315,11 +417,25 @@ async function main() {
   await registrarAceites(donoSilva.id);
   console.log(`  - ${donoSilva.email} (EMPREENDEDOR)`);
 
+  // Conta de demonstração: dona do Ateliê Fio & Arte (plano Destaque)
+  const donaAtelie = await prisma.usuario.create({
+    data: {
+      nome: 'Maria Aparecida Souza',
+      email: 'maria@ateliefioearte.com.br',
+      telefone: '66999881234',
+      senhaHash: await bcrypt.hash(demoSenha, 10),
+      perfil: 'EMPREENDEDOR',
+    },
+  });
+  await registrarAceites(donaAtelie.id);
+  console.log(`  - ${donaAtelie.email} (EMPREENDEDOR)`);
+
   console.log('Inserindo empreendedores e produtos...');
   const empreendedoresCriados = [];
   for (const { produtos, horarios = [], ...dadosEmpreendedor } of empreendedoresSeed) {
-    // Só o Silva Reparos tem dono; os demais ficam "sem dono" até um admin vincular
-    const usuarioId = dadosEmpreendedor.nomeNegocio.startsWith('Silva') ? donoSilva.id : null;
+    // Silva Reparos e Ateliê têm dono; os demais ficam "sem dono" até um admin vincular
+    const donos = { 'Silva Reparos Residenciais': donoSilva.id, 'Ateliê Fio & Arte': donaAtelie.id };
+    const usuarioId = donos[dadosEmpreendedor.nomeNegocio] ?? null;
     const empreendedor = await prisma.empreendedor.create({
       data: {
         ...dadosEmpreendedor,
@@ -332,6 +448,10 @@ async function main() {
     empreendedoresCriados.push(empreendedor);
     console.log(`  - ${empreendedor.nomeNegocio} (${empreendedor.produtos.length} itens)`);
   }
+
+  console.log('Inserindo assinaturas de demonstração...');
+  const porNome = (nome) => empreendedoresCriados.find((e) => e.nomeNegocio === nome);
+  await semearDemonstracao({ atelie: porNome('Ateliê Fio & Arte'), silva: porNome('Silva Reparos Residenciais') });
 
   console.log('Inserindo mensagem de contato de exemplo...');
   await prisma.contato.create({

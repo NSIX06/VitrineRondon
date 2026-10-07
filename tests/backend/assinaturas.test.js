@@ -282,6 +282,23 @@ describe('cancelamento pelo empreendedor', () => {
   })
 })
 
+describe('assinaturas de demonstração (seed)', () => {
+  it('cancelar uma assinatura do seed não chama o gateway, onde ela nunca existiu', async () => {
+    const demo = await assinarEPagar('ESSENCIAL', `${servico.PREFIXO_DEMO}subs_10`)
+    await servico.cancelarAssinaturaDoNegocio(REQ, 10)
+    expect(assinatura(demo.id).status).toBe(STATUS.CANCELADA)
+    expect(provedor.cancelarAssinatura).not.toHaveBeenCalled()
+  })
+
+  it('trocar de plano a partir de uma assinatura do seed também não chama o gateway', async () => {
+    const demo = await assinarEPagar('ESSENCIAL', `${servico.PREFIXO_DEMO}subs_10`)
+    await assinarEPagar('DESTAQUE')
+    expect(assinatura(demo.id).status).toBe(STATUS.CANCELADA)
+    expect(negocio()).toMatchObject({ planoAtual: 'DESTAQUE', emDestaque: true })
+    expect(provedor.cancelarAssinatura).not.toHaveBeenCalled()
+  })
+})
+
 describe('negocioDoUsuario', () => {
   it('a assinatura é sempre a do negócio da conta logada', async () => {
     expect(await servico.negocioDoUsuario({ id: 100 })).toMatchObject({ id: 10 })

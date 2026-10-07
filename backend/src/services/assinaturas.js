@@ -21,6 +21,13 @@ export const STATUS = Object.freeze({
   CANCELADA: 'CANCELADA',
 });
 
+// Assinaturas do seed de demonstração usam ids com este prefixo: parecem vir
+// do gateway (a simulação as encontra), mas nunca existiram lá
+export const PREFIXO_DEMO = 'demo_';
+
+/** A assinatura existe no gateway? (as de demonstração, não) */
+const noGateway = (id) => Boolean(id) && !id.startsWith(PREFIXO_DEMO);
+
 const MESES_POR_CICLO = { MONTHLY: 1, QUARTERLY: 3, SEMIANNUALLY: 6, ANNUALLY: 12 };
 
 /** Data da próxima cobrança: o gateway não informa, então vem do ciclo do plano */
@@ -239,7 +246,9 @@ export async function aplicarEvento(req, evento, origem) {
   // segurar o banco. Se falhar, fica no log para tratar à mão.
   for (const antiga of resultado.substituidas) {
     try {
-      await provedorPagamento().cancelarAssinatura(antiga.gatewayAssinaturaId);
+      if (noGateway(antiga.gatewayAssinaturaId)) {
+        await provedorPagamento().cancelarAssinatura(antiga.gatewayAssinaturaId);
+      }
     } catch (erro) {
       console.error(`Não foi possível cancelar no gateway a assinatura substituída ${antiga.id}:`, erro.message);
     }
@@ -335,7 +344,9 @@ export async function cancelarAssinaturaDoNegocio(req, empreendedorId) {
     return cancelada;
   }
 
-  await provedorPagamento().cancelarAssinatura(atual.gatewayAssinaturaId);
+  if (noGateway(atual.gatewayAssinaturaId)) {
+    await provedorPagamento().cancelarAssinatura(atual.gatewayAssinaturaId);
+  }
   await aplicarEvento(
     req,
     { tipo: EVENTOS.CANCELADA, assinaturaId: atual.gatewayAssinaturaId, checkoutId: atual.gatewayCheckoutId },
