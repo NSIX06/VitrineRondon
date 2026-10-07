@@ -114,14 +114,12 @@ export async function atualizarDivulgacao(req, res, next) {
       data: comDataDePublicacao(req.body, antes),
       select: campos,
     });
-    const mudou = diferencas(antes, divulgacao);
     await registrarLog(req, {
       acao: 'UPDATE',
       tipoEntidade: 'Divulgacao',
       entidadeId: id,
       descricao: `Divulgação atualizada: ${divulgacao.titulo}`,
-      antes: mudou.antes,
-      depois: mudou.depois,
+      ...diferencas(antes, divulgacao),
     });
     res.json({ success: true, message: 'Divulgação atualizada', data: divulgacao });
   } catch (erro) {

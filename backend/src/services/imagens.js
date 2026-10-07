@@ -27,7 +27,7 @@ const raizBackend = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '
 export const PASTA_UPLOADS = path.resolve(raizBackend, process.env.UPLOADS_DIR || 'uploads');
 
 /** Prefixo público dos arquivos; é o que fica gravado no banco */
-export const PREFIXO_UPLOADS = '/uploads/';
+const PREFIXO_UPLOADS = '/uploads/';
 
 /** Formatos aceitos no envio. SVG fica de fora: pode carregar script. */
 export const TIPOS_ACEITOS = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif'];

@@ -67,6 +67,17 @@ function ehEmailDuplicado(erro) {
   return erro instanceof Prisma.PrismaClientKnownRequestError && erro.code === 'P2002';
 }
 
+/** Aceite dos dois documentos na trilha de auditoria (os dois cadastros públicos) */
+function registrarAceiteNoLog(req, usuario) {
+  return registrarLog(req, {
+    usuario,
+    acao: 'ACEITE_TERMOS',
+    tipoEntidade: 'Termos',
+    descricao: `Aceite dos Termos de Uso e da Política de Privacidade, versão ${versaoVigente()}`,
+    depois: { versao: versaoVigente(), termosDeUso: true, politicaPrivacidade: true },
+  });
+}
+
 // POST /api/auth/registrar
 export async function registrarComum(req, res, next) {
   const { nome, email, telefone, senha } = req.body;
@@ -92,13 +103,7 @@ export async function registrarComum(req, res, next) {
       descricao: `Cadastro de usuário comum: ${usuario.email}`,
       depois: { nome, email, telefone, perfil: PERFIS.COMUM },
     });
-    await registrarLog(req, {
-      usuario,
-      acao: 'ACEITE_TERMOS',
-      tipoEntidade: 'Termos',
-      descricao: `Aceite dos Termos de Uso e da Política de Privacidade, versão ${versaoVigente()}`,
-      depois: { versao: versaoVigente(), termosDeUso: true, politicaPrivacidade: true },
-    });
+    await registrarAceiteNoLog(req, usuario);
 
     res.status(201).json({ success: true, message: 'Conta criada com sucesso', data: respostaSessao(usuario) });
   } catch (erro) {
@@ -162,13 +167,7 @@ export async function registrarEmpreendedor(req, res, next) {
       descricao: `Negócio cadastrado no registro: ${empreendedor.nomeNegocio}`,
       depois: negocio,
     });
-    await registrarLog(req, {
-      usuario,
-      acao: 'ACEITE_TERMOS',
-      tipoEntidade: 'Termos',
-      descricao: `Aceite dos Termos de Uso e da Política de Privacidade, versão ${versaoVigente()}`,
-      depois: { versao: versaoVigente(), termosDeUso: true, politicaPrivacidade: true },
-    });
+    await registrarAceiteNoLog(req, usuario);
 
     res.status(201).json({
       success: true,

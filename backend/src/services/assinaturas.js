@@ -286,7 +286,7 @@ export async function aplicarEvento(req, evento, origem) {
  * pago. Roda quando o empreendedor volta do checkout e abre o painel; é o que
  * dispensa túnel/webhook no localhost.
  */
-export async function conciliar(req, assinatura) {
+async function conciliar(req, assinatura) {
   if (assinatura?.status !== STATUS.PENDENTE || !assinatura.gatewayCheckoutId) return assinatura;
   try {
     const evento = await provedorPagamento().consultarPorCheckout(assinatura.gatewayCheckoutId);

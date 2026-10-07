@@ -11,9 +11,15 @@ vi.mock('../../backend/src/services/auditoria.js', async (original) => ({ ...(aw
 
 const { default: prisma } = await import('../../backend/src/config/prisma.js')
 const { registrarLog } = await import('../../backend/src/services/auditoria.js')
-const { criarDivulgacao, criarDivulgacaoSchema, atualizarDivulgacaoSchema, comDataDePublicacao } = await import(
-  '../../backend/src/controllers/divulgacaoController.js'
-)
+const {
+  criarDivulgacao,
+  criarDivulgacaoSchema,
+  atualizarDivulgacaoSchema,
+  comDataDePublicacao,
+  TIPOS_DIVULGACAO,
+  STATUS_DIVULGACAO,
+} = await import('../../backend/src/controllers/divulgacaoController.js')
+const telas = await import('../../frontend/src/services/divulgacoes.js')
 
 const DADOS = { empreendedorId: 7, tipo: 'NEGOCIO', titulo: 'No feed da semana', canal: 'Instagram' }
 const resposta = () => ({ status: vi.fn().mockReturnThis(), json: vi.fn() })
@@ -91,5 +97,12 @@ describe('criarDivulgacao', () => {
     const next = vi.fn()
     await criarDivulgacao({ body: DADOS }, resposta(), next)
     expect(next.mock.calls[0][0]).toMatchObject({ status: 404 })
+  })
+})
+
+describe('frontend e backend falam dos mesmos valores', () => {
+  it('cada tipo e cada status aceitos pela API têm nome na tela, e nenhum a mais', () => {
+    expect(Object.keys(telas.TIPOS_DIVULGACAO).sort()).toEqual([...TIPOS_DIVULGACAO].sort())
+    expect(Object.keys(telas.STATUS_DIVULGACAO).sort()).toEqual([...STATUS_DIVULGACAO].sort())
   })
 })

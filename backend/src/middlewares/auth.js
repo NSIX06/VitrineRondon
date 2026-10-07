@@ -29,6 +29,18 @@ function extrairToken(req) {
 }
 
 /**
+ * Confere o token e lê a conta no banco: o perfil e a situação valem os de
+ * agora, não os gravados no token. Token inválido ou expirado lança erro.
+ */
+async function usuarioDoToken(token) {
+  const payload = jwt.verify(token, segredo());
+  return prisma.usuario.findUnique({
+    where: { id: payload.sub },
+    select: { id: true, nome: true, email: true, perfil: true, ativo: true },
+  });
+}
+
+/**
  * Carrega o usuário do token, se houver. Não bloqueia a requisição:
  * rotas públicas usam isso para saber quem está navegando (ex.: dono vê o próprio item inativo).
  */
@@ -36,11 +48,7 @@ export async function autenticarOpcional(req, res, next) {
   const token = extrairToken(req);
   if (!token) return next();
   try {
-    const payload = jwt.verify(token, segredo());
-    const usuario = await prisma.usuario.findUnique({
-      where: { id: payload.sub },
-      select: { id: true, nome: true, email: true, perfil: true, ativo: true },
-    });
+    const usuario = await usuarioDoToken(token);
     if (usuario && usuario.ativo) req.usuario = usuario;
   } catch {
     // token inválido ou expirado: segue como visitante
@@ -57,11 +65,7 @@ export async function autenticar(req, res, next) {
     return res.status(401).json({ success: false, message: 'Faça login para continuar' });
   }
   try {
-    const payload = jwt.verify(token, segredo());
-    const usuario = await prisma.usuario.findUnique({
-      where: { id: payload.sub },
-      select: { id: true, nome: true, email: true, perfil: true, ativo: true },
-    });
+    const usuario = await usuarioDoToken(token);
     if (!usuario) {
       return res.status(401).json({ success: false, message: 'Sessão inválida. Faça login novamente' });
     }

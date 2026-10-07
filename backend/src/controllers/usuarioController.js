@@ -4,6 +4,7 @@ import { z } from 'zod';
 import prisma from '../config/prisma.js';
 import { PERFIS } from '../middlewares/auth.js';
 import { registrarLog } from '../services/auditoria.js';
+import { parseId } from '../utils/erros.js';
 
 // Campos públicos do usuário: senhaHash fica de fora de propósito
 const camposDoUsuario = {
@@ -63,10 +64,7 @@ export async function listarUsuarios(req, res, next) {
 // PATCH /api/usuarios/:id/situacao  -> ativa ou desativa uma conta
 export async function alterarSituacao(req, res, next) {
   try {
-    const id = Number(req.params.id);
-    if (!Number.isInteger(id) || id <= 0) {
-      return res.status(400).json({ success: false, message: 'ID inválido' });
-    }
+    const id = parseId(req.params.id);
 
     // Um administrador não desativa a própria conta: isso o trancaria para fora
     if (id === req.usuario.id) {

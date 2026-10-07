@@ -3,6 +3,7 @@
 // cada consulta encheria a tabela e esconderia os eventos que importam.
 import { z } from 'zod';
 import prisma from '../config/prisma.js';
+import { parseId } from '../utils/erros.js';
 
 const POR_PAGINA_PADRAO = 20;
 const POR_PAGINA_MAXIMO = 100;
@@ -140,10 +141,7 @@ export async function opcoesAuditoria(req, res, next) {
 // GET /api/auditoria/:id
 export async function buscarLog(req, res, next) {
   try {
-    const id = Number(req.params.id);
-    if (!Number.isInteger(id) || id <= 0) {
-      return res.status(400).json({ success: false, message: 'ID inválido' });
-    }
+    const id = parseId(req.params.id);
 
     const log = await prisma.logAuditoria.findUnique({
       where: { id },

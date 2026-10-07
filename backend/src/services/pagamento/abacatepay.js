@@ -75,8 +75,19 @@ async function chamar(metodo, caminho, { corpo, query } = {}) {
   return dados?.data;
 }
 
+/** Webhooks cadastrados na conta (usado por scripts/abacatepay-webhook.js) */
+export async function listarWebhooks() {
+  const dados = await chamar('GET', '/webhooks/list');
+  return Array.isArray(dados) ? dados : dados?.items || [];
+}
+
+/** Cadastra um webhook. O segredo volta na URL de cada aviso (?webhookSecret=) */
+export function criarWebhook({ nome, endpoint, segredo, eventos }) {
+  return chamar('POST', '/webhooks/create', { corpo: { name: nome, endpoint, secret: segredo, events: eventos } });
+}
+
 /** Identificador estável do plano no catálogo do gateway (muda se o preço mudar) */
-export function referenciaProduto(plano) {
+function referenciaProduto(plano) {
   return `vitrinerondon-${plano.nome.toLowerCase()}-${plano.precoCentavos}`;
 }
 
@@ -173,6 +184,14 @@ export function webhookAutentico({ segredo, assinatura, corpoCru }) {
 }
 
 /** Webhook v2 -> evento normalizado */
+/** Eventos de assinatura do AbacatePay e o que cada um significa aqui */
+export const EVENTOS_DO_WEBHOOK = Object.freeze({
+  'subscription.completed': EVENTOS.ATIVADA,
+  'subscription.renewed': EVENTOS.RENOVADA,
+  'subscription.payment_failed': EVENTOS.FALHOU,
+  'subscription.cancelled': EVENTOS.CANCELADA,
+});
+
 export function interpretarWebhook(corpo) {
   const dados = corpo?.data || {};
   const base = {
@@ -180,16 +199,5 @@ export function interpretarWebhook(corpo) {
     checkoutId: dados.checkout?.id || dados.subscription?.checkoutId || null,
     assinaturaId: dados.subscription?.id || null,
   };
-  switch (corpo?.event) {
-    case 'subscription.completed':
-      return { ...base, tipo: EVENTOS.ATIVADA };
-    case 'subscription.renewed':
-      return { ...base, tipo: EVENTOS.RENOVADA };
-    case 'subscription.payment_failed':
-      return { ...base, tipo: EVENTOS.FALHOU };
-    case 'subscription.cancelled':
-      return { ...base, tipo: EVENTOS.CANCELADA };
-    default:
-      return { ...base, tipo: EVENTOS.IGNORADO };
-  }
+  return { ...base, tipo: EVENTOS_DO_WEBHOOK[corpo?.event] ?? EVENTOS.IGNORADO };
 }

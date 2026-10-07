@@ -143,3 +143,10 @@ describe('embaralhar (rodízio da seção de destaques)', () => {
     expect(lista).toEqual([1, 2, 3, 4, 5]) // não mexe na original
   })
 })
+
+describe('frontend e backend falam dos mesmos eventos', () => {
+  it('o site só envia tipos que a API aceita, e conhece todos eles', async () => {
+    const { METRICAS } = await import('../../frontend/src/services/metricas.js')
+    expect(Object.values(METRICAS).sort()).toEqual([...metricas.TIPOS_PUBLICOS].sort())
+  })
+})
