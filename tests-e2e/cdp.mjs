@@ -13,6 +13,8 @@ export const APP = process.env.APP_URL || 'http://localhost:5173'
 
 export const ADMIN = { email: 'admin@vitrinelocal.com.br', senha: 'Admin@2026' }
 export const CARLOS = { email: 'carlos@silvareparos.com.br', senha: 'Carlos@2026' }
+// Dona do Ateliê Fio & Arte (plano Destaque no seed); mesma senha de demonstração
+export const MARIA = { email: 'maria@ateliefioearte.com.br', senha: 'Carlos@2026' }
 
 /** Porta livre de verdade: sortear sem checar fazia o driver conversar com um
  *  navegador de outra execução e travar esperando respostas. */
