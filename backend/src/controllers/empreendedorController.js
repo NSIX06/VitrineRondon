@@ -8,6 +8,12 @@ import { erroHttp, parseId } from '../utils/erros.js';
 import { lerPaginacao, resumoPaginacao } from '../utils/paginacao.js';
 import { apagarSeOrfa, apagarSeTrocou, campoImagem } from '../services/imagens.js';
 import { registrarImpressoes } from '../services/metricas.js';
+import {
+  ASSINATURAS_PARA_SITUACAO,
+  estaPublicado,
+  filtroPublicado,
+  situacaoDoNegocio,
+} from '../services/publicacao.js';
 
 // Mesma lista do frontend (services/constantes.js). Validar aqui impede que um
 // negócio fique numa categoria sem filtro na vitrine.
@@ -59,6 +65,7 @@ const empreendedorSchema = z.object({
     .regex(/^[\d\s()+-]+$/, 'WhatsApp deve conter apenas números e símbolos ( ) + -'),
   instagram: z.string().trim().max(100).optional().nullable(),
   fotoUrl: campoImagem('URL da foto inválida').optional().nullable(),
+  // Suspensão por moderação: só a administração muda (ver semModeracao)
   ativo: z.boolean().optional(),
   // Consentimento para a divulgação nas redes oficiais (benefício do Destaque).
   // planoAtual e emDestaque não entram aqui: só o serviço de assinaturas os muda.
@@ -91,9 +98,30 @@ async function carregarComoDono(req, id) {
   return registro;
 }
 
-// Plano e consentimento são informação comercial do negócio: só o dono e a
-// administração veem. O público vê só "emDestaque" (que liga o selo).
-const CAMPOS_PRIVADOS = { planoAtual: true, autorizaDivulgacao: true, autorizaDivulgacaoEm: true };
+// Plano, vigência e consentimento são informação comercial do negócio: só o
+// dono e a administração veem. O público vê só "emDestaque" (que liga o selo).
+const CAMPOS_PRIVADOS = {
+  planoAtual: true,
+  publicadoAte: true,
+  autorizaDivulgacao: true,
+  autorizaDivulgacaoEm: true,
+};
+
+/**
+ * Suspender e reativar um negócio é moderação: só a administração faz. Sem
+ * isso, o dono de um negócio suspenso se reativaria pela edição.
+ */
+function semModeracao(req, dados) {
+  if (ehAdmin(req.usuario) || !('ativo' in dados)) return dados;
+  const { ativo: _ativo, ...resto } = dados;
+  return resto;
+}
+
+/** Troca a lista de assinaturas pela situação do negócio (dono e administração) */
+function comSituacao(negocio) {
+  const { assinaturas = [], ...resto } = negocio;
+  return { ...resto, situacao: situacaoDoNegocio(negocio, assinaturas) };
+}
 
 /** O consentimento de divulgação guarda quando foi dado */
 function comDataDoConsentimento(dados) {
@@ -111,9 +139,9 @@ export function embaralhar(lista, aleatorio = Math.random) {
   return copia;
 }
 
-/** Visitante e usuário comum só enxergam negócios ativos */
+/** O público só enxerga negócio com assinatura em vigor; a administração vê todos */
 function filtroVisibilidade(req) {
-  return ehAdmin(req.usuario) ? {} : { ativo: true };
+  return ehAdmin(req.usuario) ? {} : filtroPublicado();
 }
 
 // GET /api/empreendedores?categoria=&cidade=&bairro=&busca=
@@ -134,17 +162,24 @@ export async function listarEmpreendedores(req, res, next) {
     }
 
     const paginacao = lerPaginacao(req.query);
-    // Destaques primeiro, depois os demais em ordem alfabética. É só ordem:
-    // nenhum negócio sai da lista por não ter plano.
+    // Destaques primeiro, depois os demais em ordem alfabética. O Destaque só
+    // muda a ordem: todo negócio publicado (Essencial ou Destaque) aparece.
+    const admin = ehAdmin(req.usuario);
     const consulta = {
       where,
       orderBy: [{ emDestaque: 'desc' }, { nomeNegocio: 'asc' }],
-      include: { _count: { select: { produtos: true } }, horarios: incluirHorarios },
-      ...(ehAdmin(req.usuario) ? {} : { omit: CAMPOS_PRIVADOS }),
+      include: {
+        _count: { select: { produtos: true } },
+        horarios: incluirHorarios,
+        // A administração vê também a situação (rascunho, publicado, vencido...)
+        ...(admin ? { assinaturas: ASSINATURAS_PARA_SITUACAO } : {}),
+      },
+      ...(admin ? {} : { omit: CAMPOS_PRIVADOS }),
     };
+    const formatar = (lista) => (admin ? lista.map(comSituacao) : lista);
 
     if (!paginacao.ativa) {
-      const empreendedores = await prisma.empreendedor.findMany(consulta);
+      const empreendedores = formatar(await prisma.empreendedor.findMany(consulta));
       return res.json({ success: true, total: empreendedores.length, data: empreendedores });
     }
 
@@ -152,7 +187,12 @@ export async function listarEmpreendedores(req, res, next) {
       prisma.empreendedor.count({ where }),
       prisma.empreendedor.findMany({ ...consulta, skip: paginacao.skip, take: paginacao.take }),
     ]);
-    res.json({ success: true, total, data: empreendedores, paginacao: resumoPaginacao(paginacao, total) });
+    res.json({
+      success: true,
+      total,
+      data: formatar(empreendedores),
+      paginacao: resumoPaginacao(paginacao, total),
+    });
   } catch (erro) {
     next(erro);
   }
@@ -165,7 +205,7 @@ export async function listarEmpreendedores(req, res, next) {
 export async function listarDestaques(req, res, next) {
   try {
     const limite = Math.min(Math.max(Number.parseInt(req.query.limite, 10) || 6, 1), 12);
-    const where = { ativo: true, emDestaque: true };
+    const where = { ...filtroPublicado(), emDestaque: true };
     if (req.query.categoria) where.categoria = String(req.query.categoria);
     const todos = await prisma.empreendedor.findMany({
       where,
@@ -185,12 +225,16 @@ export async function meuNegocio(req, res, next) {
   try {
     const empreendedor = await prisma.empreendedor.findUnique({
       where: { usuarioId: req.usuario.id },
-      include: { produtos: { orderBy: { createdAt: 'desc' } }, horarios: incluirHorarios },
+      include: {
+        produtos: { orderBy: { createdAt: 'desc' } },
+        horarios: incluirHorarios,
+        assinaturas: ASSINATURAS_PARA_SITUACAO,
+      },
     });
     if (!empreendedor) {
       return res.status(404).json({ success: false, message: 'Você ainda não cadastrou um negócio' });
     }
-    res.json({ success: true, data: empreendedor });
+    res.json({ success: true, data: comSituacao(empreendedor) });
   } catch (erro) {
     next(erro);
   }
@@ -207,7 +251,10 @@ export async function criarMeuNegocio(req, res, next) {
     // Cadastrar o negócio promove a conta comum a EMPREENDEDOR
     const { empreendedor, perfilAnterior } = await prisma.$transaction(async (tx) => {
       const criado = await tx.empreendedor.create({
-        data: { ...comHorariosParaPrisma(comDataDoConsentimento(req.body)), usuarioId: req.usuario.id },
+        data: {
+          ...comHorariosParaPrisma(comDataDoConsentimento(semModeracao(req, req.body))),
+          usuarioId: req.usuario.id,
+        },
         include: { horarios: incluirHorarios },
       });
       const usuario = await tx.usuario.findUnique({
@@ -241,9 +288,10 @@ export async function criarMeuNegocio(req, res, next) {
       });
     }
 
+    // Cadastrado não é publicado: o negócio nasce como rascunho até o plano ser pago
     res.status(201).json({
       success: true,
-      message: 'Negócio cadastrado com sucesso',
+      message: 'Negócio cadastrado. Escolha um plano para publicá-lo na vitrine',
       data: empreendedor,
       perfilAtualizado: perfilAnterior === PERFIS.COMUM ? PERFIS.EMPREENDEDOR : perfilAnterior,
     });
@@ -259,26 +307,31 @@ export async function buscarEmpreendedor(req, res, next) {
 
     const empreendedor = await prisma.empreendedor.findUnique({
       where: { id },
-      include: { produtos: { orderBy: { nome: 'asc' } }, horarios: incluirHorarios },
+      include: {
+        produtos: { orderBy: { nome: 'asc' } },
+        horarios: incluirHorarios,
+        assinaturas: ASSINATURAS_PARA_SITUACAO,
+      },
     });
 
     if (!empreendedor) {
       return res.status(404).json({ success: false, message: 'Empreendedor não encontrado' });
     }
 
-    // Negócio desativado só aparece para o dono e para o admin
+    // Negócio fora da vitrine (sem plano em vigor ou suspenso) só aparece para
+    // o dono, em modo privado, e para a administração
     const dono = empreendedor.usuarioId && empreendedor.usuarioId === req.usuario?.id;
-    if (!empreendedor.ativo && !ehAdmin(req.usuario) && !dono) {
+    const privilegiado = ehAdmin(req.usuario) || dono;
+    if (!estaPublicado(empreendedor) && !privilegiado) {
       return res.status(404).json({ success: false, message: 'Empreendedor não encontrado' });
     }
+    if (privilegiado) return res.json({ success: true, data: comSituacao(empreendedor) });
 
-    // Visitante não vê itens indisponíveis nem o plano do negócio
-    if (!ehAdmin(req.usuario) && !dono) {
-      empreendedor.produtos = empreendedor.produtos.filter((produto) => produto.disponivel);
-      for (const campo of Object.keys(CAMPOS_PRIVADOS)) delete empreendedor[campo];
-    }
-
-    res.json({ success: true, data: empreendedor });
+    // Visitante não vê itens indisponíveis, o plano nem as assinaturas do negócio
+    const { assinaturas: _assinaturas, ...publico } = empreendedor;
+    publico.produtos = publico.produtos.filter((produto) => produto.disponivel);
+    for (const campo of Object.keys(CAMPOS_PRIVADOS)) delete publico[campo];
+    res.json({ success: true, data: publico });
   } catch (erro) {
     next(erro);
   }
@@ -298,9 +351,10 @@ export async function criarEmpreendedor(req, res, next) {
       descricao: `Empreendedor cadastrado pela administração: ${empreendedor.nomeNegocio}`,
       depois: req.body,
     });
+    // Sem conta responsável e sem plano, fica como rascunho fora da vitrine
     res.status(201).json({
       success: true,
-      message: 'Empreendedor cadastrado com sucesso',
+      message: 'Empreendedor cadastrado como rascunho: ele só aparece na vitrine com uma assinatura em vigor',
       data: empreendedor,
     });
   } catch (erro) {
@@ -316,7 +370,7 @@ export async function atualizarEmpreendedor(req, res, next) {
 
     const empreendedor = await prisma.empreendedor.update({
       where: { id },
-      data: comHorariosParaPrisma(comDataDoConsentimento(req.body), { edicao: true }),
+      data: comHorariosParaPrisma(comDataDoConsentimento(semModeracao(req, req.body)), { edicao: true }),
       include: { horarios: incluirHorarios },
     });
     if ('fotoUrl' in req.body) await apagarSeTrocou(prisma, antes.fotoUrl, empreendedor.fotoUrl);

@@ -11,6 +11,8 @@ const banco = vi.hoisted(() => {
       if (esperado && typeof esperado === 'object' && !(esperado instanceof Date)) {
         if ('not' in esperado) return esperado.not === null ? valor != null : valor !== esperado.not
         if ('in' in esperado) return esperado.in.includes(valor)
+        if ('gt' in esperado) return valor != null && valor > esperado.gt
+        if ('lte' in esperado) return valor != null && valor <= esperado.lte
       }
       return valor === esperado
     })
@@ -150,7 +152,9 @@ describe('aplicarEvento: a máquina de estados', () => {
     expect(ativa).toMatchObject({ status: STATUS.ATIVA, gatewayAssinaturaId: 'subs_DESTAQUE' })
     expect(ativa.inicioEm).toBeInstanceOf(Date)
     expect(ativa.proximaCobranca > ativa.inicioEm).toBe(true)
-    expect(negocio()).toMatchObject({ planoAtual: 'DESTAQUE', emDestaque: true })
+    // O período pago vai até a próxima cobrança, mais a folga para a renovação chegar
+    expect(ativa.vigenteAte.getTime() - ativa.proximaCobranca.getTime()).toBe(servico.FOLGA_RENOVACAO_MS)
+    expect(negocio()).toMatchObject({ planoAtual: 'DESTAQUE', emDestaque: true, publicadoAte: ativa.vigenteAte })
     expect(registrarLog).toHaveBeenCalledWith(REQ, expect.objectContaining({ tipoEntidade: 'Assinatura' }))
   })
 
@@ -166,11 +170,11 @@ describe('aplicarEvento: a máquina de estados', () => {
     expect(assinatura(ativa.id).status).toBe(STATUS.ATIVA)
   })
 
-  it('cobrança recusada: INADIMPLENTE e o destaque sai (o negócio segue na vitrine)', async () => {
+  it('cobrança recusada: INADIMPLENTE e o negócio sai da vitrine até regularizar', async () => {
     const ativa = await assinarEPagar('DESTAQUE')
     await servico.aplicarEvento(REQ, { tipo: EVENTOS.FALHOU, assinaturaId: 'subs_DESTAQUE' }, 'TESTE')
     expect(assinatura(ativa.id).status).toBe(STATUS.INADIMPLENTE)
-    expect(negocio()).toMatchObject({ planoAtual: 'NENHUM', emDestaque: false })
+    expect(negocio()).toMatchObject({ planoAtual: 'NENHUM', emDestaque: false, publicadoAte: null })
   })
 
   it('renovação paga depois da falha volta a ATIVA com o destaque', async () => {
@@ -179,15 +183,32 @@ describe('aplicarEvento: a máquina de estados', () => {
     await servico.aplicarEvento(REQ, { tipo: EVENTOS.RENOVADA, assinaturaId: 'subs_DESTAQUE' }, 'TESTE')
     expect(assinatura(ativa.id).status).toBe(STATUS.ATIVA)
     expect(negocio().emDestaque).toBe(true)
+    expect(negocio().publicadoAte > new Date()).toBe(true)
   })
 
-  it('cancelamento tira o plano; aviso de ativação atrasado não a ressuscita', async () => {
+  it('cancelamento respeita o período pago; depois dele o negócio sai da vitrine', async () => {
     const ativa = await assinarEPagar('DESTAQUE')
     await servico.aplicarEvento(REQ, { tipo: EVENTOS.CANCELADA, assinaturaId: 'subs_DESTAQUE' }, 'TESTE')
     expect(assinatura(ativa.id).status).toBe(STATUS.CANCELADA)
-    expect(negocio()).toMatchObject({ planoAtual: 'NENHUM', emDestaque: false })
+    // Ainda dentro do período: segue publicado e com os benefícios
+    expect(negocio()).toMatchObject({ planoAtual: 'DESTAQUE', emDestaque: true, publicadoAte: ativa.vigenteAte })
+
+    const depoisDoPeriodo = new Date(ativa.vigenteAte.getTime() + 1000)
+    await servico.sincronizarNegocio(banco.cliente, 10, depoisDoPeriodo)
+    expect(negocio()).toMatchObject({ planoAtual: 'NENHUM', emDestaque: false, publicadoAte: null })
+  })
+
+  it('aviso de ativação atrasado não ressuscita uma assinatura cancelada', async () => {
+    const ativa = await assinarEPagar('DESTAQUE')
+    await servico.aplicarEvento(REQ, { tipo: EVENTOS.CANCELADA, assinaturaId: 'subs_DESTAQUE' }, 'TESTE')
     await servico.aplicarEvento(REQ, { tipo: EVENTOS.ATIVADA, assinaturaId: 'subs_DESTAQUE' }, 'TESTE')
     expect(assinatura(ativa.id).status).toBe(STATUS.CANCELADA)
+  })
+
+  it('assinatura ativa cuja renovação não chegou vence pela data', async () => {
+    const ativa = await assinarEPagar('ESSENCIAL')
+    await servico.sincronizarNegocio(banco.cliente, 10, new Date(ativa.vigenteAte.getTime() + 1))
+    expect(negocio()).toMatchObject({ planoAtual: 'NENHUM', publicadoAte: null })
   })
 
   it('checkout abandonado e pago mesmo assim é ativado: quem pagou recebe o plano', async () => {
@@ -221,8 +242,21 @@ describe('troca de plano', () => {
   it('Destaque -> Essencial: o destaque sai assim que o Essencial é pago', async () => {
     await assinarEPagar('DESTAQUE')
     await assinarEPagar('ESSENCIAL', 'subs_essencial_2')
+    // Continua publicado, só sem os benefícios do Destaque
     expect(negocio()).toMatchObject({ planoAtual: 'ESSENCIAL', emDestaque: false })
+    expect(negocio().publicadoAte > new Date()).toBe(true)
     expect(banco.estado.assinaturas.filter((a) => a.status === STATUS.ATIVA)).toHaveLength(1)
+  })
+
+  it('plano novo pago dentro do período de um cancelado encerra o antigo na hora', async () => {
+    const antiga = await assinarEPagar('DESTAQUE')
+    await servico.cancelarAssinaturaDoNegocio(REQ, 10)
+    provedor.cancelarAssinatura.mockClear()
+    await assinarEPagar('ESSENCIAL', 'subs_volta')
+    // Não ficam dois planos valendo, e o cancelado não é cancelado de novo no gateway
+    expect(assinatura(antiga.id).vigenteAte <= new Date()).toBe(true)
+    expect(negocio()).toMatchObject({ planoAtual: 'ESSENCIAL', emDestaque: false })
+    expect(provedor.cancelarAssinatura).not.toHaveBeenCalled()
   })
 
   it('falha ao cancelar a antiga no gateway não desfaz a troca (fica no log)', async () => {
@@ -262,19 +296,29 @@ describe('conciliação (volta do checkout no localhost)', () => {
 })
 
 describe('cancelamento pelo empreendedor', () => {
-  it('cancela no gateway e tira o plano do negócio', async () => {
+  it('cancela no gateway (sem novas cobranças) e mantém o negócio até o fim do período', async () => {
     const ativa = await assinarEPagar('DESTAQUE')
-    await servico.cancelarAssinaturaDoNegocio(REQ, 10)
+    const cancelada = await servico.cancelarAssinaturaDoNegocio(REQ, 10)
     expect(provedor.cancelarAssinatura).toHaveBeenCalledWith('subs_DESTAQUE')
     expect(assinatura(ativa.id).status).toBe(STATUS.CANCELADA)
-    expect(negocio()).toMatchObject({ planoAtual: 'NENHUM', emDestaque: false })
+    expect(cancelada.vigenteAte).toEqual(ativa.vigenteAte)
+    expect(negocio()).toMatchObject({ planoAtual: 'DESTAQUE', publicadoAte: ativa.vigenteAte })
+    // No painel, a cancelada ainda em vigor é a assinatura atual
+    expect(await servico.assinaturaAtual(10)).toMatchObject({ id: ativa.id, status: STATUS.CANCELADA })
   })
 
-  it('checkout não pago é só abandonado, sem chamar o gateway', async () => {
+  it('cancelar de novo dentro do período responde 404', async () => {
+    await assinarEPagar('DESTAQUE')
+    await servico.cancelarAssinaturaDoNegocio(REQ, 10)
+    await expect(servico.cancelarAssinaturaDoNegocio(REQ, 10)).rejects.toMatchObject({ status: 404 })
+  })
+
+  it('checkout não pago é só abandonado, sem chamar o gateway, e nada é publicado', async () => {
     const nova = await servico.iniciarAssinatura(REQ, 10, 'DESTAQUE')
     await servico.cancelarAssinaturaDoNegocio(REQ, 10)
     expect(assinatura(nova.id).status).toBe(STATUS.CANCELADA)
     expect(provedor.cancelarAssinatura).not.toHaveBeenCalled()
+    expect(negocio().publicadoAte ?? null).toBeNull()
   })
 
   it('sem assinatura para cancelar responde 404', async () => {

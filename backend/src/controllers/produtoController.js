@@ -6,6 +6,7 @@ import { registrarLog, diferencas } from '../services/auditoria.js';
 import { erroHttp, parseId } from '../utils/erros.js';
 import { lerPaginacao, resumoPaginacao } from '../utils/paginacao.js';
 import { apagarSeOrfa, apagarSeTrocou, campoImagem } from '../services/imagens.js';
+import { estaPublicado, filtroPublicado } from '../services/publicacao.js';
 
 const produtoSchema = z.object({
   nome: z.string({ error: 'Nome é obrigatório' }).trim().min(2, 'Nome deve ter ao menos 2 caracteres').max(150),
@@ -78,11 +79,12 @@ export async function listarProdutos(req, res, next) {
     if (categoria) filtroEmpreendedor.categoria = categoria;
     if (bairro) filtroEmpreendedor.bairro = bairro;
 
-    // Quem não é admin nem dono só vê itens disponíveis de negócios ativos
+    // Quem não é admin nem dono só vê itens disponíveis de negócios publicados
+    // (assinatura em vigor)
     const vendoOProprioNegocio = Boolean(meuNegocioId) && Number(empreendedorId) === meuNegocioId;
     if (!ehAdmin(req.usuario) && !vendoOProprioNegocio) {
       where.disponivel = true;
-      filtroEmpreendedor.ativo = true;
+      Object.assign(filtroEmpreendedor, filtroPublicado());
     }
     if (Object.keys(filtroEmpreendedor).length > 0) where.empreendedor = filtroEmpreendedor;
 
@@ -90,7 +92,7 @@ export async function listarProdutos(req, res, next) {
     const consulta = {
       where,
       // Itens de negócios em destaque primeiro, depois os demais, mais novos antes.
-      // Só ordem: nenhum item sai da lista.
+      // O Destaque só muda a ordem: os itens do Essencial continuam na lista.
       orderBy: [{ empreendedor: { emDestaque: 'desc' } }, { createdAt: 'desc' }],
       include: { empreendedor: empreendedorResumo },
     };
@@ -127,13 +129,15 @@ export async function buscarProduto(req, res, next) {
       return res.status(404).json({ success: false, message: 'Produto não encontrado' });
     }
 
-    // Item indisponível ou de negócio inativo só aparece para o dono e o admin
+    // Item indisponível ou de negócio fora da vitrine só aparece para o dono e o admin
     const dono = produto.empreendedor.usuarioId && produto.empreendedor.usuarioId === req.usuario?.id;
-    const escondido = !produto.disponivel || !produto.empreendedor.ativo;
+    const escondido = !produto.disponivel || !estaPublicado(produto.empreendedor);
     if (escondido && !ehAdmin(req.usuario) && !dono) {
       return res.status(404).json({ success: false, message: 'Produto não encontrado' });
     }
 
+    // A vigência da assinatura é informação comercial: serviu só para decidir acima
+    delete produto.empreendedor.publicadoAte;
     res.json({ success: true, data: produto });
   } catch (erro) {
     next(erro);

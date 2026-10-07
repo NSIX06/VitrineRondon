@@ -7,7 +7,7 @@ import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { semearPlanos } from './planos.js';
-import { PREFIXO_DEMO, STATUS, proximaCobrancaApos, sincronizarNegocio } from '../src/services/assinaturas.js';
+import { PREFIXO_DEMO, STATUS, sincronizarNegocio, vigenciaApos } from '../src/services/assinaturas.js';
 import { TIPOS, diaLocal } from '../src/services/metricas.js';
 
 const prisma = new PrismaClient();
@@ -244,7 +244,7 @@ const perguntasFrequentes = [
     ordem: 3,
     pergunta: 'Quanto custa anunciar no VitrineRondon?',
     resposta:
-      'O cadastro é gratuito e a plataforma não cobra comissão sobre as vendas: seu negócio aparece na vitrine sem pagar nada. Quem quiser mais recursos pode assinar um plano opcional: o Essencial (R$ 50 por mês) traz as estatísticas do perfil, e o Destaque (R$ 75 por mês) soma selo, prioridade nas listas, espaço na seção de destaques e a possibilidade de divulgação nas redes oficiais. Os planos aumentam a oportunidade de exposição, mas não garantem visitas, contatos ou vendas. Veja os detalhes na página Planos.',
+      'Navegar pela vitrine é gratuito. Para divulgar um negócio, é preciso criar uma conta e assinar um dos planos mensais: o Essencial (R$ 50 por mês) publica o perfil completo, com produtos, mapa, contato e estatísticas básicas, e o Destaque (R$ 75 por mês) soma selo, prioridade nas listas, espaço na seção de destaques, estatísticas ampliadas e a possibilidade de divulgação nas redes oficiais. O negócio fica publicado enquanto a assinatura estiver em dia, e a plataforma não cobra comissão sobre as vendas. Os planos aumentam a oportunidade de exposição, mas não garantem visitas, contatos ou vendas. Veja os detalhes na página Planos.',
   },
   {
     categoria: 'Privacidade',
@@ -257,13 +257,58 @@ const perguntasFrequentes = [
 
 // ---------------------------------------------------------------------------
 // Demonstração das assinaturas (roteiro em DEMO.md)
-// Ateliê Fio & Arte: plano Destaque ativo, com divulgação nas redes.
-// Silva Reparos: plano Essencial ativo; na apresentação, o dono assina o
-// Destaque pelo checkout de testes e o negócio sobe na vitrine.
+// Só aparece na vitrine negócio com conta e assinatura em vigor, então cada
+// negócio de exemplo tem a sua conta (senha DEMO_EMPREENDEDOR_SENHA):
+// - Ateliê Fio & Arte: Destaque ativo, com divulgação nas redes;
+// - Doces da Dona Lu, Silva Reparos e Brechó da Ju: Essencial ativo. Na
+//   apresentação, o Carlos (Silva Reparos) assina o Destaque e sobe na lista;
+// - Espaço Bela Flor: rascunho, cadastrado e sem plano. Fica fora da vitrine
+//   até a Patrícia escolher um plano e pagar.
 // As assinaturas nunca passaram pelo gateway: os ids "demo_" deixam a
 // simulação do admin encontrá-las e o cancelamento não chama o AbacatePay.
 // Os números de desempenho são de exemplo, para o painel não abrir vazio.
 // ---------------------------------------------------------------------------
+const CONTAS_DEMO = [
+  {
+    negocio: 'Ateliê Fio & Arte',
+    nome: 'Maria Aparecida Souza',
+    email: 'maria@ateliefioearte.com.br',
+    telefone: '66999881234',
+    plano: 'DESTAQUE',
+    assinadoHaDias: 12,
+  },
+  {
+    negocio: 'Doces da Dona Lu',
+    nome: 'Luciana Ferreira',
+    email: 'luciana@docesdadonalu.com.br',
+    telefone: '66998765432',
+    plano: 'ESSENCIAL',
+    assinadoHaDias: 25,
+  },
+  {
+    negocio: 'Silva Reparos Residenciais',
+    nome: 'Carlos Eduardo Silva',
+    email: 'carlos@silvareparos.com.br',
+    telefone: '66997771234',
+    plano: 'ESSENCIAL',
+    assinadoHaDias: 20,
+  },
+  {
+    negocio: 'Brechó da Ju',
+    nome: 'Juliana Martins',
+    email: 'juliana@brechodaju.com.br',
+    telefone: '66996543210',
+    plano: 'ESSENCIAL',
+    assinadoHaDias: 8,
+  },
+  {
+    negocio: 'Espaço Bela Flor',
+    nome: 'Patrícia Oliveira',
+    email: 'patricia@espacobelaflor.com.br',
+    telefone: '66995551122',
+    plano: null, // rascunho: ainda não escolheu plano
+  },
+];
 const DIA_MS = 24 * 60 * 60 * 1000;
 const diasAtras = (n) => new Date(Date.now() - n * DIA_MS);
 
@@ -287,7 +332,7 @@ async function criarAssinaturaDemo(empreendedorId, nomePlano, iniciadaHaDias) {
       gatewayCheckoutId: `${PREFIXO_DEMO}bill_${empreendedorId}`,
       gatewayAssinaturaId: `${PREFIXO_DEMO}subs_${empreendedorId}`,
       inicioEm,
-      proximaCobranca: proximaCobrancaApos(inicioEm, plano.ciclo),
+      ...vigenciaApos(inicioEm, plano.ciclo),
       criadoEm: inicioEm,
     },
   });
@@ -320,9 +365,12 @@ async function criarMetricasDemo(empreendedor, { escala, emDestaqueHaDias = 0, s
   return linhas.length;
 }
 
-async function semearDemonstracao({ atelie, silva }) {
-  await criarAssinaturaDemo(atelie.id, 'DESTAQUE', 12);
-  await criarAssinaturaDemo(silva.id, 'ESSENCIAL', 20);
+async function semearDemonstracao(porNome) {
+  for (const conta of CONTAS_DEMO.filter((c) => c.plano)) {
+    await criarAssinaturaDemo(porNome(conta.negocio).id, conta.plano, conta.assinadoHaDias);
+  }
+  const atelie = porNome('Ateliê Fio & Arte');
+  const silva = porNome('Silva Reparos Residenciais');
 
   await prisma.empreendedor.update({
     where: { id: atelie.id },
@@ -352,7 +400,8 @@ async function semearDemonstracao({ atelie, silva }) {
   const metricas =
     (await criarMetricasDemo(atelie, { escala: 1.6, emDestaqueHaDias: 12, semente: 7 })) +
     (await criarMetricasDemo(silva, { escala: 1, semente: 11 }));
-  console.log(`  - Destaque: ${atelie.nomeNegocio} | Essencial: ${silva.nomeNegocio} | ${metricas} linhas de métricas`);
+  const rascunhos = CONTAS_DEMO.filter((c) => !c.plano).map((c) => c.negocio);
+  console.log(`  - 1 Destaque, 3 Essencial, rascunho: ${rascunhos.join(', ')} | ${metricas} linhas de métricas`);
 }
 
 /** Grava o aceite dos dois termos para um usuário (uma linha por documento) */
@@ -404,37 +453,27 @@ async function main() {
   await registrarAceites(admin.id);
   console.log(`  - ${admin.email} (ADMIN)`);
 
-  // Conta de demonstração: dona do Silva Reparos Residenciais
-  const donoSilva = await prisma.usuario.create({
-    data: {
-      nome: 'Carlos Eduardo Silva',
-      email: 'carlos@silvareparos.com.br',
-      telefone: '66997771234',
-      senhaHash: await bcrypt.hash(demoSenha, 10),
-      perfil: 'EMPREENDEDOR',
-    },
-  });
-  await registrarAceites(donoSilva.id);
-  console.log(`  - ${donoSilva.email} (EMPREENDEDOR)`);
-
-  // Conta de demonstração: dona do Ateliê Fio & Arte (plano Destaque)
-  const donaAtelie = await prisma.usuario.create({
-    data: {
-      nome: 'Maria Aparecida Souza',
-      email: 'maria@ateliefioearte.com.br',
-      telefone: '66999881234',
-      senhaHash: await bcrypt.hash(demoSenha, 10),
-      perfil: 'EMPREENDEDOR',
-    },
-  });
-  await registrarAceites(donaAtelie.id);
-  console.log(`  - ${donaAtelie.email} (EMPREENDEDOR)`);
+  // Uma conta por negócio: sem conta (e plano) nenhum negócio é publicado
+  const senhaDemoHash = await bcrypt.hash(demoSenha, 10);
+  const donos = {};
+  for (const conta of CONTAS_DEMO) {
+    const usuario = await prisma.usuario.create({
+      data: {
+        nome: conta.nome,
+        email: conta.email,
+        telefone: conta.telefone,
+        senhaHash: senhaDemoHash,
+        perfil: 'EMPREENDEDOR',
+      },
+    });
+    await registrarAceites(usuario.id);
+    donos[conta.negocio] = usuario.id;
+    console.log(`  - ${usuario.email} (EMPREENDEDOR)`);
+  }
 
   console.log('Inserindo empreendedores e produtos...');
   const empreendedoresCriados = [];
   for (const { produtos, horarios = [], ...dadosEmpreendedor } of empreendedoresSeed) {
-    // Silva Reparos e Ateliê têm dono; os demais ficam "sem dono" até um admin vincular
-    const donos = { 'Silva Reparos Residenciais': donoSilva.id, 'Ateliê Fio & Arte': donaAtelie.id };
     const usuarioId = donos[dadosEmpreendedor.nomeNegocio] ?? null;
     const empreendedor = await prisma.empreendedor.create({
       data: {
@@ -451,7 +490,7 @@ async function main() {
 
   console.log('Inserindo assinaturas de demonstração...');
   const porNome = (nome) => empreendedoresCriados.find((e) => e.nomeNegocio === nome);
-  await semearDemonstracao({ atelie: porNome('Ateliê Fio & Arte'), silva: porNome('Silva Reparos Residenciais') });
+  await semearDemonstracao(porNome);
 
   console.log('Inserindo mensagem de contato de exemplo...');
   await prisma.contato.create({

@@ -9,6 +9,7 @@
 // O dono do negócio e a administração não contam como visitantes.
 import { createHash, randomBytes } from 'node:crypto';
 import prisma from '../config/prisma.js';
+import { estaPublicado } from './publicacao.js';
 
 export const TIPOS = Object.freeze({
   VISUALIZACAO_PERFIL: 'VISUALIZACAO_PERFIL',
@@ -99,9 +100,10 @@ export async function registrarEvento(req, { empreendedorId, tipo, produtoId }) 
   if (!TIPOS_PUBLICOS.includes(tipo)) return false;
   const negocio = await prisma.empreendedor.findUnique({
     where: { id: empreendedorId },
-    select: { id: true, ativo: true, usuarioId: true },
+    select: { id: true, ativo: true, usuarioId: true, publicadoAte: true },
   });
-  if (!negocio?.ativo || ehDonoOuAdmin(req, negocio)) return false;
+  // Negócio fora da vitrine não recebe visitas: nada a contar
+  if (!estaPublicado(negocio) || ehDonoOuAdmin(req, negocio)) return false;
 
   let referenciaId = 0;
   if (tipo === TIPOS.VISUALIZACAO_PRODUTO) {

@@ -2,7 +2,8 @@
 import { z } from 'zod';
 import prisma from '../config/prisma.js';
 import { registrarLog } from '../services/auditoria.js';
-import { parseId } from '../utils/erros.js';
+import { erroHttp, parseId } from '../utils/erros.js';
+import { filtroPublicado } from '../services/publicacao.js';
 
 export const criarContatoSchema = z.object({
   nome: z.string({ error: 'Nome é obrigatório' }).trim().min(2, 'Nome deve ter ao menos 2 caracteres').max(150),
@@ -34,6 +35,14 @@ export async function listarContatos(req, res, next) {
 // POST /api/contatos  (público)
 export async function criarContato(req, res, next) {
   try {
+    // Mensagem para um negócio só se ele estiver na vitrine (assinatura em vigor)
+    if (req.body.empreendedorId) {
+      const negocio = await prisma.empreendedor.findFirst({
+        where: { id: req.body.empreendedorId, ...filtroPublicado() },
+        select: { id: true },
+      });
+      if (!negocio) throw erroHttp(400, 'Esse negócio não está disponível para contato');
+    }
     const contato = await prisma.contato.create({ data: req.body });
     await registrarLog(req, {
       acao: 'CREATE',

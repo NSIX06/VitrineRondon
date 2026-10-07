@@ -15,7 +15,8 @@ const { TIPOS } = metricas
 
 /** Requisição de um visitante (IP e navegador definem a marca anônima) */
 const visitante = (ip = '200.1.1.1', usuario = null) => ({ ip, headers: { 'user-agent': 'Navegador' }, usuario })
-const NEGOCIO = { id: 7, ativo: true, usuarioId: 70 }
+// Negócio publicado: assinatura em vigor até daqui a um mês
+const NEGOCIO = { id: 7, ativo: true, usuarioId: 70, publicadoAte: new Date(Date.now() + 30 * 86400000) }
 
 beforeEach(() => {
   vi.clearAllMocks()
@@ -73,6 +74,14 @@ describe('registrarEvento', () => {
     expect(await metricas.registrarEvento(visitante(), { empreendedorId: 7, tipo: TIPOS.VISUALIZACAO_PERFIL })).toBe(false)
     prisma.empreendedor.findUnique.mockResolvedValueOnce(null)
     expect(await metricas.registrarEvento(visitante(), { empreendedorId: 8, tipo: TIPOS.VISUALIZACAO_PERFIL })).toBe(false)
+  })
+
+  it('negócio sem assinatura em vigor está fora da vitrine: nada conta', async () => {
+    prisma.empreendedor.findUnique.mockResolvedValueOnce({ ...NEGOCIO, publicadoAte: null })
+    expect(await metricas.registrarEvento(visitante(), { empreendedorId: 7, tipo: TIPOS.VISUALIZACAO_PERFIL })).toBe(false)
+    prisma.empreendedor.findUnique.mockResolvedValueOnce({ ...NEGOCIO, publicadoAte: new Date(Date.now() - 1000) })
+    expect(await metricas.registrarEvento(visitante(), { empreendedorId: 7, tipo: TIPOS.CLIQUE_WHATSAPP })).toBe(false)
+    expect(prisma.metricaDiaria.upsert).not.toHaveBeenCalled()
   })
 
   it('visualização de produto só conta se o produto for daquele negócio', async () => {

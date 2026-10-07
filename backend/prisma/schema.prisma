@@ -35,11 +35,14 @@ model Empreendedor {
   instagram            String?              @db.VarChar(100)
   fotoUrl              String?              @map("foto_url") @db.VarChar(500)
   ativo                Boolean              @default(true)
-  // Plano em vigor, copiado da assinatura ATIVA para a vitrine não precisar
+  // Plano em vigor, copiado da assinatura vigente para a vitrine não precisar
   // juntar tabelas a cada listagem. Só o serviço de assinaturas escreve aqui.
-  // Sem assinatura o negócio continua visível normalmente (NENHUM).
   planoAtual           String               @default("NENHUM") @map("plano_atual") @db.VarChar(20) // NENHUM | nome do plano
   emDestaque           Boolean              @default(false) @map("em_destaque")
+  // Até quando o negócio aparece ao público: fim do período pago da assinatura
+  // vigente. Nulo ou no passado = fora da vitrine (rascunho, aguardando
+  // pagamento ou assinatura vencida). Os dados continuam guardados.
+  publicadoAte         DateTime?            @map("publicado_ate")
   // Consentimento para a VitrineRondon usar nome, fotos e produtos em
   // divulgações nas redes oficiais (benefício do plano Destaque)
   autorizaDivulgacao   Boolean              @default(false) @map("autoriza_divulgacao")
@@ -61,6 +64,8 @@ model Empreendedor {
   @@index([ativo, bairro])
   // Ordenação "destaques primeiro" nas listagens
   @@index([ativo, emDestaque])
+  // A vitrine pública só mostra negócio com assinatura em vigor
+  @@index([ativo, publicadoAte])
   @@map("empreendedores")
 }
 
@@ -245,6 +250,10 @@ model Assinatura {
   checkoutUrl         String?      @map("checkout_url") @db.VarChar(500)
   inicioEm            DateTime?    @map("inicio_em")
   proximaCobranca     DateTime?    @map("proxima_cobranca")
+  // Fim do período já pago (próxima cobrança + um dia de folga para o aviso
+  // de renovação chegar). Cancelada pelo empreendedor, vale até esta data;
+  // cobrança recusada ou plano substituído encerram na hora.
+  vigenteAte          DateTime?    @map("vigente_ate")
   canceladaEm         DateTime?    @map("cancelada_em")
   criadoEm            DateTime     @default(now()) @map("created_at")
   atualizadoEm        DateTime     @updatedAt @map("updated_at")

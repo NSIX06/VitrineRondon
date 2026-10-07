@@ -4,7 +4,14 @@
 // demonstração percorre exatamente o mesmo caminho de um pagamento real.
 //
 // Status: PENDENTE (checkout criado) -> ATIVA (pago) -> INADIMPLENTE (cobrança
-// do ciclo recusada) / CANCELADA. Só ATIVA libera os benefícios do plano.
+// do ciclo recusada) / CANCELADA.
+//
+// Vigência: cada assinatura paga guarda até quando vale (vigenteAte = próxima
+// cobrança + um dia de folga). A assinatura "vigente" é a ATIVA, ou a
+// CANCELADA pelo empreendedor que ainda está dentro do período pago: o
+// cancelamento respeita o que já foi pago. Cobrança recusada e plano
+// substituído encerram a vigência na hora. Só a assinatura vigente publica o
+// negócio (publicadoAte) e libera os benefícios do plano.
 //
 // Troca de plano: é um checkout novo do plano escolhido. Quando ele é pago, a
 // assinatura anterior é cancelada no gateway. Assim o benefício muda na hora
@@ -45,24 +52,39 @@ export function proximaCobrancaApos(data, ciclo = 'MONTHLY') {
   return proxima;
 }
 
+/** Folga depois da data de cobrança, para o aviso de renovação do gateway chegar */
+export const FOLGA_RENOVACAO_MS = 24 * 60 * 60 * 1000;
+
+/** Até quando vale o período pago que começa (ou renova) agora */
+export function vigenciaApos(data, ciclo = 'MONTHLY') {
+  const proximaCobranca = proximaCobrancaApos(data, ciclo);
+  return { proximaCobranca, vigenteAte: new Date(proximaCobranca.getTime() + FOLGA_RENOVACAO_MS) };
+}
+
+/** Assinatura dentro do período pago: ATIVA, ou CANCELADA que ainda não venceu */
+function filtroVigente(agora = new Date()) {
+  return { status: { in: [STATUS.ATIVA, STATUS.CANCELADA] }, vigenteAte: { gt: agora } };
+}
+
 /** Planos à venda, na ordem da página de planos */
 export function listarPlanos(cliente = prisma) {
   return cliente.plano.findMany({ where: { ativo: true }, orderBy: { ordem: 'asc' } });
 }
 
 /**
- * Copia para o negócio o plano da assinatura ATIVA (ou NENHUM). A vitrine lê
- * daqui para ordenar e mostrar o selo sem juntar tabelas.
+ * Copia para o negócio o plano da assinatura vigente (ou NENHUM) e até quando
+ * ele fica publicado. A vitrine lê daqui para filtrar, ordenar e mostrar o selo
+ * sem juntar tabelas.
  */
-export async function sincronizarNegocio(cliente, empreendedorId) {
-  const ativa = await cliente.assinatura.findFirst({
-    where: { empreendedorId, status: STATUS.ATIVA },
+export async function sincronizarNegocio(cliente, empreendedorId, agora = new Date()) {
+  const vigente = await cliente.assinatura.findFirst({
+    where: { empreendedorId, ...filtroVigente(agora) },
     orderBy: { inicioEm: 'desc' },
     include: { plano: true },
   });
-  const dados = ativa
-    ? { planoAtual: ativa.plano.nome, emDestaque: ativa.plano.destaque }
-    : { planoAtual: 'NENHUM', emDestaque: false };
+  const dados = vigente
+    ? { planoAtual: vigente.plano.nome, emDestaque: vigente.plano.destaque, publicadoAte: vigente.vigenteAte }
+    : { planoAtual: 'NENHUM', emDestaque: false, publicadoAte: null };
   await cliente.empreendedor.update({ where: { id: empreendedorId }, data: dados });
   return dados;
 }
@@ -71,7 +93,7 @@ export async function sincronizarNegocio(cliente, empreendedorId) {
 export async function negocioDoUsuario(usuario) {
   const negocio = await prisma.empreendedor.findUnique({
     where: { usuarioId: usuario.id },
-    select: { id: true, nomeNegocio: true, planoAtual: true, emDestaque: true },
+    select: { id: true, nomeNegocio: true, planoAtual: true, emDestaque: true, publicadoAte: true, ativo: true },
   });
   if (!negocio) throw erroHttp(404, 'Cadastre seu negócio antes de escolher um plano');
   return negocio;
@@ -80,13 +102,21 @@ export async function negocioDoUsuario(usuario) {
 const incluirPlano = { plano: true };
 
 /**
- * Assinatura para mostrar no painel: a ATIVA; senão a PENDENTE mais nova
- * (checkout em andamento); senão a última que existiu.
+ * Assinatura para mostrar no painel: a ATIVA; senão a cancelada ainda dentro
+ * do período pago; senão a PENDENTE mais nova (checkout em andamento); senão a
+ * última que existiu.
  */
 export async function assinaturaAtual(empreendedorId, cliente = prisma) {
-  for (const status of [STATUS.ATIVA, STATUS.PENDENTE, STATUS.INADIMPLENTE]) {
+  const agora = new Date();
+  const ordem = [
+    { status: STATUS.ATIVA },
+    { status: STATUS.CANCELADA, vigenteAte: { gt: agora } },
+    { status: STATUS.PENDENTE },
+    { status: STATUS.INADIMPLENTE },
+  ];
+  for (const filtro of ordem) {
     const achada = await cliente.assinatura.findFirst({
-      where: { empreendedorId, status },
+      where: { empreendedorId, ...filtro },
       orderBy: { criadoEm: 'desc' },
       include: incluirPlano,
     });
@@ -198,20 +228,22 @@ export async function aplicarEvento(req, evento, origem) {
           status: STATUS.ATIVA,
           gatewayAssinaturaId: evento.assinaturaId ?? assinatura.gatewayAssinaturaId,
           inicioEm: assinatura.inicioEm ?? agora,
-          proximaCobranca: proximaCobrancaApos(agora, assinatura.plano.ciclo),
+          ...vigenciaApos(agora, assinatura.plano.ciclo),
           canceladaEm: null,
         };
         break;
       case EVENTOS.RENOVADA:
         if (assinatura.status === STATUS.CANCELADA) break;
-        dados = { status: STATUS.ATIVA, proximaCobranca: proximaCobrancaApos(agora, assinatura.plano.ciclo) };
+        dados = { status: STATUS.ATIVA, ...vigenciaApos(agora, assinatura.plano.ciclo) };
         break;
       case EVENTOS.FALHOU:
         if (assinatura.status !== STATUS.ATIVA) break;
-        dados = { status: STATUS.INADIMPLENTE };
+        // Sem pagamento, sem divulgação: o negócio sai da vitrine até regularizar
+        dados = { status: STATUS.INADIMPLENTE, vigenteAte: agora };
         break;
       case EVENTOS.CANCELADA:
         if (assinatura.status === STATUS.CANCELADA) break;
+        // O que já foi pago continua valendo: vigenteAte não muda
         dados = { status: STATUS.CANCELADA, canceladaEm: agora };
         break;
       default:
@@ -221,22 +253,24 @@ export async function aplicarEvento(req, evento, origem) {
 
     const atualizada = await tx.assinatura.update({ where: { id: assinatura.id }, data: dados, include: incluirPlano });
 
-    // Plano novo pago: as outras assinaturas ativas do negócio são substituídas
+    // Plano novo pago: as outras assinaturas em vigor do negócio são
+    // substituídas na hora (inclusive a cancelada que ainda valia), para não
+    // haver dois planos ao mesmo tempo
     let substituidas = [];
     if (dados.status === STATUS.ATIVA && evento.tipo === EVENTOS.ATIVADA) {
       substituidas = await tx.assinatura.findMany({
-        where: { empreendedorId: assinatura.empreendedorId, status: STATUS.ATIVA, id: { not: assinatura.id } },
+        where: { empreendedorId: assinatura.empreendedorId, ...filtroVigente(agora), id: { not: assinatura.id } },
         include: incluirPlano,
       });
       if (substituidas.length) {
         await tx.assinatura.updateMany({
           where: { id: { in: substituidas.map((s) => s.id) } },
-          data: { status: STATUS.CANCELADA, canceladaEm: agora },
+          data: { status: STATUS.CANCELADA, canceladaEm: agora, vigenteAte: agora },
         });
       }
     }
 
-    const negocio = await sincronizarNegocio(tx, assinatura.empreendedorId);
+    const negocio = await sincronizarNegocio(tx, assinatura.empreendedorId, agora);
     return { assinatura: atualizada, antes: assinatura, mudou: true, substituidas, negocio };
   });
 
@@ -246,7 +280,8 @@ export async function aplicarEvento(req, evento, origem) {
   // segurar o banco. Se falhar, fica no log para tratar à mão.
   for (const antiga of resultado.substituidas) {
     try {
-      if (noGateway(antiga.gatewayAssinaturaId)) {
+      // A cancelada pelo empreendedor já saiu do gateway; só a ATIVA precisa
+      if (antiga.status === STATUS.ATIVA && noGateway(antiga.gatewayAssinaturaId)) {
         await provedorPagamento().cancelarAssinatura(antiga.gatewayAssinaturaId);
       }
     } catch (erro) {
@@ -257,7 +292,7 @@ export async function aplicarEvento(req, evento, origem) {
       tipoEntidade: 'Assinatura',
       entidadeId: antiga.id,
       descricao: `Assinatura do plano ${antiga.plano.titulo} substituída pela troca de plano`,
-      antes: { status: STATUS.ATIVA },
+      antes: { status: antiga.status },
       depois: { status: STATUS.CANCELADA },
     });
   }
@@ -276,6 +311,7 @@ export async function aplicarEvento(req, evento, origem) {
       eventoGateway: evento.eventoId,
       planoAtual: resultado.negocio.planoAtual,
       emDestaque: resultado.negocio.emDestaque,
+      publicadoAte: resultado.negocio.publicadoAte,
     },
   });
   return resultado;
@@ -322,7 +358,10 @@ export async function trocaPendente(empreendedorId, cliente = prisma) {
   });
 }
 
-/** Cancela a assinatura atual do negócio (no gateway e aqui) */
+/**
+ * Cancela a assinatura atual do negócio (no gateway e aqui). As próximas
+ * cobranças param, mas o negócio segue publicado até o fim do período pago.
+ */
 export async function cancelarAssinaturaDoNegocio(req, empreendedorId) {
   const atual = await assinaturaAtual(empreendedorId);
   if (!atual || atual.status === STATUS.CANCELADA) throw erroHttp(404, 'Você não tem assinatura para cancelar');
@@ -353,4 +392,20 @@ export async function cancelarAssinaturaDoNegocio(req, empreendedorId) {
     'EMPREENDEDOR'
   );
   return prisma.assinatura.findUnique({ where: { id: atual.id }, include: incluirPlano });
+}
+
+/**
+ * Negócios cujo período pago acabou guardam o plano e o selo antigos (a
+ * vitrine já os esconde pela data). Esta varredura zera plano e selo para o
+ * painel e a administração mostrarem a situação real. Roda na subida do
+ * servidor e de hora em hora.
+ */
+export async function encerrarVencidas(agora = new Date()) {
+  const vencidos = await prisma.empreendedor.findMany({
+    // Só pela data: negócio suspenso pela administração mantém o plano pago
+    where: { planoAtual: { not: 'NENHUM' }, OR: [{ publicadoAte: null }, { publicadoAte: { lte: agora } }] },
+    select: { id: true },
+  });
+  for (const { id } of vencidos) await sincronizarNegocio(prisma, id, agora);
+  return vencidos.length;
 }

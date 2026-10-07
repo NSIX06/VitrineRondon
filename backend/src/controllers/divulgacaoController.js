@@ -6,6 +6,7 @@ import prisma from '../config/prisma.js';
 import { registrarLog, diferencas } from '../services/auditoria.js';
 import { negocioDoUsuario } from '../services/assinaturas.js';
 import { erroHttp, parseId } from '../utils/erros.js';
+import { estaPublicado, planoEmVigor } from '../services/publicacao.js';
 
 export const TIPOS_DIVULGACAO = ['NEGOCIO', 'PRODUTO', 'SERVICO', 'CAMPANHA', 'INSTITUCIONAL'];
 export const STATUS_DIVULGACAO = ['PLANEJADA', 'PUBLICADA', 'CANCELADA'];
@@ -79,11 +80,13 @@ export async function criarDivulgacao(req, res, next) {
   try {
     const negocio = await prisma.empreendedor.findUnique({
       where: { id: req.body.empreendedorId },
-      select: { id: true, nomeNegocio: true, planoAtual: true, autorizaDivulgacao: true },
+      select: { id: true, nomeNegocio: true, planoAtual: true, publicadoAte: true, ativo: true, autorizaDivulgacao: true },
     });
     if (!negocio) throw erroHttp(404, 'Empreendedor não encontrado');
-    const plano =
-      negocio.planoAtual === 'NENHUM' ? null : await prisma.plano.findUnique({ where: { nome: negocio.planoAtual } });
+    // Só se divulga nas redes o que está na vitrine
+    if (!estaPublicado(negocio)) throw erroHttp(409, 'Este negócio não está publicado na vitrine');
+    const nomePlano = planoEmVigor(negocio);
+    const plano = nomePlano === 'NENHUM' ? null : await prisma.plano.findUnique({ where: { nome: nomePlano } });
     if (!plano?.divulgacao) throw erroHttp(409, 'O plano atual deste negócio não inclui divulgação nas redes');
     if (!negocio.autorizaDivulgacao) {
       throw erroHttp(409, 'O empreendedor ainda não autorizou o uso das informações e imagens na divulgação');

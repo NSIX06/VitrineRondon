@@ -3,6 +3,7 @@ import { z } from 'zod';
 import prisma from '../config/prisma.js';
 import { TIPOS_PUBLICOS, registrarEvento, resumoDesempenho } from '../services/metricas.js';
 import { negocioDoUsuario } from '../services/assinaturas.js';
+import { planoEmVigor } from '../services/publicacao.js';
 
 export const eventoSchema = z.object({
   empreendedorId: z.coerce.number().int().positive(),
@@ -25,8 +26,8 @@ export async function registrarEventoPublico(req, res, next) {
 export async function desempenhoDoMeuNegocio(req, res, next) {
   try {
     const negocio = await negocioDoUsuario(req.usuario);
-    const plano =
-      negocio.planoAtual === 'NENHUM' ? null : await prisma.plano.findUnique({ where: { nome: negocio.planoAtual } });
+    const nomePlano = planoEmVigor(negocio);
+    const plano = nomePlano === 'NENHUM' ? null : await prisma.plano.findUnique({ where: { nome: nomePlano } });
 
     // Estatísticas são benefício dos planos: sem plano, o painel convida a assinar
     if (!plano) {

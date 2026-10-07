@@ -16,6 +16,7 @@ import {
 } from '../services/assinaturas.js';
 import { EVENTOS, provedorPagamento } from '../services/pagamento/index.js';
 import { erroHttp, parseId } from '../utils/erros.js';
+import { ASSINATURAS_PARA_SITUACAO, planoEmVigor, situacaoDoNegocio } from '../services/publicacao.js';
 
 export const escolherPlanoSchema = z.object({
   plano: z.string({ error: 'Escolha um plano' }).trim().min(1, 'Escolha um plano').max(30),
@@ -47,6 +48,8 @@ function formatarAssinatura(assinatura) {
     plano: formatarPlano(assinatura.plano),
     inicioEm: assinatura.inicioEm,
     proximaCobranca: assinatura.status === STATUS.ATIVA ? assinatura.proximaCobranca : null,
+    // Fim do período pago: a cancelada continua valendo até aqui
+    vigenteAte: [STATUS.ATIVA, STATUS.CANCELADA].includes(assinatura.status) ? assinatura.vigenteAte : null,
     canceladaEm: assinatura.canceladaEm,
     criadoEm: assinatura.criadoEm,
     // O link do checkout só serve enquanto ele não foi pago
@@ -104,14 +107,27 @@ export async function minhaAssinatura(req, res, next) {
     const troca = await trocaPendente(negocio.id);
     const negocioAtualizado = await prisma.empreendedor.findUnique({
       where: { id: negocio.id },
-      select: { planoAtual: true, emDestaque: true },
+      select: {
+        ativo: true,
+        planoAtual: true,
+        emDestaque: true,
+        publicadoAte: true,
+        assinaturas: ASSINATURAS_PARA_SITUACAO,
+      },
     });
+    const { assinaturas, ...dadosDoNegocio } = negocioAtualizado;
+    const plano = planoEmVigor(dadosDoNegocio);
     res.json({
       success: true,
       data: {
         assinatura: formatarAssinatura(atual),
         trocaPendente: formatarAssinatura(troca),
-        negocio: negocioAtualizado,
+        negocio: {
+          planoAtual: plano,
+          emDestaque: plano !== 'NENHUM' && dadosDoNegocio.emDestaque,
+          publicadoAte: plano !== 'NENHUM' ? dadosDoNegocio.publicadoAte : null,
+          situacao: situacaoDoNegocio(dadosDoNegocio, assinaturas),
+        },
         modoTeste: modoTeste(),
       },
     });
@@ -159,9 +175,12 @@ export async function cancelarMinha(req, res, next) {
   try {
     const negocio = await negocioDoUsuario(req.usuario);
     const assinatura = await cancelarAssinaturaDoNegocio(req, negocio.id);
+    const ate = assinatura.vigenteAte && new Date(assinatura.vigenteAte) > new Date() ? assinatura.vigenteAte : null;
     res.json({
       success: true,
-      message: 'Assinatura cancelada. Seu negócio continua na vitrine, sem os benefícios do plano',
+      message: ate
+        ? `Assinatura cancelada: não haverá novas cobranças. Seu negócio continua publicado até ${ate.toLocaleDateString('pt-BR', { timeZone: 'America/Cuiaba' })}`
+        : 'Assinatura cancelada. Seu negócio saiu da vitrine; os dados continuam guardados para quando quiser voltar',
       data: formatarAssinatura(assinatura),
     });
   } catch (erro) {

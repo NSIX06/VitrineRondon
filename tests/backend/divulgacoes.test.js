@@ -23,7 +23,14 @@ const telas = await import('../../frontend/src/services/divulgacoes.js')
 
 const DADOS = { empreendedorId: 7, tipo: 'NEGOCIO', titulo: 'No feed da semana', canal: 'Instagram' }
 const resposta = () => ({ status: vi.fn().mockReturnThis(), json: vi.fn() })
-const NEGOCIO = { id: 7, nomeNegocio: 'Silva', planoAtual: 'DESTAQUE', autorizaDivulgacao: true }
+const NEGOCIO = {
+  id: 7,
+  nomeNegocio: 'Silva',
+  ativo: true,
+  planoAtual: 'DESTAQUE',
+  publicadoAte: new Date(Date.now() + 30 * 86400000),
+  autorizaDivulgacao: true,
+}
 
 beforeEach(() => {
   vi.clearAllMocks()
@@ -89,6 +96,14 @@ describe('criarDivulgacao', () => {
     const next2 = vi.fn()
     await criarDivulgacao({ body: DADOS }, resposta(), next2)
     expect(next2.mock.calls[0][0]).toMatchObject({ status: 409 })
+    expect(prisma.divulgacao.create).not.toHaveBeenCalled()
+  })
+
+  it('recusa negócio fora da vitrine, mesmo que o plano guardado seja Destaque', async () => {
+    prisma.empreendedor.findUnique.mockResolvedValueOnce({ ...NEGOCIO, publicadoAte: new Date(Date.now() - 1000) })
+    const next = vi.fn()
+    await criarDivulgacao({ body: DADOS }, resposta(), next)
+    expect(next.mock.calls[0][0]).toMatchObject({ status: 409, message: expect.stringContaining('publicado') })
     expect(prisma.divulgacao.create).not.toHaveBeenCalled()
   })
 
