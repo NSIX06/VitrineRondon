@@ -822,3 +822,14 @@
   font-size: var(--texto-xs);
   color: var(--cor-cinza-claro);
 }
+
+/* Selo de destaque na capa, antes do "Perfil verificado" */
+.detalhe__selo-destaque {
+  align-self: center;
+}
+
+/* Na legenda do mapa o selo fica embaixo do local */
+.detalhe__mapa-legenda .selo-destaque {
+  align-self: flex-start;
+  margin-top: 4px;
+}

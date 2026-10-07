@@ -2,7 +2,7 @@
 // Todas as chamadas ao backend passam por aqui. O token de sessão, quando
 // existe, é enviado no cabeçalho Authorization.
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
+export const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
 
 /** Endereço do servidor sem o /api: é de onde vêm as imagens enviadas */
 export const ORIGEM_API = new URL(BASE_URL).origin

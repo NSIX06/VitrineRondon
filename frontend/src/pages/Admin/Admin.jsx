@@ -16,15 +16,19 @@ import PainelAuditoria from '../../components/admin/PainelAuditoria/PainelAudito
 import PainelUsuarios from '../../components/admin/PainelUsuarios/PainelUsuarios'
 import PainelFaq from '../../components/admin/PainelFaq/PainelFaq'
 import BannerForm from '../../components/admin/BannerForm/BannerForm'
+import PainelAssinaturas from '../../components/admin/PainelAssinaturas/PainelAssinaturas'
+import PainelDivulgacoes from '../../components/admin/PainelDivulgacoes/PainelDivulgacoes'
 import './Admin.css'
 import Voltar from '../../components/ui/Voltar/Voltar'
 
 const ABAS = [
-  { id: 'produtos', rotulo: 'Produtos e serviços', icone: 'shopping_bag' },
+  { id: 'produtos', rotulo: 'Produtos', icone: 'shopping_bag' },
   { id: 'empreendedores', rotulo: 'Empreendedores', icone: 'storefront' },
+  { id: 'assinaturas', rotulo: 'Assinaturas', icone: 'workspace_premium' },
+  { id: 'divulgacoes', rotulo: 'Divulgações', icone: 'campaign' },
   { id: 'mensagens', rotulo: 'Mensagens', icone: 'chat_bubble' },
   { id: 'usuarios', rotulo: 'Contas', icone: 'group' },
-  { id: 'faq', rotulo: 'Perguntas frequentes', icone: 'help' },
+  { id: 'faq', rotulo: 'FAQ', icone: 'help' },
   { id: 'auditoria', rotulo: 'Auditoria', icone: 'history' },
 ]
 
@@ -255,7 +259,7 @@ function Admin() {
     {
       chave: 'empreendedor',
       titulo: 'Para',
-      render: (c) => c.empreendedor?.nomeNegocio ?? 'Equipe da VitrineLocal',
+      render: (c) => c.empreendedor?.nomeNegocio ?? 'Equipe do VitrineRondon',
     },
     {
       chave: 'createdAt',
@@ -461,6 +465,8 @@ function Admin() {
                 perguntas ou paginar a auditoria não recarrega o painel inteiro */}
             {abaAtiva === 'usuarios' && <PainelUsuarios aoAlterar={carregarTudo} />}
 
+            {abaAtiva === 'assinaturas' && <PainelAssinaturas aoAlterar={carregarTudo} />}
+            {abaAtiva === 'divulgacoes' && <PainelDivulgacoes empreendedores={empreendedores} />}
             {abaAtiva === 'faq' && <PainelFaq />}
             {abaAtiva === 'auditoria' && <PainelAuditoria />}
           </div>

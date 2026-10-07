@@ -235,13 +235,14 @@ const perguntasFrequentes = [
     ordem: 2,
     pergunta: 'Como combino preço, pagamento e entrega?',
     resposta:
-      'Direto com o empreendedor. O botão do WhatsApp, na página do negócio, abre a conversa com quem vende. A VitrineLocal não intermedeia pagamento nem entrega.',
+      'Direto com o empreendedor. O botão do WhatsApp, na página do negócio, abre a conversa com quem vende. O VitrineRondon não intermedeia pagamento nem entrega.',
   },
   {
     categoria: 'Para quem vende',
     ordem: 3,
-    pergunta: 'Quanto custa anunciar na VitrineLocal?',
-    resposta: 'Nada. O cadastro é gratuito e a plataforma não cobra comissão sobre as vendas.',
+    pergunta: 'Quanto custa anunciar no VitrineRondon?',
+    resposta:
+      'O cadastro é gratuito e a plataforma não cobra comissão sobre as vendas: seu negócio aparece na vitrine sem pagar nada. Quem quiser mais recursos pode assinar um plano opcional: o Essencial (R$ 50 por mês) traz as estatísticas do perfil, e o Destaque (R$ 75 por mês) soma selo, prioridade nas listas, espaço na seção de destaques e a possibilidade de divulgação nas redes oficiais. Os planos aumentam a oportunidade de exposição, mas não garantem visitas, contatos ou vendas. Veja os detalhes na página Planos.',
   },
   {
     categoria: 'Privacidade',

@@ -1,12 +1,12 @@
-# Termos de Uso — VitrineLocal
+# Termos de Uso — VitrineRondon
 
-**Versão 1.0 — Setembro de 2026**
+**Versão 1.1 — Outubro de 2026**
 
-Bem-vindo(a) ao VitrineLocal. Estes Termos de Uso regulam o acesso e a utilização da plataforma. Ao criar uma conta ou utilizar nossos serviços, você declara que leu, compreendeu e concorda com as condições abaixo. Caso não concorde, não utilize a plataforma.
+Bem-vindo(a) ao VitrineRondon. Estes Termos de Uso regulam o acesso e a utilização da plataforma. Ao criar uma conta ou utilizar nossos serviços, você declara que leu, compreendeu e concorda com as condições abaixo. Caso não concorde, não utilize a plataforma.
 
 ## 1. Definições
 
-- **Plataforma:** o sistema web VitrineLocal, que conecta empreendedores locais a consumidores.
+- **Plataforma:** o sistema web VitrineRondon, que conecta empreendedores locais a consumidores.
 - **Usuário comum:** pessoa que acessa a plataforma para consultar produtos e serviços.
 - **Empreendedor:** usuário que se cadastra para publicar e gerenciar um negócio, seus produtos e serviços.
 - **Administrador:** responsável pela gestão, moderação e controle geral da plataforma.
@@ -36,7 +36,27 @@ O usuário comum pode consultar, pesquisar e visualizar publicações, além de 
 
 4.4. As negociações, vendas, pagamentos e entregas ocorrem diretamente entre empreendedor e cliente. A plataforma não é parte dessas transações.
 
-## 5. Conteúdo proibido
+## 5. Planos e assinaturas
+
+5.1. O cadastro e a exibição do negócio na vitrine são gratuitos, sem comissão sobre as vendas. Os planos de assinatura (Essencial e Destaque) são opcionais e acrescentam os recursos descritos na página Planos.
+
+5.2. Os valores, o ciclo de cobrança e os benefícios de cada plano são os informados na página Planos no momento da contratação. Alterações de preço serão comunicadas com antecedência e valem a partir do ciclo seguinte.
+
+5.3. O pagamento é processado pelo AbacatePay, intermediador de pagamentos. Os dados do cartão são informados diretamente a ele: o VitrineRondon não os armazena.
+
+5.4. A assinatura é renovada automaticamente a cada ciclo até ser cancelada. O empreendedor pode cancelar a qualquer momento pelo painel do seu negócio; o cancelamento vale de imediato e não gera novas cobranças.
+
+5.5. Se uma cobrança for recusada, os benefícios do plano ficam suspensos até a regularização, e o negócio continua na vitrine. Esgotadas as novas tentativas de cobrança feitas pelo intermediador, a assinatura é cancelada automaticamente.
+
+5.6. A troca de plano é feita por uma nova contratação: confirmado o pagamento do novo plano, o anterior é cancelado.
+
+5.7. O plano Destaque oferece maior oportunidade de exposição dentro da plataforma (selo, prioridade na ordenação das listas e espaço em seções de destaque). A plataforma não garante número de visualizações, contatos ou vendas, nem posição fixa nos resultados, e os negócios sem plano ou no plano Essencial continuam visíveis normalmente.
+
+5.8. A divulgação nas redes oficiais do VitrineRondon depende de autorização expressa do empreendedor, do calendário editorial, de critérios de conteúdo e relevância e das regras de cada rede, sem quantidade mínima de publicações. A autorização pode ser retirada a qualquer momento pelo painel.
+
+5.9. Pedidos de reembolso seguem a legislação aplicável e podem ser feitos pelos canais de contato da plataforma.
+
+## 6. Conteúdo proibido
 
 É vedado publicar ou divulgar conteúdo que:
 
@@ -48,40 +68,40 @@ O usuário comum pode consultar, pesquisar e visualizar publicações, além de 
 
 Publicações que violem estas regras podem ser removidas e a conta suspensa.
 
-## 6. Papel e responsabilidade da plataforma
+## 7. Papel e responsabilidade da plataforma
 
-6.1. O VitrineLocal atua como espaço de divulgação e conexão entre empreendedores e consumidores. Não fabrica, vende, entrega nem garante os produtos e serviços anunciados.
+7.1. O VitrineRondon atua como espaço de divulgação e conexão entre empreendedores e consumidores. Não fabrica, vende, entrega nem garante os produtos e serviços anunciados.
 
-6.2. A plataforma não se responsabiliza por danos decorrentes de negociações realizadas entre usuários, tampouco pela qualidade, entrega ou cumprimento das ofertas publicadas pelos empreendedores.
+7.2. A plataforma não se responsabiliza por danos decorrentes de negociações realizadas entre usuários, tampouco pela qualidade, entrega ou cumprimento das ofertas publicadas pelos empreendedores.
 
-6.3. Empregamos esforços razoáveis para manter a plataforma disponível e segura, mas não garantimos funcionamento ininterrupto ou livre de falhas.
+7.3. Empregamos esforços razoáveis para manter a plataforma disponível e segura, mas não garantimos funcionamento ininterrupto ou livre de falhas.
 
-## 7. Moderação, suspensão e encerramento
+## 8. Moderação, suspensão e encerramento
 
-7.1. O administrador pode moderar, editar, ocultar ou remover publicações e suspender ou encerrar contas que violem estes Termos, a legislação ou os direitos de terceiros.
+8.1. O administrador pode moderar, editar, ocultar ou remover publicações e suspender ou encerrar contas que violem estes Termos, a legislação ou os direitos de terceiros.
 
-7.2. O usuário pode solicitar o encerramento de sua conta a qualquer momento, observadas as regras de retenção previstas na Política de Privacidade.
+8.2. O usuário pode solicitar o encerramento de sua conta a qualquer momento, observadas as regras de retenção previstas na Política de Privacidade.
 
-## 8. Propriedade intelectual
+## 9. Propriedade intelectual
 
-A marca, o layout, os componentes e o código do VitrineLocal pertencem à plataforma. O conteúdo publicado por cada empreendedor permanece de sua titularidade, que concede ao VitrineLocal autorização para exibi-lo na plataforma enquanto a publicação estiver ativa.
+A marca, o layout, os componentes e o código do VitrineRondon pertencem à plataforma. O conteúdo publicado por cada empreendedor permanece de sua titularidade, que concede ao VitrineRondon autorização para exibi-lo na plataforma enquanto a publicação estiver ativa.
 
-## 9. Registros e auditoria
+## 10. Registros e auditoria
 
-Para segurança e rastreabilidade, o VitrineLocal registra ações relevantes realizadas na plataforma (como acessos, cadastros e alterações de publicações), conforme detalhado na Política de Privacidade. Esses registros são acessíveis apenas a administradores autorizados.
+Para segurança e rastreabilidade, o VitrineRondon registra ações relevantes realizadas na plataforma (como acessos, cadastros e alterações de publicações), conforme detalhado na Política de Privacidade. Esses registros são acessíveis apenas a administradores autorizados.
 
-## 10. Alterações dos Termos
+## 11. Alterações dos Termos
 
 Estes Termos podem ser atualizados. Alterações relevantes serão comunicadas na plataforma, e o uso continuado após a atualização implica concordância com a nova versão. O histórico de versões aceitas por cada usuário é registrado.
 
-## 11. Legislação e foro
+## 12. Legislação e foro
 
 Estes Termos são regidos pelas leis da República Federativa do Brasil. Fica eleito o foro da Comarca de Rondonópolis/MT para dirimir eventuais controvérsias, salvo disposição legal em contrário aplicável ao consumidor.
 
-## 12. Contato
+## 13. Contato
 
 Dúvidas sobre estes Termos podem ser enviadas para contato@vitrinelocal.com.br.
 
 ---
 
-*Documento elaborado como base para o projeto acadêmico VitrineLocal. Recomenda-se revisão por profissional jurídico antes de uso em ambiente real.*
+*Documento elaborado como base para o projeto acadêmico VitrineRondon. Recomenda-se revisão por profissional jurídico antes de uso em ambiente real.*

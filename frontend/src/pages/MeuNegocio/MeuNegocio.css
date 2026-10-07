@@ -161,3 +161,61 @@
     box-shadow: var(--sombra-botao);
   }
 }
+
+/* Selo do plano Destaque embaixo do nome */
+.meu-negocio__selo {
+  margin: var(--esp-1) 0 var(--esp-2);
+}
+
+/* Abas do painel: catálogo, plano, desempenho e divulgação */
+.meu-negocio__abas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+  margin-bottom: var(--esp-5);
+  padding-bottom: var(--esp-3);
+  border-bottom: 2px dashed var(--cor-contorno);
+}
+
+.meu-negocio__aba {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+  padding: 0.55rem 1rem;
+  background: var(--cor-branco);
+  border: var(--borda-fina);
+  border-radius: var(--raio-sm);
+  box-shadow: 3px 3px 0 0 var(--cor-contorno);
+  color: var(--cor-tinta);
+  font-weight: 700;
+  font-size: 14px;
+  transition: var(--transicao-tecla);
+}
+
+.meu-negocio__aba:hover {
+  background: var(--cor-ouro-claro);
+  transform: translate(1px, 1px);
+  box-shadow: var(--sombra-dura-sm);
+}
+
+.meu-negocio__aba--ativa,
+.meu-negocio__aba--ativa:hover {
+  background: var(--cor-ouro);
+  transform: rotate(-1deg);
+  box-shadow: 3px 3px 0 0 var(--cor-contorno), var(--cel-sm);
+}
+
+.meu-negocio__painel {
+  min-height: 12rem;
+}
+
+@media (max-width: 600px) {
+  .meu-negocio__abas {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .meu-negocio__aba {
+    justify-content: center;
+  }
+}

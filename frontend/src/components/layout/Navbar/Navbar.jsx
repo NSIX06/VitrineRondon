@@ -9,7 +9,8 @@ const links = [
   { para: '/', rotulo: 'Início', exato: true },
   { para: '/vitrine', rotulo: 'Vitrine' },
   { para: '/empreendedores', rotulo: 'Empreendedores' },
-  { para: '/contato', rotulo: 'Contato e Ajuda' },
+  { para: '/planos', rotulo: 'Planos' },
+  { para: '/contato', rotulo: 'Contato' },
   { para: '/sobre', rotulo: 'Sobre' },
 ]
 
@@ -81,7 +82,7 @@ function Navbar() {
           <span className="navbar__divisor" aria-hidden="true" />
           <span className="navbar__nome">
             <span className="letreiro" data-texto="Vitrine">Vitrine</span>
-            <span className="letreiro letreiro--ouro letreiro--brilho" data-texto="Local">Local</span>
+            <span className="letreiro letreiro--ouro letreiro--brilho" data-texto="Rondon">Rondon</span>
           </span>
         </Link>
 

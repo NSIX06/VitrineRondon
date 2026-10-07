@@ -199,8 +199,8 @@ function Empreendedores() {
             <div>
               <h3>Você também produz ou atende no bairro?</h3>
               <p>
-                A VitrineLocal é gratuita e feita para quem mantém a economia local viva. Cadastre
-                seus produtos e serviços sem taxas.
+                O cadastro no VitrineRondon é gratuito, sem comissão sobre as vendas. Se quiser mais
+                visibilidade, há planos opcionais com selo de destaque e estatísticas.
               </p>
             </div>
           </div>

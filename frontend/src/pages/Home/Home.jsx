@@ -32,6 +32,9 @@ function Home() {
   const consultaProdutos = useConsulta('/produtos')
   const consultaEmpreendedores = useConsulta('/empreendedores')
   const consultaBanner = useConsulta('/configuracoes/banner')
+  // Negócios com o plano Destaque, em rodízio (o servidor embaralha a cada consulta)
+  const consultaDestaques = useConsulta('/empreendedores/destaques', { limite: 3 })
+  const destaques = consultaDestaques.dados?.data ?? []
 
   const carregando = consultaProdutos.carregando || consultaEmpreendedores.carregando
   const erro = consultaProdutos.erro || consultaEmpreendedores.erro
@@ -188,6 +191,29 @@ function Home() {
 
       {!carregando && !erro && (
         <>
+          {destaques.length > 0 && (
+            <section className="container secao destaques" aria-labelledby="titulo-destaques">
+              <div className="secao__cabecalho">
+                <div>
+                  <h2 id="titulo-destaques">Negócios em Destaque</h2>
+                  <p className="secao__subtitulo">
+                    Negócios com o plano Destaque. A ordem muda a cada visita.
+                  </p>
+                </div>
+                <Link to="/planos" className="secao__link">
+                  Como aparecer aqui
+                </Link>
+              </div>
+              <ul className="grade-cards">
+                {destaques.map((empreendedor) => (
+                  <li key={empreendedor.id}>
+                    <EmpreendedorCard empreendedor={empreendedor} />
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
           <section className="container secao">
             <div className="secao__cabecalho">
               <div>
@@ -228,7 +254,7 @@ function Home() {
 
               {empreendedores.length === 0 ? (
                 <StatusMessage tipo="vazio" titulo="Nenhum empreendedor cadastrado">
-                  <p>Seja o primeiro a montar sua barraca na VitrineLocal.</p>
+                  <p>Seja o primeiro a montar sua barraca no VitrineRondon.</p>
                 </StatusMessage>
               ) : (
                 <ul className="grade-cards">

@@ -89,7 +89,11 @@
   position: absolute;
   top: var(--esp-2);
   left: var(--esp-2);
+  /* Espaço à direita para o reflexo da foto; com três etiquetas, quebra linha */
+  right: calc(var(--esp-2) + 34px);
   display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
   gap: var(--esp-2);
 }
 

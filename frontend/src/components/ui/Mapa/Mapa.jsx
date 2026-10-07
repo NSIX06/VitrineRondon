@@ -60,6 +60,7 @@ function Mapa({
   titulo,
   buscarPeloEndereco = true,
   altura,
+  aoAbrir,
 }) {
   // Cuidado: Number(null) e Number('') valem 0, e o ponto (0, 0) fica no oceano.
   // Coordenada ausente precisa continuar ausente.
@@ -129,6 +130,7 @@ function Mapa({
             href={`https://www.openstreetmap.org/search?query=${encodeURIComponent(textoEndereco)}`}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={aoAbrir}
           >
             Procurar no OpenStreetMap
           </a>
@@ -173,6 +175,7 @@ function Mapa({
         href={`https://www.openstreetmap.org/?mlat=${ponto[0]}&mlon=${ponto[1]}#map=${zoom}/${ponto[0]}/${ponto[1]}`}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={aoAbrir}
       >
         <Icone nome="open_in_new" tamanho={16} />
         Abrir no OpenStreetMap

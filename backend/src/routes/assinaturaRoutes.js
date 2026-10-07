@@ -6,6 +6,7 @@ import {
   assinar,
   cancelarMinha,
   escolherPlanoSchema,
+  listarAssinaturas,
   listarPlanosPublico,
   minhaAssinatura,
   simularAprovacao,
@@ -23,6 +24,7 @@ router.get('/minha', autenticar, minhaAssinatura);
 router.put('/minha', autenticar, validateBody(escolherPlanoSchema), trocarPlano);
 router.delete('/minha', autenticar, cancelarMinha);
 router.post('/', autenticar, validateBody(escolherPlanoSchema), assinar);
+router.get('/', autenticar, exigirPerfil(PERFIS.ADMIN), listarAssinaturas);
 
 // Demonstração (admin, e só fora de produção: em produção respondem 404)
 router.post('/:id/simular-aprovacao', autenticar, exigirPerfil(PERFIS.ADMIN), simularAprovacao);

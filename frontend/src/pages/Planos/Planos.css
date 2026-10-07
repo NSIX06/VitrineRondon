@@ -1,0 +1,241 @@
+.planos {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-6);
+  padding-top: 0;
+}
+
+.planos > .status {
+  margin: 0;
+}
+
+/* Dois planos lado a lado; um embaixo do outro no estreito */
+.planos__lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: var(--esp-6);
+  align-items: stretch;
+}
+
+.planos__cartao {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  padding: var(--esp-6) var(--esp-5) var(--esp-5);
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura);
+}
+
+/* Destaque: fundo amarelo-claro e sombra mais funda */
+.planos__cartao--destaque {
+  background: var(--linhas-escuras), var(--cor-ouro-claro);
+  box-shadow: 7px 7px 0 0 var(--cor-contorno);
+}
+
+.planos__popular {
+  position: absolute;
+  top: -15px;
+  right: var(--esp-5);
+  padding: 0.25rem 0.75rem;
+  background: var(--cor-anil);
+  color: var(--cor-branco);
+  border: var(--borda-fina);
+  border-radius: 999px;
+  box-shadow: 3px 3px 0 0 var(--cor-contorno);
+  transform: rotate(2deg);
+  font-size: var(--texto-xs);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.planos__titulo {
+  margin: 0;
+  font-size: var(--texto-3xl);
+}
+
+.planos__chamada {
+  margin: 0;
+  font-size: var(--texto-md);
+  color: var(--cor-cinza);
+}
+
+.planos__preco {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+  margin: var(--esp-2) 0 0;
+}
+
+.planos__preco strong {
+  font-family: var(--fonte-titulo);
+  font-size: var(--texto-4xl);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--cor-anil);
+  line-height: 1;
+}
+
+.planos__preco span {
+  font-weight: 600;
+  color: var(--cor-cinza);
+}
+
+.planos__selo {
+  align-self: flex-start;
+}
+
+.planos__beneficios {
+  list-style: none;
+  margin: var(--esp-2) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  flex: 1;
+}
+
+.planos__beneficios li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--esp-2);
+  line-height: 1.45;
+}
+
+.planos__beneficios .icone {
+  flex-shrink: 0;
+  color: var(--cor-sucesso);
+  margin-top: 1px;
+}
+
+.planos__acao {
+  display: flex;
+  margin-top: var(--esp-3);
+}
+
+.planos__acao .botao {
+  flex: 1;
+  white-space: normal;
+}
+
+.planos__nota {
+  margin: 0;
+  font-size: var(--texto-sm);
+  color: var(--cor-cinza);
+}
+
+/* Comparação */
+.planos__comparacao h2 {
+  margin-bottom: var(--esp-4);
+}
+
+.planos__tabela-rolagem {
+  overflow-x: auto;
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura);
+  background: var(--cor-branco);
+}
+
+.planos__tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--texto-sm);
+}
+
+.planos__tabela th,
+.planos__tabela td {
+  padding: var(--esp-3) var(--esp-4);
+  border-bottom: 2px dashed var(--cor-superficie-alta);
+  text-align: left;
+}
+
+.planos__tabela thead th {
+  background: var(--cor-ouro);
+  border-bottom: var(--borda);
+  font-family: var(--fonte-titulo);
+  font-size: var(--texto-md);
+}
+
+.planos__tabela tbody th {
+  font-weight: 600;
+}
+
+.planos__tabela td,
+.planos__tabela thead th + th {
+  width: 22%;
+  text-align: center;
+}
+
+.planos__tabela tbody tr:last-child th,
+.planos__tabela tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.planos__sim {
+  display: inline-flex;
+  color: var(--cor-sucesso);
+}
+
+.planos__nao {
+  color: var(--cor-cinza-claro);
+  font-weight: 700;
+}
+
+/* Transparência comercial */
+.planos__transparencia {
+  display: flex;
+  gap: var(--esp-4);
+  align-items: flex-start;
+  padding: var(--esp-5);
+  background: var(--cor-superficie-baixa);
+  border: 2px dashed var(--cor-contorno);
+  border-radius: var(--raio);
+}
+
+.planos__transparencia > .icone {
+  flex-shrink: 0;
+  color: var(--cor-anil);
+}
+
+.planos__transparencia h2 {
+  font-size: var(--texto-xl);
+  margin-bottom: var(--esp-2);
+}
+
+.planos__transparencia p {
+  margin: 0 0 var(--esp-2);
+  color: var(--cor-cinza);
+  line-height: 1.6;
+}
+
+.planos__transparencia p:last-child {
+  margin-bottom: 0;
+}
+
+.planos__confirmacao p {
+  margin: 0 0 var(--esp-3);
+}
+
+@media (max-width: 600px) {
+  .planos__cartao {
+    padding: var(--esp-6) var(--esp-4) var(--esp-4);
+  }
+
+  .planos__tabela th,
+  .planos__tabela td {
+    padding: var(--esp-2) var(--esp-3);
+  }
+
+  .planos__transparencia {
+    flex-direction: column;
+    padding: var(--esp-4);
+  }
+}

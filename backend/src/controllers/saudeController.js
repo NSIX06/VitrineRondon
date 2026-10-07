@@ -24,7 +24,7 @@ export function criarVerificacaoDeSaude({ limiteMs = TEMPO_LIMITE_MS } = {}) {
     const agora = new Date().toISOString();
     try {
       await bancoResponde(limiteMs);
-      res.json({ success: true, message: 'API VitrineLocal operando', banco: 'ok', timestamp: agora });
+      res.json({ success: true, message: 'API VitrineRondon operando', banco: 'ok', timestamp: agora });
     } catch (erro) {
       // O motivo (host, porta, código do driver) fica no log do servidor
       console.error('Health check: banco indisponível:', erro.message);

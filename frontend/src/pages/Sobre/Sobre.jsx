@@ -95,7 +95,7 @@ function Sobre() {
           <span className="sobre__eyebrow-meta">Caderno 01</span>
         </div>
         <h1>Sobre o projeto.</h1>
-        <p>Por que a VitrineLocal existe e para quem ela foi feita.</p>
+        <p>Por que o VitrineRondon existe e para quem ele foi feito.</p>
         <div className="sobre__regua" />
       </header>
 
@@ -175,7 +175,7 @@ function Sobre() {
             </div>
             <h2>O que a vitrine faz</h2>
             <p className="sobre__paragrafo-grande">
-              A VitrineLocal é um catálogo público e gratuito. O empreendedor cadastra o negócio,
+              O VitrineRondon é um catálogo público, com cadastro gratuito. O empreendedor cadastra o negócio,
               os produtos ou serviços e o número de WhatsApp. Quem mora na cidade navega pelas
               categorias, encontra o que precisa e fala direto com quem faz.
             </p>
@@ -218,7 +218,7 @@ function Sobre() {
               <span className="sobre__ods-agenda">Agenda 2030</span>
             </div>
             <p>
-              A tecnologia pública deve responder a desafios concretos. Por isso a VitrineLocal
+              A tecnologia pública deve responder a desafios concretos. Por isso o VitrineRondon
               adota como bússola de impacto as metas das Nações Unidas para o desenvolvimento
               territorial sustentável.
             </p>

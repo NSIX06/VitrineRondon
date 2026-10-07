@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import api from '../../services/api'
 import { useAuth } from '../../contexts/auth'
 import Button from '../../components/ui/Button/Button'
@@ -15,8 +15,19 @@ import ProdutoForm from '../../components/forms/ProdutoForm/ProdutoForm'
 import EmpreendedorForm from '../../components/forms/EmpreendedorForm/EmpreendedorForm'
 import './MeuNegocio.css'
 import Voltar from '../../components/ui/Voltar/Voltar'
+import SeloDestaque from '../../components/ui/SeloDestaque/SeloDestaque'
+import PainelPlano from '../../components/painel/PainelPlano'
+import PainelDesempenho from '../../components/painel/PainelDesempenho'
+import PainelDivulgacao from '../../components/painel/PainelDivulgacao'
 
 const formatadorPreco = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
+
+const ABAS = [
+  { id: 'catalogo', rotulo: 'Catálogo', icone: 'inventory_2' },
+  { id: 'plano', rotulo: 'Plano', icone: 'workspace_premium' },
+  { id: 'desempenho', rotulo: 'Desempenho', icone: 'monitoring' },
+  { id: 'divulgacao', rotulo: 'Divulgação', icone: 'campaign' },
+]
 
 /**
  * Área do empreendedor: cadastro do próprio negócio e gestão do catálogo dele.
@@ -25,6 +36,21 @@ const formatadorPreco = new Intl.NumberFormat('pt-BR', { style: 'currency', curr
  */
 function MeuNegocio() {
   const { atualizarUsuario } = useAuth()
+  const [parametros, setParametros] = useSearchParams()
+  // Volta do checkout do gateway (?assinatura=retorno): abre no plano e confere
+  // o pagamento. O parâmetro sai da URL para um F5 não repetir a conferência.
+  const [voltouDoCheckout] = useState(() => parametros.get('assinatura') === 'retorno')
+  const [aba, setAba] = useState(() =>
+    voltouDoCheckout ? 'plano' : ABAS.some((a) => a.id === parametros.get('aba')) ? parametros.get('aba') : 'catalogo'
+  )
+  useEffect(() => {
+    if (parametros.has('assinatura')) {
+      const sem = new URLSearchParams(parametros)
+      sem.delete('assinatura')
+      setParametros(sem, { replace: true })
+    }
+  }, [parametros, setParametros])
+
 
   const [negocio, setNegocio] = useState(null)
   const [carregando, setCarregando] = useState(true)
@@ -35,6 +61,16 @@ function MeuNegocio() {
   const [modalForm, setModalForm] = useState(null)
   const [confirmacao, setConfirmacao] = useState(null)
   const [excluindo, setExcluindo] = useState(false)
+
+  /** O plano mudou (pagamento, troca ou cancelamento): atualiza selo e divulgação */
+  const aoMudarPlano = useCallback((resumo) => {
+    if (!resumo) return
+    setNegocio((anterior) =>
+      anterior && (anterior.planoAtual !== resumo.planoAtual || anterior.emDestaque !== resumo.emDestaque)
+        ? { ...anterior, ...resumo }
+        : anterior
+    )
+  }, [])
 
   // Aviso flutuante: salvar no modal não tira a pessoa do lugar na página
   const mostrarStatus = (tipo, mensagem) => setStatus({ tipo, mensagem })
@@ -195,6 +231,7 @@ function MeuNegocio() {
         <div>
           <span className="meu-negocio__indice">Minha área</span>
           <h1 className="meu-negocio__titulo">{negocio.nomeNegocio}</h1>
+          {negocio.emDestaque && <SeloDestaque className="meu-negocio__selo" />}
           <p className="meu-negocio__linha-fina">
             {negocio.categoria} · {negocio.bairro ? `${negocio.bairro}, ` : ''}
             {negocio.cidade}
@@ -217,6 +254,35 @@ function MeuNegocio() {
 
       <Aviso aviso={status} onFechar={fecharStatus} />
 
+      <div className="meu-negocio__abas" role="tablist" aria-label="Seções do seu negócio">
+        {ABAS.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            role="tab"
+            id={`aba-${item.id}`}
+            aria-selected={aba === item.id}
+            aria-controls="painel-negocio"
+            className={`meu-negocio__aba ${aba === item.id ? 'meu-negocio__aba--ativa' : ''}`}
+            onClick={() => setAba(item.id)}
+          >
+            <Icone nome={item.icone} tamanho={18} />
+            {item.rotulo}
+          </button>
+        ))}
+      </div>
+
+      <div id="painel-negocio" role="tabpanel" aria-labelledby={`aba-${aba}`} className="meu-negocio__painel">
+      {aba === 'plano' && <PainelPlano voltouDoCheckout={voltouDoCheckout} aoMudar={aoMudarPlano} />}
+      {aba === 'desempenho' && <PainelDesempenho />}
+      {aba === 'divulgacao' && (
+        <PainelDivulgacao
+          negocio={negocio}
+          aoAtualizar={(salvo) => setNegocio((anterior) => ({ ...salvo, produtos: anterior.produtos }))}
+        />
+      )}
+      {aba === 'catalogo' && (
+      <>
       <div className="meu-negocio__resumo">
         <div className="meu-negocio__indicador">
           <span className="meu-negocio__indicador-rotulo">Itens no catálogo</span>
@@ -269,6 +335,9 @@ function MeuNegocio() {
         Precisa de ajuda ou quer remover seu negócio da vitrine?{' '}
         <Link to="/contato">Fale com a administração</Link>.
       </p>
+      </>
+      )}
+      </div>
 
       <Modal
         aberto={modalForm?.entidade === 'negocio'}

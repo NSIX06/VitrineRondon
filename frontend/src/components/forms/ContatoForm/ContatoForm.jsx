@@ -92,7 +92,7 @@ function ContatoForm({ empreendedores = [], empreendedorInicial = '', onSubmit }
     setEnviando(true)
     try {
       await onSubmit(dados)
-      setEnviado({ destino: destinatario?.nomeNegocio ?? 'a equipe da VitrineLocal', email: dados.email })
+      setEnviado({ destino: destinatario?.nomeNegocio ?? 'a equipe do VitrineRondon', email: dados.email })
       setValores({ ...estadoInicial, empreendedorId: valores.empreendedorId })
       setErrosCampos({})
       setTocados({})
@@ -229,7 +229,7 @@ function ContatoForm({ empreendedores = [], empreendedorInicial = '', onSubmit }
                 value={valores.empreendedorId}
                 onChange={atualizarCampo}
               >
-                <option value="">Equipe da VitrineLocal</option>
+                <option value="">Equipe do VitrineRondon</option>
                 {empreendedores.map((empreendedor) => (
                   <option key={empreendedor.id} value={empreendedor.id}>
                     {empreendedor.nomeNegocio}
@@ -264,7 +264,7 @@ function ContatoForm({ empreendedores = [], empreendedorInicial = '', onSubmit }
                     className="contato-form__whatsapp"
                     href={linkWhatsapp(
                       destinatario.whatsapp,
-                      `Olá! Vi o ${destinatario.nomeNegocio} na VitrineLocal.`
+                      `Olá! Vi o ${destinatario.nomeNegocio} no VitrineRondon.`
                     )}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -276,7 +276,7 @@ function ContatoForm({ empreendedores = [], empreendedorInicial = '', onSubmit }
               </>
             ) : (
               <>
-                <strong>Equipe da VitrineLocal</strong>
+                <strong>Equipe do VitrineRondon</strong>
                 <span className="contato-form__destino-info">
                   Dúvidas, sugestões e problemas no site. Respondemos em até 24 horas úteis.
                 </span>

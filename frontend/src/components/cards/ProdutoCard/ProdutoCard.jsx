@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom'
 import Tag from '../../ui/Tag/Tag'
 import Icone from '../../ui/Icone/Icone'
+import SeloDestaque from '../../ui/SeloDestaque/SeloDestaque'
+import { METRICAS, registrarMetrica } from '../../../services/metricas'
 import imagemPadrao from '../../../assets/imagem-padrao.svg'
 import { urlImagem } from '../../../services/imagens'
 import './ProdutoCard.css'
@@ -40,6 +42,7 @@ function ProdutoCard({ produto, linkWhatsapp }) {
             {ehServico ? 'Serviço' : 'Produto'}
           </Tag>
           {!disponivel && <Tag variante="alerta">Indisponível</Tag>}
+          {empreendedor?.emDestaque && <SeloDestaque compacto claro />}
         </div>
       </div>
 
@@ -63,6 +66,7 @@ function ProdutoCard({ produto, linkWhatsapp }) {
             href={`${linkWhatsapp}${encodeURIComponent(` Tenho interesse em: ${nome}.`)}`}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => registrarMetrica(produto.empreendedorId, METRICAS.CLIQUE_WHATSAPP)}
           >
             <Icone nome="calculate" tamanho={18} />
             Pedir orçamento

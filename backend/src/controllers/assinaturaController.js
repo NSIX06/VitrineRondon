@@ -72,6 +72,27 @@ export async function listarPlanosPublico(req, res, next) {
   }
 }
 
+// GET /api/assinaturas  (admin): as mais recentes, para acompanhar e, fora de
+// produção, simular a aprovação ou a falha durante a demonstração
+export async function listarAssinaturas(req, res, next) {
+  try {
+    const assinaturas = await prisma.assinatura.findMany({
+      orderBy: { criadoEm: 'desc' },
+      take: 100,
+      include: { plano: true, empreendedor: { select: { id: true, nomeNegocio: true } } },
+    });
+    res.json({
+      success: true,
+      total: assinaturas.length,
+      simulacaoDisponivel: !producao(),
+      modoTeste: modoTeste(),
+      data: assinaturas.map((a) => ({ ...formatarAssinatura(a), empreendedor: a.empreendedor })),
+    });
+  } catch (erro) {
+    next(erro);
+  }
+}
+
 // GET /api/assinaturas/minha
 export async function minhaAssinatura(req, res, next) {
   try {

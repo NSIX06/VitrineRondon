@@ -89,6 +89,13 @@
   align-self: flex-start;
 }
 
+.empreendedor-card__etiquetas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-2);
+}
+
 .empreendedor-card__nome {
   margin: 0;
   font-size: 28px;

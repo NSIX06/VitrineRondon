@@ -42,7 +42,7 @@ function AceiteTermos({ valores, onChange, erros = {}, versao }) {
           <button type="button" className="link-em-texto" onClick={abrir('TERMOS_DE_USO')}>
             Termos de Uso
           </button>{' '}
-          do VitrineLocal.
+          do VitrineRondon.
         </label>
         {erros.termosDeUso && (
           <span id="aceite-termos-erro" className="campo__erro">

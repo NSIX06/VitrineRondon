@@ -30,6 +30,7 @@ const MeuNegocio = lazy(() => import('./pages/MeuNegocio/MeuNegocio'))
 const Login = lazy(() => import('./pages/Login/Login'))
 const Cadastro = lazy(() => import('./pages/Cadastro/Cadastro'))
 const Termos = lazy(() => import('./pages/Termos/Termos'))
+const Planos = lazy(() => import('./pages/Planos/Planos'))
 
 /** Layout comum: Navbar + conteúdo da rota + Footer */
 function Layout() {
@@ -66,6 +67,7 @@ const router = createBrowserRouter(
           <Route path="/empreendedores/:id" element={<EmpreendedorDetalhe />} />
           <Route path="/contato" element={<Contato />} />
           <Route path="/sobre" element={<Sobre />} />
+          <Route path="/planos" element={<Planos />} />
           <Route path="/login" element={<Login />} />
           <Route path="/cadastro" element={<Cadastro />} />
           <Route path="/termos" element={<Termos key="termos" tipo="TERMOS_DE_USO" />} />

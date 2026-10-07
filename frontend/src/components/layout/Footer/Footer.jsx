@@ -40,7 +40,7 @@ function Footer() {
           <div className="footer__coluna">
             <span className="footer__marca">
               <span className="letreiro letreiro--claro" data-texto="Vitrine">Vitrine</span>
-              <span className="letreiro letreiro--ouro" data-texto="Local">Local</span>
+              <span className="letreiro letreiro--ouro" data-texto="Rondon">Rondon</span>
             </span>
             <p className="footer__texto">
               Uma vitrine digital para quem produz e trabalha perto de você. Feito para
@@ -64,6 +64,7 @@ function Footer() {
             <Link to="/vitrine">Vitrine de produtos</Link>
             <Link to="/empreendedores">Empreendedores do bairro</Link>
             <Link to="/contato">Contato e Ajuda</Link>
+            <Link to="/planos">Planos para negócios</Link>
             <Link to="/sobre">Sobre o projeto</Link>
           </nav>
 
@@ -83,7 +84,7 @@ function Footer() {
         </div>
 
         <div className="footer__base">
-          <small>&copy; {anoAtual} VitrineLocal. Fomento ao comércio de bairro. Todos os direitos reservados.</small>
+          <small>&copy; {anoAtual} VitrineRondon. Fomento ao comércio de bairro. Todos os direitos reservados.</small>
           <span className="footer__slogan">Feito para a economia popular</span>
         </div>
       </div>

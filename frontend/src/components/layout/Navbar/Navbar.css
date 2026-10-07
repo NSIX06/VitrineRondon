@@ -146,6 +146,31 @@
   z-index: 2;
 }
 
+/* Até 1280 (notebooks) marca, lojinha e espaçamentos encolhem um pouco: com
+   "Planos" no menu e o nome VitrineRondon, os itens passavam da tela */
+@media (max-width: 1280px) {
+  .navbar__nome {
+    font-size: 26px;
+  }
+
+  .navbar__logo {
+    width: 54px;
+  }
+
+  .navbar__menu {
+    margin-left: var(--esp-4);
+    gap: var(--esp-3);
+  }
+
+  .navbar__links {
+    gap: 2px;
+  }
+
+  .navbar__link {
+    padding-inline: 0.55rem;
+  }
+}
+
 /* Entre 1101 e 1200 o nome da pessoa sai e sobra espaço para a ação do perfil,
    que pode ser longa ("Cadastrar meu negócio"). Abaixo de 1101 o menu vira
    o botão de abrir: em 1024 (tablet deitado) os itens passavam 18px da tela e

@@ -78,7 +78,7 @@ function Contato() {
               <Icone nome="storefront" tamanho={20} />
               Quero publicar meu negócio
             </Button>
-            <div className="contato__gratuito">100% gratuito para o comércio local</div>
+            <div className="contato__gratuito">Cadastro gratuito, sem comissão sobre as vendas</div>
           </div>
 
           <div className="contato__caixa">

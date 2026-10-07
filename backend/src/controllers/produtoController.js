@@ -117,7 +117,10 @@ export async function buscarProduto(req, res, next) {
 
     const produto = await prisma.produto.findUnique({
       where: { id },
-      include: { empreendedor: true },
+      // Plano e consentimento do negócio são privados: a página do item não precisa
+      include: {
+        empreendedor: { omit: { planoAtual: true, autorizaDivulgacao: true, autorizaDivulgacaoEm: true } },
+      },
     });
 
     if (!produto) {

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useConsulta } from '../../hooks/useConsulta'
 import { linkWhatsapp } from '../../services/whatsapp'
@@ -11,13 +12,15 @@ import imagemPadrao from '../../assets/imagem-padrao.svg'
 import './ProdutoDetalhe.css'
 import Voltar from '../../components/ui/Voltar/Voltar'
 import { urlImagem } from '../../services/imagens'
+import { METRICAS, registrarMetrica } from '../../services/metricas'
+import SeloDestaque from '../../components/ui/SeloDestaque/SeloDestaque'
 
 const formatadorPreco = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
 
 function linkDoItem(numero, nomeNegocio, nomeItem) {
   return linkWhatsapp(
     numero,
-    `Olá! Vi "${nomeItem}" do ${nomeNegocio} na VitrineLocal e gostaria de mais informações.`
+    `Olá! Vi "${nomeItem}" do ${nomeNegocio} no VitrineRondon e gostaria de mais informações.`
   )
 }
 
@@ -28,7 +31,13 @@ function ProdutoDetalhe() {
   const consulta = useConsulta(`/produtos/${id}`, undefined, { manterAnterior: false })
   const produto = consulta.dados?.data ?? null
   const { carregando, erro } = consulta
+  const produtoId = produto?.id
+  const negocioId = produto?.empreendedor?.id
 
+  // Uma visualização por item aberto (o servidor ignora repetição e o dono)
+  useEffect(() => {
+    if (produtoId && negocioId) registrarMetrica(negocioId, METRICAS.VISUALIZACAO_PRODUTO, produtoId)
+  }, [produtoId, negocioId])
 
   if (carregando) return <Spinner texto="Carregando o item..." />
 
@@ -84,7 +93,10 @@ function ProdutoDetalhe() {
         </div>
 
         <div className="produto-detalhe__info">
-          <span className="pagina-cabecalho__marca">{empreendedor.categoria}</span>
+          <div className="produto-detalhe__marcas">
+            <span className="pagina-cabecalho__marca">{empreendedor.categoria}</span>
+            {empreendedor.emDestaque && <SeloDestaque />}
+          </div>
           <h1 className="produto-detalhe__nome">{nome}</h1>
           {descricao && <p className="produto-detalhe__descricao">{descricao}</p>}
 
@@ -94,7 +106,11 @@ function ProdutoDetalhe() {
           </div>
 
           <div className="produto-detalhe__acoes">
-            <Button href={linkDoItem(empreendedor.whatsapp, empreendedor.nomeNegocio, nome)} variante="whatsapp">
+            <Button
+              href={linkDoItem(empreendedor.whatsapp, empreendedor.nomeNegocio, nome)}
+              variante="whatsapp"
+              onClick={() => registrarMetrica(empreendedor.id, METRICAS.CLIQUE_WHATSAPP)}
+            >
               <Icone nome="chat" tamanho={20} />
               {ehServico ? 'Pedir orçamento no WhatsApp' : 'Pedir pelo WhatsApp'}
             </Button>
@@ -105,7 +121,7 @@ function ProdutoDetalhe() {
 
           <p className="produto-detalhe__aviso">
             <Icone nome="handshake" tamanho={16} />
-            O pedido é combinado direto com o empreendedor. A VitrineLocal não cobra comissão.
+            O pedido é combinado direto com o empreendedor. O VitrineRondon não cobra comissão.
           </p>
         </div>
       </section>

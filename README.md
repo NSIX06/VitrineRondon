@@ -115,7 +115,7 @@ JWT_SECRET="troque-por-um-segredo-longo-e-aleatorio"
 JWT_EXPIRES_IN="8h"
 
 # Versão vigente dos documentos legais, gravada em cada aceite
-TERMOS_VERSAO="1.0"
+TERMOS_VERSAO="1.1"
 
 # Imagens enviadas do computador: pasta local, ou Cloudinary se preenchido
 UPLOADS_DIR="uploads"
@@ -134,7 +134,7 @@ DEMO_EMPREENDEDOR_SENHA="defina-uma-senha-forte"
 | `DATABASE_URL_MIGRACAO` | para migrations | Conta de administrador. Usada por `prisma:migrate`, `prisma:deploy`, `prisma:status` e `banco:criar-usuario`; a API nunca se conecta com ela |
 | `JWT_SECRET` | sim | Sem ela a API recusa qualquer login, com erro explícito |
 | `JWT_EXPIRES_IN` | não | Padrão `8h` |
-| `TERMOS_VERSAO` | não | Padrão `1.0`. Mudar a versão faz novos aceites gravarem o novo número |
+| `TERMOS_VERSAO` | não | Padrão `1.1`. Mudar a versão faz novos aceites gravarem o novo número |
 | `UPLOADS_DIR` | não | Padrão `uploads` (relativo à pasta `backend`). Onde ficam as fotos enviadas quando não há Cloudinary |
 | `CLOUDINARY_URL` | em produção | `cloudinary://CHAVE:SEGREDO@CONTA`. Com ela, as fotos enviadas vão para o Cloudinary em vez da pasta local (o disco do Render gratuito é apagado a cada deploy) |
 | `CLOUDINARY_PASTA` | não | Padrão `vitrinelocal`. Pasta das fotos dentro da conta do Cloudinary |

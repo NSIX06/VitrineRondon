@@ -125,8 +125,8 @@ app.get(['/', '/api'], (req, res) => {
   res.json({
     success: true,
     message: producao
-      ? 'API do VitrineLocal. As rotas começam em /api.'
-      : 'API do VitrineLocal. Esta é a porta do servidor; o site fica em http://localhost:5173',
+      ? 'API do VitrineRondon. As rotas começam em /api.'
+      : 'API do VitrineRondon. Esta é a porta do servidor; o site fica em http://localhost:5173',
     saude: '/api/health',
   });
 });

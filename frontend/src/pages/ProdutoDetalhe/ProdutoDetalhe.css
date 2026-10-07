@@ -119,3 +119,16 @@
     gap: var(--esp-5);
   }
 }
+
+/* Categoria e selo de destaque lado a lado, quebrando linha se faltar espaço */
+.produto-detalhe__marcas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-3);
+  margin-bottom: var(--esp-2);
+}
+
+.produto-detalhe__marcas .pagina-cabecalho__marca {
+  margin-bottom: 0;
+}

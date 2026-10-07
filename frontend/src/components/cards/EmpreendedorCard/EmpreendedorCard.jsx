@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import Tag from '../../ui/Tag/Tag'
 import Icone from '../../ui/Icone/Icone'
+import SeloDestaque from '../../ui/SeloDestaque/SeloDestaque'
 import imagemPadrao from '../../../assets/imagem-padrao.svg'
 import { urlImagem } from '../../../services/imagens'
 import './EmpreendedorCard.css'
@@ -10,7 +11,7 @@ import './EmpreendedorCard.css'
  * Espera o formato de GET /api/empreendedores (com `_count.produtos` opcional).
  */
 function EmpreendedorCard({ empreendedor }) {
-  const { id, nomeNegocio, responsavel, descricao, categoria, cidade, fotoUrl, _count } =
+  const { id, nomeNegocio, responsavel, descricao, categoria, cidade, fotoUrl, emDestaque, _count } =
     empreendedor
   const totalItens = _count?.produtos
 
@@ -32,7 +33,10 @@ function EmpreendedorCard({ empreendedor }) {
       </Link>
 
       <div className="empreendedor-card__corpo">
-        <Tag variante="categoria">{categoria}</Tag>
+        <div className="empreendedor-card__etiquetas">
+          <Tag variante="categoria">{categoria}</Tag>
+          {emDestaque && <SeloDestaque compacto />}
+        </div>
         <h3 className="empreendedor-card__nome">
           <Link to={`/empreendedores/${id}`} className="empreendedor-card__link">
             {nomeNegocio}

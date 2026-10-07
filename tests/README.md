@@ -44,6 +44,7 @@ npx vitest run tests/backend/horarios.test.js   # um arquivo só
 | `horarios.test.js` | `services/horarios.js` | "aberto agora" no fuso de Rondonópolis, incluindo virada de dia, almoço e fim de semana |
 | `geocodificacao.test.js` | `services/geocodificacao.js` | segunda tentativa no Nominatim, cache por endereço e nenhuma coordenada inventada |
 | `whatsapp.test.js` | `services/whatsapp.js` | código do país sem duplicar o 55 e mensagem inicial escapada |
+| `planos-metricas.test.js` | `services/planos.js` e `services/metricas.js` | preço em reais a partir de centavos, ciclo em português, e o registro de métricas com keepalive, com o token do dono e sem quebrar a página quando a rede falha |
 | `imagens.test.js` | `services/imagens.js` | imagem enviada aponta para o servidor da API, link antigo passa intacto, formato e tamanho conferidos antes do envio, e o arquivo vai cru, sem virar JSON |
 | `sessao.test.js` | `contexts/auth.js`, `services/validacoes.js`, `services/constantes.js` | destino de cada perfil depois do login e aceites obrigatórios |
 | `fontes.test.js` | `services/fontes.js` | toda afirmação do site aponta para uma fonte com endereço e data |

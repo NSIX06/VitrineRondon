@@ -34,7 +34,7 @@ services:
       - key: JWT_EXPIRES_IN
         value: 8h
       - key: TERMOS_VERSAO
-        value: "1.0"
+        value: "1.1"
       # Endereço do site (ex.: https://vitrinelocal.onrender.com), sem barra no fim
       - key: CORS_ORIGINS
         sync: false

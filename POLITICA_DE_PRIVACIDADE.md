@@ -1,8 +1,8 @@
-# Política de Privacidade — VitrineLocal
+# Política de Privacidade — VitrineRondon
 
-**Versão 1.0 — Setembro de 2026**
+**Versão 1.1 — Outubro de 2026**
 
-Esta Política descreve como o VitrineLocal coleta, utiliza, armazena e protege os dados pessoais dos seus usuários, em conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018 — LGPD). Ao utilizar a plataforma e aceitar esta Política, você concorda com o tratamento dos seus dados nos termos aqui descritos.
+Esta Política descreve como o VitrineRondon coleta, utiliza, armazena e protege os dados pessoais dos seus usuários, em conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018 — LGPD). Ao utilizar a plataforma e aceitar esta Política, você concorda com o tratamento dos seus dados nos termos aqui descritos.
 
 ## 1. Dados que coletamos
 
@@ -25,6 +25,21 @@ Esta Política descreve como o VitrineLocal coleta, utiliza, armazena e protege 
 
 - Produtos e serviços cadastrados (nome, descrição, categoria, preço, imagem, disponibilidade)
 
+**Dados de assinatura (empreendedor que contrata um plano):**
+
+- Plano contratado, status e datas da assinatura (início, próxima cobrança, cancelamento)
+- Identificadores da cobrança no intermediador de pagamento
+- Os dados do cartão são informados diretamente ao AbacatePay e não são armazenados pelo VitrineRondon
+
+**Estatísticas de desempenho dos negócios:**
+
+- Contagens diárias de visitas ao perfil, cliques em contato e visualizações de produtos, somadas por negócio
+- Essas contagens não identificam o visitante: não usamos cookies para isso e não gravamos o endereço IP. Para evitar contar a mesma pessoa várias vezes, uma marca anônima e temporária fica apenas na memória do servidor por até 30 minutos
+
+**Autorização de divulgação (empreendedor):**
+
+- Registro da autorização, e da data em que foi dada, para uso das informações e imagens do negócio nas redes oficiais
+
 **Dados técnicos e de segurança:**
 
 - Registros de auditoria das ações realizadas na plataforma
@@ -38,6 +53,9 @@ Utilizamos os dados para:
 - Exibir os negócios, produtos e serviços dos empreendedores aos usuários.
 - Permitir o contato entre consumidores e empreendedores.
 - Exibir a localização dos estabelecimentos, quando informada.
+- Processar a contratação, a cobrança e o cancelamento dos planos de assinatura.
+- Mostrar ao empreendedor as estatísticas de desempenho do seu negócio.
+- Divulgar o negócio nas redes oficiais, somente com a autorização do empreendedor.
 - Garantir a segurança, prevenir fraudes e manter registros de auditoria.
 - Cumprir obrigações legais e regulatórias.
 
@@ -51,7 +69,9 @@ O tratamento dos seus dados se fundamenta em: execução de contrato (prestaçã
 
 4.2. Dados de conta (como senha) nunca são exibidos publicamente nem compartilhados com terceiros.
 
-4.3. Não vendemos seus dados pessoais. O compartilhamento com terceiros ocorre apenas quando necessário para o funcionamento da plataforma (por exemplo, serviços de mapa) ou por exigência legal.
+4.3. **Pagamentos e imagens:** os dados necessários à cobrança dos planos são tratados pelo AbacatePay, intermediador de pagamentos, e as imagens enviadas pelos empreendedores são armazenadas no Cloudinary, serviço de hospedagem de imagens. Cada um recebe apenas o necessário para a sua função.
+
+4.4. Não vendemos seus dados pessoais. O compartilhamento com terceiros ocorre apenas quando necessário para o funcionamento da plataforma (por exemplo, serviços de mapa) ou por exigência legal.
 
 ## 5. Serviços de mapa
 
@@ -101,4 +121,4 @@ Para exercer seus direitos ou esclarecer dúvidas sobre o tratamento dos seus da
 
 ---
 
-*Documento elaborado como base para o projeto acadêmico VitrineLocal. Recomenda-se revisão por profissional jurídico antes de uso em ambiente real.*
+*Documento elaborado como base para o projeto acadêmico VitrineRondon. Recomenda-se revisão por profissional jurídico antes de uso em ambiente real.*

@@ -15,6 +15,8 @@ import Button from '../../components/ui/Button/Button'
 import Tag from '../../components/ui/Tag/Tag'
 import Icone from '../../components/ui/Icone/Icone'
 import Mapa from '../../components/ui/Mapa/MapaPreguicoso'
+import SeloDestaque from '../../components/ui/SeloDestaque/SeloDestaque'
+import { METRICAS, registrarMetrica } from '../../services/metricas'
 import ProdutoCard from '../../components/cards/ProdutoCard/ProdutoCard'
 import imagemPadrao from '../../assets/imagem-padrao.svg'
 import './EmpreendedorDetalhe.css'
@@ -25,7 +27,7 @@ import { urlImagem } from '../../services/imagens'
 function montarLinkWhatsapp(numero, nomeNegocio, mensagem) {
   return linkWhatsapp(
     numero,
-    mensagem || `Olá! Vi o ${nomeNegocio} na VitrineLocal e gostaria de mais informações.`
+    mensagem || `Olá! Vi o ${nomeNegocio} no VitrineRondon e gostaria de mais informações.`
   )
 }
 
@@ -45,6 +47,13 @@ function EmpreendedorDetalhe() {
   const consulta = useConsulta(`/empreendedores/${id}`, undefined, { manterAnterior: false })
   const empreendedor = consulta.dados?.data ?? null
   const { carregando, erro } = consulta
+  const negocioId = empreendedor?.id
+
+  // Uma visualização por perfil aberto (o servidor ignora repetição e o dono)
+  useEffect(() => {
+    if (negocioId) registrarMetrica(negocioId, METRICAS.VISUALIZACAO_PERFIL)
+  }, [negocioId])
+  const contar = (tipo) => () => registrarMetrica(negocioId, tipo)
   // Relógio da página: o selo troca sozinho quando o horário de atendimento
   // começa ou termina, sem precisar recarregar
   const [agora, setAgora] = useState(() => new Date())
@@ -94,6 +103,7 @@ function EmpreendedorDetalhe() {
     latitude,
     longitude,
     exibirEndereco,
+    emDestaque,
   } = empreendedor
 
   const resumoEmpreendedor = { id: empreendedor.id, nomeNegocio, cidade, whatsapp }
@@ -107,7 +117,7 @@ function EmpreendedorDetalhe() {
   const linkWhatsapp = montarLinkWhatsapp(whatsapp, nomeNegocio)
   // Base do link usada pelos cards: a mensagem do item é anexada ao final
   const linkWhatsappBase = `https://wa.me/${numeroInternacional(whatsapp)}?text=${encodeURIComponent(
-    `Olá, ${primeiroNome}! Vi o ${nomeNegocio} na VitrineLocal.`
+    `Olá, ${primeiroNome}! Vi o ${nomeNegocio} no VitrineRondon.`
   )}`
   const chips = produtos.slice(0, 3).map((p) => p.nome)
 
@@ -169,9 +179,10 @@ function EmpreendedorDetalhe() {
         />
         <div className="detalhe__capa-sombra" />
         <div className="container detalhe__capa-selos">
+          {emDestaque && <SeloDestaque claro className="detalhe__selo-destaque" />}
           <span className="detalhe__selo detalhe__selo--verificado">
             <Icone nome="verified" tamanho={18} />
-            Perfil verificado pela VitrineLocal
+            Perfil verificado pelo VitrineRondon
           </span>
           <span className="detalhe__selo detalhe__selo--local">
             <Icone nome="location_on" tamanho={18} />
@@ -275,13 +286,18 @@ function EmpreendedorDetalhe() {
           </p>
           <div className="detalhe__telefone-caixa">
             <span className="detalhe__telefone-rotulo">Telefone e WhatsApp comercial</span>
-            <a className="detalhe__telefone" href={`tel:${String(whatsapp).replace(/\D/g, '')}`}>
+            <a
+              className="detalhe__telefone"
+              href={`tel:${String(whatsapp).replace(/\D/g, '')}`}
+              onClick={contar(METRICAS.CLIQUE_TELEFONE)}
+            >
               {formatarTelefone(whatsapp)}
             </a>
           </div>
           {instagramUsuario && (
             <a
               className="detalhe__instagram"
+              onClick={contar(METRICAS.CLIQUE_INSTAGRAM)}
               href={`https://instagram.com/${instagramUsuario}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -295,7 +311,12 @@ function EmpreendedorDetalhe() {
               @{instagramUsuario}
             </a>
           )}
-          <Button href={linkWhatsapp} variante="whatsapp" className="detalhe__whatsapp">
+          <Button
+            href={linkWhatsapp}
+            variante="whatsapp"
+            onClick={contar(METRICAS.CLIQUE_WHATSAPP)}
+            className="detalhe__whatsapp"
+          >
             <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
               <path
                 fill="currentColor"
@@ -363,6 +384,7 @@ function EmpreendedorDetalhe() {
             <Button
               href={montarLinkWhatsapp(whatsapp, nomeNegocio, `Olá, ${primeiroNome}! Tenho uma dúvida sobre um pedido específico.`)}
               variante="secundario"
+              onClick={contar(METRICAS.CLIQUE_WHATSAPP)}
             >
               Consultar outro pedido
             </Button>
@@ -418,9 +440,11 @@ function EmpreendedorDetalhe() {
             endereco={{ endereco, numero, bairro, cidade, estado, cep }}
             exibirEndereco={enderecoPublico}
             titulo={nomeNegocio}
+            aoAbrir={contar(METRICAS.CLIQUE_ENDERECO)}
           />
           <div className="detalhe__mapa-legenda">
             <strong>{localResumo || cidade}</strong>
+            {emDestaque && <SeloDestaque compacto />}
             <span>{enderecoPublico ? 'Local do negócio' : 'Região de atendimento'}</span>
           </div>
         </div>
@@ -437,7 +461,7 @@ function EmpreendedorDetalhe() {
               <p>Chame no WhatsApp para checar disponibilidade e combinar os detalhes.</p>
             </div>
           </div>
-          <Button href={linkWhatsapp} variante="whatsapp">
+          <Button href={linkWhatsapp} variante="whatsapp" onClick={contar(METRICAS.CLIQUE_WHATSAPP)}>
             <Icone nome="chat" tamanho={20} />
             Enviar WhatsApp agora
           </Button>

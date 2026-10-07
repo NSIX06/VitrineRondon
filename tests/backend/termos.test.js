@@ -20,9 +20,9 @@ describe('versaoVigente', () => {
     expect(versaoVigente()).toBe('2.1')
   })
 
-  it('cai em 1.0 quando não há configuração', () => {
+  it('cai em 1.1 quando não há configuração', () => {
     delete process.env.TERMOS_VERSAO
-    expect(versaoVigente()).toBe('1.0')
+    expect(versaoVigente()).toBe('1.1')
   })
 })
 
