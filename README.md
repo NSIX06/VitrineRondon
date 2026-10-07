@@ -234,14 +234,18 @@ VitrineLocal/
         ├── App.jsx           Router com Layout e rotas protegidas por perfil
         ├── contexts/         auth.js (contexto e perfis) + AuthContext.jsx (provider)
         ├── services/         api.js (cliente Fetch com token), constantes.js, fontes.js,
-        │                     validacoes.js, whatsapp.js (links wa.me),
+        │                     validacoes.js (inclui os erros do servidor por campo),
+        │                     formatos.js (preço e números), whatsapp.js (links wa.me),
+        │                     planos.js, metricas.js, divulgacoes.js, imagens.js,
         │                     geocodificacao.js (Nominatim, com cache em memória),
         │                     faq.js (busca, filtro e validação da central de ajuda),
         │                     horarios.js (cálculo de "aberto agora" no fuso de Rondonópolis)
+        ├── hooks/            useConsulta (leituras com cache), useFiltrosNaUrl (filtros e
+        │                     página das listagens na URL), useRelogio (hora que se atualiza)
         ├── components/
         │   ├── auth/         RotaProtegida
         │   ├── layout/       Navbar (estados por perfil), Footer
-        │   ├── ui/           Button, Modal, ConfirmModal, StatusMessage, Spinner, Tag, Icone, Fonte,
+        │   ├── ui/           Button, Modal, ConfirmModal, StatusMessage, Spinner, Tag e TagTipo, Icone, Fonte,
         │   │                 Mapa (Leaflet, carregado sob demanda), Voltar e Avançar,
         │   │                 Paginacao, Acordeao, PaginaErro, SeloDestaque
         │   ├── cards/        ProdutoCard, EmpreendedorCard
@@ -893,7 +897,7 @@ Prefeitura de Rondonópolis em domínio público. O crédito aparece ao lado da 
 ### Unidade (sem banco, sem rede, sem servidor)
 
 Cada função do sistema tem o seu arquivo `.test.js` em [`tests/`](tests/), separado por lado:
-`tests/backend/` e `tests/frontend/`. São 614 verificações em 31 arquivos, rodando com Vitest.
+`tests/backend/` e `tests/frontend/`. São 623 verificações em 32 arquivos, rodando com Vitest.
 
 ```bash
 npm test            # roda tudo uma vez
@@ -948,7 +952,7 @@ O `teste-desempenho.mjs` lê a pasta `frontend/dist`, então precisa de um `npm 
 não abre o navegador.
 
 As capturas de tela vão para `docs/`. `cdp.mjs` guarda o driver e os utilitários compartilhados
-(`abrirNavegador`, `entrarNoSistema`, `cabecalhoAdmin`), e usa as contas do seed, então depende das
+(`abrirNavegador`, `entrarNoSistema`, `cabecalhoAdmin` e o placar `criarPlacar`), e usa as contas do seed, então depende das
 senhas definidas no `.env`. Cada execução cria um perfil descartável do navegador e o apaga ao
 terminar, inclusive após uma interrupção.
 

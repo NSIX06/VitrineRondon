@@ -10,7 +10,7 @@ efeito disso na vitrine, sem esconder quem não assina.
 
 ## Antes da apresentação
 
-1. **Banco limpo:** em `backend/`, rode `npm run seed`. Ele recria os dados e deixa:
+1. **Banco limpo:** em `backend/`, rode `npm run prisma:seed`. Ele recria os dados e deixa:
 
    | Negócio | Plano | Conta |
    |---|---|---|
@@ -104,7 +104,7 @@ respondem 404.
 
 ## Depois da apresentação
 
-Para repetir o roteiro do zero, rode `npm run seed` de novo em `backend/`.
+Para repetir o roteiro do zero, rode `npm run prisma:seed` de novo em `backend/`.
 
 ## Perguntas que a banca pode fazer
 
