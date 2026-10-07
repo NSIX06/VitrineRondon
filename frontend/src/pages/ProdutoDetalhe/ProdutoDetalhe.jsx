@@ -10,6 +10,7 @@ import EmpreendedorCard from '../../components/cards/EmpreendedorCard/Empreended
 import imagemPadrao from '../../assets/imagem-padrao.svg'
 import './ProdutoDetalhe.css'
 import Voltar from '../../components/ui/Voltar/Voltar'
+import { urlImagem } from '../../services/imagens'
 
 const formatadorPreco = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
 
@@ -70,7 +71,7 @@ function ProdutoDetalhe() {
         <div className="produto-detalhe__imagem">
           <img
             decoding="async"
-            src={imagem || imagemPadrao}
+            src={urlImagem(imagem) || imagemPadrao}
             alt={nome}
             onError={(evento) => {
               evento.currentTarget.src = imagemPadrao

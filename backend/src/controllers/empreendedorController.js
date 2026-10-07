@@ -6,6 +6,7 @@ import { registrarLog, diferencas } from '../services/auditoria.js';
 import { horariosSchema, incluirHorarios, comHorariosParaPrisma } from '../services/horarios.js';
 import { erroHttp, parseId } from '../utils/erros.js';
 import { lerPaginacao, resumoPaginacao } from '../utils/paginacao.js';
+import { apagarSeOrfa, apagarSeTrocou, campoImagem } from '../services/imagens.js';
 
 // Mesma lista do frontend (services/constantes.js). Validar aqui impede que um
 // negócio fique numa categoria sem filtro na vitrine.
@@ -56,7 +57,7 @@ const empreendedorSchema = z.object({
     .max(30)
     .regex(/^[\d\s()+-]+$/, 'WhatsApp deve conter apenas números e símbolos ( ) + -'),
   instagram: z.string().trim().max(100).optional().nullable(),
-  fotoUrl: z.url({ error: 'URL da foto inválida' }).max(500).optional().nullable(),
+  fotoUrl: campoImagem('URL da foto inválida').optional().nullable(),
   ativo: z.boolean().optional(),
 });
 
@@ -268,6 +269,7 @@ export async function atualizarEmpreendedor(req, res, next) {
       data: comHorariosParaPrisma(req.body, { edicao: true }),
       include: { horarios: incluirHorarios },
     });
+    if ('fotoUrl' in req.body) await apagarSeTrocou(prisma, antes.fotoUrl, empreendedor.fotoUrl);
 
     const mudou = diferencas(antes, empreendedor);
     await registrarLog(req, {
@@ -291,13 +293,20 @@ export async function excluirEmpreendedor(req, res, next) {
     const id = parseId(req.params.id);
     const antes = await prisma.empreendedor.findUnique({
       where: { id },
-      include: { _count: { select: { produtos: true } } },
+      include: {
+        _count: { select: { produtos: true } },
+        // As imagens dos itens que saem junto, em cascata, para limpar depois
+        produtos: { select: { imagem: true } },
+      },
     });
     if (!antes) {
       return res.status(404).json({ success: false, message: 'Empreendedor não encontrado' });
     }
 
     await prisma.empreendedor.delete({ where: { id } });
+    for (const caminho of [antes.fotoUrl, ...antes.produtos.map((p) => p.imagem)]) {
+      await apagarSeOrfa(prisma, caminho);
+    }
 
     await registrarLog(req, {
       acao: 'DELETE',

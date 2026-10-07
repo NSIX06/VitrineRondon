@@ -3,6 +3,9 @@
 // existe, é enviado no cabeçalho Authorization.
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
+
+/** Endereço do servidor sem o /api: é de onde vêm as imagens enviadas */
+export const ORIGEM_API = new URL(BASE_URL).origin
 const CHAVE_TOKEN = 'vitrinelocal.token'
 
 // Texto mostrado quando a resposta não traz uma mensagem que possamos exibir
@@ -96,7 +99,11 @@ async function request(caminho, { method = 'GET', body, headers = {} } = {}) {
   const token = obterToken()
   if (token) opcoes.headers.Authorization = `Bearer ${token}`
 
-  if (body !== undefined) {
+  if (body instanceof Blob) {
+    // Arquivo (imagem do computador): vai como está, com o tipo dele
+    opcoes.headers['Content-Type'] = body.type || 'application/octet-stream'
+    opcoes.body = body
+  } else if (body !== undefined) {
     opcoes.headers['Content-Type'] = 'application/json'
     opcoes.body = JSON.stringify(body)
   }
@@ -165,6 +172,8 @@ const api = {
   put: (caminho, body) => request(caminho, { method: 'PUT', body }),
   patch: (caminho, body) => request(caminho, { method: 'PATCH', body }),
   delete: (caminho) => request(caminho, { method: 'DELETE' }),
+  /** Envia uma imagem do computador; a resposta traz `data.url` para salvar no cadastro */
+  enviarImagem: (arquivo) => request('/uploads/imagem', { method: 'POST', body: arquivo }),
 }
 
 export default api

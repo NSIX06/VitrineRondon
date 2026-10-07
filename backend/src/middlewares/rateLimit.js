@@ -33,6 +33,19 @@ export const limitePadrao = rateLimit({
 });
 
 /**
+ * Envio de imagens: cada chamada processa um arquivo de até 5 MB, então o teto
+ * é bem menor que o geral. Dá para cadastrar um catálogo inteiro numa sentada.
+ */
+export const limiteUpload = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 60,
+  skip: ignorarMaquinaLocal,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  handler: recusar('Muitas imagens enviadas em pouco tempo. Aguarde alguns minutos e tente de novo.'),
+});
+
+/**
  * Limite apertado para login e cadastro: é o que impede força bruta de senha.
  * Só conta as tentativas que falharam, então quem acerta a senha não é punido.
  */

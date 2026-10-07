@@ -9,6 +9,7 @@ import auditoriaRoutes from './auditoriaRoutes.js';
 import usuarioRoutes from './usuarioRoutes.js';
 import configuracaoRoutes from './configuracaoRoutes.js';
 import faqRoutes from './faqRoutes.js';
+import uploadRoutes from './uploadRoutes.js';
 import { verificarSaude } from '../controllers/saudeController.js';
 
 const router = Router();
@@ -25,5 +26,6 @@ router.use('/auditoria', auditoriaRoutes);
 router.use('/usuarios', usuarioRoutes);
 router.use('/configuracoes', configuracaoRoutes);
 router.use('/faq', faqRoutes);
+router.use('/uploads', uploadRoutes);
 
 export default router;

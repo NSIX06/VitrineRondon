@@ -1,0 +1,147 @@
+/* O campo se ajusta à largura da coluna onde está (container query), e não só
+   à da tela: no modal de empreendedor ele cai numa coluna estreita mesmo no
+   desktop, e com a prévia ao lado o botão vazava da caixa */
+.campo-imagem {
+  container-type: inline-size;
+}
+
+/* Área do campo: prévia à esquerda, ações à direita; vira coluna no estreito */
+.campo-imagem__area {
+  display: grid;
+  grid-template-columns: 148px minmax(0, 1fr);
+  gap: var(--esp-4);
+  align-items: start;
+  padding: var(--esp-3);
+  border: 2px dashed var(--cor-contorno);
+  border-radius: var(--raio-md);
+  background: var(--cor-superficie-baixa);
+  transition: background-color 0.15s ease;
+}
+
+.campo-imagem__area--sem-previa {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* Arquivo sendo arrastado por cima: a área acende em amarelo */
+.campo-imagem__area--arrastando {
+  background: var(--cor-ouro-claro);
+  border-style: solid;
+}
+
+.campo-imagem__area--erro {
+  border-color: var(--cor-lacre-escuro);
+  background: var(--cor-lacre-fundo);
+}
+
+.campo-imagem__previa {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: var(--borda);
+  border-radius: var(--raio-md);
+  box-shadow: var(--sombra-dura-sm);
+  background: var(--cor-branco);
+}
+
+.campo-imagem__previa img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.campo-imagem__vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 100%;
+  padding: var(--esp-2);
+  text-align: center;
+  font-size: var(--texto-xs);
+  font-weight: 600;
+  color: var(--cor-cinza-claro);
+}
+
+.campo-imagem__enviando {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.88);
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  color: var(--cor-anil);
+}
+
+.campo-imagem__girando {
+  width: 22px;
+  height: 22px;
+  border: 3px solid var(--cor-superficie-alta);
+  border-top-color: var(--cor-contorno);
+  border-right-color: var(--cor-ouro);
+  border-radius: 50%;
+  animation: campo-imagem-girar 0.8s linear infinite;
+}
+
+@keyframes campo-imagem-girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.campo-imagem__acoes {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--esp-2);
+  min-width: 0;
+}
+
+.campo-imagem__botoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-2);
+  max-width: 100%;
+}
+
+/* O botão padrão não quebra linha; aqui ele pode, para nunca passar da caixa */
+.campo-imagem__botoes .botao {
+  max-width: 100%;
+  white-space: normal;
+  text-align: left;
+}
+
+/* "Prefere colar um link?": discreto, como um link no meio do texto */
+.campo-imagem__alternar {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: var(--texto-sm);
+  font-weight: 700;
+  color: var(--cor-anil);
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+
+.campo-imagem__acoes .campo__entrada {
+  width: 100%;
+}
+
+@container (max-width: 400px) {
+  .campo-imagem__area {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .campo-imagem__previa {
+    max-width: 200px;
+  }
+}

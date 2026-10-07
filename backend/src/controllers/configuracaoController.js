@@ -4,6 +4,7 @@
 import { z } from 'zod';
 import prisma from '../config/prisma.js';
 import { registrarLog } from '../services/auditoria.js';
+import { apagarSeTrocou, campoImagem } from '../services/imagens.js';
 
 const CHAVE_BANNER = 'banner_home';
 
@@ -11,10 +12,9 @@ const CHAVE_BANNER = 'banner_home';
 const BANNER_VAZIO = { imagemUrl: null, legenda: null };
 
 export const bannerSchema = z.object({
-  imagemUrl: z
-    .url({ error: 'Informe o endereço completo da imagem, começando com http:// ou https://' })
-    .max(500)
-    .nullable(),
+  imagemUrl: campoImagem(
+    'Informe o endereço completo da imagem, começando com http:// ou https://, ou envie um arquivo do computador'
+  ).nullable(),
   legenda: z.string().trim().max(120, 'A legenda pode ter até 120 caracteres').nullable().optional(),
 });
 
@@ -57,6 +57,7 @@ export async function salvarBanner(req, res, next) {
       create: { chave: CHAVE_BANNER, valor: JSON.stringify(depois) },
       update: { valor: JSON.stringify(depois) },
     });
+    await apagarSeTrocou(prisma, antes.imagemUrl, imagemUrl);
 
     await registrarLog(req, {
       acao: 'UPDATE',

@@ -10,6 +10,7 @@ import StatusMessage from '../../components/ui/StatusMessage/StatusMessage'
 import ProdutoCard from '../../components/cards/ProdutoCard/ProdutoCard'
 import EmpreendedorCard from '../../components/cards/EmpreendedorCard/EmpreendedorCard'
 import imagemPadrao from '../../assets/imagem-padrao.svg'
+import { urlImagem } from '../../services/imagens'
 import './Home.css'
 
 const LIMITE_PRODUTOS = 6
@@ -51,7 +52,7 @@ function Home() {
   // O cartaz do herói mostra o banner da administração ou, sem ele,
   // o item mais recente da vitrine
   const destaque = produtos[0]
-  const imagemCartaz = banner?.imagemUrl || destaque?.imagem || imagemPadrao
+  const imagemCartaz = urlImagem(banner?.imagemUrl || destaque?.imagem) || imagemPadrao
   const legendaCartaz = banner
     ? banner.legenda || 'Comércio de bairro em Rondonópolis'
     : destaque

@@ -98,6 +98,14 @@ describe('imagem', () => {
     expect(mensagens(criar({ imagem: '/fotos/bolo.jpg' }))).toContain('URL da imagem inválida')
   })
 
+  it('aceita imagem enviada do computador (caminho gerado pelo servidor)', () => {
+    expect(criar({ imagem: '/uploads/3f2b8c1e-9a4d-4e7f-8b2a-1c5d6e7f8a9b.webp' }).success).toBe(true)
+  })
+
+  it('recusa link que não é http nem https', () => {
+    expect(mensagens(criar({ imagem: 'javascript:alert(1)' }))).toContain('URL da imagem inválida')
+  })
+
   it('aceita item sem imagem', () => {
     expect(criar({ imagem: null }).success).toBe(true)
   })

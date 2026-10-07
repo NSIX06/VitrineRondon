@@ -29,6 +29,7 @@ npx vitest run tests/backend/horarios.test.js   # um arquivo só
 | `schemas-admin.test.js` | contato, usuário e configuração | mensagem da comunidade, moderação de conta e banner da home |
 | `faq.test.js` | `controllers/faqController.js` | público só com ativas e em ordem, id gerado no cadastro, edição que não reativa sozinha, limites de 300 caracteres e auditoria |
 | `paginacao.test.js` | `utils/paginacao.js` | sem página a lista vem inteira; página e tamanho inválidos são recusados com 400 |
+| `imagens.test.js` | `services/imagens.js` | envio vira WebP de até 1600 px sem metadados, arquivo que não é imagem é recusado, caminho forjado nunca é aceito nem apagado, e a imagem só sai do disco quando nenhum cadastro a usa |
 
 ### `frontend/`
 
@@ -38,6 +39,7 @@ npx vitest run tests/backend/horarios.test.js   # um arquivo só
 | `horarios.test.js` | `services/horarios.js` | "aberto agora" no fuso de Rondonópolis, incluindo virada de dia, almoço e fim de semana |
 | `geocodificacao.test.js` | `services/geocodificacao.js` | segunda tentativa no Nominatim, cache por endereço e nenhuma coordenada inventada |
 | `whatsapp.test.js` | `services/whatsapp.js` | código do país sem duplicar o 55 e mensagem inicial escapada |
+| `imagens.test.js` | `services/imagens.js` | imagem enviada aponta para o servidor da API, link antigo passa intacto, formato e tamanho conferidos antes do envio, e o arquivo vai cru, sem virar JSON |
 | `sessao.test.js` | `contexts/auth.js`, `services/validacoes.js`, `services/constantes.js` | destino de cada perfil depois do login e aceites obrigatórios |
 | `fontes.test.js` | `services/fontes.js` | toda afirmação do site aponta para uma fonte com endereço e data |
 | `faq.test.js` | `services/faq.js` | busca sem acento e com várias palavras, filtro por assunto e os mesmos limites do servidor |

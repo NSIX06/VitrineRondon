@@ -3,9 +3,12 @@ import api from '../../../services/api'
 import Button from '../../ui/Button/Button'
 import Spinner from '../../ui/Spinner/Spinner'
 import StatusMessage from '../../ui/StatusMessage/StatusMessage'
+import CampoImagem from '../../forms/CampoImagem/CampoImagem'
+import { ehImagemEnviada, ehLinkDeImagem, urlImagem } from '../../../services/imagens'
 import './BannerForm.css'
 
-const URL_VALIDA = /^https?:\/\/\S+$/i
+/** Link http(s) completo ou arquivo enviado do computador */
+const imagemValida = (valor) => ehLinkDeImagem(valor) || ehImagemEnviada(valor)
 
 /**
  * Troca da imagem do banner da página inicial.
@@ -22,6 +25,7 @@ function BannerForm({ onSalvo, onCancelar }) {
   const [erroUrl, setErroUrl] = useState(null)
   // Situação da prévia: 'vazia' | 'carregando' | 'ok' | 'falhou'
   const [previa, setPrevia] = useState('vazia')
+  const [enviandoImagem, setEnviandoImagem] = useState(false)
 
   useEffect(() => {
     let ativo = true
@@ -46,11 +50,13 @@ function BannerForm({ onSalvo, onCancelar }) {
   const alterar = (evento) => {
     const { name, value } = evento.target
     setValores((anterior) => ({ ...anterior, [name]: value }))
-    if (name === 'imagemUrl') {
-      setErroUrl(null)
-      const limpa = value.trim()
-      setPrevia(!limpa ? 'vazia' : URL_VALIDA.test(limpa) ? 'carregando' : 'vazia')
-    }
+  }
+
+  const alterarImagem = (imagemUrl) => {
+    setValores((anterior) => ({ ...anterior, imagemUrl }))
+    setErroUrl(null)
+    const limpa = imagemUrl.trim()
+    setPrevia(!limpa ? 'vazia' : imagemValida(limpa) ? 'carregando' : 'vazia')
   }
 
   const enviar = async (imagemUrl, legenda) => {
@@ -71,8 +77,8 @@ function BannerForm({ onSalvo, onCancelar }) {
   const salvar = (evento) => {
     evento.preventDefault()
     const url = valores.imagemUrl.trim()
-    if (!URL_VALIDA.test(url)) {
-      setErroUrl('Informe o endereço completo da imagem, começando com http:// ou https://')
+    if (!imagemValida(url)) {
+      setErroUrl('Escolha uma imagem do computador ou cole o endereço completo, começando com https://')
       return
     }
     if (previa === 'falhou') {
@@ -104,28 +110,21 @@ function BannerForm({ onSalvo, onCancelar }) {
 
       <div className="banner-form__grade">
         <div className="banner-form__campos">
-          <div className="campo">
-            <label className="campo__rotulo" htmlFor="banner-url">
-              Endereço da imagem<span className="campo__obrigatorio">*</span>
-            </label>
-            <input
-              id="banner-url"
-              name="imagemUrl"
-              type="url"
-              className={`campo__entrada ${erroUrl ? 'campo__entrada--erro' : ''}`}
-              value={valores.imagemUrl}
-              onChange={alterar}
-              placeholder="https://..."
-              maxLength={500}
-            />
-            {erroUrl ? (
-              <span className="campo__erro">{erroUrl}</span>
-            ) : (
-              <span className="campo__ajuda">
-                Use uma foto que você tenha direito de publicar. Formato de retrato fica melhor.
-              </span>
-            )}
-          </div>
+          <CampoImagem
+            id="banner-url"
+            rotulo="Imagem do banner"
+            obrigatorio
+            semPrevia
+            valor={valores.imagemUrl}
+            onChange={alterarImagem}
+            erro={erroUrl}
+            ajuda={
+              erroUrl
+                ? null
+                : 'Use uma foto que você tenha direito de publicar. Formato de retrato fica melhor.'
+            }
+            onEnviando={setEnviandoImagem}
+          />
 
           <div className="campo">
             <label className="campo__rotulo" htmlFor="banner-legenda">
@@ -149,13 +148,13 @@ function BannerForm({ onSalvo, onCancelar }) {
             {mostraImagem && (
               <img
                 key={urlDigitada}
-                src={urlDigitada}
+                src={urlImagem(urlDigitada)}
                 alt="Prévia do banner"
                 onLoad={() => setPrevia('ok')}
                 onError={() => setPrevia('falhou')}
               />
             )}
-            {previa === 'vazia' && <span>A prévia aparece quando o endereço estiver completo</span>}
+            {previa === 'vazia' && <span>A prévia aparece assim que você escolher a imagem</span>}
             {previa === 'falhou' && (
               <span className="banner-form__falhou">Não foi possível abrir essa imagem</span>
             )}
@@ -178,7 +177,7 @@ function BannerForm({ onSalvo, onCancelar }) {
         <Button variante="secundario" onClick={onCancelar} disabled={salvando}>
           Cancelar
         </Button>
-        <Button type="submit" disabled={salvando || previa === 'carregando'}>
+        <Button type="submit" disabled={salvando || enviandoImagem || previa === 'carregando'}>
           {salvando ? 'Salvando...' : 'Salvar banner'}
         </Button>
       </div>

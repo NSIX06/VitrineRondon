@@ -19,6 +19,7 @@ import ProdutoCard from '../../components/cards/ProdutoCard/ProdutoCard'
 import imagemPadrao from '../../assets/imagem-padrao.svg'
 import './EmpreendedorDetalhe.css'
 import Voltar from '../../components/ui/Voltar/Voltar'
+import { urlImagem } from '../../services/imagens'
 
 /** Monta o link do WhatsApp com mensagem inicial */
 function montarLinkWhatsapp(numero, nomeNegocio, mensagem) {
@@ -160,7 +161,7 @@ function EmpreendedorDetalhe() {
       <div className="detalhe__capa">
         <img
           decoding="async"
-          src={fotoUrl || imagemPadrao}
+          src={urlImagem(fotoUrl) || imagemPadrao}
           alt=""
           onError={(evento) => {
             evento.currentTarget.src = imagemPadrao

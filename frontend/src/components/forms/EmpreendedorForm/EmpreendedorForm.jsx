@@ -4,6 +4,7 @@ import Icone from '../../ui/Icone/Icone'
 import StatusMessage from '../../ui/StatusMessage/StatusMessage'
 import Mapa from '../../ui/Mapa/MapaPreguicoso'
 import HorariosEditor from '../HorariosEditor/HorariosEditor'
+import CampoImagem from '../CampoImagem/CampoImagem'
 import { errosDosHorarios } from '../../../services/horarios'
 import { CATEGORIAS } from '../../../services/constantes'
 import { geocodificarEndereco, montarEnderecoTexto } from '../../../services/geocodificacao'
@@ -75,6 +76,7 @@ function EmpreendedorForm({ initialData, onSubmit, onCancelar, textoEnviar, text
   const [errosCampos, setErrosCampos] = useState({})
   const [erroGeral, setErroGeral] = useState(null)
   const [salvando, setSalvando] = useState(false)
+  const [enviandoImagem, setEnviandoImagem] = useState(false)
   // Estado do geocodificador: { tipo: 'ok' | 'erro' | 'aviso', mensagem }
   const [localizacao, setLocalizacao] = useState(null)
   const [localizando, setLocalizando] = useState(false)
@@ -341,23 +343,20 @@ function EmpreendedorForm({ initialData, onSubmit, onCancelar, textoEnviar, text
                 placeholder="@seunegocio"
               />
             </div>
-            <div className="campo">
-              <label className="campo__rotulo" htmlFor="emp-foto">
-                URL da foto
-              </label>
-              <input
-                id="emp-foto"
-                name="fotoUrl"
-                type="url"
-                className={classeEntrada('fotoUrl')}
-                value={valores.fotoUrl}
-                onChange={atualizarCampo}
-                maxLength={500}
-                placeholder="https://..."
-              />
-              {errosCampos.fotoUrl && <span className="campo__erro">{errosCampos.fotoUrl}</span>}
-            </div>
           </div>
+
+          <CampoImagem
+            id="emp-foto"
+            rotulo="Foto do negócio"
+            valor={valores.fotoUrl}
+            onChange={(fotoUrl) => {
+              setValores((anterior) => ({ ...anterior, fotoUrl }))
+              if (errosCampos.fotoUrl) setErrosCampos((anterior) => ({ ...anterior, fotoUrl: undefined }))
+            }}
+            erro={errosCampos.fotoUrl}
+            ajuda="Aparece no card da vitrine e no topo da sua página. Foto horizontal fica melhor."
+            onEnviando={setEnviandoImagem}
+          />
 
           <div className="campo">
             <label className="campo__rotulo" htmlFor="emp-descricao">
@@ -604,7 +603,7 @@ function EmpreendedorForm({ initialData, onSubmit, onCancelar, textoEnviar, text
         <Button variante="secundario" onClick={onCancelar} disabled={salvando}>
           {textoCancelar}
         </Button>
-        <Button type="submit" disabled={salvando}>
+        <Button type="submit" disabled={salvando || enviandoImagem}>
           {salvando ? 'Salvando...' : textoEnviar || (modoEdicao ? 'Salvar alterações' : 'Cadastrar')}
         </Button>
       </div>

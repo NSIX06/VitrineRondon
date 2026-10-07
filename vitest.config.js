@@ -17,6 +17,7 @@ export default defineConfig({
       '@prisma/client': doBackend.resolve('@prisma/client'),
       jsonwebtoken: doBackend.resolve('jsonwebtoken'),
       bcryptjs: doBackend.resolve('bcryptjs'),
+      sharp: doBackend.resolve('sharp'),
     },
   },
   test: {

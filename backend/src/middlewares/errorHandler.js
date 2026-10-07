@@ -70,11 +70,13 @@ export function errorHandler(erro, req, res, next) {
     });
   }
 
-  // Corpo maior que o limite de express.json
+  // Corpo maior que o limite de express.json (ou da imagem, no envio de arquivo)
   if (erro.type === 'entity.too.large') {
     return res.status(413).json({
       success: false,
-      message: 'Corpo da requisição muito grande',
+      message: req.originalUrl?.startsWith('/api/uploads')
+        ? 'A imagem passa de 5 MB. Escolha um arquivo menor'
+        : 'Corpo da requisição muito grande',
     });
   }
 

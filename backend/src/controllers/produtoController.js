@@ -5,6 +5,7 @@ import { ehAdmin } from '../middlewares/auth.js';
 import { registrarLog, diferencas } from '../services/auditoria.js';
 import { erroHttp, parseId } from '../utils/erros.js';
 import { lerPaginacao, resumoPaginacao } from '../utils/paginacao.js';
+import { apagarSeOrfa, apagarSeTrocou, campoImagem } from '../services/imagens.js';
 
 const produtoSchema = z.object({
   nome: z.string({ error: 'Nome é obrigatório' }).trim().min(2, 'Nome deve ter ao menos 2 caracteres').max(150),
@@ -13,7 +14,7 @@ const produtoSchema = z.object({
     .number({ error: 'Preço é obrigatório e deve ser numérico' })
     .positive('Preço deve ser um valor positivo'),
   tipo: z.enum(['produto', 'servico'], { error: 'Tipo deve ser "produto" ou "servico"' }),
-  imagem: z.url({ error: 'URL da imagem inválida' }).max(500).optional().nullable(),
+  imagem: campoImagem('URL da imagem inválida').optional().nullable(),
   disponivel: z.boolean().optional(),
   empreendedorId: z.coerce
     .number({ error: 'empreendedorId é obrigatório e deve ser numérico' })
@@ -184,6 +185,7 @@ export async function atualizarProduto(req, res, next) {
       data: req.body,
       include: { empreendedor: empreendedorResumo },
     });
+    if ('imagem' in req.body) await apagarSeTrocou(prisma, antes.imagem, produto.imagem);
 
     // Compara só os campos do próprio item, sem o objeto do empreendedor
     const { empreendedor: relacaoAntes, ...antesLimpo } = antes;
@@ -213,6 +215,7 @@ export async function excluirProduto(req, res, next) {
     const antes = await carregarComoDono(req, id);
 
     await prisma.produto.delete({ where: { id } });
+    await apagarSeOrfa(prisma, antes.imagem);
 
     await registrarLog(req, {
       acao: 'DELETE',

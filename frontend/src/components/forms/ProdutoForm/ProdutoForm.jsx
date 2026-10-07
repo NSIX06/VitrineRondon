@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Button from '../../ui/Button/Button'
 import StatusMessage from '../../ui/StatusMessage/StatusMessage'
+import CampoImagem from '../CampoImagem/CampoImagem'
 import './ProdutoForm.css'
 
 const estadoInicialPadrao = {
@@ -46,6 +47,7 @@ function ProdutoForm({ initialData, empreendedores = [], negocioFixo, onSubmit, 
   const [errosCampos, setErrosCampos] = useState({})
   const [erroGeral, setErroGeral] = useState(null)
   const [salvando, setSalvando] = useState(false)
+  const [enviandoImagem, setEnviandoImagem] = useState(false)
 
   const modoEdicao = Boolean(initialData?.id)
 
@@ -224,23 +226,18 @@ function ProdutoForm({ initialData, empreendedores = [], negocioFixo, onSubmit, 
         />
       </div>
 
-      <div className="campo">
-        <label className="campo__rotulo" htmlFor="produto-imagem">
-          URL da imagem
-        </label>
-        <input
-          id="produto-imagem"
-          name="imagem"
-          type="url"
-          className={`campo__entrada ${errosCampos.imagem ? 'campo__entrada--erro' : ''}`}
-          value={valores.imagem}
-          onChange={atualizarCampo}
-          maxLength={500}
-          placeholder="https://..."
-        />
-        {errosCampos.imagem && <span className="campo__erro">{errosCampos.imagem}</span>}
-        <span className="campo__ajuda">Opcional. Sem imagem, a vitrine mostra uma ilustração padrão.</span>
-      </div>
+      <CampoImagem
+        id="produto-imagem"
+        rotulo="Imagem"
+        valor={valores.imagem}
+        onChange={(imagem) => {
+          setValores((anterior) => ({ ...anterior, imagem }))
+          if (errosCampos.imagem) setErrosCampos((anterior) => ({ ...anterior, imagem: undefined }))
+        }}
+        erro={errosCampos.imagem}
+        ajuda="Opcional. Sem imagem, a vitrine mostra uma ilustração padrão."
+        onEnviando={setEnviandoImagem}
+      />
 
       <div className="campo campo--checkbox">
         <input
@@ -257,7 +254,7 @@ function ProdutoForm({ initialData, empreendedores = [], negocioFixo, onSubmit, 
         <Button variante="secundario" onClick={onCancelar} disabled={salvando}>
           Cancelar
         </Button>
-        <Button type="submit" disabled={salvando}>
+        <Button type="submit" disabled={salvando || enviandoImagem}>
           {salvando ? 'Salvando...' : modoEdicao ? 'Salvar alterações' : 'Cadastrar'}
         </Button>
       </div>

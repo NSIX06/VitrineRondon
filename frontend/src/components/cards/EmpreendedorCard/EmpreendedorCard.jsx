@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import Tag from '../../ui/Tag/Tag'
 import Icone from '../../ui/Icone/Icone'
 import imagemPadrao from '../../../assets/imagem-padrao.svg'
+import { urlImagem } from '../../../services/imagens'
 import './EmpreendedorCard.css'
 
 /**
@@ -23,7 +24,7 @@ function EmpreendedorCard({ empreendedor }) {
         <img
           decoding="async"
           className="empreendedor-card__foto"
-          src={fotoUrl || imagemPadrao}
+          src={urlImagem(fotoUrl) || imagemPadrao}
           alt={`Foto de ${nomeNegocio}`}
           loading="lazy"
           onError={tratarErroImagem}

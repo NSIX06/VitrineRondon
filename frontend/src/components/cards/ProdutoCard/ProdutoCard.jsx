@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import Tag from '../../ui/Tag/Tag'
 import Icone from '../../ui/Icone/Icone'
 import imagemPadrao from '../../../assets/imagem-padrao.svg'
+import { urlImagem } from '../../../services/imagens'
 import './ProdutoCard.css'
 
 const formatadorPreco = new Intl.NumberFormat('pt-BR', {
@@ -29,7 +30,7 @@ function ProdutoCard({ produto, linkWhatsapp }) {
         <img
           decoding="async"
           className="produto-card__imagem"
-          src={imagem || imagemPadrao}
+          src={urlImagem(imagem) || imagemPadrao}
           alt=""
           loading="lazy"
           onError={tratarErroImagem}
