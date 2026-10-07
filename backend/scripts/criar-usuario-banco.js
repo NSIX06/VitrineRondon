@@ -8,6 +8,10 @@
 // Usa as duas URLs do .env:
 //   DATABASE_URL           a conta da aplicação (é ela que este script cria)
 //   DATABASE_URL_MIGRACAO  a conta de administrador (root), que tem poder para criar
+//   BANCO_HOST_CONTA       de onde a conta pode entrar (padrão: localhost). Num
+//                          banco na nuvem (Aiven), a API conecta de fora, então
+//                          use "%" (qualquer endereço; a senha longa e o SSL
+//                          obrigatório do provedor é que protegem)
 //
 // Pode rodar quantas vezes quiser: se a conta existe, a senha e as permissões
 // são realinhadas com o .env.
@@ -15,6 +19,7 @@ import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
 
 const NOME_VALIDO = /^[A-Za-z0-9_]+$/;
+const HOST_VALIDO = /^(%|localhost|[A-Za-z0-9._%-]+)$/;
 
 function lerUrl(variavel) {
   const valor = process.env[variavel];
@@ -39,6 +44,11 @@ if (!NOME_VALIDO.test(usuario) || !NOME_VALIDO.test(banco)) {
   console.error('Usuário e banco devem ter só letras, números e _.');
   process.exit(1);
 }
+const host = process.env.BANCO_HOST_CONTA || 'localhost';
+if (!HOST_VALIDO.test(host)) {
+  console.error('BANCO_HOST_CONTA deve ser "localhost", "%" ou um endereço (letras, números, ponto e hífen).');
+  process.exit(1);
+}
 if (senha.length < 16) {
   console.error('A senha da conta da aplicação precisa de pelo menos 16 caracteres.');
   process.exit(1);
@@ -46,7 +56,7 @@ if (senha.length < 16) {
 
 // A senha vai dentro de aspas simples no SQL
 const literal = (texto) => `'${texto.replace(/\\/g, '\\\\').replace(/'/g, "''")}'`;
-const conta = `'${usuario}'@'localhost'`;
+const conta = `'${usuario}'@'${host}'`;
 
 const prisma = new PrismaClient({ datasourceUrl: admin.toString(), log: [] });
 try {
@@ -56,7 +66,7 @@ try {
   await prisma.$executeRawUnsafe(`REVOKE ALL PRIVILEGES, GRANT OPTION FROM ${conta}`);
   await prisma.$executeRawUnsafe(`GRANT SELECT, INSERT, UPDATE, DELETE ON \`${banco}\`.* TO ${conta}`);
   const permissoes = await prisma.$queryRawUnsafe(`SHOW GRANTS FOR ${conta}`);
-  console.log(`Conta ${usuario}@localhost pronta. Permissões:`);
+  console.log(`Conta ${usuario}@${host} pronta. Permissões:`);
   for (const linha of permissoes) console.log('  ' + Object.values(linha)[0]);
 } catch (erro) {
   console.error('Não foi possível criar a conta:', erro.message.split('\n').at(-1));

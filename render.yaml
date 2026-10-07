@@ -1,0 +1,78 @@
+# Blueprint do Render: cria a API e o site de uma vez.
+# Passo a passo (Aiven, Cloudinary e as variáveis) em docs/DEPLOY_RENDER.md.
+#
+# Os valores com "sync: false" são pedidos pelo Render só na primeira criação
+# do Blueprint; depois, troque pelo painel (Environment) de cada serviço.
+
+services:
+  # API (Express + Prisma). Plano gratuito: dorme após 15 min sem acesso e leva
+  # cerca de 1 minuto para acordar na primeira visita.
+  - type: web
+    name: vitrinelocal-api
+    runtime: node
+    plan: free
+    region: virginia
+    rootDir: backend
+    # --include=dev: com NODE_ENV=production o npm pularia as devDependencies,
+    # e o CLI do Prisma (que gera o client e roda as migrations) é uma delas.
+    # As migrations rodam aqui porque o "pre-deploy command" é só de plano pago;
+    # se uma falhar, o build para e a versão anterior continua no ar.
+    buildCommand: npm ci --include=dev && npm run render:build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Conta restrita da aplicação (só SELECT/INSERT/UPDATE/DELETE), no Aiven
+      - key: DATABASE_URL
+        sync: false
+      # Conta de administrador do Aiven, usada só nas migrations do build
+      - key: DATABASE_URL_MIGRACAO
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 8h
+      - key: TERMOS_VERSAO
+        value: "1.0"
+      # Endereço do site (ex.: https://vitrinelocal.onrender.com), sem barra no fim
+      - key: CORS_ORIGINS
+        sync: false
+      # cloudinary://CHAVE:SEGREDO@NOME_DA_CONTA (painel do Cloudinary > API Keys)
+      - key: CLOUDINARY_URL
+        sync: false
+      - key: CLOUDINARY_PASTA
+        value: vitrinelocal
+
+  # Site (React + Vite), servido pela CDN do Render. Gratuito e não dorme.
+  - type: web
+    name: vitrinelocal
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    envVars:
+      # Endereço da API com /api no fim (ex.: https://vitrinelocal-api.onrender.com/api).
+      # É lido no build: depois de trocar, faça um novo deploy do site.
+      - key: VITE_API_URL
+        sync: false
+    routes:
+      # Aplicação de página única: qualquer rota (/vitrine, /empreendedores/5...)
+      # abre o index.html e o React Router decide a tela
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      # Arquivos do build têm hash no nome: podem ficar em cache por um ano
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable

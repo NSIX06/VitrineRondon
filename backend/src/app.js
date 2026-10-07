@@ -9,6 +9,7 @@ import { errorHandler } from './middlewares/errorHandler.js';
 import { limitePadrao } from './middlewares/rateLimit.js';
 import { erroHttp } from './utils/erros.js';
 import { lerOrigens, origemPermitida } from './utils/origens.js';
+import { PASTA_UPLOADS } from './services/imagens.js';
 
 const app = express();
 const producao = process.env.NODE_ENV === 'production';
@@ -39,8 +40,12 @@ app.use(
 
 // Em produção recusa tráfego que não chegou por HTTPS (o proxy informa em
 // X-Forwarded-Proto). Em dev o servidor é http://localhost e a checagem é pulada.
+// O health check fica de fora: a hospedagem (Render) chama /api/health por
+// dentro da rede dela, direto na porta, sem passar pelo proxy HTTPS. Recusar
+// essa chamada faria o deploy ser dado como quebrado.
 if (producao) {
   app.use((req, res, next) => {
+    if (req.path === '/api/health') return next();
     if (req.secure || req.headers['x-forwarded-proto'] === 'https') return next();
     return res.status(403).json({ success: false, message: 'HTTPS obrigatório' });
   });
@@ -88,6 +93,24 @@ app.use((req, res, next) => {
 
 // Rotas da API
 app.use('/api', autenticarOpcional, routes);
+
+// Imagens enviadas do computador. São sempre WebP gerados pelo servidor, com
+// nome aleatório: o arquivo nunca muda, então o navegador pode guardar por um
+// ano. O site pode estar em outro domínio, por isso a política de recurso é
+// liberada só aqui (a API continua restrita ao mesmo site).
+app.use(
+  '/uploads',
+  express.static(PASTA_UPLOADS, {
+    index: false,
+    dotfiles: 'deny',
+    redirect: false,
+    immutable: true,
+    maxAge: '365d',
+    setHeaders(res) {
+      res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+    },
+  })
+);
 
 // Quem abre o endereço do servidor no navegador cai aqui, e não num 404 seco.
 // Em desenvolvimento a mensagem aponta o site; em produção não cita endereço

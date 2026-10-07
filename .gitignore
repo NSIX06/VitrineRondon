@@ -1,4 +1,11 @@
 node_modules/
 dist/
 .env
+# Variações com senha (ex.: backend/.env.aiven); os modelos .example continuam no git
+.env.*
+!.env.example
+!.env.*.example
 *.log
+
+# Imagens enviadas pelos usuários (geradas em tempo de execução)
+backend/uploads/

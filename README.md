@@ -24,6 +24,7 @@ O sistema é multiusuário: cada empreendedor administra apenas o próprio negó
 - [Testes](#testes)
 - [Tratamento de erros](#tratamento-de-erros)
 - [Desempenho](#desempenho)
+- [Publicação no Render](#publicação-no-render)
 - [Solução de problemas](#solução-de-problemas)
 
 ## Stack
@@ -116,6 +117,10 @@ JWT_EXPIRES_IN="8h"
 # Versão vigente dos documentos legais, gravada em cada aceite
 TERMOS_VERSAO="1.0"
 
+# Imagens enviadas do computador: pasta local, ou Cloudinary se preenchido
+UPLOADS_DIR="uploads"
+CLOUDINARY_URL=""
+
 # Usadas apenas pelo seed
 ADMIN_NOME="Administrador"
 ADMIN_EMAIL="admin@vitrinelocal.com.br"
@@ -130,6 +135,10 @@ DEMO_EMPREENDEDOR_SENHA="defina-uma-senha-forte"
 | `JWT_SECRET` | sim | Sem ela a API recusa qualquer login, com erro explícito |
 | `JWT_EXPIRES_IN` | não | Padrão `8h` |
 | `TERMOS_VERSAO` | não | Padrão `1.0`. Mudar a versão faz novos aceites gravarem o novo número |
+| `UPLOADS_DIR` | não | Padrão `uploads` (relativo à pasta `backend`). Onde ficam as fotos enviadas quando não há Cloudinary |
+| `CLOUDINARY_URL` | em produção | `cloudinary://CHAVE:SEGREDO@CONTA`. Com ela, as fotos enviadas vão para o Cloudinary em vez da pasta local (o disco do Render gratuito é apagado a cada deploy) |
+| `CLOUDINARY_PASTA` | não | Padrão `vitrinelocal`. Pasta das fotos dentro da conta do Cloudinary |
+| `BANCO_HOST_CONTA` | não | Padrão `localhost`. De onde a conta da aplicação pode entrar no MySQL; num banco na nuvem use `%` |
 | `ADMIN_SENHA`, `DEMO_EMPREENDEDOR_SENHA` | só para o seed | O seed aborta se faltarem |
 
 Nenhuma chave de API vai para o frontend: o mapa (Leaflet com ladrilhos do OpenStreetMap) e a
@@ -492,11 +501,23 @@ pertence; o administrador também passa em todas as rotas de dono.
 | POST | `/produtos` | dono | Cria no próprio negócio |
 | PUT | `/produtos/:id` | dono | Atualiza. O vínculo com o negócio não pode ser trocado |
 | DELETE | `/produtos/:id` | dono | Exclui |
+| POST | `/uploads/imagem` | autenticado | Envia uma imagem do computador (corpo = o arquivo, `Content-Type: image/...`). Devolve `data.url` para usar em `imagem`, `fotoUrl` ou no banner |
 | POST | `/contatos` | público | Envia mensagem |
 | GET | `/contatos` | admin | Lista as mensagens recebidas |
 | PATCH | `/contatos/:id/lido` | admin | Marca como lida. Corpo opcional `{ "lido": false }` desmarca |
 | DELETE | `/contatos/:id` | admin | Exclui |
 | GET | `/faq` | público | Perguntas ativas, por `ordem` e depois pela pergunta |
+
+**Imagens.** Os campos `imagem` (produto), `fotoUrl` (negócio) e `imagemUrl` (banner) aceitam um
+link `http(s)` completo, como sempre, ou o caminho devolvido por `POST /uploads/imagem`
+(`/uploads/<id>.webp`, ou o endereço `https://res.cloudinary.com/...` quando `CLOUDINARY_URL` está
+definida). No envio, o servidor só aceita JPG, PNG, WebP, GIF e AVIF de até 5 MB, abre o
+arquivo com o [sharp](https://sharp.pixelplumbing.com) (arquivo que não é imagem é recusado com
+`415`), reduz para no máximo 1600 px, regrava em WebP e descarta os metadados, inclusive a
+localização GPS das fotos de celular. SVG fica de fora porque pode carregar script. Os arquivos são
+servidos em `/uploads/...` com cache de um ano, e a imagem trocada ou de um cadastro excluído é
+apagada do disco quando nenhum outro cadastro a usa. Imagem enviada e nunca salva num cadastro
+continua na pasta.
 
 **Paginação opcional.** Sem `pagina` na URL, `/produtos` e `/empreendedores` devolvem a lista inteira,
 como sempre: a home, o painel do empreendedor e as coleções de teste continuam funcionando sem
@@ -800,6 +821,14 @@ em paralelo. Sem esses parâmetros a resposta continua inteira, por compatibilid
 **Já existiam antes:** `loading="lazy"` nas imagens dos cards, debounce de 400 ms na busca e cache de
 GET com revalidação em segundo plano em [`api.js`](frontend/src/services/api.js) — é o que evita a
 tela piscar "Carregando" a cada navegação.
+
+## Publicação no Render
+
+O projeto sobe no Render pelo Blueprint [`render.yaml`](render.yaml), que cria a API (web service) e o
+site (static site), os dois no plano gratuito. O MySQL fica no Aiven e as fotos enviadas no
+Cloudinary, também gratuitos. O passo a passo completo, com a preparação do banco pela sua máquina
+(`npm run aiven:migrar`, `aiven:criar-usuario` e `aiven:seed`), está em
+[docs/DEPLOY_RENDER.md](docs/DEPLOY_RENDER.md).
 
 ## Solução de problemas
 

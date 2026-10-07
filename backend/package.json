@@ -14,7 +14,11 @@
     "audit": "npm audit --audit-level=high",
     "prisma:deploy": "node scripts/prisma-admin.js migrate deploy",
     "prisma:status": "node scripts/prisma-admin.js migrate status",
-    "banco:criar-usuario": "node scripts/criar-usuario-banco.js"
+    "banco:criar-usuario": "node scripts/criar-usuario-banco.js",
+    "render:build": "prisma generate && node scripts/prisma-admin.js migrate deploy",
+    "aiven:migrar": "node --env-file=.env.aiven scripts/prisma-admin.js migrate deploy",
+    "aiven:criar-usuario": "node --env-file=.env.aiven scripts/criar-usuario-banco.js",
+    "aiven:seed": "node --env-file=.env.aiven prisma/seed.js"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
@@ -29,6 +33,7 @@
     "express-rate-limit": "^8.7.0",
     "helmet": "^8.3.0",
     "jsonwebtoken": "^9.0.3",
+    "sharp": "^0.35.5",
     "zod": "^4.6.5"
   },
   "devDependencies": {
@@ -37,5 +42,8 @@
   },
   "overrides": {
     "deepmerge-ts": "^8.0.2"
+  },
+  "engines": {
+    "node": ">=22.12"
   }
 }
