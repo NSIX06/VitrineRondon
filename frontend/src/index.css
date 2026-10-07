@@ -194,6 +194,23 @@ button {
   cursor: pointer;
 }
 
+/* Caixas de marcar nunca encolhem dentro de linha flexível (uma chegava a
+   13px de largura) e, no celular, têm o tamanho mínimo para o dedo */
+input[type='checkbox'],
+input[type='radio'] {
+  flex-shrink: 0;
+}
+
+/* "body" na frente dá o peso para vencer os tamanhos fixos de cada componente
+   (.campo--checkbox, .aceite__item, .horarios-editor__nome) só no celular */
+@media (max-width: 600px) {
+  body input[type='checkbox'],
+  body input[type='radio'] {
+    width: 24px;
+    height: 24px;
+  }
+}
+
 :focus-visible {
   outline: 3px solid var(--cor-ouro);
   outline-offset: 2px;

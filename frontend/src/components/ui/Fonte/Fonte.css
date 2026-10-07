@@ -13,6 +13,15 @@
   background: var(--cor-branco);
   white-space: nowrap;
   vertical-align: middle;
+  max-width: 100%;
+}
+
+/* Celular: fonte com nome e data longos ("CDL Rondonópolis, 13 de outubro de
+   2025") passava 17px da caixa. Aqui ela pode quebrar linha. */
+@media (max-width: 600px) {
+  .fonte {
+    white-space: normal;
+  }
 }
 
 .fonte:hover {

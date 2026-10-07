@@ -68,6 +68,11 @@
 .contato__caixa .botao {
   align-self: flex-start;
   margin-top: auto;
+  /* Em três colunas estreitas (por volta de 1024px) o texto do botão não cabia
+     numa linha só e vazava da caixa */
+  max-width: 100%;
+  white-space: normal;
+  text-align: left;
 }
 
 .contato__caixa {

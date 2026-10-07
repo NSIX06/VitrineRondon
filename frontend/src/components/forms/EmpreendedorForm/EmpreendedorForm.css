@@ -95,6 +95,14 @@
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
 }
 
+/* Formulário estreito (celular): um campo por linha. Lado a lado, com 140px
+   cada, o nome do negócio e o do responsável apareciam cortados */
+@container form-negocio (max-width: 440px) {
+  .empreendedor-form .formulario__linha {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 .empreendedor-form__grupo.empreendedor-form__coluna {
   margin: 0;
 }
