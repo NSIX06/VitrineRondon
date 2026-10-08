@@ -3,7 +3,8 @@
   position: relative;
   /* O cartão que sai da frente da pilha "cai" e some na borda do herói */
   overflow: hidden;
-  background: var(--linhas-claras), var(--cor-anil);
+  background: var(--brilho-amanhecer), var(--brilho-luar), var(--faixa-textura, var(--linhas-claras)),
+    var(--cor-anil);
   color: var(--cor-branco);
   border-bottom: var(--borda);
 }
