@@ -43,6 +43,10 @@ model Empreendedor {
   // vigente. Nulo ou no passado = fora da vitrine (rascunho, aguardando
   // pagamento ou assinatura vencida). Os dados continuam guardados.
   publicadoAte         DateTime?            @map("publicado_ate")
+  // Quando o negócio apareceu na vitrine pela primeira vez (primeira
+  // assinatura paga). Não muda em renovações nem quando ele volta depois de
+  // sair: é o que marca o selo "Novo na vitrine" nos primeiros dias.
+  publicadoDesde       DateTime?            @map("publicado_desde")
   // Consentimento para a VitrineRondon usar nome, fotos e produtos em
   // divulgações nas redes oficiais (benefício do plano Destaque)
   autorizaDivulgacao   Boolean              @default(false) @map("autoriza_divulgacao")

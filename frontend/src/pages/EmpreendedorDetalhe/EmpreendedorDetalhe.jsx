@@ -21,6 +21,8 @@ import { METRICAS, registrarMetrica } from '../../services/metricas'
 import ProdutoCard from '../../components/cards/ProdutoCard/ProdutoCard'
 import imagemPadrao from '../../assets/imagem-padrao.svg'
 import { useRelogio } from '../../hooks/useRelogio'
+import SeloNovo from '../../components/ui/SeloNovo/SeloNovo'
+import { ehNovidade } from '../../services/novidades'
 import './EmpreendedorDetalhe.css'
 import Voltar from '../../components/ui/Voltar/Voltar'
 import { urlImagem } from '../../services/imagens'
@@ -100,9 +102,11 @@ function EmpreendedorDetalhe() {
     longitude,
     exibirEndereco,
     emDestaque,
+    publicadoDesde,
     // Só vem para o dono e a administração: o público nunca recebe negócio fora da vitrine
     situacao: situacaoDoNegocio,
   } = empreendedor
+  const novo = ehNovidade(publicadoDesde)
   const previa = situacaoDoNegocio && situacaoDoNegocio !== 'ATIVO' ? SITUACAO_NEGOCIO[situacaoDoNegocio] : null
 
   const resumoEmpreendedor = { id: empreendedor.id, nomeNegocio, cidade, whatsapp }
@@ -189,6 +193,7 @@ function EmpreendedorDetalhe() {
         <div className="detalhe__capa-sombra" />
         <div className="container detalhe__capa-selos">
           {emDestaque && <SeloDestaque claro className="detalhe__selo-destaque" />}
+          {novo && <SeloNovo claro className="detalhe__selo-destaque" />}
           <span className="detalhe__selo detalhe__selo--verificado">
             <Icone nome="verified" tamanho={18} />
             Perfil verificado pelo VitrineRondon
@@ -454,6 +459,7 @@ function EmpreendedorDetalhe() {
           <div className="detalhe__mapa-legenda">
             <strong>{localResumo || cidade}</strong>
             {emDestaque && <SeloDestaque compacto />}
+            {novo && <SeloNovo compacto />}
             <span>{enderecoPublico ? 'Local do negócio' : 'Região de atendimento'}</span>
           </div>
         </div>

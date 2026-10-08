@@ -7,6 +7,8 @@ import imagemPadrao from '../../../assets/imagem-padrao.svg'
 import { urlImagem } from '../../../services/imagens'
 import { formatarPreco } from '../../../services/formatos'
 import TagTipo from '../../ui/Tag/TagTipo'
+import SeloNovo from '../../ui/SeloNovo/SeloNovo'
+import { ehNovidade } from '../../../services/novidades'
 import './ProdutoCard.css'
 
 /**
@@ -37,6 +39,7 @@ function ProdutoCard({ produto, linkWhatsapp }) {
           <TagTipo tipo={tipo} />
           {!disponivel && <Tag variante="alerta">Indisponível</Tag>}
           {empreendedor?.emDestaque && <SeloDestaque compacto claro />}
+          {ehNovidade(empreendedor?.publicadoDesde) && <SeloNovo compacto claro />}
         </div>
       </div>
 

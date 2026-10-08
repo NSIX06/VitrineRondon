@@ -4,6 +4,8 @@ import Icone from '../../ui/Icone/Icone'
 import SeloDestaque from '../../ui/SeloDestaque/SeloDestaque'
 import imagemPadrao from '../../../assets/imagem-padrao.svg'
 import { urlImagem } from '../../../services/imagens'
+import SeloNovo from '../../ui/SeloNovo/SeloNovo'
+import { ehNovidade } from '../../../services/novidades'
 import './EmpreendedorCard.css'
 
 /**
@@ -11,7 +13,7 @@ import './EmpreendedorCard.css'
  * Espera o formato de GET /api/empreendedores (com `_count.produtos` opcional).
  */
 function EmpreendedorCard({ empreendedor }) {
-  const { id, nomeNegocio, responsavel, descricao, categoria, cidade, fotoUrl, emDestaque, _count } =
+  const { id, nomeNegocio, responsavel, descricao, categoria, cidade, fotoUrl, emDestaque, publicadoDesde, _count } =
     empreendedor
   const totalItens = _count?.produtos
 
@@ -37,6 +39,7 @@ function EmpreendedorCard({ empreendedor }) {
         <div className="empreendedor-card__etiquetas">
           <Tag variante="categoria">{categoria}</Tag>
           {emDestaque && <SeloDestaque compacto />}
+          {ehNovidade(publicadoDesde) && <SeloNovo compacto />}
         </div>
         <h3 className="empreendedor-card__nome">
           <Link to={`/empreendedores/${id}`} className="empreendedor-card__link">

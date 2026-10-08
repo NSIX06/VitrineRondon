@@ -1,0 +1,45 @@
+/* Adesivo verde, irmão do selo de Destaque: mesmo formato, inclinado para o
+   outro lado, para os dois lado a lado não parecerem um só */
+.selo-novo {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0.2rem 0.6rem 0.2rem 0.45rem;
+  background: #4ade80;
+  color: var(--cor-tinta);
+  border: var(--borda-fina);
+  border-radius: 999px;
+  box-shadow: 2px 2px 0 0 var(--cor-contorno), var(--cel-sm);
+  transform: rotate(1.5deg);
+  font-size: var(--texto-xs);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.selo-novo__brilho {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+  fill: var(--cor-branco);
+  stroke: var(--cor-contorno);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.selo-novo--compacto {
+  padding: 0.12rem 0.5rem 0.12rem 0.35rem;
+  font-size: 10px;
+}
+
+.selo-novo--compacto .selo-novo__brilho {
+  width: 11px;
+  height: 11px;
+}
+
+.selo-novo--claro {
+  border-color: var(--cor-branco);
+  box-shadow: 2px 2px 0 0 rgba(0, 0, 0, 0.55);
+}

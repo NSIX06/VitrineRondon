@@ -85,6 +85,14 @@ export async function sincronizarNegocio(cliente, empreendedorId, agora = new Da
   const dados = vigente
     ? { planoAtual: vigente.plano.nome, emDestaque: vigente.plano.destaque, publicadoAte: vigente.vigenteAte }
     : { planoAtual: 'NENHUM', emDestaque: false, publicadoAte: null };
+  // Primeira publicação: guarda a data (ela marca o "Novo na vitrine")
+  if (vigente) {
+    const { publicadoDesde } = await cliente.empreendedor.findUnique({
+      where: { id: empreendedorId },
+      select: { publicadoDesde: true },
+    });
+    if (!publicadoDesde) dados.publicadoDesde = vigente.inicioEm ?? agora;
+  }
   await cliente.empreendedor.update({ where: { id: empreendedorId }, data: dados });
   return dados;
 }

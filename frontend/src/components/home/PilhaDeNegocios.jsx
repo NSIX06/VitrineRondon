@@ -5,6 +5,8 @@ import Icone from '../ui/Icone/Icone'
 import SeloDestaque from '../ui/SeloDestaque/SeloDestaque'
 import imagemPadrao from '../../assets/imagem-padrao.svg'
 import { urlImagem } from '../../services/imagens'
+import SeloNovo from '../ui/SeloNovo/SeloNovo'
+import { ehNovidade } from '../../services/novidades'
 import './PilhaDeNegocios.css'
 
 // Tamanho dos cartões conforme o espaço que a pilha tem (e não a tela: no topo
@@ -92,6 +94,7 @@ function Pilha({ negocios, disponivel }) {
                 <span className="pilha-negocios__etiquetas">
                   <span className="tag tag--categoria">{negocio.categoria}</span>
                   {negocio.emDestaque && <SeloDestaque compacto />}
+                  {ehNovidade(negocio.publicadoDesde) && <SeloNovo compacto />}
                 </span>
                 <strong className="pilha-negocios__nome">{negocio.nomeNegocio}</strong>
                 <span className="pilha-negocios__local">

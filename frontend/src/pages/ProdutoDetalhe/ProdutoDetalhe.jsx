@@ -11,6 +11,8 @@ import EmpreendedorCard from '../../components/cards/EmpreendedorCard/Empreended
 import imagemPadrao from '../../assets/imagem-padrao.svg'
 import { formatarPreco } from '../../services/formatos'
 import TagTipo from '../../components/ui/Tag/TagTipo'
+import SeloNovo from '../../components/ui/SeloNovo/SeloNovo'
+import { ehNovidade } from '../../services/novidades'
 import './ProdutoDetalhe.css'
 import Voltar from '../../components/ui/Voltar/Voltar'
 import { urlImagem } from '../../services/imagens'
@@ -96,6 +98,7 @@ function ProdutoDetalhe() {
           <div className="produto-detalhe__marcas">
             <span className="pagina-cabecalho__marca">{empreendedor.categoria}</span>
             {empreendedor.emDestaque && <SeloDestaque />}
+            {ehNovidade(empreendedor.publicadoDesde) && <SeloNovo />}
           </div>
           <h1 className="produto-detalhe__nome">{nome}</h1>
           {descricao && <p className="produto-detalhe__descricao">{descricao}</p>}

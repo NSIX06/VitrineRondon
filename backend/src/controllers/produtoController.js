@@ -34,7 +34,15 @@ export const atualizarProdutoSchema = produtoSchema.omit({ empreendedorId: true 
 
 // Campos do empreendedor incluídos nas listagens de produtos
 const empreendedorResumo = {
-  select: { id: true, nomeNegocio: true, whatsapp: true, cidade: true, bairro: true, emDestaque: true },
+  select: {
+    id: true,
+    nomeNegocio: true,
+    whatsapp: true,
+    cidade: true,
+    bairro: true,
+    emDestaque: true,
+    publicadoDesde: true,
+  },
 };
 
 /** Id do negócio do usuário autenticado (null se ele não tiver um) */
