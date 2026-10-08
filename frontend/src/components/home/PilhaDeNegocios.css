@@ -1,3 +1,9 @@
+/* Área que a pilha tem para ocupar: é ela que define o tamanho dos cartões */
+.pilha-negocios__area {
+  width: 100%;
+  min-width: 0;
+}
+
 /* Palco da pilha: reserva o espaço dos cartões de trás e centraliza o conjunto */
 .pilha-negocios {
   position: relative;

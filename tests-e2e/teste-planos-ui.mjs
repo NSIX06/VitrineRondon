@@ -85,8 +85,8 @@ async function main() {
     await abrir('/vitrine?busca=sobrancelhas', '.vitrine__filtros, .listagem__filtros')
     await esperar(800)
     checar('a busca não acha item de negócio sem plano', await evaluate("!document.querySelector('.produto-card')"))
-    await abrir('/', '#titulo-feira')
-    checar('a Home mostra a feira com o Destaque primeiro, com selo', await evaluate("Boolean(__q('.feira .card-swap__cartao .selo-destaque')) && __q('.feira__nome').textContent.includes('Ateliê')"))
+    await abrir('/', '.hero .card-swap__cartao')
+    checar('o topo da Home mostra a pilha com o Destaque primeiro, com selo', await evaluate("Boolean(__q('.hero .card-swap__cartao .selo-destaque')) && __q('.hero__nome').textContent.includes('Ateliê')"))
 
     console.log('\n2. Página de planos (visitante)')
     await abrir('/planos', '.planos__cartao')

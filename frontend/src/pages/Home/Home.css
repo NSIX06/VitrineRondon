@@ -1,6 +1,8 @@
 /* Herói */
 .hero {
   position: relative;
+  /* O cartão que sai da frente da pilha "cai" e some na borda do herói */
+  overflow: hidden;
   background: var(--linhas-claras), var(--cor-anil);
   color: var(--cor-branco);
   border-bottom: var(--borda);
@@ -21,7 +23,7 @@
 
 .hero__conteudo {
   display: grid;
-  grid-template-columns: 7fr 5fr;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 6fr);
   gap: var(--esp-8);
   align-items: center;
   padding-block: var(--esp-8);
@@ -73,69 +75,62 @@
   gap: var(--esp-4);
 }
 
-/* Foto colada como cartaz de lambe-lambe */
-.hero__cartaz {
-  position: relative;
-  justify-self: end;
-  width: 100%;
-  max-width: 440px;
-  background: var(--cor-branco);
-  padding: var(--esp-2);
-  border: var(--borda);
-  border-radius: var(--raio);
-  transform: rotate(2deg);
-  box-shadow: 7px 7px 0 0 var(--cor-ouro);
-}
-
-/* Reflexo de vitrine sobre a foto do cartaz */
-.hero__cartaz::before {
-  content: '';
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  width: 40px;
-  height: 40px;
-  background: var(--reflexo) no-repeat center / contain;
-  opacity: 0.9;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.hero__cartaz-foto {
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  border: var(--borda);
-  border-radius: var(--raio-md);
-  background: var(--cor-superficie-media);
-}
-
-.hero__cartaz-foto img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.hero__cartaz-legenda {
+/* Pilha de negócios no lugar do cartaz */
+.hero__palco {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  min-width: 0;
+}
+
+/* Lugar da pilha enquanto o arquivo dela (e o gsap) chega: a página não pula */
+.hero__espera {
+  width: 100%;
+  min-height: 560px;
+}
+
+/* Negócios da pilha em lista: o caminho para quem usa teclado ou leitor de tela */
+.hero__negocios {
+  display: flex;
+  flex-direction: column;
   gap: var(--esp-2);
-  padding: var(--esp-2) var(--esp-1) var(--esp-1);
-  color: var(--cor-anil);
+}
+
+.hero__negocios-rotulo {
   font-size: var(--texto-xs);
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
+  color: var(--cor-ouro);
 }
 
-.hero__cartaz-etiqueta {
-  background: var(--cor-anil);
-  color: var(--cor-ouro);
-  padding: 2px 6px;
-  border: var(--borda-fina);
-  border-radius: 4px;
-  transform: rotate(1deg);
-  font-size: 10px;
+.hero__nomes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}
+
+.hero__nome {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.35rem 0.75rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  border-radius: 999px;
+  color: var(--cor-branco);
+  font-size: var(--texto-sm);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.hero__nome:hover,
+.hero__nome:focus-visible {
+  background: var(--cor-branco);
+  color: var(--cor-anil);
+  border-color: var(--cor-branco);
 }
 
 /* Contadores com barra à esquerda */
@@ -231,138 +226,6 @@
   text-underline-offset: 3px;
 }
 
-.secao__link--claro {
-  color: var(--cor-ouro);
-}
-
-/* Seção em azul: quem está na feira */
-.feira {
-  background: var(--cor-anil);
-  color: var(--cor-branco);
-  padding-block: var(--esp-7);
-  border-block: var(--borda);
-  background: var(--linhas-claras), var(--cor-anil);
-}
-
-.feira__cabecalho {
-  border-bottom-color: rgba(255, 255, 255, 0.3);
-}
-
-.feira h2 {
-  color: var(--cor-branco);
-}
-
-.feira .secao__subtitulo {
-  color: rgba(255, 255, 255, 0.8);
-}
-
-/* Texto e lista à esquerda, pilha animada à direita; um embaixo do outro no estreito */
-.feira {
-  /* O cartão que sai da frente da pilha "cai" e some na borda da faixa */
-  overflow: hidden;
-}
-
-.feira__grade {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
-  gap: var(--esp-6);
-  align-items: center;
-}
-
-.feira__texto {
-  display: flex;
-  flex-direction: column;
-  gap: var(--esp-3);
-  min-width: 0;
-}
-
-.feira__texto h2 {
-  margin: 0;
-}
-
-.feira__texto .secao__subtitulo {
-  margin: 0;
-  max-width: 48ch;
-  line-height: 1.55;
-}
-
-/* Sobre o azul, o rótulo fica amarelo (o padrão anil sumiria no fundo) */
-.feira .feira__marca {
-  color: var(--cor-ouro);
-  margin-bottom: 0;
-}
-
-/* Lista de nomes: o caminho para quem usa teclado ou leitor de tela */
-.feira__nomes {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--esp-2);
-}
-
-.feira__nome {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0.35rem 0.75rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.55);
-  border-radius: 999px;
-  color: var(--cor-branco);
-  font-size: var(--texto-sm);
-  font-weight: 700;
-  text-decoration: none;
-}
-
-.feira__nome:hover,
-.feira__nome:focus-visible {
-  background: var(--cor-branco);
-  color: var(--cor-anil);
-  border-color: var(--cor-branco);
-}
-
-.feira__acoes {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--esp-4);
-  margin-top: var(--esp-2);
-}
-
-.feira__palco {
-  display: flex;
-  justify-content: center;
-  min-width: 0;
-}
-
-.feira__palco > .status {
-  width: 100%;
-}
-
-/* Lugar da pilha enquanto o arquivo dela chega: a página não pula */
-.feira__espera {
-  width: 100%;
-  min-height: 560px;
-}
-
-@media (max-width: 900px) {
-  .feira__grade {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .feira__espera {
-    min-height: 480px;
-  }
-}
-
-@media (max-width: 480px) {
-  .feira__espera {
-    min-height: 420px;
-  }
-}
-
 .como-funciona {
   position: relative;
   border: var(--borda);
@@ -447,9 +310,8 @@
     padding-block: var(--esp-6);
   }
 
-  .hero__cartaz {
-    justify-self: center;
-    transform: rotate(1.5deg);
+  .hero__espera {
+    min-height: 480px;
   }
 
   .numeros__lista,

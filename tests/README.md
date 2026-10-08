@@ -26,7 +26,7 @@ npx vitest run tests/backend/horarios.test.js   # um arquivo só
 | `schemas-empreendedor.test.js` | `controllers/empreendedorController.js` | categoria da lista, coordenada dentro do planeta, e o padrão do estado não vaza para a edição parcial |
 | `schemas-produto.test.js` | `controllers/produtoController.js` | preço positivo, e a edição não transfere o item para outro negócio nem transforma serviço em produto |
 | `schemas-conta.test.js` | `controllers/authController.js` | força da senha, confirmação, telefone com DDD e os dois aceites obrigatórios |
-| `schemas-admin.test.js` | contato, usuário e configuração | mensagem da comunidade, moderação de conta e banner da home |
+| `schemas-admin.test.js` | contato e usuário | mensagem da comunidade e moderação de conta |
 | `faq.test.js` | `controllers/faqController.js` | público só com ativas e em ordem, id gerado no cadastro, edição que não reativa sozinha, limites de 300 caracteres e auditoria |
 | `paginacao.test.js` | `utils/paginacao.js` | sem página a lista vem inteira; página e tamanho inválidos são recusados com 400 |
 | `planos.test.js` | `prisma/planos.js` | preços em centavos, só o Destaque liga selo, métricas ampliadas e divulgação, nenhum texto promete resultado, e o seed atualiza sem apagar nem desligar o plano do gateway |

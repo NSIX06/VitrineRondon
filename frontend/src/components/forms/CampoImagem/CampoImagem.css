@@ -18,10 +18,6 @@
   transition: background-color 0.15s ease;
 }
 
-.campo-imagem__area--sem-previa {
-  grid-template-columns: minmax(0, 1fr);
-}
-
 /* Arquivo sendo arrastado por cima: a área acende em amarelo */
 .campo-imagem__area--arrastando {
   background: var(--cor-ouro-claro);

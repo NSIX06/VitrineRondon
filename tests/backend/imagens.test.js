@@ -34,7 +34,6 @@ const lerGravado = async (caminho) => sharp(await readFile(path.join(pasta, path
 const prismaComUsos = (usos = 0) => ({
   produto: { count: vi.fn().mockResolvedValue(usos) },
   empreendedor: { count: vi.fn().mockResolvedValue(0) },
-  configuracao: { count: vi.fn().mockResolvedValue(0) },
 })
 
 describe('ehUpload', () => {

@@ -22,12 +22,6 @@
   max-width: 60ch;
 }
 
-.admin__topo-acoes {
-  display: flex;
-  gap: var(--esp-3);
-  flex-wrap: wrap;
-}
-
 .admin__metricas {
   display: grid;
   /* auto-fit em vez de 3 colunas fixas: com 4 indicadores a última linha

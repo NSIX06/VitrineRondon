@@ -19,7 +19,6 @@ import './CampoImagem.css'
  * - `valor` / `onChange(novoValor)`: estado controlado pelo formulário
  * - `erro`: mensagem vinda da validação do formulário ou do servidor
  * - `onEnviando(bool)`: avisa o formulário para segurar o "Salvar" no envio
- * - `semPrevia`: o formulário mostra a prévia por conta própria (banner)
  */
 function CampoImagem({
   id,
@@ -30,7 +29,6 @@ function CampoImagem({
   ajuda,
   obrigatorio = false,
   onEnviando,
-  semPrevia = false,
 }) {
   const entrada = useRef(null)
   const [enviando, setEnviando] = useState(false)
@@ -97,7 +95,6 @@ function CampoImagem({
           'campo-imagem__area',
           arrastando && 'campo-imagem__area--arrastando',
           mensagemErro && 'campo-imagem__area--erro',
-          semPrevia && 'campo-imagem__area--sem-previa',
         ]
           .filter(Boolean)
           .join(' ')}
@@ -108,29 +105,27 @@ function CampoImagem({
         onDragLeave={() => setArrastando(false)}
         onDrop={aoSoltar}
       >
-        {!semPrevia && (
-          <div className="campo-imagem__previa" aria-live="polite">
-            {temImagem && !previaFalhou ? (
-              <img
-                key={valor}
-                src={urlImagem(valor.trim())}
-                alt="Prévia da imagem escolhida"
-                onError={() => setPreviaFalhou(true)}
-              />
-            ) : (
-              <span className="campo-imagem__vazio">
-                <Icone nome={previaFalhou ? 'broken_image' : 'add_photo_alternate'} tamanho={30} />
-                {previaFalhou ? 'Não foi possível abrir essa imagem' : 'Nenhuma imagem'}
-              </span>
-            )}
-            {enviando && (
-              <span className="campo-imagem__enviando">
-                <span className="campo-imagem__girando" aria-hidden="true" />
-                Enviando...
-              </span>
-            )}
-          </div>
-        )}
+        <div className="campo-imagem__previa" aria-live="polite">
+          {temImagem && !previaFalhou ? (
+            <img
+              key={valor}
+              src={urlImagem(valor.trim())}
+              alt="Prévia da imagem escolhida"
+              onError={() => setPreviaFalhou(true)}
+            />
+          ) : (
+            <span className="campo-imagem__vazio">
+              <Icone nome={previaFalhou ? 'broken_image' : 'add_photo_alternate'} tamanho={30} />
+              {previaFalhou ? 'Não foi possível abrir essa imagem' : 'Nenhuma imagem'}
+            </span>
+          )}
+          {enviando && (
+            <span className="campo-imagem__enviando">
+              <span className="campo-imagem__girando" aria-hidden="true" />
+              Enviando...
+            </span>
+          )}
+        </div>
 
         <div className="campo-imagem__acoes">
           <input

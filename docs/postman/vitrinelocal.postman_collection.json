@@ -37,7 +37,7 @@
                 "health"
               ]
             },
-            "description": "**Esperado:** 200\n\nResponde `success: true` e a mensagem \"API VitrineLocal operando\". Se falhar, o backend não está rodando."
+            "description": "**Esperado:** 200\n\nResponde `success: true` e a mensagem \"API VitrineRondon operando\". Se falhar, o backend não está rodando."
           },
           "response": []
         },
@@ -398,40 +398,7 @@
           "response": []
         },
         {
-          "name": "11. Banner da página inicial",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Responde 200', () => pm.response.to.have.status(200));"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "auth": {
-              "type": "noauth"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/configuracoes/banner",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "configuracoes",
-                "banner"
-              ]
-            },
-            "description": "**Esperado:** 200\n\n`imagemUrl` fica `null` quando a administração não escolheu imagem: a página inicial usa a foto do item mais recente."
-          },
-          "response": []
-        },
-        {
-          "name": "12. Termos de Uso",
+          "name": "11. Termos de Uso",
           "event": [
             {
               "listen": "test",
@@ -464,7 +431,7 @@
           "response": []
         },
         {
-          "name": "13. Política de Privacidade",
+          "name": "12. Política de Privacidade",
           "event": [
             {
               "listen": "test",
@@ -497,7 +464,7 @@
           "response": []
         },
         {
-          "name": "14. Enviar mensagem de contato",
+          "name": "13. Enviar mensagem de contato",
           "event": [
             {
               "listen": "test",
@@ -548,7 +515,7 @@
       "name": "3. Área do empreendedor (Carlos)",
       "item": [
         {
-          "name": "15. Meu negócio",
+          "name": "14. Meu negócio",
           "event": [
             {
               "listen": "test",
@@ -590,7 +557,7 @@
           "response": []
         },
         {
-          "name": "16. Detalhe público do meu negócio",
+          "name": "15. Detalhe público do meu negócio",
           "event": [
             {
               "listen": "test",
@@ -623,7 +590,7 @@
           "response": []
         },
         {
-          "name": "17. Definir horário (08:00–12:00 e 13:00–17:00, seg a sex)",
+          "name": "16. Definir horário (08:00–12:00 e 13:00–17:00, seg a sex)",
           "event": [
             {
               "listen": "test",
@@ -677,7 +644,7 @@
           "response": []
         },
         {
-          "name": "18. Cadastrar produto no meu negócio",
+          "name": "17. Cadastrar produto no meu negócio",
           "event": [
             {
               "listen": "test",
@@ -732,7 +699,7 @@
           "response": []
         },
         {
-          "name": "19. Alterar só o preço do produto",
+          "name": "18. Alterar só o preço do produto",
           "event": [
             {
               "listen": "test",
@@ -786,7 +753,7 @@
           "response": []
         },
         {
-          "name": "20. Excluir o produto",
+          "name": "19. Excluir o produto",
           "event": [
             {
               "listen": "test",
@@ -831,7 +798,7 @@
       "name": "4. Administração",
       "item": [
         {
-          "name": "21. Mensagens recebidas",
+          "name": "20. Mensagens recebidas",
           "event": [
             {
               "listen": "test",
@@ -870,7 +837,7 @@
           "response": []
         },
         {
-          "name": "22. Contas cadastradas",
+          "name": "21. Contas cadastradas",
           "event": [
             {
               "listen": "test",
@@ -909,7 +876,7 @@
           "response": []
         },
         {
-          "name": "23. Auditoria (página 1, 10 por página)",
+          "name": "22. Auditoria (página 1, 10 por página)",
           "event": [
             {
               "listen": "test",
@@ -958,7 +925,7 @@
           "response": []
         },
         {
-          "name": "24. Auditoria: só entradas recusadas",
+          "name": "23. Auditoria: só entradas recusadas",
           "event": [
             {
               "listen": "test",
@@ -1003,7 +970,7 @@
           "response": []
         },
         {
-          "name": "25. Opções dos filtros da auditoria",
+          "name": "24. Opções dos filtros da auditoria",
           "event": [
             {
               "listen": "test",
@@ -1041,114 +1008,6 @@
             "description": "**Esperado:** 200\n\nAções, entidades e pessoas que existem de fato na trilha, com as quantidades."
           },
           "response": []
-        },
-        {
-          "name": "26. Trocar o banner",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Responde 200', () => pm.response.to.have.status(200));"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{tokenAdmin}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"imagemUrl\": \"https://images.unsplash.com/photo-1600166898405-da9535204843?w=800\",\n  \"legenda\": \"Feira do Produtor, Vila Aurora\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/configuracoes/banner",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "configuracoes",
-                "banner"
-              ]
-            },
-            "description": "**Esperado:** 200\n\nMensagem \"Banner atualizado\". A página inicial passa a mostrar essa imagem. Rode a próxima para desfazer."
-          },
-          "response": []
-        },
-        {
-          "name": "27. Voltar o banner automático",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Responde 200', () => pm.response.to.have.status(200));"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{tokenAdmin}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"imagemUrl\": null\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/configuracoes/banner",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "configuracoes",
-                "banner"
-              ]
-            },
-            "description": "**Esperado:** 200\n\nMensagem \"Banner removido\". A página inicial volta a usar a foto do item mais recente."
-          },
-          "response": []
         }
       ]
     },
@@ -1156,7 +1015,7 @@
       "name": "5. Erros esperados (segurança e validação)",
       "item": [
         {
-          "name": "28. 401: mensagens sem login",
+          "name": "25. 401: mensagens sem login",
           "event": [
             {
               "listen": "test",
@@ -1188,7 +1047,7 @@
           "response": []
         },
         {
-          "name": "29. 403: empreendedor tentando ver contas",
+          "name": "26. 403: empreendedor tentando ver contas",
           "event": [
             {
               "listen": "test",
@@ -1227,7 +1086,7 @@
           "response": []
         },
         {
-          "name": "30. 400: categoria fora da lista",
+          "name": "27. 400: categoria fora da lista",
           "event": [
             {
               "listen": "test",
@@ -1280,7 +1139,7 @@
           "response": []
         },
         {
-          "name": "31. 400: horário com fim antes do início",
+          "name": "28. 400: horário com fim antes do início",
           "event": [
             {
               "listen": "test",
@@ -1334,7 +1193,7 @@
           "response": []
         },
         {
-          "name": "32. 401: senha errada",
+          "name": "29. 401: senha errada",
           "event": [
             {
               "listen": "test",
@@ -1386,7 +1245,7 @@
       "name": "6. Paginação e perguntas frequentes",
       "item": [
         {
-          "name": "33. Produtos: página 2, 5 por página",
+          "name": "30. Produtos: página 2, 5 por página",
           "event": [
             {
               "listen": "test",
@@ -1432,7 +1291,7 @@
           "response": []
         },
         {
-          "name": "34. Perguntas frequentes (público)",
+          "name": "31. Perguntas frequentes (público)",
           "event": [
             {
               "listen": "test",
@@ -1467,7 +1326,7 @@
           "response": []
         },
         {
-          "name": "35. Criar pergunta (admin)",
+          "name": "32. Criar pergunta (admin)",
           "event": [
             {
               "listen": "test",
@@ -1525,7 +1384,7 @@
           "response": []
         },
         {
-          "name": "36. Todas as perguntas, inclusive ocultas (admin)",
+          "name": "33. Todas as perguntas, inclusive ocultas (admin)",
           "event": [
             {
               "listen": "test",
@@ -1566,7 +1425,7 @@
           "response": []
         },
         {
-          "name": "37. Editar e esconder a pergunta (admin)",
+          "name": "34. Editar e esconder a pergunta (admin)",
           "event": [
             {
               "listen": "test",
@@ -1625,7 +1484,7 @@
           "response": []
         },
         {
-          "name": "38. Pergunta oculta não aparece no público",
+          "name": "35. Pergunta oculta não aparece no público",
           "event": [
             {
               "listen": "test",
@@ -1658,7 +1517,7 @@
           "response": []
         },
         {
-          "name": "39. Excluir a pergunta (admin)",
+          "name": "36. Excluir a pergunta (admin)",
           "event": [
             {
               "listen": "test",
@@ -1698,7 +1557,7 @@
           "response": []
         },
         {
-          "name": "40. 404: editar pergunta que já foi excluída",
+          "name": "37. 404: editar pergunta que já foi excluída",
           "event": [
             {
               "listen": "test",
@@ -1747,12 +1606,12 @@
                 "{{faqId}}"
               ]
             },
-            "description": "**Esperado:** 404\n\nA pergunta da requisição 39 não existe mais."
+            "description": "**Esperado:** 404\n\nA pergunta da requisição 36 não existe mais."
           },
           "response": []
         },
         {
-          "name": "41. 401: criar pergunta sem login",
+          "name": "38. 401: criar pergunta sem login",
           "event": [
             {
               "listen": "test",
@@ -1798,7 +1657,7 @@
           "response": []
         },
         {
-          "name": "42. 403: empreendedor tentando criar pergunta",
+          "name": "39. 403: empreendedor tentando criar pergunta",
           "event": [
             {
               "listen": "test",
@@ -1851,7 +1710,7 @@
           "response": []
         },
         {
-          "name": "43. 403: empreendedor tentando ver as ocultas",
+          "name": "40. 403: empreendedor tentando ver as ocultas",
           "event": [
             {
               "listen": "test",
@@ -1891,7 +1750,7 @@
           "response": []
         },
         {
-          "name": "44. 400: pergunta vazia",
+          "name": "41. 400: pergunta vazia",
           "event": [
             {
               "listen": "test",
@@ -1945,7 +1804,7 @@
           "response": []
         },
         {
-          "name": "45. 400: pergunta com 301 caracteres",
+          "name": "42. 400: pergunta com 301 caracteres",
           "event": [
             {
               "listen": "test",

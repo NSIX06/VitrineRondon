@@ -71,7 +71,6 @@ async function main() {
     await viewport(1280, 900)
     await abrir('/admin', '.admin__metricas')
     checar('cadastrar produto fica dentro da aba de produtos', await evaluate("Boolean([...document.querySelectorAll('.admin__painel button')].find(b => b.innerText.includes('Novo produto')))"))
-    checar('o topo não repete as ações das abas', !(await evaluate("[...document.querySelectorAll('.admin__topo-acoes button')].some(b => /Novo (produto|empreendedor)/.test(b.innerText))")))
     await evaluate("[...document.querySelectorAll('.admin__aba')].find(a => __textoSemIcone(a).startsWith('Mensagens')).click()")
     await esperar(400)
     checar('a aba de mensagens não repete o total do cartão', !(await evaluate("Boolean(__q('.admin__painel .admin__barra'))")))

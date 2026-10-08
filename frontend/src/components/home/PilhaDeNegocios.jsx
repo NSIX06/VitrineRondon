@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import CardSwap, { Card } from '../ui/CardSwap/CardSwap'
 import Icone from '../ui/Icone/Icone'
@@ -7,30 +7,34 @@ import imagemPadrao from '../../assets/imagem-padrao.svg'
 import { urlImagem } from '../../services/imagens'
 import './PilhaDeNegocios.css'
 
-// Tamanho dos cartões e da pilha conforme a largura da tela
+// Tamanho dos cartões conforme o espaço que a pilha tem (e não a tela: no topo
+// da Home ela divide a largura com o texto)
 const MEDIDAS = [
-  { ate: 480, largura: 260, altura: 330, distanciaX: 12, distanciaY: 22 },
-  { ate: 900, largura: 290, altura: 360, distanciaX: 30, distanciaY: 34 },
-  { ate: Infinity, largura: 320, altura: 380, distanciaX: 44, distanciaY: 48 },
+  { ate: 360, largura: 250, altura: 320, distanciaX: 12, distanciaY: 20 },
+  { ate: 480, largura: 270, altura: 340, distanciaX: 20, distanciaY: 26 },
+  { ate: Infinity, largura: 320, altura: 380, distanciaX: 36, distanciaY: 42 },
 ]
-// Margem lateral da página (16px de cada lado) e a sombra amarela do cartão
-const FOLGA_LATERAL = 40
+// Sombra amarela do cartão, que fica para fora dele
+const FOLGA_SOMBRA = 10
 
-/** Medidas para a largura de tela: o cartão encolhe para a pilha caber sem rolagem lateral */
-function medir(quantidade, larguraTela) {
-  const base = MEDIDAS.find((m) => larguraTela <= m.ate)
+/** Medidas para o espaço disponível: o cartão encolhe para a pilha caber inteira */
+function medir(quantidade, disponivel) {
+  const base = MEDIDAS.find((m) => disponivel <= m.ate)
   const espalhamento = base.distanciaX * Math.max(quantidade - 1, 0)
-  const largura = Math.min(base.largura, larguraTela - FOLGA_LATERAL - espalhamento)
+  const largura = Math.max(200, Math.min(base.largura, disponivel - FOLGA_SOMBRA - espalhamento))
   return { ...base, largura }
 }
 
-function useLarguraTela() {
-  const [largura, setLargura] = useState(() => window.innerWidth)
+/** Largura do elemento, acompanhando as mudanças (tela girada, janela redimensionada) */
+function useLarguraDe(ref) {
+  const [largura, setLargura] = useState(null)
   useEffect(() => {
-    const aoRedimensionar = () => setLargura(window.innerWidth)
-    window.addEventListener('resize', aoRedimensionar)
-    return () => window.removeEventListener('resize', aoRedimensionar)
-  }, [])
+    const no = ref.current
+    if (!no) return undefined
+    const observador = new ResizeObserver(([entrada]) => setLargura(Math.round(entrada.contentRect.width)))
+    observador.observe(no)
+    return () => observador.disconnect()
+  }, [ref])
   return largura
 }
 
@@ -40,7 +44,20 @@ function useLarguraTela() {
  * - `negocios`: lista já na ordem de exibição
  */
 function PilhaDeNegocios({ negocios }) {
-  const { largura, altura, distanciaX, distanciaY } = medir(negocios.length, useLarguraTela())
+  const area = useRef(null)
+  const disponivel = useLarguraDe(area)
+
+  // A área é sempre o mesmo elemento: é ela que o ResizeObserver acompanha
+  return (
+    <div ref={area} className="pilha-negocios__area">
+      {/* Antes de medir o espaço, só a área vazia (um quadro): nada pula depois */}
+      {disponivel && <Pilha negocios={negocios} disponivel={disponivel} />}
+    </div>
+  )
+}
+
+function Pilha({ negocios, disponivel }) {
+  const { largura, altura, distanciaX, distanciaY } = medir(negocios.length, disponivel)
   // Espaço para os cartões de trás, que saem para cima e para a direita
   const espalhamentoX = distanciaX * (negocios.length - 1)
   const espalhamentoY = distanciaY * (negocios.length - 1)

@@ -17,9 +17,9 @@ site e não responde à API.
 3. Rode as requisições na ordem dos números. Algumas guardam valores que as seguintes usam:
    - 02 e 03 guardam os tokens do administrador e do empreendedor;
    - 08 guarda um id de produto, usado na 10;
-   - 15 guarda o id do negócio do Carlos, usado na 16, 17 e 31;
-   - 18 guarda o id do produto criado, usado na 19 e 20;
-   - 35 guarda o id da pergunta criada, usado da 36 à 40.
+   - 14 guarda o id do negócio do Carlos, usado na 15, 16 e 28;
+   - 17 guarda o id do produto criado, usado na 18 e 19;
+   - 32 guarda o id da pergunta criada, usado da 33 à 37.
 
 ## Como rodar uma por vez
 
@@ -41,7 +41,7 @@ GET {{baseUrl}}/health
 
 - **Autenticação:** nenhuma
 - **Resposta esperada:** 200
-- **Confira:** Responde `success: true` e a mensagem "API VitrineLocal operando". Se falhar, o backend não está rodando.
+- **Confira:** Responde `success: true` e a mensagem "API VitrineRondon operando". Se falhar, o backend não está rodando.
 
 ### 02. Entrar como administrador
 
@@ -156,17 +156,7 @@ GET {{baseUrl}}/produtos/{{produtoId}}
 - **Resposta esperada:** 200
 - **Confira:** Um único item, com os dados completos do empreendedor.
 
-### 11. Banner da página inicial
-
-```
-GET {{baseUrl}}/configuracoes/banner
-```
-
-- **Autenticação:** nenhuma
-- **Resposta esperada:** 200
-- **Confira:** `imagemUrl` fica `null` quando a administração não escolheu imagem: a página inicial usa a foto do item mais recente.
-
-### 12. Termos de Uso
+### 11. Termos de Uso
 
 ```
 GET {{baseUrl}}/termos/TERMOS_DE_USO
@@ -176,7 +166,7 @@ GET {{baseUrl}}/termos/TERMOS_DE_USO
 - **Resposta esperada:** 200
 - **Confira:** Traz o texto em Markdown e a versão vigente.
 
-### 13. Política de Privacidade
+### 12. Política de Privacidade
 
 ```
 GET {{baseUrl}}/termos/POLITICA_PRIVACIDADE
@@ -186,7 +176,7 @@ GET {{baseUrl}}/termos/POLITICA_PRIVACIDADE
 - **Resposta esperada:** 200
 - **Confira:** Mesmo formato dos termos, com o texto da política.
 
-### 14. Enviar mensagem de contato
+### 13. Enviar mensagem de contato
 
 ```
 POST {{baseUrl}}/contatos
@@ -210,7 +200,7 @@ Corpo (JSON):
 
 ## 3. Área do empreendedor (Carlos)
 
-### 15. Meu negócio
+### 14. Meu negócio
 
 ```
 GET {{baseUrl}}/empreendedores/meu
@@ -221,7 +211,7 @@ GET {{baseUrl}}/empreendedores/meu
 - **Guarda no ambiente:** `empreendedorId`
 - **Confira:** O negócio do Carlos, com produtos e horários. O id vai para a variável `empreendedorId`. Rode esta antes das outras da pasta.
 
-### 16. Detalhe público do meu negócio
+### 15. Detalhe público do meu negócio
 
 ```
 GET {{baseUrl}}/empreendedores/{{empreendedorId}}
@@ -231,7 +221,7 @@ GET {{baseUrl}}/empreendedores/{{empreendedorId}}
 - **Resposta esperada:** 200
 - **Confira:** O mesmo negócio visto por um visitante, sem login.
 
-### 17. Definir horário (08:00–12:00 e 13:00–17:00, seg a sex)
+### 16. Definir horário (08:00–12:00 e 13:00–17:00, seg a sex)
 
 ```
 PUT {{baseUrl}}/empreendedores/{{empreendedorId}}
@@ -300,7 +290,7 @@ Corpo (JSON):
 }
 ```
 
-### 18. Cadastrar produto no meu negócio
+### 17. Cadastrar produto no meu negócio
 
 ```
 POST {{baseUrl}}/produtos
@@ -324,7 +314,7 @@ Corpo (JSON):
 }
 ```
 
-### 19. Alterar só o preço do produto
+### 18. Alterar só o preço do produto
 
 ```
 PUT {{baseUrl}}/produtos/{{produtoId}}
@@ -342,7 +332,7 @@ Corpo (JSON):
 }
 ```
 
-### 20. Excluir o produto
+### 19. Excluir o produto
 
 ```
 DELETE {{baseUrl}}/produtos/{{produtoId}}
@@ -354,7 +344,7 @@ DELETE {{baseUrl}}/produtos/{{produtoId}}
 
 ## 4. Administração
 
-### 21. Mensagens recebidas
+### 20. Mensagens recebidas
 
 ```
 GET {{baseUrl}}/contatos
@@ -364,7 +354,7 @@ GET {{baseUrl}}/contatos
 - **Resposta esperada:** 200
 - **Confira:** Inclui a mensagem enviada na pasta 2. Só o administrador consegue ler.
 
-### 22. Contas cadastradas
+### 21. Contas cadastradas
 
 ```
 GET {{baseUrl}}/usuarios
@@ -374,7 +364,7 @@ GET {{baseUrl}}/usuarios
 - **Resposta esperada:** 200
 - **Confira:** Lista as contas com perfil e negócio. Nenhuma traz `senhaHash`.
 
-### 23. Auditoria (página 1, 10 por página)
+### 22. Auditoria (página 1, 10 por página)
 
 ```
 GET {{baseUrl}}/auditoria?pagina=1&porPagina=10
@@ -384,7 +374,7 @@ GET {{baseUrl}}/auditoria?pagina=1&porPagina=10
 - **Resposta esperada:** 200
 - **Confira:** `paginacao` informa total e número de páginas. Os registros vêm do mais novo para o mais antigo.
 
-### 24. Auditoria: só entradas recusadas
+### 23. Auditoria: só entradas recusadas
 
 ```
 GET {{baseUrl}}/auditoria?acao=LOGIN_RECUSADO
@@ -394,7 +384,7 @@ GET {{baseUrl}}/auditoria?acao=LOGIN_RECUSADO
 - **Resposta esperada:** 200
 - **Confira:** Só aparecem tentativas de login recusadas.
 
-### 25. Opções dos filtros da auditoria
+### 24. Opções dos filtros da auditoria
 
 ```
 GET {{baseUrl}}/auditoria/opcoes
@@ -404,46 +394,9 @@ GET {{baseUrl}}/auditoria/opcoes
 - **Resposta esperada:** 200
 - **Confira:** Ações, entidades e pessoas que existem de fato na trilha, com as quantidades.
 
-### 26. Trocar o banner
-
-```
-PUT {{baseUrl}}/configuracoes/banner
-```
-
-- **Autenticação:** Bearer, token do administrador (`{{tokenAdmin}}`)
-- **Resposta esperada:** 200
-- **Confira:** Mensagem "Banner atualizado". A página inicial passa a mostrar essa imagem. Rode a próxima para desfazer.
-
-Corpo (JSON):
-
-```json
-{
-  "imagemUrl": "https://images.unsplash.com/photo-1600166898405-da9535204843?w=800",
-  "legenda": "Feira do Produtor, Vila Aurora"
-}
-```
-
-### 27. Voltar o banner automático
-
-```
-PUT {{baseUrl}}/configuracoes/banner
-```
-
-- **Autenticação:** Bearer, token do administrador (`{{tokenAdmin}}`)
-- **Resposta esperada:** 200
-- **Confira:** Mensagem "Banner removido". A página inicial volta a usar a foto do item mais recente.
-
-Corpo (JSON):
-
-```json
-{
-  "imagemUrl": null
-}
-```
-
 ## 5. Erros esperados (segurança e validação)
 
-### 28. 401: mensagens sem login
+### 25. 401: mensagens sem login
 
 ```
 GET {{baseUrl}}/contatos
@@ -453,7 +406,7 @@ GET {{baseUrl}}/contatos
 - **Resposta esperada:** 401
 - **Confira:** Sem token, a API recusa com "Faça login para continuar".
 
-### 29. 403: empreendedor tentando ver contas
+### 26. 403: empreendedor tentando ver contas
 
 ```
 GET {{baseUrl}}/usuarios
@@ -463,7 +416,7 @@ GET {{baseUrl}}/usuarios
 - **Resposta esperada:** 403
 - **Confira:** O token é válido, mas o perfil não tem permissão para essa rota.
 
-### 30. 400: categoria fora da lista
+### 27. 400: categoria fora da lista
 
 ```
 POST {{baseUrl}}/empreendedores
@@ -485,7 +438,7 @@ Corpo (JSON):
 }
 ```
 
-### 31. 400: horário com fim antes do início
+### 28. 400: horário com fim antes do início
 
 ```
 PUT {{baseUrl}}/empreendedores/{{empreendedorId}}
@@ -509,7 +462,7 @@ Corpo (JSON):
 }
 ```
 
-### 32. 401: senha errada
+### 29. 401: senha errada
 
 ```
 POST {{baseUrl}}/auth/login
@@ -530,7 +483,7 @@ Corpo (JSON):
 
 ## 6. Paginação e perguntas frequentes
 
-### 33. Produtos: página 2, 5 por página
+### 30. Produtos: página 2, 5 por página
 
 ```
 GET {{baseUrl}}/produtos?pagina=2&porPagina=5
@@ -540,7 +493,7 @@ GET {{baseUrl}}/produtos?pagina=2&porPagina=5
 - **Resposta esperada:** 200
 - **Confira:** No máximo 5 itens e o bloco `paginacao` com `pagina: 2`, `porPagina: 5`, o total e o total de páginas. Sem `pagina` na URL, a lista vem inteira, como na 08.
 
-### 34. Perguntas frequentes (público)
+### 31. Perguntas frequentes (público)
 
 ```
 GET {{baseUrl}}/faq
@@ -550,7 +503,7 @@ GET {{baseUrl}}/faq
 - **Resposta esperada:** 200
 - **Confira:** Só as perguntas visíveis, em ordem crescente de `ordem`. Nenhuma traz o campo `ativo`.
 
-### 35. Criar pergunta (admin)
+### 32. Criar pergunta (admin)
 
 ```
 POST {{baseUrl}}/faq
@@ -571,7 +524,7 @@ Corpo (JSON):
 }
 ```
 
-### 36. Todas as perguntas, inclusive ocultas (admin)
+### 33. Todas as perguntas, inclusive ocultas (admin)
 
 ```
 GET {{baseUrl}}/faq/todas
@@ -579,9 +532,9 @@ GET {{baseUrl}}/faq/todas
 
 - **Autenticação:** Bearer, token do administrador (`{{tokenAdmin}}`)
 - **Resposta esperada:** 200
-- **Confira:** A pergunta criada na 35 está na lista, com `ativo` e as datas.
+- **Confira:** A pergunta criada na 32 está na lista, com `ativo` e as datas.
 
-### 37. Editar e esconder a pergunta (admin)
+### 34. Editar e esconder a pergunta (admin)
 
 ```
 PUT {{baseUrl}}/faq/{{faqId}}
@@ -600,7 +553,7 @@ Corpo (JSON):
 }
 ```
 
-### 38. Pergunta oculta não aparece no público
+### 35. Pergunta oculta não aparece no público
 
 ```
 GET {{baseUrl}}/faq
@@ -608,9 +561,9 @@ GET {{baseUrl}}/faq
 
 - **Autenticação:** nenhuma
 - **Resposta esperada:** 200
-- **Confira:** A pergunta escondida na 37 não está na lista.
+- **Confira:** A pergunta escondida na 34 não está na lista.
 
-### 39. Excluir a pergunta (admin)
+### 36. Excluir a pergunta (admin)
 
 ```
 DELETE {{baseUrl}}/faq/{{faqId}}
@@ -620,7 +573,7 @@ DELETE {{baseUrl}}/faq/{{faqId}}
 - **Resposta esperada:** 200
 - **Confira:** Exclusão definitiva. Aparece na auditoria como `DELETE` de `PerguntaFrequente`.
 
-### 40. 404: editar pergunta que já foi excluída
+### 37. 404: editar pergunta que já foi excluída
 
 ```
 PUT {{baseUrl}}/faq/{{faqId}}
@@ -628,7 +581,7 @@ PUT {{baseUrl}}/faq/{{faqId}}
 
 - **Autenticação:** Bearer, token do administrador (`{{tokenAdmin}}`)
 - **Resposta esperada:** 404
-- **Confira:** A pergunta da 39 não existe mais.
+- **Confira:** A pergunta da 36 não existe mais.
 
 Corpo (JSON):
 
@@ -638,7 +591,7 @@ Corpo (JSON):
 }
 ```
 
-### 41. 401: criar pergunta sem login
+### 38. 401: criar pergunta sem login
 
 ```
 POST {{baseUrl}}/faq
@@ -659,7 +612,7 @@ Corpo (JSON):
 }
 ```
 
-### 42. 403: empreendedor tentando criar pergunta
+### 39. 403: empreendedor tentando criar pergunta
 
 ```
 POST {{baseUrl}}/faq
@@ -680,7 +633,7 @@ Corpo (JSON):
 }
 ```
 
-### 43. 403: empreendedor tentando ver as ocultas
+### 40. 403: empreendedor tentando ver as ocultas
 
 ```
 GET {{baseUrl}}/faq/todas
@@ -690,7 +643,7 @@ GET {{baseUrl}}/faq/todas
 - **Resposta esperada:** 403
 - **Confira:** A lista completa é só da administração.
 
-### 44. 400: pergunta vazia
+### 41. 400: pergunta vazia
 
 ```
 POST {{baseUrl}}/faq
@@ -709,7 +662,7 @@ Corpo (JSON):
 }
 ```
 
-### 45. 400: pergunta com 301 caracteres
+### 42. 400: pergunta com 301 caracteres
 
 ```
 POST {{baseUrl}}/faq

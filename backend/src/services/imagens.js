@@ -1,4 +1,4 @@
-// Imagens enviadas do computador (fotos de negócio, de produto e o banner).
+// Imagens enviadas do computador (fotos de negócio e de produto).
 //
 // O arquivo nunca é guardado como chegou: o sharp decodifica, gira conforme a
 // orientação da câmera, reduz para no máximo 1600 px e regrava em WebP. Assim
@@ -181,7 +181,7 @@ export async function salvarImagem(buffer) {
 
 /**
  * Apaga um arquivo enviado que deixou de ser usado. Só age sobre caminhos
- * gerados por nós e só se nenhum produto, negócio ou banner ainda apontar para
+ * gerados por nós e só se nenhum produto ou negócio ainda apontar para
  * ele (o mesmo arquivo pode ter sido reaproveitado em outro cadastro).
  * Falhar aqui nunca derruba a operação principal: no pior caso sobra um
  * arquivo esquecido na pasta.
@@ -191,12 +191,11 @@ export async function apagarSeOrfa(prisma, caminho) {
   const idRemoto = idNaNuvem(caminho, nuvem);
   if (!ehUpload(caminho) && !idRemoto) return;
   try {
-    const [produtos, negocios, banner] = await Promise.all([
+    const [produtos, negocios] = await Promise.all([
       prisma.produto.count({ where: { imagem: caminho } }),
       prisma.empreendedor.count({ where: { fotoUrl: caminho } }),
-      prisma.configuracao.count({ where: { valor: { contains: caminho } } }),
     ]);
-    if (produtos + negocios + banner > 0) return;
+    if (produtos + negocios > 0) return;
     if (idRemoto) {
       await chamarNuvem(nuvem, 'destroy', { invalidate: true, public_id: idRemoto });
       return;

@@ -165,16 +165,6 @@ model LogAuditoria {
   @@map("logs_auditoria")
 }
 
-// Configurações do site editáveis pela administração (ex.: banner da página inicial).
-// Chave e valor em texto; cada chave tem seu próprio schema de validação na API.
-model Configuracao {
-  chave     String   @id @db.VarChar(60)
-  valor     String?  @db.Text
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("configuracoes")
-}
-
 // Intervalos de atendimento informados pelo empreendedor.
 // Um dia pode ter vários (ex.: 08:00-12:00 e 13:00-17:00). "Aberto agora" é
 // calculado a partir daqui, no fuso de Rondonópolis (America/Cuiaba).

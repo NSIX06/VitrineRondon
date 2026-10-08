@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { criarContatoSchema } from '../../backend/src/controllers/contatoController.js'
 import { situacaoSchema } from '../../backend/src/controllers/usuarioController.js'
-import { bannerSchema } from '../../backend/src/controllers/configuracaoController.js'
 
 const mensagens = (resultado) => resultado.error.issues.map((i) => i.message)
 
@@ -69,32 +68,5 @@ describe('situação da conta (moderação)', () => {
   it('não permite trocar o perfil por aqui', () => {
     const { data } = situacaoSchema.safeParse({ ativo: true, perfil: 'ADMIN' })
     expect(data.perfil).toBeUndefined()
-  })
-})
-
-describe('banner da página inicial', () => {
-  it('aceita imagem com legenda', () => {
-    const { success } = bannerSchema.safeParse({
-      imagemUrl: 'https://exemplo.com/feira.jpg',
-      legenda: 'Feira do bairro',
-    })
-    expect(success).toBe(true)
-  })
-
-  it('aceita voltar ao banner automático, com imagem nula', () => {
-    expect(bannerSchema.safeParse({ imagemUrl: null }).success).toBe(true)
-  })
-
-  it('exige endereço completo da imagem', () => {
-    expect(mensagens(bannerSchema.safeParse({ imagemUrl: 'feira.jpg' }))[0]).toContain('endereço completo')
-  })
-
-  it('limita a legenda a 120 caracteres', () => {
-    const resultado = bannerSchema.safeParse({ imagemUrl: null, legenda: 'a'.repeat(121) })
-    expect(mensagens(resultado)).toContain('A legenda pode ter até 120 caracteres')
-  })
-
-  it('exige o campo da imagem, mesmo que vazio', () => {
-    expect(bannerSchema.safeParse({ legenda: 'Só a legenda' }).success).toBe(false)
   })
 })

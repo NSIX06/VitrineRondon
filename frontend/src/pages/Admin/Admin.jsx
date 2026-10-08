@@ -15,7 +15,6 @@ import EmpreendedorForm from '../../components/forms/EmpreendedorForm/Empreended
 import PainelAuditoria from '../../components/admin/PainelAuditoria/PainelAuditoria'
 import PainelUsuarios from '../../components/admin/PainelUsuarios/PainelUsuarios'
 import PainelFaq from '../../components/admin/PainelFaq/PainelFaq'
-import BannerForm from '../../components/admin/BannerForm/BannerForm'
 import PainelAssinaturas from '../../components/admin/PainelAssinaturas/PainelAssinaturas'
 import PainelDivulgacoes from '../../components/admin/PainelDivulgacoes/PainelDivulgacoes'
 import { formatarPreco } from '../../services/formatos'
@@ -84,7 +83,6 @@ function Admin() {
   const [confirmacao, setConfirmacao] = useState(null)
   const [excluindo, setExcluindo] = useState(false)
 
-  const [modalBanner, setModalBanner] = useState(false)
 
   // Não altera `carregando` ao iniciar: o estado inicial já é true e as
   // recargas após salvar/excluir devem manter a tabela visível.
@@ -292,14 +290,6 @@ function Admin() {
               cadastradas, as perguntas frequentes e a trilha de auditoria do sistema.
             </p>
           </div>
-          {/* Cadastrar produto e empreendedor fica dentro da aba de cada um, perto
-              da tabela que muda; aqui em cima só o que não pertence a nenhuma aba */}
-          <div className="admin__topo-acoes">
-            <Button variante="secundario" onClick={() => setModalBanner(true)}>
-              <Icone nome="image" tamanho={18} />
-              Trocar banner
-            </Button>
-          </div>
         </div>
 
         <Aviso aviso={status} onFechar={fecharStatus} />
@@ -505,23 +495,6 @@ function Admin() {
             moderacao
             onSubmit={salvar}
             onCancelar={fecharModalForm}
-          />
-        )}
-      </Modal>
-
-      <Modal
-        aberto={modalBanner}
-        titulo="Banner da página inicial"
-        onFechar={() => setModalBanner(false)}
-        tamanho="lg"
-      >
-        {modalBanner && (
-          <BannerForm
-            onSalvo={(mensagem) => {
-              setModalBanner(false)
-              mostrarStatus('sucesso', mensagem)
-            }}
-            onCancelar={() => setModalBanner(false)}
           />
         )}
       </Modal>

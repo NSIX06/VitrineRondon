@@ -36,7 +36,7 @@ Destaque e sobe na lista, e o cancelamento respeita o período já pago.
 
 ### 1. A vitrine (visitante, sem login)
 
-- Na **Home**, mostre a faixa **"Quem está na feira"**: a pilha de cartões se reveza sozinha, com o Ateliê Fio & Arte (Destaque, com selo) na frente e os negócios do Essencial em seguida. Clique num cartão para abrir o negócio.
+- No **topo da Home**, mostre a pilha de cartões, que se reveza sozinha, com o Ateliê Fio & Arte (Destaque, com selo) na frente e os negócios do Essencial em seguida. Clique num cartão para abrir o negócio.
 - Em **Empreendedores**, mostre que aparecem **quatro** negócios: só os que têm plano em vigor. O
   Espaço Bela Flor está cadastrado, mas não aparece: ainda não assinou. Busque "sobrancelhas" na
   Vitrine: o serviço dela também não aparece.
@@ -98,7 +98,7 @@ Saia da conta.
 
 - Volte em **Empreendedores** (atualize a página): o **Silva Reparos subiu para o segundo lugar**,
   com o selo. Os negócios do Essencial continuam lá, logo abaixo.
-- Na **Home**, a pilha da feira agora começa pelos dois negócios em Destaque (em ordem que se reveza a cada visita), com o selo.
+- Na **Home**, a pilha do topo agora começa pelos dois negócios em Destaque (em ordem que se reveza a cada visita), com o selo.
 
 ### 7. Cancelamento respeita o período pago (opcional)
 
