@@ -613,40 +613,43 @@ html .sobre__ods {
 
 /* ==========================================================================
    Títulos em cel-shade (h1 e h2), só com CSS, em dose leve
-   Contorno fino só por fora (quatro sombras duras, sem desfoque: um traço de
-   verdade cresceria para dentro e engoliria a letra), faixa de sombra chapada
-   na parte de baixo de cada linha, riscos de brilho finos e espaçados no alto
-   e um pouco de sombra no pé. Cores: --letra-luz/--letra-sombra (padrão: anil).
+   Faixa de luz em cima e de sombra chapada embaixo (como na logo) e uma sombra
+   dura só no pé das letras. Sem contorno em volta: em fonte pesada e tamanho
+   de texto ele fechava o miolo do "e", do "a" e do "s" e as letras se
+   colavam. Os riscos de brilho ficam só nos h1 grandes, onde cabem sem cortar
+   as letras. Cores: --letra-luz/--letra-sombra (padrão: anil).
    ========================================================================== */
 :is(h1, h2):not(.detalhe__horarios-titulo, .visualmente-oculto) {
-  --contorno-titulo: max(1px, 0.02em);
+  letter-spacing: -0.01em;
   -webkit-text-fill-color: transparent;
+  background-image: linear-gradient(
+    to bottom,
+    var(--letra-luz, #3b5fc8) 0 0.62lh,
+    var(--letra-sombra, #2b4aa6) 0.62lh 1lh
+  );
+  background-size: 100% 1lh;
+  background-repeat: repeat-y;
+  -webkit-background-clip: text;
+  background-clip: text;
+  filter: drop-shadow(0 max(1px, 0.035em) 0 var(--letra-contorno, var(--cor-contorno)));
+}
+
+h1:not(.visualmente-oculto) {
   background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cg stroke='%23fff' stroke-opacity='.75' stroke-linecap='round'%3E%3Cpath d='M30 46 38 22' stroke-width='3.4'/%3E%3Cpath d='M41 46 45 35' stroke-width='2.6'/%3E%3C/g%3E%3C/svg%3E"),
-    repeating-linear-gradient(
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cg stroke='%23fff' stroke-opacity='.5' stroke-linecap='round'%3E%3Cpath d='M30 40 36 22' stroke-width='3'/%3E%3Cpath d='M40 40 43 32' stroke-width='2.2'/%3E%3C/g%3E%3C/svg%3E"),
+    linear-gradient(
       to bottom,
       var(--letra-luz, #3b5fc8) 0 0.62lh,
       var(--letra-sombra, #2b4aa6) 0.62lh 1lh
     );
   background-size:
-    2.4em 1lh,
-    100% 100%;
-  background-repeat: repeat, no-repeat;
-  -webkit-background-clip: text;
-  background-clip: text;
-  filter: drop-shadow(var(--contorno-titulo) 0 0 var(--letra-contorno, var(--cor-contorno)))
-    drop-shadow(calc(var(--contorno-titulo) * -1) 0 0 var(--letra-contorno, var(--cor-contorno)))
-    drop-shadow(0 calc(var(--contorno-titulo) * -1) 0 var(--letra-contorno, var(--cor-contorno)))
-    drop-shadow(0 var(--contorno-titulo) 0 var(--letra-contorno, var(--cor-contorno)))
-    drop-shadow(0 0.02em 0 var(--letra-contorno, var(--cor-contorno)));
+    2.6em 1lh,
+    100% 1lh;
+  background-repeat: repeat, repeat-y;
 }
 
-/* Títulos menores: contorno de 1px exato e brilho mais espaçado */
 h2:not(.detalhe__horarios-titulo, .visualmente-oculto) {
-  --contorno-titulo: 1px;
-  background-size:
-    3.2em 1lh,
-    100% 100%;
+  letter-spacing: 0;
 }
 
 /* Títulos sobre fundo anil: contorno preto para destacar do azul */
