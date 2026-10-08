@@ -335,7 +335,6 @@ input[type='radio'] {
     .empreendedores__chamada-icone,
     .contexto__icone,
     .detalhe__outro-icone,
-    .detalhe__cta-icone,
     .como-funciona__numero,
     .sobre__ods-numero,
     .pagina-erro__icone,
@@ -423,7 +422,6 @@ input[type='radio'] {
     .horarios-editor__atalho:not(:hover),
     .cadastro__etapas li:not(.cadastro__etapa--ativa, .cadastro__etapa--feita) span,
     .empreendedores__chamada-icone,
-    .detalhe__cta-icone,
     .planos__cartao:not(.planos__cartao--destaque) :is(.planos__icone, .planos__chip),
     .planos-garantias__icone--branco
   ) {

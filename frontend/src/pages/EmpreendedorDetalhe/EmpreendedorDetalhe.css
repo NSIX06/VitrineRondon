@@ -1,4 +1,10 @@
-/* Barra de migalhas e utilidades */
+/* ==========================================================================
+   Perfil do negócio em três blocos: o cabeçalho sobre a capa (quem é, onde
+   fica, se atende agora), o catálogo e a coluna de contato com horário e mapa.
+   Endereço e WhatsApp aparecem uma vez só cada.
+   ========================================================================== */
+
+/* Barra de migalhas */
 .detalhe__migalhas {
   background: var(--cor-superficie-baixa);
   border-bottom: var(--borda);
@@ -19,15 +25,6 @@
 /* Na linha das migalhas as setas ficam centradas, sem o espaço de baixo */
 .detalhe__migalhas-conteudo .navegacao {
   margin-bottom: 0;
-}
-
-/* Aviso de prévia (negócio fora da vitrine, visto pelo dono ou pela administração) */
-.detalhe__previa {
-  padding-top: var(--esp-4);
-}
-
-.detalhe__previa > .status {
-  margin: 0;
 }
 
 .detalhe__migalhas-nav {
@@ -54,45 +51,19 @@
   white-space: nowrap;
 }
 
-.detalhe__utilidades {
-  display: flex;
-  align-items: center;
-  gap: var(--esp-3);
+/* Aviso de prévia (negócio fora da vitrine, visto pelo dono ou pela administração) */
+.detalhe__previa {
+  padding-top: var(--esp-4);
 }
 
-.detalhe__disponivel {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 2px 10px;
-  background: var(--cor-branco);
-  border: var(--borda-fina);
-  border-radius: 999px;
-  box-shadow: var(--sombra-dura-sm);
-  color: var(--cor-tinta);
+.detalhe__previa > .status {
+  margin: 0;
 }
 
-.detalhe__ponto {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  border: 1.5px solid var(--cor-contorno);
-  background: var(--cor-whatsapp);
-}
-
-.detalhe__disponivel--inativo {
-  color: var(--cor-lacre-escuro);
-  background: var(--cor-lacre-fundo);
-}
-
-.detalhe__disponivel--inativo .detalhe__ponto {
-  background: var(--cor-lacre);
-}
-
-/* Capa com sombra e selos */
+/* Capa */
 .detalhe__capa {
   position: relative;
-  height: clamp(200px, 30vw, 320px);
+  height: clamp(180px, 26vw, 300px);
   background: var(--cor-anil-escuro);
   overflow: hidden;
   border-bottom: var(--borda);
@@ -107,121 +78,84 @@
 .detalhe__capa-sombra {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(17, 24, 39, 0.8), rgba(17, 24, 39, 0.3) 45%, transparent);
+  background: linear-gradient(to top, rgba(17, 24, 39, 0.7), rgba(17, 24, 39, 0.15) 55%, transparent);
 }
 
-.detalhe__capa-selos {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: var(--esp-4);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--esp-3);
-  flex-wrap: wrap;
+.detalhe__corpo {
+  padding-bottom: var(--esp-8);
 }
 
-.detalhe__selo {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0.35rem 0.75rem;
-  font-size: var(--texto-xs);
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  border-radius: 4px;
-  box-shadow: 3px 3px 0 0 var(--cor-contorno);
-  transform: rotate(-1.5deg);
-}
-
-.detalhe__selo--verificado {
-  background: var(--cor-anil);
-  color: var(--cor-branco);
-  border: var(--borda-fina);
-}
-
-.detalhe__selo--verificado .icone {
-  color: var(--cor-ouro);
-}
-
-.detalhe__selo--local {
-  background: var(--cor-ouro);
-  color: var(--cor-tinta);
-  border: var(--borda-fina);
-  transform: rotate(1deg);
-  text-transform: none;
-  letter-spacing: 0;
-  font-size: 12px;
-}
-
-.detalhe__selo--local .icone {
-  color: var(--cor-tinta);
-}
-
-.detalhe__selo--solto {
-  align-self: flex-start;
-  background: var(--cor-anil);
-}
-
-/* Perfil */
-.detalhe__conteudo {
-  display: grid;
-  grid-template-columns: 8fr 4fr;
-  gap: var(--esp-7);
-  align-items: start;
-  padding-block: var(--esp-7);
-}
-
-.detalhe__identidade {
+/* --------------------------------------------------------------------------
+   Cabeçalho do perfil: um cartão que sobe por cima da capa
+   -------------------------------------------------------------------------- */
+.detalhe__cabecalho {
+  position: relative;
+  z-index: 1;
+  margin-top: calc(-1 * clamp(56px, 8vw, 104px));
+  padding: var(--esp-6);
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura);
   display: flex;
   flex-direction: column;
-  gap: var(--esp-4);
-  min-width: 0;
+  gap: var(--esp-3);
 }
 
-.detalhe__tags {
+/* Hachura de nanquim no canto do cabeçalho */
+.detalhe__cabecalho::after {
+  content: '';
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 40px;
+  height: 15px;
+  background: var(--hachura) no-repeat center / contain;
+  pointer-events: none;
+}
+
+.detalhe__selos {
   display: flex;
-  gap: var(--esp-1);
+  gap: var(--esp-2);
   flex-wrap: wrap;
   align-items: center;
 }
 
-.detalhe__chip {
+.detalhe__verificado {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 0.25rem 0.75rem;
-  background: var(--cor-branco);
-  border: var(--borda-fina);
-  border-radius: var(--raio-sm);
-  box-shadow: var(--sombra-dura-sm);
   font-size: 12px;
-  font-weight: 600;
-  color: var(--cor-tinta);
+  font-weight: 700;
+  color: var(--cor-anil);
 }
 
-.detalhe__chip .icone {
-  color: var(--cor-anil-escuro);
+.detalhe__verificado .icone {
+  color: var(--cor-sucesso);
 }
 
 .detalhe__nome {
   margin: 0;
-  font-size: clamp(30px, 4vw, 46px);
+  font-size: clamp(30px, 4.4vw, 50px);
   line-height: 1.05;
   overflow-wrap: anywhere;
 }
 
 .detalhe__meta {
   display: flex;
-  align-items: center;
-  gap: var(--esp-2);
+  flex-wrap: wrap;
+  gap: var(--esp-2) var(--esp-5);
+  margin: 0;
   font-family: var(--fonte-titulo);
-  font-size: var(--texto-xl);
+  font-size: var(--texto-lg);
   font-weight: 700;
   color: var(--cor-tinta);
-  margin: 0;
+}
+
+.detalhe__meta > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .detalhe__meta .icone {
@@ -229,88 +163,165 @@
 }
 
 .detalhe__descricao {
-  font-size: var(--texto-lg);
+  margin: 0;
+  max-width: 68ch;
+  font-size: var(--texto-md);
   line-height: 1.6;
   color: var(--cor-cinza);
-  margin: 0;
-  max-width: 60ch;
 }
 
-.detalhe__confianca {
-  position: relative;
-  background: var(--cor-ouro-claro);
-  border: var(--borda);
-  border-radius: var(--raio);
-  box-shadow: var(--sombra-dura);
-  padding: var(--esp-4);
-  display: flex;
-  flex-direction: column;
-  gap: var(--esp-3);
-}
-
-/* Hachura de nanquim no canto do selo de confiança */
-.detalhe__confianca::after {
-  content: '';
-  position: absolute;
-  top: 12px;
-  right: 14px;
-  width: 40px;
-  height: 15px;
-  background: var(--hachura) no-repeat center / contain;
-  pointer-events: none;
-}
-
-.detalhe__confianca-topo {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--esp-3);
-}
-
-.detalhe__confianca-topo > .icone {
-  color: var(--cor-anil);
-  margin-top: 2px;
-}
-
-.detalhe__confianca-titulo {
-  margin: 0;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--cor-anil);
-}
-
-.detalhe__confianca-texto {
-  margin: 0;
-  font-weight: 500;
-}
-
-.detalhe__confianca-lista {
+/* Fatos rápidos: atendimento agora, quantos itens e o sem comissão */
+.detalhe__fatos {
   list-style: none;
-  padding: var(--esp-2) 0 0;
-  margin: 0;
-  border-top: 2px dashed var(--cor-contorno);
+  margin: var(--esp-1) 0 0;
+  padding: var(--esp-3) 0 0;
+  border-top: 2px dashed var(--cor-linha);
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: var(--esp-2) var(--esp-5);
-  font-size: 12px;
+  font-size: var(--texto-sm);
   font-weight: 600;
   color: var(--cor-tinta);
 }
 
-.detalhe__confianca-lista li {
+.detalhe__fatos > li {
   display: inline-flex;
   align-items: center;
   gap: 6px;
 }
 
-.detalhe__confianca-lista .icone {
+.detalhe__fatos .icone {
   color: var(--cor-anil);
 }
 
+.detalhe__disponivel {
+  padding: 2px 10px;
+  background: var(--cor-sucesso-fundo);
+  color: var(--cor-sucesso-tinta);
+  border: var(--borda-fina);
+  border-radius: 999px;
+  box-shadow: var(--sombra-dura-sm);
+  font-weight: 700;
+}
+
+.detalhe__ponto {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--cor-contorno);
+  background: var(--cor-whatsapp);
+}
+
+.detalhe__disponivel--inativo {
+  color: var(--cor-lacre-escuro);
+  background: var(--cor-lacre-fundo);
+}
+
+.detalhe__disponivel--inativo .detalhe__ponto {
+  background: var(--cor-lacre);
+}
+
+/* Quando abre ou fecha, ao lado do selo */
+.detalhe__disponivel-quando {
+  font-weight: 500;
+}
+
+/* --------------------------------------------------------------------------
+   Grade: catálogo à esquerda; contato e horário/local à direita.
+   No celular a ordem é cabeçalho, contato, catálogo, horário e local.
+   -------------------------------------------------------------------------- */
+.detalhe__grade {
+  display: grid;
+  grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+  grid-template-areas:
+    'catalogo contato'
+    'catalogo info';
+  grid-template-rows: auto 1fr;
+  gap: var(--esp-6) var(--esp-7);
+  align-items: start;
+  margin-top: var(--esp-7);
+}
+
+.detalhe__catalogo {
+  grid-area: catalogo;
+  min-width: 0;
+}
+
 .detalhe__contato {
-  position: sticky;
-  top: 96px;
+  grid-area: contato;
+}
+
+.detalhe__info {
+  grid-area: info;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+  min-width: 0;
+}
+
+/* Catálogo */
+.detalhe__secao-topo {
+  margin-bottom: var(--esp-5);
+}
+
+.detalhe__secao-topo h2 {
+  margin: var(--esp-1) 0;
+  font-size: var(--texto-3xl);
+}
+
+.detalhe__secao-topo .secao__subtitulo {
+  margin: 0;
+}
+
+.detalhe__cards {
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+
+.detalhe__outro {
+  display: flex;
+  max-width: none;
+  align-items: center;
+  gap: var(--esp-3);
+  margin: var(--esp-6) 0 0;
+  padding: var(--esp-3) var(--esp-4);
+  background: var(--cor-superficie-baixa);
+  border: var(--borda-fina);
+  border-style: dashed;
+  border-radius: var(--raio-md);
+  font-size: var(--texto-sm);
+  color: var(--cor-cinza);
+  line-height: 1.5;
+}
+
+.detalhe__outro strong {
+  color: var(--cor-tinta);
+}
+
+.detalhe__outro a {
+  font-weight: 700;
+  color: var(--cor-anil);
+}
+
+.detalhe__outro-icone {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--raio-md);
+  border: var(--borda-fina);
+  box-shadow: var(--sombra-dura-sm);
+  transform: rotate(-4deg);
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Caixa de contato */
+.detalhe__contato {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--esp-4);
@@ -388,15 +399,21 @@
 .detalhe__telefone {
   display: block;
   font-family: var(--fonte-titulo);
-  font-size: 32px;
+  font-size: clamp(24px, 2.6vw, 30px);
   font-weight: 800;
   letter-spacing: -0.02em;
   color: var(--cor-anil);
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .detalhe__telefone:hover {
   color: var(--cor-anil-escuro);
+}
+
+.detalhe__contato .botao--whatsapp {
+  width: 100%;
+  padding-block: 0.9rem;
 }
 
 .detalhe__instagram {
@@ -418,302 +435,39 @@
   text-decoration: underline;
 }
 
-.detalhe__contato .botao--whatsapp {
-  width: 100%;
-  padding-block: 0.9rem;
-}
-
 .detalhe__mensagem {
   text-align: center;
   font-size: var(--texto-sm);
   color: var(--cor-cinza);
 }
 
-.detalhe__garantia {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding-top: var(--esp-3);
+.detalhe__confianca {
+  list-style: none;
+  margin: 0;
+  padding: var(--esp-3) 0 0;
   border-top: 2px dashed var(--cor-contorno);
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
   font-size: var(--texto-xs);
+  font-weight: 600;
   color: var(--cor-cinza);
 }
 
-.detalhe__garantia .icone {
+.detalhe__confianca li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.detalhe__confianca .icone {
   color: var(--cor-ouro-escuro);
 }
 
-/* Catálogo em fundo cinza-claro */
-.detalhe__itens {
-  background: var(--cor-superficie-media);
-  border-block: var(--borda);
-}
-
-.detalhe__itens-contagem {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0.35rem 0.75rem;
-  background: var(--cor-branco);
-  border: var(--borda-fina);
-  border-radius: var(--raio-sm);
-  box-shadow: var(--sombra-dura-sm);
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.detalhe__itens-contagem .icone {
-  color: var(--cor-anil-escuro);
-}
-
-.detalhe__outro {
-  margin-top: var(--esp-7);
-  padding: var(--esp-4);
-  background: var(--cor-branco);
-  border: var(--borda);
-  border-radius: var(--raio);
-  box-shadow: var(--sombra-dura);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--esp-4);
-  flex-wrap: wrap;
-}
-
-.detalhe__outro-texto {
-  display: flex;
-  align-items: center;
-  gap: var(--esp-3);
-}
-
-.detalhe__outro-texto p {
-  margin: 0;
-  font-size: var(--texto-sm);
-  color: var(--cor-cinza);
-}
-
-.detalhe__outro-titulo {
-  font-family: var(--fonte-titulo);
-  font-weight: 700;
-  font-size: var(--texto-md);
-  color: var(--cor-anil);
-}
-
-.detalhe__outro-icone {
-  flex-shrink: 0;
-  width: 40px;
-  height: 40px;
-  border-radius: var(--raio-md);
-  border: var(--borda-fina);
-  box-shadow: var(--sombra-dura-sm);
-  transform: rotate(-4deg);
-  background: var(--cor-ouro);
-  color: var(--cor-tinta);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Localização */
+/* Horário e local: dois cartões iguais na coluna da direita */
+.detalhe__horarios,
 .detalhe__local {
-  display: grid;
-  grid-template-columns: 5fr 7fr;
-  gap: var(--esp-6);
-  align-items: center;
-}
-
-.detalhe__local-texto {
-  display: flex;
-  flex-direction: column;
-  gap: var(--esp-2);
-}
-
-.detalhe__local-texto h3 {
-  font-size: var(--texto-2xl);
-  margin: 0;
-}
-
-.detalhe__local-texto p {
-  margin: 0;
-  color: var(--cor-cinza);
-  line-height: 1.6;
-}
-
-.detalhe__local-lista {
-  list-style: none;
-  padding: 0;
-  margin: var(--esp-2) 0 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--esp-2);
-  font-size: var(--texto-sm);
-}
-
-.detalhe__local-lista li {
-  display: flex;
-  align-items: center;
-  gap: var(--esp-2);
-}
-
-.detalhe__local-lista .icone {
-  color: var(--cor-anil);
-}
-
-.detalhe__mapa {
-  position: relative;
-  height: 288px;
-  border: var(--borda);
-  border-radius: var(--raio);
-  box-shadow: var(--sombra-dura);
-  overflow: hidden;
-  background: var(--cor-superficie-media);
-}
-
-.detalhe__mapa iframe {
-  width: 100%;
-  height: 100%;
-  border: 0;
-  display: block;
-}
-
-.detalhe__mapa-legenda {
-  position: absolute;
-  left: var(--esp-3);
-  bottom: var(--esp-3);
-  padding: var(--esp-2) var(--esp-3);
-  background: var(--cor-branco);
-  border: var(--borda-fina);
-  border-radius: var(--raio-sm);
-  box-shadow: var(--sombra-dura-sm);
-  display: flex;
-  flex-direction: column;
-  font-size: var(--texto-sm);
-}
-
-.detalhe__mapa-legenda strong {
-  font-size: 12px;
-  color: var(--cor-anil);
-}
-
-.detalhe__mapa-legenda span {
-  color: var(--cor-cinza);
-}
-
-/* Chamada final */
-.detalhe__cta {
-  background: var(--linhas-escuras), var(--cor-ouro);
-  color: var(--cor-tinta);
-  border-block: var(--borda);
-  padding-block: var(--esp-5);
-}
-
-.detalhe__cta-conteudo {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--esp-4);
-  flex-wrap: wrap;
-}
-
-.detalhe__cta-texto {
-  display: flex;
-  align-items: center;
-  gap: var(--esp-3);
-}
-
-.detalhe__cta-texto h4 {
-  margin: 0 0 2px;
-  color: var(--cor-anil);
-  font-size: var(--texto-xl);
-}
-
-.detalhe__cta-texto p {
-  margin: 0;
-  font-size: var(--texto-sm);
-  color: var(--cor-tinta);
-}
-
-.detalhe__cta-icone {
-  flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  border-radius: var(--raio-md);
-  border: var(--borda);
-  box-shadow: var(--sombra-dura-sm);
-  transform: rotate(-4deg);
-  background: var(--cor-branco);
-  color: var(--cor-anil);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-@media (max-width: 900px) {
-  .detalhe__conteudo {
-    grid-template-columns: 1fr;
-    gap: var(--esp-5);
-    padding-block: var(--esp-5);
-  }
-
-  .detalhe__contato {
-    position: relative;
-    /* O top do modo fixo (desktop) empurrava a caixa 96px para baixo: abria um
-       vão acima dela e ela invadia a seção seguinte */
-    top: auto;
-  }
-
-  .detalhe__local {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 600px) {
-  .detalhe__utilidades {
-    display: none;
-  }
-
-  .detalhe__capa-selos {
-    justify-content: flex-start;
-  }
-
-  .detalhe__selo--local {
-    display: none;
-  }
-
-  .detalhe__outro .botao,
-  .detalhe__cta .botao {
-    width: 100%;
-  }
-
-  .detalhe__mapa {
-    height: 220px;
-  }
-}
-
-.detalhe__local-aviso {
-  color: var(--cor-cinza);
-  font-size: var(--texto-xs);
-}
-
-.detalhe__local .detalhe__abrir-mapa {
-  align-self: flex-start;
-  margin-top: var(--esp-2);
-}
-
-/* Quando abre ou fecha, ao lado do selo */
-.detalhe__disponivel-quando {
-  font-weight: 400;
-  color: var(--cor-cinza);
-}
-
-.detalhe__disponivel--inativo .detalhe__disponivel-quando {
-  color: var(--cor-lacre-escuro);
-}
-
-.detalhe__horarios {
-  margin-top: var(--esp-5);
-  padding: var(--esp-4) var(--esp-5);
+  padding: var(--esp-4);
   border: var(--borda);
   border-radius: var(--raio);
   box-shadow: var(--sombra-dura);
@@ -768,17 +522,6 @@
 .detalhe__semana {
   margin: 0;
   display: grid;
-  grid-template-columns: 1fr;
-  column-gap: var(--esp-5);
-}
-
-/* Em duas colunas a leitura desce: segunda a quinta à esquerda, sexta a domingo à direita */
-@media (min-width: 640px) {
-  .detalhe__semana {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: repeat(4, auto);
-    grid-auto-flow: column;
-  }
 }
 
 .detalhe__semana-dia {
@@ -835,13 +578,180 @@
   color: var(--cor-cinza-claro);
 }
 
-/* Selo de destaque na capa, antes do "Perfil verificado" */
-.detalhe__selo-destaque {
-  align-self: center;
+.detalhe__local {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
 }
 
-/* Na legenda do mapa o selo fica embaixo do local */
-.detalhe__mapa-legenda .selo-destaque {
-  align-self: flex-start;
-  margin-top: 4px;
+.detalhe__local-texto {
+  margin: 0;
+  font-size: var(--texto-sm);
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--cor-tinta);
+}
+
+.detalhe__mapa {
+  position: relative;
+  height: 220px;
+  border: var(--borda-fina);
+  border-radius: var(--raio-md);
+  overflow: hidden;
+  background: var(--cor-superficie-media);
+}
+
+.detalhe__mapa iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+.detalhe__local-aviso {
+  margin: 0;
+  font-size: var(--texto-xs);
+  color: var(--cor-cinza);
+}
+
+/* --------------------------------------------------------------------------
+   Perfil premium do plano Destaque: o mesmo anil profundo com moldura
+   dourada dos cartões Destaque, nome em letreiro dourado, fita "Negócio
+   Destaque" no canto e detalhes dourados na caixa de contato.
+   -------------------------------------------------------------------------- */
+.detalhe--destaque .detalhe__capa {
+  border-bottom-color: var(--cor-ouro);
+  border-bottom-width: 6px;
+}
+
+.detalhe--destaque .detalhe__capa-sombra {
+  background: linear-gradient(to top, rgba(15, 37, 87, 0.85), rgba(15, 37, 87, 0.2) 60%, transparent);
+}
+
+.detalhe--destaque .detalhe__cabecalho {
+  background:
+    var(--linhas-claras),
+    linear-gradient(160deg, #1e3a8a 0%, var(--cor-anil-escuro) 72%);
+  color: var(--cor-branco);
+  box-shadow:
+    inset 0 0 0 3px var(--cor-ouro),
+    6px 6px 0 0 var(--cor-ouro),
+    6px 6px 0 3px var(--cor-contorno);
+}
+
+.detalhe--destaque .detalhe__cabecalho::after {
+  background-image: var(--hachura-clara);
+  opacity: 0.6;
+}
+
+.detalhe--destaque .detalhe__nome {
+  --letra-luz: #fcd34d;
+  --letra-sombra: #e09a0e;
+}
+
+.detalhe--destaque .detalhe__meta {
+  color: var(--cor-branco);
+}
+
+.detalhe--destaque .detalhe__meta .icone,
+.detalhe--destaque .detalhe__fatos .icone {
+  color: var(--cor-ouro);
+}
+
+.detalhe--destaque .detalhe__descricao {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.detalhe--destaque .detalhe__verificado {
+  color: var(--cor-ouro-claro);
+}
+
+.detalhe--destaque .detalhe__verificado .icone {
+  color: #4ade80;
+}
+
+.detalhe--destaque .detalhe__fatos {
+  color: var(--cor-branco);
+  border-top-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Fita dourada no canto de cima do cabeçalho */
+.detalhe__fita {
+  position: absolute;
+  top: -16px;
+  right: var(--esp-6);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.4rem 0.9rem;
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
+  border: var(--borda);
+  border-radius: var(--raio-sm);
+  box-shadow: 3px 3px 0 0 var(--cor-contorno), var(--cel-sm);
+  transform: rotate(2deg);
+  font-size: var(--texto-sm);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Com a fita no canto, a hachura sai do caminho */
+.detalhe--destaque .detalhe__cabecalho::after {
+  top: auto;
+  bottom: 14px;
+}
+
+.detalhe--destaque .detalhe__contato {
+  box-shadow:
+    inset 0 0 0 3px var(--cor-ouro),
+    6px 6px 0 0 var(--cor-ouro),
+    6px 6px 0 3px var(--cor-contorno);
+}
+
+.detalhe--destaque .detalhe__contato-selo {
+  background: var(--cor-anil);
+  color: var(--cor-ouro);
+}
+
+.detalhe--destaque .detalhe__telefone-caixa {
+  background: var(--cor-ouro-claro);
+}
+
+@media (max-width: 900px) {
+  .detalhe__grade {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'contato'
+      'catalogo'
+      'info';
+    grid-template-rows: none;
+    gap: var(--esp-6);
+    margin-top: var(--esp-6);
+  }
+
+  .detalhe__info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    align-items: start;
+  }
+}
+
+@media (max-width: 600px) {
+  .detalhe__cabecalho {
+    padding: var(--esp-5) var(--esp-4);
+  }
+
+  .detalhe__fita {
+    right: var(--esp-4);
+    font-size: var(--texto-xs);
+  }
+
+  .detalhe__secao-topo h2 {
+    font-size: var(--texto-2xl);
+  }
+
+  .detalhe__outro {
+    align-items: flex-start;
+  }
 }
