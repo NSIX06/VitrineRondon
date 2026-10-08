@@ -36,11 +36,8 @@
   align-items: start;
 }
 
-.aceite__item input {
-  width: 20px;
-  height: 20px;
-  margin: 2px 0 0;
-  accent-color: var(--cor-anil);
+.aceite__item .caixa-marcar {
+  margin-top: 2px;
 }
 
 .aceite__item label {

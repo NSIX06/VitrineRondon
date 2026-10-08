@@ -7,6 +7,7 @@ import StatusMessage from '../ui/StatusMessage/StatusMessage'
 import Tag from '../ui/Tag/Tag'
 import { formatarNumero } from '../../services/formatos'
 import { STATUS_DIVULGACAO, TIPOS_DIVULGACAO } from '../../services/divulgacoes'
+import CaixaDeMarcar from '../ui/CaixaDeMarcar/CaixaDeMarcar'
 import './Painel.css'
 
 
@@ -47,8 +48,7 @@ function PainelDivulgacao({ negocio, aoAtualizar }) {
       </p>
 
       <label className={`painel__consentimento ${!temDestaque ? 'painel__consentimento--inativo' : ''}`}>
-        <input
-          type="checkbox"
+        <CaixaDeMarcar
           checked={Boolean(negocio.autorizaDivulgacao)}
           onChange={alterarConsentimento}
           disabled={salvando}

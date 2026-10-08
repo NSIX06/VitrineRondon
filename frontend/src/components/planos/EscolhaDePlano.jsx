@@ -61,7 +61,7 @@ function EscolhaDePlano({ planoInicial = '' }) {
         {planos.map((p) => (
           <label
             key={p.nome}
-            className={`escolha-plano__opcao ${escolhido === p.nome ? 'escolha-plano__opcao--marcada' : ''} ${
+            className={`escolha-plano__opcao reflexo-ao-passar ${escolhido === p.nome ? 'escolha-plano__opcao--marcada' : ''} ${
               p.destaque ? 'escolha-plano__opcao--destaque' : ''
             }`}
           >

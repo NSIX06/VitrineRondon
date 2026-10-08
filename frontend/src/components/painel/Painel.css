@@ -320,11 +320,8 @@
   line-height: 1.5;
 }
 
-.painel__consentimento input {
-  width: 20px;
-  height: 20px;
+.painel__consentimento .caixa-marcar {
   margin-top: 2px;
-  accent-color: var(--cor-contorno);
 }
 
 .painel__consentimento small {

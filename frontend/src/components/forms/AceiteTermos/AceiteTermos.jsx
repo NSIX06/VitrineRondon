@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import DocumentoLegalModal from '../../legal/DocumentoLegalModal/DocumentoLegalModal'
+import CaixaDeMarcar from '../../ui/CaixaDeMarcar/CaixaDeMarcar'
 import './AceiteTermos.css'
 
 /**
@@ -30,9 +31,8 @@ function AceiteTermos({ valores, onChange, erros = {}, versao }) {
       </legend>
 
       <div className={`aceite__item ${erros.termosDeUso ? 'aceite__item--erro' : ''}`}>
-        <input
+        <CaixaDeMarcar
           id="aceite-termos"
-          type="checkbox"
           checked={Boolean(valores.termosDeUso)}
           onChange={alternar('termosDeUso')}
           aria-describedby={erros.termosDeUso ? 'aceite-termos-erro' : undefined}
@@ -52,9 +52,8 @@ function AceiteTermos({ valores, onChange, erros = {}, versao }) {
       </div>
 
       <div className={`aceite__item ${erros.politicaPrivacidade ? 'aceite__item--erro' : ''}`}>
-        <input
+        <CaixaDeMarcar
           id="aceite-privacidade"
-          type="checkbox"
           checked={Boolean(valores.politicaPrivacidade)}
           onChange={alternar('politicaPrivacidade')}
           aria-describedby={erros.politicaPrivacidade ? 'aceite-privacidade-erro' : undefined}

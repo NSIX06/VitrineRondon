@@ -868,6 +868,16 @@ pilha pausa com o mouse em cima, e o gsap só é baixado quando ela aparece, for
 visita. Para quem pede menos movimento ao sistema, os cartões trocam de lugar com um esmaecimento, sem
 cair nem deslizar. Teclado e leitor de tela usam a lista de nomes ao lado da pilha.
 
+**Caixas de marcar e reflexo nos planos:** as caixas de marcar (aceite dos termos, consentimento de
+divulgação, horários, "disponível na vitrine" e afins) usam o componente
+[CaixaDeMarcar](frontend/src/components/ui/CaixaDeMarcar/CaixaDeMarcar.jsx): ao marcar, a caixa fica
+amarela e o visto é desenhado (SVG com `stroke-dashoffset`), e ela afunda ao ser pressionada, como as
+teclas. Por baixo continua o `<input type="checkbox">` de verdade, então teclado, leitor de tela e
+formulários funcionam igual. Os cartões de planos (página Planos e escolha do plano no cadastro) têm
+um reflexo de luz que atravessa o cartão ao passar o mouse (classe `reflexo-ao-passar`). Os dois
+efeitos foram inspirados no Checkbox do animate-ui e no GlareHover do Magic UI, refeitos só com CSS,
+sem Tailwind, shadcn/ui, Headless UI nem motion.
+
 **Revelar ao rolar e barra de rolagem:** blocos e cartões surgem subindo e ganhando cor quando entram
 na tela, com animações guiadas pela própria rolagem, só em CSS (`animation-timeline: view()`); listas
 como os números e o "O que fazemos" animam em grupo, em cascata, pela linha do tempo do bloco pai

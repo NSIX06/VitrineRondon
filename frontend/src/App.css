@@ -213,12 +213,6 @@ textarea.campo__entrada {
   color: var(--cor-anil);
 }
 
-.campo--checkbox input {
-  width: 20px;
-  height: 20px;
-  accent-color: var(--cor-contorno);
-}
-
 .formulario__acoes {
   display: flex;
   justify-content: flex-end;

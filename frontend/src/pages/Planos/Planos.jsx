@@ -160,7 +160,10 @@ function Planos() {
             )}
             <ul className="planos__lista">
               {planos.map((plano) => (
-                <li key={plano.nome} className={`planos__cartao ${plano.destaque ? 'planos__cartao--destaque' : ''}`}>
+                <li
+                  key={plano.nome}
+                  className={`planos__cartao reflexo-ao-passar ${plano.destaque ? 'planos__cartao--destaque' : ''}`}
+                >
                   {plano.destaque && <span className="planos__popular">Mais popular</span>}
                   <h2 className="planos__titulo">{plano.titulo.replace(/^VitrineRondon /, '')}</h2>
                   <p className="planos__chamada">{plano.chamada}</p>

@@ -3,6 +3,7 @@ import Button from '../../ui/Button/Button'
 import StatusMessage from '../../ui/StatusMessage/StatusMessage'
 import { LIMITES_FAQ, validarFaq } from '../../../services/faq'
 import { errosDoServidor } from '../../../services/validacoes'
+import CaixaDeMarcar from '../../ui/CaixaDeMarcar/CaixaDeMarcar'
 import './FaqForm.css'
 
 const VAZIO = { pergunta: '', resposta: '', categoria: '', ordem: '0', ativo: true }
@@ -162,7 +163,7 @@ function FaqForm({ inicial, categorias = [], onSubmit, onCancelar }) {
       </div>
 
       <div className="campo campo--checkbox">
-        <input id="faq-ativo" name="ativo" type="checkbox" checked={valores.ativo} onChange={atualizarCampo} />
+        <CaixaDeMarcar id="faq-ativo" name="ativo" checked={valores.ativo} onChange={atualizarCampo} />
         <label htmlFor="faq-ativo">Visível na central de ajuda</label>
       </div>
 

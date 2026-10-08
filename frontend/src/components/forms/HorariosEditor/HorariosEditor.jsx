@@ -8,6 +8,7 @@ import {
   situacaoAtendimento,
 } from '../../../services/horarios'
 import { useRelogio } from '../../../hooks/useRelogio'
+import CaixaDeMarcar from '../../ui/CaixaDeMarcar/CaixaDeMarcar'
 import './HorariosEditor.css'
 
 // O exemplo mais comum no comércio de bairro: manhã e tarde com pausa para o almoço
@@ -119,9 +120,9 @@ function HorariosEditor({ valor = [], onChange, errosServidor = {} }) {
               }`}
             >
               <label className="horarios-editor__nome" htmlFor={idDia}>
-                <input
+                <CaixaDeMarcar
+                  tamanho="sm"
                   id={idDia}
-                  type="checkbox"
                   checked={atende}
                   onChange={(evento) => alternarDia(dia.indice, evento.target.checked)}
                 />

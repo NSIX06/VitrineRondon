@@ -101,12 +101,6 @@
   cursor: pointer;
 }
 
-.horarios-editor__nome input {
-  width: 16px;
-  height: 16px;
-  accent-color: var(--cor-anil);
-}
-
 .horarios-editor__intervalos {
   display: flex;
   flex-wrap: wrap;

@@ -9,6 +9,7 @@ import { errosDosHorarios } from '../../../services/horarios'
 import { CATEGORIAS } from '../../../services/constantes'
 import { geocodificarEndereco, montarEnderecoTexto } from '../../../services/geocodificacao'
 import { errosDoServidor } from '../../../services/validacoes'
+import CaixaDeMarcar from '../../ui/CaixaDeMarcar/CaixaDeMarcar'
 import './EmpreendedorForm.css'
 
 const estadoInicialPadrao = {
@@ -567,10 +568,9 @@ function EmpreendedorForm({
           )}
 
           <div className="campo campo--checkbox">
-            <input
+            <CaixaDeMarcar
               id="emp-exibir-endereco"
               name="exibirEndereco"
-              type="checkbox"
               checked={valores.exibirEndereco}
               onChange={atualizarCampo}
             />
@@ -595,10 +595,9 @@ function EmpreendedorForm({
 
       {moderacao && (
         <div className="campo campo--checkbox">
-          <input
+          <CaixaDeMarcar
             id="emp-ativo"
             name="ativo"
-            type="checkbox"
             checked={valores.ativo}
             onChange={atualizarCampo}
           />

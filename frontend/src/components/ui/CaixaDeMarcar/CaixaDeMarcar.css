@@ -1,0 +1,95 @@
+/* Caixa de marcar: o input de verdade é a própria caixa (appearance: none);
+   o visto em SVG fica por cima, sem receber cliques */
+.caixa-marcar {
+  --caixa-tam: 22px;
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: var(--caixa-tam);
+  height: var(--caixa-tam);
+  vertical-align: middle;
+}
+
+.caixa-marcar--sm {
+  --caixa-tam: 18px;
+}
+
+.caixa-marcar__entrada {
+  grid-area: 1 / 1;
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  background: var(--cor-branco);
+  border: 2px solid var(--cor-contorno);
+  border-radius: 6px;
+  box-shadow: 2px 2px 0 0 var(--cor-contorno);
+  cursor: pointer;
+  transition:
+    background-color 0.18s ease,
+    box-shadow 0.12s ease,
+    transform 0.12s ease;
+}
+
+.caixa-marcar__entrada:hover:not(:disabled) {
+  background: var(--cor-ouro-claro);
+}
+
+/* Pressionar afunda a caixa, como as teclas do sistema */
+.caixa-marcar__entrada:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 0 var(--cor-contorno);
+}
+
+.caixa-marcar__entrada:checked {
+  background: var(--cor-ouro);
+}
+
+.caixa-marcar__entrada:focus-visible {
+  outline: 3px solid var(--cor-anil);
+  outline-offset: 2px;
+}
+
+.caixa-marcar__entrada:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+/* O visto: traço de nanquim desenhado da ponta esquerda para a direita */
+.caixa-marcar__visto {
+  grid-area: 1 / 1;
+  width: 78%;
+  height: 78%;
+  pointer-events: none;
+  fill: none;
+  stroke: var(--cor-contorno);
+  stroke-width: 3.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 0.28s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* Acompanha o afundar da caixa pressionada */
+.caixa-marcar__entrada:active:not(:disabled) + .caixa-marcar__visto {
+  transform: translate(2px, 2px);
+}
+
+.caixa-marcar__entrada:checked + .caixa-marcar__visto {
+  stroke-dashoffset: 0;
+  transition-delay: 0.04s;
+}
+
+/* Alto contraste do Windows: as cores do sistema mandam, o visto continua visível */
+@media (forced-colors: active) {
+  .caixa-marcar__entrada {
+    border-color: CanvasText;
+  }
+
+  .caixa-marcar__visto {
+    stroke: CanvasText;
+  }
+}

@@ -3,6 +3,7 @@ import Button from '../../ui/Button/Button'
 import StatusMessage from '../../ui/StatusMessage/StatusMessage'
 import CampoImagem from '../CampoImagem/CampoImagem'
 import { errosDoServidor } from '../../../services/validacoes'
+import CaixaDeMarcar from '../../ui/CaixaDeMarcar/CaixaDeMarcar'
 import './ProdutoForm.css'
 
 const estadoInicialPadrao = {
@@ -235,10 +236,9 @@ function ProdutoForm({ initialData, empreendedores = [], negocioFixo, onSubmit, 
       />
 
       <div className="campo campo--checkbox">
-        <input
+        <CaixaDeMarcar
           id="produto-disponivel"
           name="disponivel"
-          type="checkbox"
           checked={valores.disponivel}
           onChange={atualizarCampo}
         />

@@ -830,3 +830,41 @@ h2:not(.detalhe__horarios-titulo, .visualmente-oculto) {
     scrollbar-color: var(--cor-anil) var(--cor-superficie-baixa);
   }
 }
+
+/* ==========================================================================
+   Reflexo ao passar (inspirado no GlareHover do Magic UI, só CSS)
+   Uma faixa de luz em diagonal atravessa o cartão quando o mouse passa ou o
+   foco do teclado entra nele. Fica num ::after do tamanho exato do cartão:
+   não precisa de overflow escondido, então selos que saem da borda (como o
+   "Mais popular") continuam inteiros. Sem efeito para quem pede menos
+   movimento.
+   Uso: class="reflexo-ao-passar" num elemento com position: relative.
+   ========================================================================== */
+.reflexo-ao-passar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    -45deg,
+    transparent 45%,
+    rgba(255, 255, 255, 0.7) 50%,
+    transparent 55%
+  );
+  background-size: 250% 250%;
+  background-repeat: no-repeat;
+  background-position: 120% 120%;
+  transition: background-position 0.8s ease;
+}
+
+.reflexo-ao-passar:is(:hover, :focus-within)::after {
+  background-position: -20% -20%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reflexo-ao-passar::after {
+    display: none;
+  }
+}
