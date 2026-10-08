@@ -11,9 +11,10 @@
     "audit": "npm audit --audit-level=high --prefix backend && npm audit --audit-level=high --prefix frontend",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "node tests-e2e/teste-ajustes-ui.mjs && node tests-e2e/teste-erros-ui.mjs && node tests-e2e/teste-desempenho.mjs && node tests-e2e/teste-faq-ui.mjs && node tests-e2e/teste-celular-ui.mjs && node tests-e2e/teste-planos-ui.mjs",
+    "test:e2e": "node tests-e2e/teste-ajustes-ui.mjs && node tests-e2e/teste-erros-ui.mjs && node tests-e2e/teste-desempenho.mjs && node tests-e2e/teste-faq-ui.mjs && node tests-e2e/teste-celular-ui.mjs",
     "banco:criar-usuario": "npm run banco:criar-usuario --prefix backend",
-    "prisma:deploy": "npm run prisma:deploy --prefix backend"
+    "prisma:deploy": "npm run prisma:deploy --prefix backend",
+    "test:e2e:planos": "node tests-e2e/teste-planos-ui.mjs --resetar-banco"
   },
   "devDependencies": {
     "vitest": "^3.2.7"

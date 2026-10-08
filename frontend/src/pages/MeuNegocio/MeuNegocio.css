@@ -141,7 +141,8 @@
 }
 
 .meu-negocio__rodape {
-  margin: 0;
+  /* Afasta da tabela: colado na borda dela, parecia parte do último item */
+  margin: var(--esp-3) 0 0;
   font-size: var(--texto-sm);
   color: var(--cor-cinza);
 }

@@ -5,8 +5,8 @@
 // painéis do Essencial e do Destaque, a troca de plano, o cancelamento que
 // respeita o período pago e o celular.
 //
-// Roda o seed no começo e no fim: parte sempre do mesmo cenário (DEMO.md) e
-// deixa o banco pronto para a demonstração. Precisa da ABACATEPAY_API_KEY de
+// Roda o seed no começo e no fim (só com --resetar-banco): parte sempre do
+// mesmo cenário (DEMO.md) e deixa o banco pronto para a demonstração. Precisa da ABACATEPAY_API_KEY de
 // testes no backend/.env e de internet para abrir o checkout. A aprovação do
 // pagamento vem da simulação do admin, que aplica o mesmo tratamento do aviso
 // do gateway (o checkout hospedado não é automatizado aqui).
@@ -21,6 +21,16 @@ const PATRICIA = { email: 'patricia@espacobelaflor.com.br', senha: CARLOS.senha 
 const { checar, encerrar } = criarPlacar()
 
 const semear = () => execFileSync('node', ['prisma/seed.js'], { cwd: BACKEND, stdio: 'ignore' })
+
+// O seed APAGA o banco inteiro. Sem pedido explícito, a suíte não roda: rodar
+// por engano levaria embora o que foi cadastrado à mão no banco local.
+if (!process.argv.includes('--resetar-banco')) {
+  console.error(
+    'Esta suíte recria o banco com o seed (apaga tudo o que foi cadastrado à mão).\n' +
+      'Para rodar mesmo assim: node tests-e2e/teste-planos-ui.mjs --resetar-banco  (ou npm run test:e2e:planos)'
+  )
+  process.exit(1)
+}
 
 async function main() {
   semear()
@@ -75,8 +85,8 @@ async function main() {
     await abrir('/vitrine?busca=sobrancelhas', '.vitrine__filtros, .listagem__filtros')
     await esperar(800)
     checar('a busca não acha item de negócio sem plano', await evaluate("!document.querySelector('.produto-card')"))
-    await abrir('/', '#titulo-destaques')
-    checar('a Home mostra a seção de destaques com o selo', await evaluate("Boolean(__q('.destaques .selo-destaque'))"))
+    await abrir('/', '#titulo-feira')
+    checar('a Home mostra a feira com o Destaque primeiro, com selo', await evaluate("Boolean(__q('.feira .card-swap__cartao .selo-destaque')) && __q('.feira__nome').textContent.includes('Ateliê')"))
 
     console.log('\n2. Página de planos (visitante)')
     await abrir('/planos', '.planos__cartao')

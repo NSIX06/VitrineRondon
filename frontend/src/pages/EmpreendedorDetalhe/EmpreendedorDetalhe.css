@@ -658,6 +658,9 @@
 
   .detalhe__contato {
     position: relative;
+    /* O top do modo fixo (desktop) empurrava a caixa 96px para baixo: abria um
+       vão acima dela e ela invadia a seção seguinte */
+    top: auto;
   }
 
   .detalhe__local {

@@ -94,9 +94,12 @@
 .produto-card__nome {
   font-size: var(--texto-xl);
   margin: 0;
+  /* Até duas linhas: numa linha só, no celular o nome virava "Oficina de crochê pa…" */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 }
 
 .produto-card__descricao {

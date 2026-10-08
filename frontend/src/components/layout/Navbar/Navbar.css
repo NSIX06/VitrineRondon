@@ -272,6 +272,30 @@
   }
 }
 
+/* Celulares pequenos (320px): marca e botão do menu cabem lado a lado sem
+   empurrar a página para o lado */
+@media (max-width: 340px) {
+  .navbar__conteudo {
+    gap: var(--esp-2);
+  }
+
+  .navbar__marca {
+    gap: var(--esp-2);
+  }
+
+  .navbar__nome {
+    font-size: 21px;
+  }
+
+  .navbar__logo {
+    width: 42px;
+  }
+
+  .navbar__divisor {
+    height: 30px;
+  }
+}
+
 .navbar__link--entrar {
   border-color: transparent;
 }

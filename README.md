@@ -38,7 +38,7 @@ O sistema é multiusuário: cada empreendedor administra apenas o próprio negó
 |---|---|
 | Banco de dados | MySQL 8 (`vitrine_db`) |
 | Backend | Node.js, Express 5, Prisma ORM 6, Zod 4, cors, compression, dotenv, nodemon |
-| Frontend | React 19, Vite, React Router 7, Fetch nativo, Leaflet + react-leaflet (mapas) |
+| Frontend | React 19, Vite, React Router 7, Fetch nativo, Leaflet + react-leaflet (mapas), gsap (pilha animada da Home) |
 | Pagamentos | AbacatePay (API v2, em modo de testes), atrás de uma camada própria em `services/pagamento/` |
 | Imagens | sharp (conversão para WebP) e Cloudinary em produção |
 | Portas | Backend `3001`, frontend `5173` |
@@ -575,7 +575,7 @@ as vendas.
 | Estatísticas do perfil | totais do período | totais, gráfico por dia e produtos mais vistos |
 | Selo "Negócio em Destaque" | | ✓ |
 | Prioridade na ordem das listas e da busca | | ✓ |
-| Espaço na seção "Negócios em Destaque" da Home | | ✓ |
+| Prioridade na vitrine animada da Home ("Quem está na feira") | | ✓ |
 | Possibilidade de divulgação nas redes oficiais | | ✓ |
 
 Os planos ficam em [backend/prisma/planos.js](backend/prisma/planos.js) (`npm run planos:semear`
@@ -868,6 +868,14 @@ lógica fica no gancho [frontend/src/hooks/useConsulta.js](frontend/src/hooks/us
 rolagem. Salvar no painel mostra um aviso no canto da tela, que some sozinho, em vez de levar a
 página ao topo. Imagens fora da tela carregam só quando chegam perto dela.
 
+**Pilha de negócios da Home:** a faixa "Quem está na feira" mostra uma pilha de cartões que se
+revezam sozinhos, adaptada do CardSwap do React Bits (licença MIT) em
+[components/ui/CardSwap](frontend/src/components/ui/CardSwap/CardSwap.jsx). Os negócios do Destaque vêm
+na frente, com o selo, e os demais publicados em seguida; cada cartão abre a página do negócio. A
+pilha pausa com o mouse em cima, e o gsap só é baixado quando ela aparece, fora do pacote da primeira
+visita. Para quem pede menos movimento ao sistema, os cartões trocam de lugar com um esmaecimento, sem
+cair nem deslizar. Teclado e leitor de tela usam a lista de nomes ao lado da pilha.
+
 **Movimento:** o botão "Cadastre-se" alterna com "Vire empreendedor", deslizando. Quem pede menos
 movimento ao sistema vê a troca por esmaecimento, sem deslizar, e a rolagem até "Como funciona" vai
 direto em vez de animar. Nos dois casos, a troca pausa com o mouse ou o foco sobre o botão.
@@ -968,15 +976,17 @@ node teste-erros-ui.mjs       # a tela de erro não mostra pilha de chamadas nem
 node teste-desempenho.mjs     # o que a primeira tela baixa e a compressão da API
 node teste-faq-ui.mjs         # central de ajuda, paginação, contato estável e permissões na tela
 node teste-celular-ui.mjs     # telas a 390px, termos em modal no cadastro e o painel sem repetições
-node teste-planos-ui.mjs      # só negócio com plano na vitrine, cadastro em 3 etapas, rascunho, troca e cancelamento
+node teste-planos-ui.mjs --resetar-banco  # APAGA o banco: regra de publicação, cadastro em 3 etapas, troca e cancelamento
 ```
 
-O `teste-planos-ui.mjs` roda o seed no começo e no fim (parte sempre do cenário do
-[DEMO.md](DEMO.md) e deixa o banco pronto para a demonstração). Ele abre o checkout de testes do
-AbacatePay, então precisa da `ABACATEPAY_API_KEY` de Dev mode e de internet; a aprovação do
-pagamento vem da simulação do admin, que aplica o mesmo tratamento do aviso do gateway.
+O `teste-planos-ui.mjs` **apaga o banco local**: roda o seed no começo e no fim, para partir sempre
+do cenário do [DEMO.md](DEMO.md) e deixá-lo pronto para a demonstração. Por isso ele só roda com
+pedido explícito, `npm run test:e2e:planos` (ou `node teste-planos-ui.mjs --resetar-banco`), e fica
+fora do `npm run test:e2e`. Ele abre o checkout de testes do AbacatePay, então precisa da
+`ABACATEPAY_API_KEY` de Dev mode e de internet; a aprovação do pagamento vem da simulação do admin,
+que aplica o mesmo tratamento do aviso do gateway.
 
-Ou, da raiz, `npm run test:e2e` roda as seis em sequência. Se o frontend estiver em outra porta, informe:
+Ou, da raiz, `npm run test:e2e` roda as cinco que não mexem no banco, em sequência. Se o frontend estiver em outra porta, informe:
 `APP_URL=http://localhost:5174 npm run test:e2e`. O `teste-erros-ui.mjs` derruba de fora o
 arquivo de uma tela, para provocar a falha sem nenhum código de teste dentro do site.
 

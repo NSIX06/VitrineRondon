@@ -63,7 +63,7 @@ function Footer() {
             <span className="footer__titulo">Navegue</span>
             <Link to="/vitrine">Vitrine de produtos</Link>
             <Link to="/empreendedores">Empreendedores do bairro</Link>
-            <Link to="/contato">Contato e Ajuda</Link>
+            <Link to="/contato">Contato e perguntas frequentes</Link>
             <Link to="/planos">Planos para negócios</Link>
             <Link to="/sobre">Sobre o projeto</Link>
           </nav>
