@@ -1,0 +1,47 @@
+/* Barra de migalhas das páginas de detalhe (negócio e item) */
+.detalhe__migalhas {
+  background: var(--cor-superficie-baixa);
+  border-bottom: var(--borda);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cor-cinza);
+}
+
+.detalhe__migalhas-conteudo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-3);
+  flex-wrap: wrap;
+  padding-block: var(--esp-2);
+}
+
+/* Na linha das migalhas as setas ficam centradas, sem o espaço de baixo */
+.detalhe__migalhas-conteudo .navegacao {
+  margin-bottom: 0;
+}
+
+.detalhe__migalhas-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  min-width: 0;
+}
+
+.detalhe__migalhas-nav a {
+  color: var(--cor-cinza);
+  text-decoration: none;
+}
+
+.detalhe__migalhas-nav a:hover {
+  color: var(--cor-anil);
+}
+
+.detalhe__migalhas-atual {
+  color: var(--cor-anil);
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+

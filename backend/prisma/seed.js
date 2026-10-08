@@ -43,7 +43,7 @@ const empreendedoresSeed = [
     exibirEndereco: true,
     whatsapp: '66991234567',
     instagram: '@atelie.fioearte',
-    fotoUrl: 'https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=800',
+    fotoUrl: 'https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=1600',
     produtos: [
       {
         nome: 'Tapete de crochê redondo',
@@ -85,7 +85,7 @@ const empreendedoresSeed = [
     exibirEndereco: false,
     whatsapp: '66998765432',
     instagram: '@docesdadonalu',
-    fotoUrl: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800',
+    fotoUrl: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=1600',
     produtos: [
       {
         nome: 'Bolo de cenoura com chocolate',
@@ -119,7 +119,7 @@ const empreendedoresSeed = [
     exibirEndereco: true,
     whatsapp: '66997771234',
     instagram: null,
-    fotoUrl: 'https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=800',
+    fotoUrl: 'https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=1600',
     produtos: [
       {
         nome: 'Instalação elétrica residencial',
@@ -161,7 +161,7 @@ const empreendedoresSeed = [
     exibirEndereco: true,
     whatsapp: '66996543210',
     instagram: '@brechodaju',
-    fotoUrl: 'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=800',
+    fotoUrl: 'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=1600',
     produtos: [
       {
         nome: 'Camiseta estampa autoral',
@@ -195,7 +195,7 @@ const empreendedoresSeed = [
     exibirEndereco: true,
     whatsapp: '66995551122',
     instagram: '@espacobelaflor',
-    fotoUrl: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800',
+    fotoUrl: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=1600',
     produtos: [
       {
         nome: 'Corte feminino + escova',

@@ -21,7 +21,9 @@ import ProdutoCard from '../../components/cards/ProdutoCard/ProdutoCard'
 import imagemPadrao from '../../assets/imagem-padrao.svg'
 import { useRelogio } from '../../hooks/useRelogio'
 import SeloNovo from '../../components/ui/SeloNovo/SeloNovo'
+import SeloDestaque from '../../components/ui/SeloDestaque/SeloDestaque'
 import { ehNovidade } from '../../services/novidades'
+import '../detalhe-migalhas.css'
 import './EmpreendedorDetalhe.css'
 import Voltar from '../../components/ui/Voltar/Voltar'
 import { urlImagem } from '../../services/imagens'
@@ -106,6 +108,7 @@ function EmpreendedorDetalhe() {
     situacao: situacaoDoNegocio,
   } = empreendedor
   const novo = ehNovidade(publicadoDesde)
+  const capa = urlImagem(fotoUrl) || imagemPadrao
   const previa = situacaoDoNegocio && situacaoDoNegocio !== 'ATIVO' ? SITUACAO_NEGOCIO[situacaoDoNegocio] : null
 
   const resumoEmpreendedor = { id: empreendedor.id, nomeNegocio, cidade, whatsapp }
@@ -169,15 +172,20 @@ function EmpreendedorDetalhe() {
       )}
 
       <div className="detalhe__capa">
-        <img
-          decoding="async"
-          src={urlImagem(fotoUrl) || imagemPadrao}
-          alt=""
-          onError={(evento) => {
-            evento.currentTarget.src = imagemPadrao
-          }}
-        />
-        <div className="detalhe__capa-sombra" />
+        <img className="detalhe__capa-fundo" decoding="async" src={capa} alt="" aria-hidden="true" />
+        <div className="container detalhe__capa-moldura">
+          <div className="detalhe__capa-foto">
+            <img
+              decoding="async"
+              src={capa}
+              alt=""
+              onError={(evento) => {
+                evento.currentTarget.src = imagemPadrao
+              }}
+            />
+            <div className="detalhe__capa-sombra" />
+          </div>
+        </div>
       </div>
 
       <div className="container detalhe__corpo">
@@ -346,71 +354,102 @@ function EmpreendedorDetalhe() {
             </ul>
           </aside>
 
-          <div className="detalhe__info">
-            <section className="detalhe__horarios" aria-labelledby="titulo-horarios">
-              <div className="detalhe__horarios-topo">
-                <h2 id="titulo-horarios" className="detalhe__horarios-titulo">
-                  <Icone nome="schedule" tamanho={20} />
-                  Horário
-                </h2>
-                <span className={`detalhe__situacao ${atendeAgora ? 'detalhe__situacao--aberto' : ''}`}>
-                  <span className="detalhe__ponto" aria-hidden="true" />
-                  {atendeAgora ? 'Aberto agora' : 'Fechado agora'}
-                </span>
-              </div>
-              {situacao.semHorario ? (
-                <p className="detalhe__horarios-vazio">
-                  {primeiroNome} ainda não informou o horário de atendimento. Combine pelo WhatsApp.
-                </p>
-              ) : (
-                <dl className="detalhe__semana">
-                  {DIAS.map((dia) => (
-                    <div
-                      key={dia.indice}
-                      className={`detalhe__semana-dia ${dia.indice === diaDeHoje ? 'detalhe__semana-dia--hoje' : ''}`}
-                    >
-                      <dt>
-                        {dia.curto}
-                        {dia.indice === diaDeHoje && <span className="detalhe__hoje">hoje</span>}
-                      </dt>
-                      <dd>{textoDoDia(horarios, dia.indice)}</dd>
-                    </div>
-                  ))}
-                </dl>
-              )}
-              <p className="detalhe__horarios-fuso">Horário de Rondonópolis (MT).</p>
-            </section>
-
-            <section className="detalhe__local" aria-labelledby="titulo-local">
-              <h2 id="titulo-local" className="detalhe__horarios-titulo">
-                <Icone nome="location_on" tamanho={20} />
-                {enderecoPublico ? 'Como chegar' : `Atende em ${localResumo || cidade}`}
+          <section className="detalhe__horarios" aria-labelledby="titulo-horarios">
+            <div className="detalhe__horarios-topo">
+              <h2 id="titulo-horarios" className="detalhe__horarios-titulo">
+                <Icone nome="schedule" tamanho={20} />
+                Horário de atendimento
               </h2>
-              <p className="detalhe__local-texto">
-                {enderecoPublico
-                  ? enderecoCompleto
-                  : `${primeiroNome} não divulga o endereço exato. Entrega, retirada ou visita são combinadas pelo WhatsApp.`}
+              <span className={`detalhe__situacao ${atendeAgora ? 'detalhe__situacao--aberto' : ''}`}>
+                <span className="detalhe__ponto" aria-hidden="true" />
+                {atendeAgora ? 'Aberto agora' : 'Fechado agora'}
+              </span>
+            </div>
+            {situacao.semHorario ? (
+              <p className="detalhe__horarios-vazio">
+                {primeiroNome} ainda não informou o horário de atendimento. Combine pelo WhatsApp.
               </p>
-              <div className="detalhe__mapa">
-                <Mapa
-                  latitude={latitude}
-                  longitude={longitude}
-                  endereco={{ endereco, numero, bairro, cidade, estado, cep }}
-                  exibirEndereco={enderecoPublico}
-                  titulo={nomeNegocio}
-                  aoAbrir={contar(METRICAS.CLIQUE_ENDERECO)}
-                />
-              </div>
-              <p className="detalhe__local-aviso">
-                {enderecoPublico && !temCoordenadas
-                  ? 'Posição no mapa aproximada a partir do endereço. '
-                  : ''}
-                Confirme o horário pelo WhatsApp antes de ir.
-              </p>
-            </section>
-          </div>
+            ) : (
+              <dl className="detalhe__semana">
+                {DIAS.map((dia) => (
+                  <div
+                    key={dia.indice}
+                    className={`detalhe__semana-dia ${dia.indice === diaDeHoje ? 'detalhe__semana-dia--hoje' : ''}`}
+                  >
+                    <dt>
+                      {dia.curto}
+                      {dia.indice === diaDeHoje && <span className="detalhe__hoje">hoje</span>}
+                    </dt>
+                    <dd>{textoDoDia(horarios, dia.indice)}</dd>
+                  </div>
+                ))}
+              </dl>
+            )}
+            <p className="detalhe__horarios-fuso">Horário de Rondonópolis (MT).</p>
+          </section>
         </div>
       </div>
+
+      <section className="detalhe__local-faixa">
+        <div className="container secao detalhe__local">
+          <div className="detalhe__local-texto">
+            <span className="detalhe__selo-solto">Localização</span>
+            <h2>{enderecoPublico ? 'Como chegar' : `Atende em ${localResumo || cidade}`}</h2>
+            <p>
+              {enderecoPublico
+                ? 'Endereço informado pelo empreendedor. Confirme horário e disponibilidade pelo WhatsApp antes de ir.'
+                : `${primeiroNome} não divulga o endereço exato. Entrega, retirada ou visita são combinadas pelo WhatsApp.`}
+            </p>
+            <ul className="detalhe__local-lista">
+              {enderecoPublico && (
+                <li>
+                  <Icone nome="home_pin" tamanho={18} />
+                  <span>
+                    <strong>Endereço:</strong> {enderecoCompleto}
+                  </span>
+                </li>
+              )}
+              {bairro && (
+                <li>
+                  <Icone nome="check_box" tamanho={18} />
+                  <span>
+                    <strong>Bairro:</strong> {bairro}
+                  </span>
+                </li>
+              )}
+              <li>
+                <Icone nome="check_box" tamanho={18} />
+                <span>
+                  <strong>Cidade:</strong> {cidade}
+                  {estado ? ` - ${estado}` : ''}
+                </span>
+              </li>
+              {!temCoordenadas && enderecoPublico && (
+                <li className="detalhe__local-aviso">
+                  <Icone nome="info" tamanho={18} />
+                  <span>Posição no mapa aproximada a partir do endereço.</span>
+                </li>
+              )}
+            </ul>
+          </div>
+          <div className="detalhe__mapa">
+            <Mapa
+              latitude={latitude}
+              longitude={longitude}
+              endereco={{ endereco, numero, bairro, cidade, estado, cep }}
+              exibirEndereco={enderecoPublico}
+              titulo={nomeNegocio}
+              aoAbrir={contar(METRICAS.CLIQUE_ENDERECO)}
+            />
+            <div className="detalhe__mapa-legenda">
+              <strong>{localResumo || cidade}</strong>
+              {emDestaque && <SeloDestaque compacto />}
+              {novo && <SeloNovo compacto />}
+              <span>{enderecoPublico ? 'Local do negócio' : 'Região de atendimento'}</span>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }

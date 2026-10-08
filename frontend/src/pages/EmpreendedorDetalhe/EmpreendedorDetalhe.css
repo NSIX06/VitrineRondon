@@ -4,53 +4,6 @@
    Endereço e WhatsApp aparecem uma vez só cada.
    ========================================================================== */
 
-/* Barra de migalhas */
-.detalhe__migalhas {
-  background: var(--cor-superficie-baixa);
-  border-bottom: var(--borda);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--cor-cinza);
-}
-
-.detalhe__migalhas-conteudo {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--esp-3);
-  flex-wrap: wrap;
-  padding-block: var(--esp-2);
-}
-
-/* Na linha das migalhas as setas ficam centradas, sem o espaço de baixo */
-.detalhe__migalhas-conteudo .navegacao {
-  margin-bottom: 0;
-}
-
-.detalhe__migalhas-nav {
-  display: flex;
-  align-items: center;
-  gap: var(--esp-2);
-  min-width: 0;
-}
-
-.detalhe__migalhas-nav a {
-  color: var(--cor-cinza);
-  text-decoration: none;
-}
-
-.detalhe__migalhas-nav a:hover {
-  color: var(--cor-anil);
-}
-
-.detalhe__migalhas-atual {
-  color: var(--cor-anil);
-  font-weight: 700;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 /* Aviso de prévia (negócio fora da vitrine, visto pelo dono ou pela administração) */
 .detalhe__previa {
   padding-top: var(--esp-4);
@@ -60,16 +13,40 @@
   margin: 0;
 }
 
-/* Capa */
+/* Capa: a foto fica na largura do conteúdo, sobre um fundo com a mesma foto
+   desfocada. Esticada na tela toda, a foto (em geral 800px) estourava */
 .detalhe__capa {
   position: relative;
-  height: clamp(180px, 26vw, 300px);
-  background: var(--cor-anil-escuro);
   overflow: hidden;
+  background: var(--cor-anil-escuro);
   border-bottom: var(--borda);
 }
 
-.detalhe__capa img {
+.detalhe__capa-fundo {
+  position: absolute;
+  inset: -40px;
+  width: calc(100% + 80px);
+  height: calc(100% + 80px);
+  object-fit: cover;
+  filter: blur(28px) saturate(1.1) brightness(0.55);
+}
+
+.detalhe__capa-moldura {
+  position: relative;
+  height: clamp(180px, 24vw, 300px);
+  padding-block: var(--esp-4) 0;
+}
+
+.detalhe__capa-foto {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  border: var(--borda);
+  border-bottom: 0;
+  border-radius: var(--raio) var(--raio) 0 0;
+}
+
+.detalhe__capa-foto img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -78,7 +55,7 @@
 .detalhe__capa-sombra {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(17, 24, 39, 0.7), rgba(17, 24, 39, 0.15) 55%, transparent);
+  background: linear-gradient(to top, rgba(17, 24, 39, 0.55), transparent 55%);
 }
 
 .detalhe__corpo {
@@ -237,7 +214,7 @@
   grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
   grid-template-areas:
     'catalogo contato'
-    'catalogo info';
+    'horarios contato';
   grid-template-rows: auto 1fr;
   gap: var(--esp-6) var(--esp-7);
   align-items: start;
@@ -253,12 +230,8 @@
   grid-area: contato;
 }
 
-.detalhe__info {
-  grid-area: info;
-  display: flex;
-  flex-direction: column;
-  gap: var(--esp-5);
-  min-width: 0;
+.detalhe__horarios {
+  grid-area: horarios;
 }
 
 /* Catálogo */
@@ -319,9 +292,10 @@
   justify-content: center;
 }
 
-/* Caixa de contato */
+/* Caixa de contato: acompanha a rolagem no computador */
 .detalhe__contato {
-  position: relative;
+  position: sticky;
+  top: 96px;
   display: flex;
   flex-direction: column;
   gap: var(--esp-4);
@@ -464,10 +438,9 @@
   color: var(--cor-ouro-escuro);
 }
 
-/* Horário e local: dois cartões iguais na coluna da direita */
-.detalhe__horarios,
-.detalhe__local {
-  padding: var(--esp-4);
+/* Horário de atendimento */
+.detalhe__horarios {
+  padding: var(--esp-4) var(--esp-5);
   border: var(--borda);
   border-radius: var(--raio);
   box-shadow: var(--sombra-dura);
@@ -522,6 +495,17 @@
 .detalhe__semana {
   margin: 0;
   display: grid;
+  grid-template-columns: 1fr;
+  column-gap: var(--esp-5);
+}
+
+/* Em duas colunas a leitura desce: segunda a quinta à esquerda, sexta a domingo à direita */
+@media (min-width: 640px) {
+  .detalhe__semana {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(4, auto);
+    grid-auto-flow: column;
+  }
 }
 
 .detalhe__semana-dia {
@@ -578,25 +562,82 @@
   color: var(--cor-cinza-claro);
 }
 
+/* Localização: faixa larga com o texto e o mapa grande */
+.detalhe__local-faixa {
+  border-top: var(--borda);
+  background: var(--cor-superficie-baixa);
+}
+
 .detalhe__local {
-  display: flex;
-  flex-direction: column;
-  gap: var(--esp-3);
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: var(--esp-6);
+  align-items: center;
 }
 
 .detalhe__local-texto {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+}
+
+.detalhe__local-texto h2 {
+  font-size: var(--texto-2xl);
   margin: 0;
+}
+
+.detalhe__local-texto p {
+  margin: 0;
+  color: var(--cor-cinza);
+  line-height: 1.6;
+}
+
+.detalhe__selo-solto {
+  align-self: flex-start;
+  padding: 0.35rem 0.75rem;
+  background: var(--cor-anil);
+  color: var(--cor-branco);
+  border: var(--borda-fina);
+  border-radius: 4px;
+  box-shadow: 3px 3px 0 0 var(--cor-contorno);
+  transform: rotate(-1.5deg);
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.detalhe__local-lista {
+  list-style: none;
+  padding: 0;
+  margin: var(--esp-2) 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
   font-size: var(--texto-sm);
-  font-weight: 500;
-  line-height: 1.5;
-  color: var(--cor-tinta);
+}
+
+.detalhe__local-lista li {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+}
+
+.detalhe__local-lista .icone {
+  color: var(--cor-anil);
+}
+
+.detalhe__local-aviso {
+  color: var(--cor-cinza);
+  font-size: var(--texto-xs);
 }
 
 .detalhe__mapa {
   position: relative;
-  height: 220px;
-  border: var(--borda-fina);
-  border-radius: var(--raio-md);
+  height: 288px;
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura);
   overflow: hidden;
   background: var(--cor-superficie-media);
 }
@@ -608,10 +649,34 @@
   display: block;
 }
 
-.detalhe__local-aviso {
-  margin: 0;
-  font-size: var(--texto-xs);
+.detalhe__mapa-legenda {
+  position: absolute;
+  left: var(--esp-3);
+  bottom: var(--esp-3);
+  padding: var(--esp-2) var(--esp-3);
+  background: var(--cor-branco);
+  border: var(--borda-fina);
+  border-radius: var(--raio-sm);
+  box-shadow: var(--sombra-dura-sm);
+  display: flex;
+  flex-direction: column;
+  font-size: var(--texto-sm);
+}
+
+.detalhe__mapa-legenda strong {
+  font-size: 12px;
+  color: var(--cor-anil);
+}
+
+.detalhe__mapa-legenda span {
   color: var(--cor-cinza);
+}
+
+/* Na legenda do mapa o selo fica embaixo do local */
+.detalhe__mapa-legenda .selo-destaque,
+.detalhe__mapa-legenda .selo-novo {
+  align-self: flex-start;
+  margin-top: 4px;
 }
 
 /* --------------------------------------------------------------------------
@@ -624,8 +689,8 @@
   border-bottom-width: 6px;
 }
 
-.detalhe--destaque .detalhe__capa-sombra {
-  background: linear-gradient(to top, rgba(15, 37, 87, 0.85), rgba(15, 37, 87, 0.2) 60%, transparent);
+.detalhe--destaque .detalhe__capa-foto {
+  border-color: var(--cor-ouro);
 }
 
 .detalhe--destaque .detalhe__cabecalho {
@@ -724,16 +789,20 @@
     grid-template-areas:
       'contato'
       'catalogo'
-      'info';
+      'horarios';
     grid-template-rows: none;
     gap: var(--esp-6);
     margin-top: var(--esp-6);
   }
 
-  .detalhe__info {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    align-items: start;
+  .detalhe__contato {
+    position: relative;
+    /* O top do modo fixo (desktop) empurrava a caixa para baixo */
+    top: auto;
+  }
+
+  .detalhe__local {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -753,5 +822,19 @@
 
   .detalhe__outro {
     align-items: flex-start;
+  }
+
+  .detalhe__mapa {
+    height: 220px;
+  }
+
+  .detalhe__capa-moldura {
+    padding-inline: 0;
+    padding-top: 0;
+  }
+
+  .detalhe__capa-foto {
+    border: 0;
+    border-radius: 0;
   }
 }
