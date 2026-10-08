@@ -38,7 +38,7 @@ function ProdutoCard({ produto, linkWhatsapp }) {
         <div className="produto-card__tags">
           <TagTipo tipo={tipo} />
           {!disponivel && <Tag variante="alerta">Indisponível</Tag>}
-          {empreendedor?.emDestaque && <SeloDestaque compacto claro />}
+          {empreendedor?.emDestaque && <SeloDestaque compacto claro doNegocio />}
           {ehNovidade(empreendedor?.publicadoDesde) && <SeloNovo compacto claro />}
         </div>
       </div>
