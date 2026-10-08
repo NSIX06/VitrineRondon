@@ -248,7 +248,7 @@ function Home() {
               </li>
               <li>
                 <Icone nome="check_circle" tamanho={20} />
-                Navegar é gratuito. Para divulgar um negócio, o empreendedor assina um plano mensal
+                Navegar é gratuito. Para divulgar um negócio, o empreendedor assina um plano, mensal ou anual
                 (Essencial ou Destaque).
               </li>
               <li>

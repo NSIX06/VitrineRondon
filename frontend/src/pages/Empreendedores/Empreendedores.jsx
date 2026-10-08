@@ -159,7 +159,7 @@ function Empreendedores() {
             <div>
               <h3>Você também produz ou atende no bairro?</h3>
               <p>
-                Crie sua conta, cadastre o negócio e escolha um plano mensal para publicá-lo: Essencial
+                Crie sua conta, cadastre o negócio e escolha um plano (mensal ou anual) para publicá-lo: Essencial
                 ou Destaque. Sem comissão sobre as vendas.
               </p>
             </div>

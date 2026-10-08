@@ -55,3 +55,30 @@ export const SITUACAO_NEGOCIO = {
     texto: 'Fale com a equipe pela página de contato para entender o motivo e regularizar.',
   },
 }
+
+/** Nome curto do plano para os cartões: sem a marca e sem o "Anual" (a chave já diz o ciclo) */
+export const nomeDoPlano = (plano) => (plano?.titulo ?? '').replace(/^VitrineRondon /, '').replace(/ Anual$/, '')
+
+/** Plano mensal com os mesmos recursos de um plano anual (o par dele) */
+export function equivalenteMensal(plano, planos) {
+  return planos.find(
+    (p) =>
+      p.ciclo === 'MONTHLY' &&
+      p.destaque === plano.destaque &&
+      p.divulgacao === plano.divulgacao &&
+      p.metricasAmpliadas === plano.metricasAmpliadas
+  )
+}
+
+/**
+ * Quanto o plano anual economiza em relação a 12 meses do mensal:
+ * { centavos, meses } (meses de presente), ou null se não houver o que comparar.
+ */
+export function economiaAnual(plano, planos) {
+  if (plano?.ciclo !== 'ANNUALLY') return null
+  const mensal = equivalenteMensal(plano, planos)
+  if (!mensal) return null
+  const centavos = mensal.precoCentavos * 12 - plano.precoCentavos
+  if (centavos <= 0) return null
+  return { centavos, meses: Math.round(centavos / mensal.precoCentavos), mensalCentavos: mensal.precoCentavos }
+}

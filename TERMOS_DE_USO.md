@@ -38,7 +38,7 @@ O usuário comum pode consultar, pesquisar e visualizar publicações, além de 
 
 ## 5. Planos e assinaturas
 
-5.1. Navegar pela plataforma é gratuito. Para que um negócio seja publicado e divulgado, o empreendedor deve possuir conta cadastrada e uma assinatura mensal em vigor de um dos planos oferecidos (Essencial ou Destaque). Não há publicação gratuita de negócios. A plataforma não cobra comissão sobre as vendas.
+5.1. Navegar pela plataforma é gratuito. Para que um negócio seja publicado e divulgado, o empreendedor deve possuir conta cadastrada e uma assinatura em vigor de um dos planos oferecidos (Essencial ou Destaque), com cobrança mensal ou anual. Não há publicação gratuita de negócios. A plataforma não cobra comissão sobre as vendas.
 
 5.1.1. O negócio pode ser cadastrado antes do pagamento, mas permanece como rascunho, visível apenas ao empreendedor e à administração, até a confirmação do pagamento da assinatura.
 
@@ -46,7 +46,7 @@ O usuário comum pode consultar, pesquisar e visualizar publicações, além de 
 
 5.3. O pagamento é processado pelo AbacatePay, intermediador de pagamentos. Os dados do cartão são informados diretamente a ele: o VitrineRondon não os armazena.
 
-5.4. A assinatura é renovada automaticamente a cada ciclo até ser cancelada. O empreendedor pode cancelar a qualquer momento pelo painel do seu negócio. O cancelamento interrompe as cobranças seguintes, e o negócio permanece publicado, com os benefícios do plano, até o fim do período já pago.
+5.4. A assinatura é renovada automaticamente a cada ciclo (mês ou ano, conforme o plano escolhido) até ser cancelada. No plano anual, o valor do ano é cobrado de uma vez. O empreendedor pode cancelar a qualquer momento pelo painel do seu negócio. O cancelamento interrompe as cobranças seguintes, e o negócio permanece publicado, com os benefícios do plano, até o fim do período já pago.
 
 5.5. Se uma cobrança for recusada, o negócio deixa de ser exibido publicamente até a regularização do pagamento. Esgotadas as novas tentativas de cobrança feitas pelo intermediador, a assinatura é cancelada automaticamente.
 

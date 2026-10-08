@@ -14,6 +14,22 @@ describe('PLANOS', () => {
     expect(porNome('DESTAQUE')).toMatchObject({ destaque: true, metricasAmpliadas: true, divulgacao: true })
   })
 
+  it('anuais: os mesmos recursos do mensal, cobrados uma vez por ano com 2 meses de presente', () => {
+    for (const nome of ['ESSENCIAL', 'DESTAQUE']) {
+      const mensal = porNome(nome)
+      const anual = porNome(`${nome}_ANUAL`)
+      expect(anual).toMatchObject({
+        ciclo: 'ANNUALLY',
+        precoCentavos: mensal.precoCentavos * 10,
+        destaque: mensal.destaque,
+        metricasAmpliadas: mensal.metricasAmpliadas,
+        divulgacao: mensal.divulgacao,
+        descricao: mensal.descricao,
+      })
+      expect(anual.precoCentavos).toBeLessThan(mensal.precoCentavos * 12)
+    }
+  })
+
   it('nomes únicos, preços inteiros positivos e uma lista de benefícios', () => {
     expect(new Set(PLANOS.map((p) => p.nome)).size).toBe(PLANOS.length)
     for (const plano of PLANOS) {

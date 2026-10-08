@@ -11,7 +11,7 @@
 // partir dela. Os textos falam em oportunidade de exposição e nunca prometem
 // resultado (mais clientes, posição fixa, número de visualizações).
 
-export const PLANOS = [
+const MENSAIS = [
   {
     nome: 'ESSENCIAL',
     titulo: 'VitrineRondon Essencial',
@@ -53,6 +53,24 @@ export const PLANOS = [
     ].join('\n'),
   },
 ];
+
+// Planos anuais: os mesmos recursos, pagos de uma vez por ano com 2 meses de
+// presente (12 meses pelo preço de 10). Mudar o desconto é mudar este número.
+export const MESES_PAGOS_NO_ANO = 10;
+
+/** Versão anual de um plano mensal: mesmo conteúdo, ciclo e preço do ano */
+function anual(plano) {
+  return {
+    ...plano,
+    nome: `${plano.nome}_ANUAL`,
+    titulo: `${plano.titulo} Anual`,
+    precoCentavos: plano.precoCentavos * MESES_PAGOS_NO_ANO,
+    ciclo: 'ANNUALLY',
+    ordem: plano.ordem + 10,
+  };
+}
+
+export const PLANOS = [...MENSAIS, ...MENSAIS.map(anual)];
 
 /**
  * Cria os planos que faltam e atualiza os que existem, pelo nome. Nunca apaga

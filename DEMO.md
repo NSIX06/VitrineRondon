@@ -46,8 +46,8 @@ Destaque e sobe na lista, e o cancelamento respeita o período já pago.
 
 ### 2. A página de planos
 
-- Abra **Planos** no menu. O texto do topo diz a regra: para divulgar, escolha um dos planos
-  mensais. Mostre os dois cartões (Essencial R$ 50, Destaque R$ 75 por mês), a tabela de comparação
+- Abra **Planos** no menu. O texto do topo diz a regra: para divulgar, escolha um dos planos,
+  com cobrança mensal ou anual. Mostre os dois cartões (Essencial R$ 50, Destaque R$ 75 por mês) e a chave **Mensal/Anual**: no anual, R$ 500 e R$ 750 por ano, com 2 meses de presente. Mostre também a tabela de comparação
   e o quadro **"Transparência"**: o plano aumenta a oportunidade de exposição, mas não garante
   visitas, contatos nem vendas.
 - O aviso "Ambiente de testes" informa que nada é cobrado e qual cartão usar.
@@ -64,7 +64,8 @@ Destaque e sobe na lista, e o cancelamento respeita o período já pago.
 3. Clique em **"Escolher um plano"**, escolha o **Essencial** e conclua o pagamento de testes
    (cartão 4242 ou "Simular Pagamento").
 4. De volta ao painel: **Essencial · Ativa**, com próxima cobrança e vencimento, e o negócio
-   **Publicado**. Em **Empreendedores**, o Espaço Bela Flor agora aparece.
+   **Publicado**. Em **Empreendedores**, o Espaço Bela Flor agora aparece, com o selo verde
+   **"Novo"**: negócio que entrou na vitrine há menos de 30 dias (o Brechó da Ju também tem).
 
 Saia da conta.
 

@@ -1,0 +1,65 @@
+/* Chave mensal/anual: duas teclas num trilho de nanquim */
+.chave-ciclo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--esp-3);
+}
+
+.chave-ciclo__trilho {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-radius: var(--raio-md);
+  box-shadow: 3px 3px 0 0 var(--cor-contorno), var(--cel-sm);
+}
+
+.chave-ciclo__opcao {
+  min-width: 96px;
+  padding: 0.45rem 1rem;
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: calc(var(--raio-md) - 4px);
+  font: inherit;
+  font-weight: 800;
+  color: var(--cor-anil);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.chave-ciclo__opcao:hover {
+  background: var(--cor-superficie-baixa);
+}
+
+.chave-ciclo__opcao--ativa,
+.chave-ciclo__opcao--ativa:hover {
+  background: var(--cor-anil);
+  border-color: var(--cor-contorno);
+  color: var(--cor-branco);
+  box-shadow: var(--cel-sm);
+}
+
+.chave-ciclo__opcao:focus-visible {
+  outline: 3px solid var(--cor-ouro);
+  outline-offset: 2px;
+}
+
+.chave-ciclo__presente {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.3rem 0.7rem;
+  background: var(--cor-ouro);
+  border: var(--borda-fina);
+  border-radius: 6px;
+  box-shadow: 2px 2px 0 0 var(--cor-contorno), var(--cel-sm);
+  transform: rotate(-1.5deg);
+  font-size: var(--texto-xs);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--cor-tinta);
+}

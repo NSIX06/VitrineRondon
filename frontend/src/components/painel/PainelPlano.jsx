@@ -134,7 +134,7 @@ function PainelPlano({ voltouDoCheckout = false, aoMudar }) {
             <p>
               {expirado
                 ? 'Renove sua assinatura para voltar a divulgar seu negócio no VitrineRondon. Seus dados, produtos e fotos continuam guardados.'
-                : 'Para aparecer na vitrine, escolha o Essencial (R$ 50 por mês) ou o Destaque (R$ 75 por mês), que soma selo, prioridade nas listas, estatísticas ampliadas e a possibilidade de divulgação nas redes oficiais.'}
+                : 'Para aparecer na vitrine, escolha o Essencial (a partir de R$ 50 por mês) ou o Destaque (a partir de R$ 75 por mês), com cobrança mensal ou anual. O Destaque soma selo, prioridade nas listas, estatísticas ampliadas e a possibilidade de divulgação nas redes oficiais.'}
             </p>
             {cancelada && (
               <p className="painel__detalhe">Sua última assinatura ({nomeCurto(assinatura.plano)}) terminou.</p>

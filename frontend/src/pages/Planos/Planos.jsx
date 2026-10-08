@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import api from '../../services/api'
 import { useAuth } from '../../contexts/auth'
 import { useConsulta } from '../../hooks/useConsulta'
-import { porCiclo, precoEmReais } from '../../services/planos'
+import { economiaAnual, nomeDoPlano, porCiclo, precoEmReais } from '../../services/planos'
 import Button from '../../components/ui/Button/Button'
 import Icone from '../../components/ui/Icone/Icone'
 import Modal from '../../components/ui/Modal/Modal'
 import Spinner from '../../components/ui/Spinner/Spinner'
 import StatusMessage from '../../components/ui/StatusMessage/StatusMessage'
 import Voltar from '../../components/ui/Voltar/Voltar'
+import ChaveCiclo from '../../components/planos/ChaveCiclo'
 import './Planos.css'
 
 // Linhas da comparação. O que cada plano libera vem dos campos do plano
@@ -68,7 +69,24 @@ const GARANTIAS = [
 function Planos() {
   const { usuario, carregando: carregandoSessao } = useAuth()
   const consulta = useConsulta('/planos')
-  const planos = consulta.dados?.data ?? []
+  const todosOsPlanos = consulta.dados?.data ?? []
+  // Mensal ou anual, guardado na URL (?ciclo=anual) para o link levar a escolha
+  const [parametros, setParametros] = useSearchParams()
+  const ciclo = parametros.get('ciclo') === 'anual' ? 'ANNUALLY' : 'MONTHLY'
+  const escolherCiclo = (novo) =>
+    setParametros(
+      (atual) => {
+        const proximo = new URLSearchParams(atual)
+        if (novo === 'ANNUALLY') proximo.set('ciclo', 'anual')
+        else proximo.delete('ciclo')
+        return proximo
+      },
+      { replace: true, preventScrollReset: true }
+    )
+  const planos = todosOsPlanos.filter((p) => p.ciclo === ciclo)
+  const temAnual = todosOsPlanos.some((p) => p.ciclo === 'ANNUALLY')
+  // Meses de presente do anual (o mesmo para todos os planos)
+  const presenteAnual = todosOsPlanos.map((p) => economiaAnual(p, todosOsPlanos)).find(Boolean)
   const modoTeste = consulta.dados?.modoTeste
 
   // Situação de quem está logado: { semNegocio } | dados de /assinaturas/minha
@@ -148,7 +166,9 @@ function Planos() {
     }
     return (
       <Button onClick={() => setEscolhido(plano)} variante={variante}>
-        {planoAtivo ? 'Mudar para este plano' : `Assinar o ${plano.titulo.replace(/^VitrineRondon /, '')}`}
+        {planoAtivo
+          ? 'Mudar para este plano'
+          : `Assinar o ${nomeDoPlano(plano)}${plano.ciclo === 'ANNUALLY' ? ' anual' : ''}`}
         <Icone nome={plano.destaque ? 'rocket_launch' : 'arrow_forward'} tamanho={18} />
       </Button>
     )
@@ -173,15 +193,19 @@ function Planos() {
             Escolha o plano para o seu <span className="planos-topo__marca-texto">negócio aparecer</span>
           </h1>
           <p className="planos-topo__texto">
-            Para divulgar seu negócio no VitrineRondon, escolha um dos planos mensais. Sem intermediários
+            Para divulgar seu negócio no VitrineRondon, escolha um dos planos, com cobrança mensal ou anual. Sem intermediários
             nem porcentagem sobre as vendas: o cliente fala direto com você pelo{' '}
             <strong className="planos-topo__whatsapp">WhatsApp</strong>. Navegar pela vitrine continua
             gratuito para todo mundo.
           </p>
-          <span className="planos-topo__ciclo">
-            <Icone nome="event_repeat" tamanho={16} />
-            Cobrança mensal, sem fidelidade
-          </span>
+          {temAnual ? (
+            <ChaveCiclo valor={ciclo} aoMudar={escolherCiclo} mesesDePresente={presenteAnual?.meses} />
+          ) : (
+            <span className="planos-topo__ciclo">
+              <Icone nome="event_repeat" tamanho={16} />
+              Cobrança mensal, sem fidelidade
+            </span>
+          )}
         </div>
       </header>
 
@@ -233,7 +257,7 @@ function Planos() {
                   </div>
 
                   <div className="planos__nome">
-                    <h2 className="planos__titulo">{plano.titulo.replace(/^VitrineRondon /, '')}</h2>
+                    <h2 className="planos__titulo">{nomeDoPlano(plano)}</h2>
                     <span className="planos__etiqueta">
                       {plano.destaque ? 'Prioridade nas listas' : 'Presença local'}
                     </span>
@@ -245,9 +269,17 @@ function Planos() {
                       <strong>{precoEmReais(plano.precoCentavos)}</strong>
                       <span>{porCiclo(plano.ciclo)}</span>
                     </p>
+                    {economiaAnual(plano, todosOsPlanos) && (
+                      <span className="planos__preco-equivale">
+                        Equivale a {precoEmReais(Math.round(plano.precoCentavos / 12))} por mês ·{' '}
+                        <strong>economia de {precoEmReais(economiaAnual(plano, todosOsPlanos).centavos)}</strong>
+                      </span>
+                    )}
                     <span className="planos__preco-nota">
                       <Icone nome={plano.destaque ? 'star' : 'event_available'} tamanho={16} />
-                      {plano.destaque ? 'Tudo do Essencial, com mais exposição' : 'Cobrança mensal, sem fidelidade'}
+                      {plano.destaque
+                        ? 'Tudo do Essencial, com mais exposição'
+                        : `Cobrança ${plano.ciclo === 'ANNUALLY' ? 'anual' : 'mensal'}, sem fidelidade`}
                     </span>
                   </div>
 
@@ -312,7 +344,7 @@ function Planos() {
                       <th scope="col">O que você recebe</th>
                       {planos.map((plano) => (
                         <th scope="col" key={plano.nome}>
-                          {plano.titulo.replace(/^VitrineRondon /, '')}
+                          {nomeDoPlano(plano)}
                         </th>
                       ))}
                     </tr>

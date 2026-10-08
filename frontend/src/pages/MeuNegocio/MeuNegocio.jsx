@@ -211,7 +211,7 @@ function MeuNegocio() {
           <span className="meu-negocio__indice">Cadastro</span>
           <h1 className="meu-negocio__titulo">Cadastre seu negócio</h1>
           <p className="meu-negocio__linha-fina">
-            Preencha os dados abaixo. Depois, escolha um plano mensal para publicar o negócio na
+            Preencha os dados abaixo. Depois, escolha um plano, mensal ou anual, para publicar o negócio na
             vitrine. Você pode alterar tudo depois e decidir se o endereço fica visível.
           </p>
         </header>

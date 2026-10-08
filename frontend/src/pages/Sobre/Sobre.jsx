@@ -47,7 +47,7 @@ const problemas = [
 ]
 
 const passos = [
-  { titulo: '1. Cadastro e plano', texto: 'Conta, dados do negócio e um plano mensal, sem CNPJ obrigatório.' },
+  { titulo: '1. Cadastro e plano', texto: 'Conta, dados do negócio e um plano, mensal ou anual, sem CNPJ obrigatório.' },
   { titulo: '2. Vitrine', texto: 'Páginas por negócio, com busca por nome, categoria e bairro.' },
   { titulo: '3. Contato', texto: 'O cliente clica e cai direto na conversa de WhatsApp de quem faz.' },
 ]
@@ -176,7 +176,7 @@ function Sobre() {
             <h2>O que a vitrine faz</h2>
             <p className="sobre__paragrafo-grande">
               O VitrineRondon é um catálogo público: navegar é gratuito e não pede conta. O empreendedor
-              cadastra o negócio, os produtos ou serviços e o número de WhatsApp e assina um plano mensal
+              cadastra o negócio, os produtos ou serviços e o número de WhatsApp e assina um plano, mensal ou anual,
               para publicá-los. Quem mora na cidade navega pelas categorias, encontra o que precisa e
               fala direto com quem faz.
             </p>
@@ -296,7 +296,7 @@ function Sobre() {
             </span>
             <h3>Sem comissão sobre as vendas</h3>
             <p>
-              Além do plano mensal, a plataforma não cobra taxa de intermediação nem retém valores das
+              Além do plano, a plataforma não cobra taxa de intermediação nem retém valores das
               vendas, pois todo negócio é fechado diretamente no WhatsApp.
             </p>
             <div className="sobre__nota">

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { BASE_URL, definirToken } from '../../frontend/src/services/api.js'
 import { METRICAS, registrarMetrica } from '../../frontend/src/services/metricas.js'
-import { STATUS_ASSINATURA, porCiclo, precoEmReais } from '../../frontend/src/services/planos.js'
+import { STATUS_ASSINATURA, economiaAnual, equivalenteMensal, nomeDoPlano, porCiclo, precoEmReais } from '../../frontend/src/services/planos.js'
 
 /** localStorage de mentira, já que o teste não roda no navegador */
 function armazenamentoFalso() {
@@ -78,5 +78,34 @@ describe('registrarMetrica', () => {
     registrarMetrica(null, METRICAS.VISUALIZACAO_PERFIL)
     registrarMetrica(7, undefined)
     expect(chamada).not.toHaveBeenCalled()
+  })
+})
+
+describe('planos anuais', () => {
+  const PLANOS = [
+    { nome: 'ESSENCIAL', titulo: 'VitrineRondon Essencial', precoCentavos: 5000, ciclo: 'MONTHLY', destaque: false, divulgacao: false, metricasAmpliadas: false },
+    { nome: 'DESTAQUE', titulo: 'VitrineRondon Destaque', precoCentavos: 7500, ciclo: 'MONTHLY', destaque: true, divulgacao: true, metricasAmpliadas: true },
+    { nome: 'ESSENCIAL_ANUAL', titulo: 'VitrineRondon Essencial Anual', precoCentavos: 50000, ciclo: 'ANNUALLY', destaque: false, divulgacao: false, metricasAmpliadas: false },
+    { nome: 'DESTAQUE_ANUAL', titulo: 'VitrineRondon Destaque Anual', precoCentavos: 75000, ciclo: 'ANNUALLY', destaque: true, divulgacao: true, metricasAmpliadas: true },
+  ]
+
+  it('o nome do cartão não repete a marca nem o "Anual"', () => {
+    expect(nomeDoPlano(PLANOS[3])).toBe('Destaque')
+    expect(nomeDoPlano(PLANOS[0])).toBe('Essencial')
+  })
+
+  it('o anual é comparado com o mensal de mesmos recursos', () => {
+    expect(equivalenteMensal(PLANOS[3], PLANOS).nome).toBe('DESTAQUE')
+    expect(equivalenteMensal(PLANOS[2], PLANOS).nome).toBe('ESSENCIAL')
+  })
+
+  it('economia do anual: 12 meses do mensal menos o preço do ano, em meses de presente', () => {
+    expect(economiaAnual(PLANOS[2], PLANOS)).toEqual({ centavos: 10000, meses: 2, mensalCentavos: 5000 })
+    expect(economiaAnual(PLANOS[3], PLANOS)).toEqual({ centavos: 15000, meses: 2, mensalCentavos: 7500 })
+  })
+
+  it('plano mensal, ou anual sem desconto, não mostra economia', () => {
+    expect(economiaAnual(PLANOS[0], PLANOS)).toBeNull()
+    expect(economiaAnual({ ...PLANOS[2], precoCentavos: 60000 }, PLANOS)).toBeNull()
   })
 })

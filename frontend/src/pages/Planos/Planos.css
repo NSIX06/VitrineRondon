@@ -109,6 +109,24 @@
   color: var(--cor-ouro);
 }
 
+/* Equivalente por mês e economia, no plano anual */
+.planos__preco-equivale {
+  font-size: var(--texto-sm);
+  color: var(--cor-cinza);
+}
+
+.planos__preco-equivale strong {
+  color: var(--cor-sucesso);
+}
+
+.planos__cartao--destaque .planos__preco-equivale {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.planos__cartao--destaque .planos__preco-equivale strong {
+  color: #4ade80;
+}
+
 /* Área dos cartões */
 .planos {
   display: flex;

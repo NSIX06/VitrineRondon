@@ -244,7 +244,7 @@ const perguntasFrequentes = [
     ordem: 3,
     pergunta: 'Quanto custa anunciar no VitrineRondon?',
     resposta:
-      'Navegar pela vitrine é gratuito. Para divulgar um negócio, é preciso criar uma conta e assinar um dos planos mensais: o Essencial (R$ 50 por mês) publica o perfil completo, com produtos, mapa, contato e estatísticas básicas, e o Destaque (R$ 75 por mês) soma selo, prioridade nas listas, espaço na seção de destaques, estatísticas ampliadas e a possibilidade de divulgação nas redes oficiais. O negócio fica publicado enquanto a assinatura estiver em dia, e a plataforma não cobra comissão sobre as vendas. Os planos aumentam a oportunidade de exposição, mas não garantem visitas, contatos ou vendas. Veja os detalhes na página Planos.',
+      'Navegar pela vitrine é gratuito. Para divulgar um negócio, é preciso criar uma conta e assinar um dos planos: o Essencial (R$ 50 por mês) publica o perfil completo, com produtos, mapa, contato e estatísticas básicas, e o Destaque (R$ 75 por mês) soma selo, prioridade nas listas, espaço na seção de destaques, estatísticas ampliadas e a possibilidade de divulgação nas redes oficiais. Os dois também têm versão anual, paga de uma vez, com 2 meses de presente. O negócio fica publicado enquanto a assinatura estiver em dia, e a plataforma não cobra comissão sobre as vendas. Os planos aumentam a oportunidade de exposição, mas não garantem visitas, contatos ou vendas. Veja os detalhes na página Planos.',
   },
   {
     categoria: 'Privacidade',
@@ -264,6 +264,9 @@ const perguntasFrequentes = [
 //   apresentação, o Carlos (Silva Reparos) assina o Destaque e sobe na lista;
 // - Espaço Bela Flor: rascunho, cadastrado e sem plano. Fica fora da vitrine
 //   até a Patrícia escolher um plano e pagar.
+// naVitrineHaDias é desde quando cada um aparece na vitrine (a assinatura
+// atual pode ser mais nova, renovada): só o Brechó, há 6 dias, ganha o selo
+// "Novo na vitrine"; a Patrícia ganha ao publicar na demonstração.
 // As assinaturas nunca passaram pelo gateway: os ids "demo_" deixam a
 // simulação do admin encontrá-las e o cancelamento não chama o AbacatePay.
 // Os números de desempenho são de exemplo, para o painel não abrir vazio.
@@ -276,6 +279,7 @@ const CONTAS_DEMO = [
     telefone: '66999881234',
     plano: 'DESTAQUE',
     assinadoHaDias: 12,
+    naVitrineHaDias: 150,
   },
   {
     negocio: 'Doces da Dona Lu',
@@ -284,6 +288,7 @@ const CONTAS_DEMO = [
     telefone: '66998765432',
     plano: 'ESSENCIAL',
     assinadoHaDias: 25,
+    naVitrineHaDias: 210,
   },
   {
     negocio: 'Silva Reparos Residenciais',
@@ -292,6 +297,7 @@ const CONTAS_DEMO = [
     telefone: '66997771234',
     plano: 'ESSENCIAL',
     assinadoHaDias: 20,
+    naVitrineHaDias: 95,
   },
   {
     negocio: 'Brechó da Ju',
@@ -300,6 +306,7 @@ const CONTAS_DEMO = [
     telefone: '66996543210',
     plano: 'ESSENCIAL',
     assinadoHaDias: 8,
+    naVitrineHaDias: 6,
   },
   {
     negocio: 'Espaço Bela Flor',
@@ -367,7 +374,9 @@ async function criarMetricasDemo(empreendedor, { escala, emDestaqueHaDias = 0, s
 
 async function semearDemonstracao(porNome) {
   for (const conta of CONTAS_DEMO.filter((c) => c.plano)) {
-    await criarAssinaturaDemo(porNome(conta.negocio).id, conta.plano, conta.assinadoHaDias);
+    const id = porNome(conta.negocio).id;
+    await criarAssinaturaDemo(id, conta.plano, conta.assinadoHaDias);
+    await prisma.empreendedor.update({ where: { id }, data: { publicadoDesde: diasAtras(conta.naVitrineHaDias) } });
   }
   const atelie = porNome('Ateliê Fio & Arte');
   const silva = porNome('Silva Reparos Residenciais');

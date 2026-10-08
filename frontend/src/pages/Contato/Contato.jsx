@@ -71,7 +71,7 @@ function Contato() {
           <div className="contato__caixa">
             <h2>Quer divulgar seu negócio?</h2>
             <p>
-              Você mesmo cadastra a loja, o serviço ou a produção e escolhe um plano mensal para
+              Você mesmo cadastra a loja, o serviço ou a produção e escolhe um plano, mensal ou anual, para
               aparecer na vitrine do bairro.
             </p>
             <Button to="/cadastro" variante="secundario">

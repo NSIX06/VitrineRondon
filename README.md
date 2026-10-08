@@ -560,12 +560,13 @@ zero, reaplicar (sem efeito), reverter e aplicar de novo deixaram o banco idênt
 > O roteiro da apresentação está em [DEMO.md](DEMO.md).
 
 **Navegar é gratuito. Divulgar um negócio exige conta + plano em vigor.** Não existe publicação
-gratuita: o empreendedor escolhe um dos dois planos mensais, e a plataforma não cobra comissão sobre
+gratuita: o empreendedor escolhe um dos dois planos, com cobrança mensal ou anual, e a plataforma não cobra comissão sobre
 as vendas.
 
 | | Essencial | Destaque |
 |---|---|---|
-| Preço | R$ 50 por mês | R$ 75 por mês |
+| Preço mensal | R$ 50 por mês | R$ 75 por mês |
+| Preço anual (2 meses de presente) | R$ 500 por ano | R$ 750 por ano |
 | Publicação do negócio na vitrine (busca, categorias, mapa, contato) | ✓ | ✓ |
 | Estatísticas do perfil | totais do período | totais, gráfico por dia e produtos mais vistos |
 | Selo "Negócio em Destaque" | | ✓ |
@@ -580,6 +581,17 @@ atualiza o banco sem apagar nada). A vitrine decide pelos recursos do plano (`de
 **Transparência.** A página `/planos`, os Termos (seção 5) e a FAQ dizem a mesma coisa: o plano aumenta
 a oportunidade de exposição, mas **não garante** visitas, contatos ou vendas. O Destaque muda a ordem e
 dá o selo; os negócios do Essencial continuam na busca, nas listas e no mapa.
+
+**Mensal ou anual.** Cada plano tem uma versão anual (`ESSENCIAL_ANUAL`, `DESTAQUE_ANUAL`), com os
+mesmos recursos, cobrada uma vez por ano no AbacatePay (ciclo `ANNUALLY`) e com 2 meses de presente
+(12 meses pelo preço de 10, em `MESES_PAGOS_NO_ANO`, no `planos.js`). A página de planos e a escolha
+do plano no cadastro têm a chave Mensal/Anual. Cancelar o anual interrompe a renovação, e o negócio
+fica no ar até o fim do ano pago.
+
+**Selo "Novo na vitrine".** O negócio guarda quando apareceu na vitrine pela primeira vez
+(`publicadoDesde`, gravado na primeira assinatura paga). Nos 30 dias seguintes, os cartões dele, os
+cartões dos seus produtos e serviços, a página do negócio e a do produto mostram o selo verde
+"Novo". Renovar ou voltar depois de sair não faz o negócio parecer novo de novo.
 
 **Publicação condicionada à assinatura.** A regra mora em
 [services/publicacao.js](backend/src/services/publicacao.js) e vale em toda consulta pública: lista e
@@ -605,7 +617,7 @@ rascunho em modo de prévia. Negócio criado pela administração sem conta resp
 
 **Fluxo da assinatura.**
 
-1. O empreendedor escolhe o plano em `/planos`. A API cria (uma vez só) o produto mensal no AbacatePay e
+1. O empreendedor escolhe o plano em `/planos`. A API cria (uma vez só) o produto do plano no AbacatePay (mensal ou anual) e
    um checkout de assinatura, e grava a assinatura como `PENDENTE`.
 2. O navegador vai para a página de pagamento do AbacatePay. Em Dev mode vale o cartão
    `4242 4242 4242 4242` ou o botão "Simular Pagamento".

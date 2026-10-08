@@ -1,14 +1,13 @@
 import { useState } from 'react'
 import api from '../../services/api'
 import { useConsulta } from '../../hooks/useConsulta'
-import { porCiclo, precoEmReais } from '../../services/planos'
+import { economiaAnual, nomeDoPlano, porCiclo, precoEmReais } from '../../services/planos'
+import ChaveCiclo from './ChaveCiclo'
 import Button from '../ui/Button/Button'
 import Icone from '../ui/Icone/Icone'
 import Spinner from '../ui/Spinner/Spinner'
 import StatusMessage from '../ui/StatusMessage/StatusMessage'
 import './EscolhaDePlano.css'
-
-const nomeCurto = (plano) => plano.titulo.replace(/^VitrineRondon /, '')
 
 /**
  * Última etapa do cadastro: escolher o plano e seguir para o pagamento. Sem
@@ -17,8 +16,19 @@ const nomeCurto = (plano) => plano.titulo.replace(/^VitrineRondon /, '')
  */
 function EscolhaDePlano({ planoInicial = '' }) {
   const consulta = useConsulta('/planos')
-  const planos = consulta.dados?.data ?? []
+  const todosOsPlanos = consulta.dados?.data ?? []
   const [escolhido, setEscolhido] = useState(planoInicial.toUpperCase())
+  // Plano anual vindo da página de planos abre a chave já no anual
+  const [ciclo, setCiclo] = useState(planoInicial.toUpperCase().endsWith('_ANUAL') ? 'ANNUALLY' : 'MONTHLY')
+  const planos = todosOsPlanos.filter((p) => p.ciclo === ciclo)
+  const presenteAnual = todosOsPlanos.map((p) => economiaAnual(p, todosOsPlanos)).find(Boolean)
+  // Trocar de ciclo leva a escolha para o plano equivalente (Destaque mensal -> Destaque anual)
+  const mudarCiclo = (novo) => {
+    const atual = todosOsPlanos.find((p) => p.nome === escolhido)
+    const par = atual && todosOsPlanos.find((p) => p.ciclo === novo && p.destaque === atual.destaque)
+    setCiclo(novo)
+    if (par) setEscolhido(par.nome)
+  }
   const [enviando, setEnviando] = useState(false)
   const [erro, setErro] = useState(null)
 
@@ -56,6 +66,10 @@ function EscolhaDePlano({ planoInicial = '' }) {
         </StatusMessage>
       )}
 
+      {todosOsPlanos.some((p) => p.ciclo === 'ANNUALLY') && (
+        <ChaveCiclo valor={ciclo} aoMudar={mudarCiclo} mesesDePresente={presenteAnual?.meses} />
+      )}
+
       <fieldset className="escolha-plano__opcoes">
         <legend className="escolha-plano__legenda">Escolha o plano para publicar seu negócio</legend>
         {planos.map((p) => (
@@ -73,7 +87,7 @@ function EscolhaDePlano({ planoInicial = '' }) {
               onChange={() => setEscolhido(p.nome)}
             />
             <span className="escolha-plano__topo">
-              <strong>{nomeCurto(p)}</strong>
+              <strong>{nomeDoPlano(p)}</strong>
               <span className="escolha-plano__preco">
                 {precoEmReais(p.precoCentavos)} <small>{porCiclo(p.ciclo)}</small>
               </span>
@@ -111,7 +125,11 @@ function EscolhaDePlano({ planoInicial = '' }) {
           onClick={irParaPagamento}
           disabled={!plano || enviando}
         >
-          {enviando ? 'Abrindo o pagamento...' : plano ? `Pagar o ${nomeCurto(plano)}` : 'Escolha um plano'}
+          {enviando
+            ? 'Abrindo o pagamento...'
+            : plano
+              ? `Pagar o ${nomeDoPlano(plano)}${plano.ciclo === 'ANNUALLY' ? ' anual' : ''}`
+              : 'Escolha um plano'}
         </Button>
       </div>
       <p className="escolha-plano__nota">

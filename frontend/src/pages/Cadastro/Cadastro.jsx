@@ -84,7 +84,7 @@ function Cadastro() {
           <h1>Quero divulgar meu negócio</h1>
           <p>
             Crie sua conta e cadastre seu negócio. Para publicar na plataforma, escolha um dos planos
-            mensais: Essencial ou Destaque.
+            Essencial ou Destaque, com cobrança mensal ou anual.
           </p>
         </div>
       </header>
