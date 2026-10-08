@@ -1,4 +1,5 @@
 import { Suspense, lazy } from 'react'
+import FundoDePontos from '../../components/ui/DotField/FundoDePontos'
 import { Link } from 'react-router-dom'
 import { useConsulta } from '../../hooks/useConsulta'
 import { CATEGORIAS } from '../../services/constantes'
@@ -53,7 +54,8 @@ function Home() {
   }
   return (
     <>
-      <section className="hero">
+      <section className="hero com-pontos">
+        <FundoDePontos tom="anil" />
         <div className="container hero__conteudo">
           <div className="hero__texto-bloco">
             <span className="hero__selo">Comércio de bairro • Rondonópolis-MT</span>
@@ -217,7 +219,8 @@ function Home() {
         </>
       )}
 
-      <div className="faixa faixa--anil">
+      <div className="faixa faixa--anil com-pontos">
+        <FundoDePontos tom="anil" />
         <section className="container secao" id="o-que-fazemos">
           <div className="secao__cabecalho">
             <div>

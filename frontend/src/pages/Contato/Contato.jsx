@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import FundoDePontos from '../../components/ui/DotField/FundoDePontos'
 import { useSearchParams } from 'react-router-dom'
 import api from '../../services/api'
 import ContatoForm from '../../components/forms/ContatoForm/ContatoForm'
@@ -36,7 +37,8 @@ function Contato() {
 
   return (
     <>
-      <header className="pagina-cabecalho faixa faixa--anil">
+      <header className="pagina-cabecalho faixa faixa--anil com-pontos">
+        <FundoDePontos tom="anil" />
         <div className="container">
           <Voltar para="/" rotulo="Início" />
           <span className="pagina-cabecalho__marca">Central de ajuda</span>

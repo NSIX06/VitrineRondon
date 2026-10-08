@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import FundoDePontos from '../../components/ui/DotField/FundoDePontos'
 import { Link, useSearchParams } from 'react-router-dom'
 import api from '../../services/api'
 import { useAuth } from '../../contexts/auth'
@@ -176,7 +177,8 @@ function Planos() {
 
   return (
     <>
-      <header className="planos-topo">
+      <header className="planos-topo com-pontos">
+        <FundoDePontos tom="claro" />
         <div className="container planos-topo__conteudo">
           <Voltar para="/" rotulo="Início" />
           <div className="planos-topo__chips">

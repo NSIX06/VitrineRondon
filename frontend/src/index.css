@@ -723,6 +723,19 @@ h2:not(.detalhe__horarios-titulo, .visualmente-oculto) {
   color: rgba(255, 255, 255, 0.45);
 }
 
+/* Faixa com o campo de pontos (DotField): os pontos substituem as listras e
+   o conteúdo fica por cima deles */
+html .com-pontos {
+  position: relative;
+  isolation: isolate;
+  background-image: none;
+}
+
+.com-pontos > :not(.dot-field-container) {
+  position: relative;
+  z-index: 1;
+}
+
 .pagina-cabecalho.faixa {
   padding-block: var(--esp-6);
 }

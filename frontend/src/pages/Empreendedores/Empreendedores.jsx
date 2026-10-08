@@ -1,4 +1,5 @@
 import { useCallback } from 'react'
+import FundoDePontos from '../../components/ui/DotField/FundoDePontos'
 import { useConsulta } from '../../hooks/useConsulta'
 import { useFiltrosNaUrl } from '../../hooks/useFiltrosNaUrl'
 import Spinner from '../../components/ui/Spinner/Spinner'
@@ -41,7 +42,8 @@ function Empreendedores() {
 
   return (
     <>
-      <header className="pagina-cabecalho faixa faixa--ouro">
+      <header className="pagina-cabecalho faixa faixa--ouro com-pontos">
+        <FundoDePontos tom="claro" />
         <div className="container">
           <Voltar para="/" rotulo="Início" />
           <span className="pagina-cabecalho__marca">Comércio de proximidade</span>
