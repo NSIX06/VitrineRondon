@@ -256,14 +256,111 @@
   color: rgba(255, 255, 255, 0.8);
 }
 
-/* Sobre o azul a sombra preta some: o cartão ganha sombra amarela */
-.feira .empreendedor-card {
-  box-shadow: 5px 5px 0 0 var(--cor-ouro);
+/* Texto e lista à esquerda, pilha animada à direita; um embaixo do outro no estreito */
+.feira {
+  /* O cartão que sai da frente da pilha "cai" e some na borda da faixa */
+  overflow: hidden;
 }
 
-.feira .empreendedor-card:hover,
-.feira .empreendedor-card:focus-within {
-  box-shadow: 2px 2px 0 0 var(--cor-ouro);
+.feira__grade {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  gap: var(--esp-6);
+  align-items: center;
+}
+
+.feira__texto {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  min-width: 0;
+}
+
+.feira__texto h2 {
+  margin: 0;
+}
+
+.feira__texto .secao__subtitulo {
+  margin: 0;
+  max-width: 48ch;
+  line-height: 1.55;
+}
+
+/* Sobre o azul, o rótulo fica amarelo (o padrão anil sumiria no fundo) */
+.feira .feira__marca {
+  color: var(--cor-ouro);
+  margin-bottom: 0;
+}
+
+/* Lista de nomes: o caminho para quem usa teclado ou leitor de tela */
+.feira__nomes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}
+
+.feira__nome {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.35rem 0.75rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  border-radius: 999px;
+  color: var(--cor-branco);
+  font-size: var(--texto-sm);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.feira__nome:hover,
+.feira__nome:focus-visible {
+  background: var(--cor-branco);
+  color: var(--cor-anil);
+  border-color: var(--cor-branco);
+}
+
+.feira__acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-4);
+  margin-top: var(--esp-2);
+}
+
+.feira__palco {
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+}
+
+.feira__palco > .status {
+  width: 100%;
+}
+
+/* Lugar da pilha enquanto o arquivo dela chega: a página não pula */
+.feira__espera {
+  width: 100%;
+  min-height: 560px;
+}
+
+@media (max-width: 900px) {
+  .feira__grade {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .feira__espera {
+    min-height: 480px;
+  }
+}
+
+@media (max-width: 480px) {
+  .feira__espera {
+    min-height: 420px;
+  }
 }
 
 .como-funciona {

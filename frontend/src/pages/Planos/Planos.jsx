@@ -23,7 +23,7 @@ const COMPARACAO = [
   { rotulo: 'Estatísticas básicas (totais do mês)', tem: () => true },
   { rotulo: 'Selo "Negócio em Destaque"', tem: (p) => p.destaque },
   { rotulo: 'Prioridade na ordem das listas e da busca', tem: (p) => p.destaque },
-  { rotulo: 'Espaço na seção "Negócios em Destaque"', tem: (p) => p.destaque },
+  { rotulo: 'Prioridade na vitrine animada da página inicial', tem: (p) => p.destaque },
   { rotulo: 'Possibilidade de divulgação nas redes oficiais', tem: (p) => p.divulgacao },
   { rotulo: 'Estatísticas ampliadas (por dia e por produto)', tem: (p) => p.metricasAmpliadas },
 ]

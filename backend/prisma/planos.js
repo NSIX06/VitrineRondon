@@ -47,7 +47,7 @@ export const PLANOS = [
       'Tudo o que o plano Essencial oferece',
       'Selo "Negócio em Destaque" no card, no perfil e nos resultados de busca',
       'Prioridade na ordem das listas, sem tirar os demais negócios publicados',
-      'Espaço na seção "Negócios em Destaque" da página inicial',
+      'Prioridade na vitrine animada da página inicial, à frente dos demais negócios',
       'Possibilidade de participar de campanhas e da divulgação nas redes oficiais, conforme o calendário editorial',
       'Estatísticas ampliadas: evolução por dia, por produto e impressões em destaque',
     ].join('\n'),

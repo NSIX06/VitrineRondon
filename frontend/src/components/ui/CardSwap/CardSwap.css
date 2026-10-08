@@ -1,0 +1,19 @@
+/* Pilha de cartões: o palco tem o tamanho de um cartão; os de trás saem para
+   cima e para a direita (quem usa reserva espaço em volta). */
+.card-swap {
+  position: relative;
+  perspective: 900px;
+  overflow: visible;
+}
+
+.card-swap__cartao {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  /* Antes do gsap assumir, já centrado: a página não pisca na primeira pintura */
+  transform: translate(-50%, -50%);
+  transform-style: preserve-3d;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}

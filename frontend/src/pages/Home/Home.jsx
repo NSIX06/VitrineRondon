@@ -1,3 +1,4 @@
+import { Suspense, lazy } from 'react'
 import { Link } from 'react-router-dom'
 import { useConsulta } from '../../hooks/useConsulta'
 import { CATEGORIAS } from '../../services/constantes'
@@ -8,13 +9,18 @@ import Fonte from '../../components/ui/Fonte/Fonte'
 import Spinner from '../../components/ui/Spinner/Spinner'
 import StatusMessage from '../../components/ui/StatusMessage/StatusMessage'
 import ProdutoCard from '../../components/cards/ProdutoCard/ProdutoCard'
-import EmpreendedorCard from '../../components/cards/EmpreendedorCard/EmpreendedorCard'
+import SeloDestaque from '../../components/ui/SeloDestaque/SeloDestaque'
 import imagemPadrao from '../../assets/imagem-padrao.svg'
 import { urlImagem } from '../../services/imagens'
 import './Home.css'
 
+// A pilha animada (e o gsap) só carrega quando a Home a desenha: fica fora do
+// pacote da primeira visita
+const PilhaDeNegocios = lazy(() => import('../../components/home/PilhaDeNegocios'))
+
 const LIMITE_PRODUTOS = 6
-const LIMITE_EMPREENDEDORES = 3
+// Cartões na pilha da feira: os do Destaque primeiro, completando com os demais
+const LIMITE_PILHA = 6
 
 const funcionalidades = [
   { icone: 'storefront', texto: 'Página simples por empreendedor' },
@@ -33,14 +39,16 @@ function Home() {
   const consultaEmpreendedores = useConsulta('/empreendedores')
   const consultaBanner = useConsulta('/configuracoes/banner')
   // Negócios com o plano Destaque, em rodízio (o servidor embaralha a cada consulta)
-  const consultaDestaques = useConsulta('/empreendedores/destaques', { limite: 3 })
+  const consultaDestaques = useConsulta('/empreendedores/destaques', { limite: LIMITE_PILHA })
   const destaques = consultaDestaques.dados?.data ?? []
 
   const carregando = consultaProdutos.carregando || consultaEmpreendedores.carregando
   const erro = consultaProdutos.erro || consultaEmpreendedores.erro
   const todosEmpreendedores = consultaEmpreendedores.dados?.data ?? []
   const produtos = (consultaProdutos.dados?.data ?? []).slice(0, LIMITE_PRODUTOS)
-  const empreendedores = todosEmpreendedores.slice(0, LIMITE_EMPREENDEDORES)
+  // Feira: negócios em Destaque (em rodízio) primeiro, depois quem mais está na vitrine
+  const idsDestaque = new Set(destaques.map((e) => e.id))
+  const feira = [...destaques, ...todosEmpreendedores.filter((e) => !idsDestaque.has(e.id))].slice(0, LIMITE_PILHA)
   const totais = {
     produtos: consultaProdutos.dados?.total ?? 0,
     empreendedores: consultaEmpreendedores.dados?.total ?? 0,
@@ -191,29 +199,6 @@ function Home() {
 
       {!carregando && !erro && (
         <>
-          {destaques.length > 0 && (
-            <section className="container secao destaques" aria-labelledby="titulo-destaques">
-              <div className="secao__cabecalho">
-                <div>
-                  <h2 id="titulo-destaques">Negócios em Destaque</h2>
-                  <p className="secao__subtitulo">
-                    Negócios com o plano Destaque. A ordem muda a cada visita.
-                  </p>
-                </div>
-                <Link to="/planos" className="secao__link">
-                  Como aparecer aqui
-                </Link>
-              </div>
-              <ul className="grade-cards">
-                {destaques.map((empreendedor) => (
-                  <li key={empreendedor.id}>
-                    <EmpreendedorCard empreendedor={empreendedor} />
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-
           <section className="container secao">
             <div className="secao__cabecalho">
               <div>
@@ -240,31 +225,50 @@ function Home() {
             )}
           </section>
 
-          <section className="feira">
-            <div className="container">
-              <div className="secao__cabecalho feira__cabecalho">
-                <div>
-                  <h2>Quem está na feira</h2>
-                  <p className="secao__subtitulo">Conheça alguns dos negócios cadastrados.</p>
+          <section className="feira" aria-labelledby="titulo-feira">
+            <div className="container feira__grade">
+              <div className="feira__texto">
+                <span className="pagina-cabecalho__marca feira__marca">Negócios da cidade</span>
+                <h2 id="titulo-feira">Quem está na feira</h2>
+                <p className="secao__subtitulo">
+                  Os negócios em Destaque aparecem primeiro, com o selo, e em seguida quem mais está na
+                  vitrine. Clique num cartão para conhecer o negócio.
+                </p>
+
+                {feira.length > 0 && (
+                  <ul className="feira__nomes" aria-label="Negócios da pilha">
+                    {feira.map((negocio) => (
+                      <li key={negocio.id}>
+                        <Link to={`/empreendedores/${negocio.id}`} className="feira__nome">
+                          {negocio.nomeNegocio}
+                          {negocio.emDestaque && <SeloDestaque compacto claro />}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                <div className="feira__acoes">
+                  <Button to="/empreendedores" variante="destaque">
+                    Ver todos os negócios
+                  </Button>
+                  <Link to="/planos" className="secao__link secao__link--claro">
+                    Como aparecer em destaque
+                  </Link>
                 </div>
-                <Link to="/empreendedores" className="secao__link secao__link--claro">
-                  Ver todos
-                </Link>
               </div>
 
-              {empreendedores.length === 0 ? (
-                <StatusMessage tipo="vazio" titulo="Nenhum empreendedor cadastrado">
-                  <p>Seja o primeiro a montar sua barraca no VitrineRondon.</p>
-                </StatusMessage>
-              ) : (
-                <ul className="grade-cards">
-                  {empreendedores.map((empreendedor) => (
-                    <li key={empreendedor.id}>
-                      <EmpreendedorCard empreendedor={empreendedor} />
-                    </li>
-                  ))}
-                </ul>
-              )}
+              <div className="feira__palco">
+                {feira.length === 0 ? (
+                  <StatusMessage tipo="vazio" titulo="Nenhum negócio na vitrine ainda">
+                    <p>Seja o primeiro a montar sua barraca no VitrineRondon.</p>
+                  </StatusMessage>
+                ) : (
+                  <Suspense fallback={<div className="feira__espera" aria-hidden="true" />}>
+                    <PilhaDeNegocios negocios={feira} />
+                  </Suspense>
+                )}
+              </div>
             </div>
           </section>
         </>
