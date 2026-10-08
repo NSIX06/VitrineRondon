@@ -18,6 +18,8 @@ import TagTipo from '../../components/ui/Tag/TagTipo'
 import './MeuNegocio.css'
 import Voltar from '../../components/ui/Voltar/Voltar'
 import SeloDestaque from '../../components/ui/SeloDestaque/SeloDestaque'
+import AvisoSituacao from '../../components/painel/AvisoSituacao'
+import { SITUACAO_NEGOCIO } from '../../services/planos'
 import PainelPlano from '../../components/painel/PainelPlano'
 import PainelDesempenho from '../../components/painel/PainelDesempenho'
 import PainelDivulgacao from '../../components/painel/PainelDivulgacao'
@@ -62,11 +64,14 @@ function MeuNegocio() {
   const [confirmacao, setConfirmacao] = useState(null)
   const [excluindo, setExcluindo] = useState(false)
 
-  /** O plano mudou (pagamento, troca ou cancelamento): atualiza selo e divulgação */
+  /** O plano mudou (pagamento, troca ou cancelamento): atualiza selo, situação e divulgação */
   const aoMudarPlano = useCallback((resumo) => {
     if (!resumo) return
     setNegocio((anterior) =>
-      anterior && (anterior.planoAtual !== resumo.planoAtual || anterior.emDestaque !== resumo.emDestaque)
+      anterior &&
+      (anterior.planoAtual !== resumo.planoAtual ||
+        anterior.emDestaque !== resumo.emDestaque ||
+        anterior.situacao !== resumo.situacao)
         ? { ...anterior, ...resumo }
         : anterior
     )
@@ -103,7 +108,8 @@ function MeuNegocio() {
 
   const cadastrarNegocio = async (dados) => {
     const resposta = await api.post('/empreendedores/meu', dados)
-    setNegocio({ ...resposta.data, produtos: [] })
+    // Cadastrado não é publicado: nasce como rascunho até o plano ser pago
+    setNegocio({ ...resposta.data, produtos: [], situacao: 'RASCUNHO' })
     // Cadastrar o primeiro negócio promove a conta a EMPREENDEDOR
     if (resposta.perfilAtualizado) atualizarUsuario({ perfil: resposta.perfilAtualizado })
     mostrarStatus('sucesso', resposta.message)
@@ -111,7 +117,7 @@ function MeuNegocio() {
 
   const salvarNegocio = async (dados) => {
     const resposta = await api.put(`/empreendedores/${negocio.id}`, dados)
-    setNegocio((anterior) => ({ ...resposta.data, produtos: anterior.produtos }))
+    setNegocio((anterior) => ({ ...resposta.data, produtos: anterior.produtos, situacao: anterior.situacao }))
     setModalForm(null)
     mostrarStatus('sucesso', resposta.message)
   }
@@ -203,10 +209,10 @@ function MeuNegocio() {
         <Voltar para="/" rotulo="Início" />
         <header className="meu-negocio__cabecalho">
           <span className="meu-negocio__indice">Cadastro</span>
-          <h1 className="meu-negocio__titulo">Coloque seu negócio na vitrine</h1>
+          <h1 className="meu-negocio__titulo">Cadastre seu negócio</h1>
           <p className="meu-negocio__linha-fina">
-            Preencha os dados abaixo e seu negócio passa a aparecer para quem procura no bairro. Você
-            pode alterar tudo depois e decidir se o endereço fica visível.
+            Preencha os dados abaixo. Depois, escolha um plano mensal para publicar o negócio na
+            vitrine. Você pode alterar tudo depois e decidir se o endereço fica visível.
           </p>
         </header>
 
@@ -220,6 +226,8 @@ function MeuNegocio() {
   }
 
   const produtos = negocio.produtos ?? []
+  const situacao = SITUACAO_NEGOCIO[negocio.situacao]
+  const publicado = negocio.situacao === 'ATIVO'
   const disponiveis = produtos.filter((p) => p.disponivel).length
 
   return (
@@ -234,14 +242,17 @@ function MeuNegocio() {
             {negocio.categoria} · {negocio.bairro ? `${negocio.bairro}, ` : ''}
             {negocio.cidade}
           </p>
-          {!negocio.ativo && (
-            <Tag variante="alerta">Negócio inativo: não aparece na vitrine pública</Tag>
+          {situacao && (
+            <Tag variante={situacao.variante}>
+              {situacao.rotulo}
+              {publicado ? '' : ': fora da vitrine'}
+            </Tag>
           )}
         </div>
         <div className="meu-negocio__acoes-topo">
           <Button to={`/empreendedores/${negocio.id}`} variante="secundario" tamanho="sm">
             <Icone nome="visibility" tamanho={18} />
-            Ver como o público vê
+            {publicado ? 'Ver como o público vê' : 'Ver prévia (só você vê)'}
           </Button>
           <Button onClick={() => setModalForm({ entidade: 'negocio' })} tamanho="sm">
             <Icone nome="edit" tamanho={18} />
@@ -251,6 +262,8 @@ function MeuNegocio() {
       </header>
 
       <Aviso aviso={status} onFechar={fecharStatus} />
+
+      <AvisoSituacao situacao={negocio.situacao} aoVerPagamento={() => setAba('plano')} />
 
       <div className="meu-negocio__abas" role="tablist" aria-label="Seções do seu negócio">
         {ABAS.map((item) => (
@@ -276,7 +289,9 @@ function MeuNegocio() {
       {aba === 'divulgacao' && (
         <PainelDivulgacao
           negocio={negocio}
-          aoAtualizar={(salvo) => setNegocio((anterior) => ({ ...salvo, produtos: anterior.produtos }))}
+          aoAtualizar={(salvo) =>
+            setNegocio((anterior) => ({ ...salvo, produtos: anterior.produtos, situacao: anterior.situacao }))
+          }
         />
       )}
       {aba === 'catalogo' && (
@@ -286,7 +301,9 @@ function MeuNegocio() {
           <span className="meu-negocio__indicador-rotulo">Itens no catálogo</span>
           <strong className="meu-negocio__indicador-numero">{produtos.length}</strong>
           <span className="meu-negocio__indicador-detalhe">
-            {disponiveis} {disponiveis === 1 ? 'visível' : 'visíveis'} na vitrine
+            {publicado
+              ? `${disponiveis} ${disponiveis === 1 ? 'visível' : 'visíveis'} na vitrine`
+              : `${disponiveis} ${disponiveis === 1 ? 'aparecerá' : 'aparecerão'} quando o negócio for publicado`}
           </span>
         </div>
         <div className="meu-negocio__indicador">

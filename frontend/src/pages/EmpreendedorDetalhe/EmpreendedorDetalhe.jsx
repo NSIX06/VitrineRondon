@@ -16,6 +16,7 @@ import Tag from '../../components/ui/Tag/Tag'
 import Icone from '../../components/ui/Icone/Icone'
 import Mapa from '../../components/ui/Mapa/MapaPreguicoso'
 import SeloDestaque from '../../components/ui/SeloDestaque/SeloDestaque'
+import { SITUACAO_NEGOCIO } from '../../services/planos'
 import { METRICAS, registrarMetrica } from '../../services/metricas'
 import ProdutoCard from '../../components/cards/ProdutoCard/ProdutoCard'
 import imagemPadrao from '../../assets/imagem-padrao.svg'
@@ -68,7 +69,7 @@ function EmpreendedorDetalhe() {
           tipo={naoEncontrado ? 'vazio' : 'erro'}
           titulo={naoEncontrado ? 'Empreendedor não encontrado' : 'Não foi possível carregar'}
         >
-          <p>{naoEncontrado ? 'Esse cadastro não existe ou foi removido.' : erro.message}</p>
+          <p>{naoEncontrado ? 'Esse negócio não existe ou não está publicado no momento.' : erro.message}</p>
           <Button to="/empreendedores" variante="secundario" tamanho="sm">
             Ver todos os empreendedores
           </Button>
@@ -99,7 +100,10 @@ function EmpreendedorDetalhe() {
     longitude,
     exibirEndereco,
     emDestaque,
+    // Só vem para o dono e a administração: o público nunca recebe negócio fora da vitrine
+    situacao: situacaoDoNegocio,
   } = empreendedor
+  const previa = situacaoDoNegocio && situacaoDoNegocio !== 'ATIVO' ? SITUACAO_NEGOCIO[situacaoDoNegocio] : null
 
   const resumoEmpreendedor = { id: empreendedor.id, nomeNegocio, cidade, whatsapp }
   const produtosComEmpreendedor = produtos.map((produto) => ({
@@ -162,6 +166,16 @@ function EmpreendedorDetalhe() {
           </div>
         </div>
       </div>
+
+      {previa && (
+        <div className="container detalhe__previa">
+          <StatusMessage tipo="aviso" titulo={`Prévia: ${previa.rotulo.toLowerCase()}`}>
+            <p>
+              Este negócio não está na vitrine: só você e a administração veem esta página. {previa.texto}
+            </p>
+          </StatusMessage>
+        </div>
+      )}
 
       <div className="detalhe__capa">
         <img

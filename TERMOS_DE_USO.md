@@ -7,14 +7,14 @@ Bem-vindo(a) ao VitrineRondon. Estes Termos de Uso regulam o acesso e a utiliza�
 ## 1. Definições
 
 - **Plataforma:** o sistema web VitrineRondon, que conecta empreendedores locais a consumidores.
-- **Usuário comum:** pessoa que acessa a plataforma para consultar produtos e serviços.
-- **Empreendedor:** usuário que se cadastra para publicar e gerenciar um negócio, seus produtos e serviços.
+- **Usuário comum:** pessoa que acessa a plataforma para consultar produtos e serviços. Navegar pela plataforma é gratuito e não exige conta.
+- **Empreendedor:** usuário que se cadastra e assina um plano para divulgar e gerenciar um negócio, seus produtos e serviços.
 - **Administrador:** responsável pela gestão, moderação e controle geral da plataforma.
 - **Publicação:** qualquer produto, serviço ou informação de negócio divulgado por um empreendedor.
 
 ## 2. Aceitação e cadastro
 
-2.1. O uso de funcionalidades de publicação exige cadastro e aceite destes Termos e da Política de Privacidade.
+2.1. A divulgação de um negócio exige cadastro, aceite destes Termos e da Política de Privacidade e uma assinatura em vigor, nos termos da seção 5. A criação da conta é gratuita.
 
 2.2. Ao se cadastrar, você se compromete a fornecer informações verdadeiras, completas e atualizadas, incluindo nome, e-mail e telefone.
 
@@ -38,23 +38,29 @@ O usuário comum pode consultar, pesquisar e visualizar publicações, além de 
 
 ## 5. Planos e assinaturas
 
-5.1. O cadastro e a exibição do negócio na vitrine são gratuitos, sem comissão sobre as vendas. Os planos de assinatura (Essencial e Destaque) são opcionais e acrescentam os recursos descritos na página Planos.
+5.1. Navegar pela plataforma é gratuito. Para que um negócio seja publicado e divulgado, o empreendedor deve possuir conta cadastrada e uma assinatura mensal em vigor de um dos planos oferecidos (Essencial ou Destaque). Não há publicação gratuita de negócios. A plataforma não cobra comissão sobre as vendas.
+
+5.1.1. O negócio pode ser cadastrado antes do pagamento, mas permanece como rascunho, visível apenas ao empreendedor e à administração, até a confirmação do pagamento da assinatura.
 
 5.2. Os valores, o ciclo de cobrança e os benefícios de cada plano são os informados na página Planos no momento da contratação. Alterações de preço serão comunicadas com antecedência e valem a partir do ciclo seguinte.
 
 5.3. O pagamento é processado pelo AbacatePay, intermediador de pagamentos. Os dados do cartão são informados diretamente a ele: o VitrineRondon não os armazena.
 
-5.4. A assinatura é renovada automaticamente a cada ciclo até ser cancelada. O empreendedor pode cancelar a qualquer momento pelo painel do seu negócio; o cancelamento vale de imediato e não gera novas cobranças.
+5.4. A assinatura é renovada automaticamente a cada ciclo até ser cancelada. O empreendedor pode cancelar a qualquer momento pelo painel do seu negócio. O cancelamento interrompe as cobranças seguintes, e o negócio permanece publicado, com os benefícios do plano, até o fim do período já pago.
 
-5.5. Se uma cobrança for recusada, os benefícios do plano ficam suspensos até a regularização, e o negócio continua na vitrine. Esgotadas as novas tentativas de cobrança feitas pelo intermediador, a assinatura é cancelada automaticamente.
+5.5. Se uma cobrança for recusada, o negócio deixa de ser exibido publicamente até a regularização do pagamento. Esgotadas as novas tentativas de cobrança feitas pelo intermediador, a assinatura é cancelada automaticamente.
 
-5.6. A troca de plano é feita por uma nova contratação: confirmado o pagamento do novo plano, o anterior é cancelado.
+5.5.1. Encerrada a assinatura (por cancelamento, falta de pagamento ou fim do período pago), o negócio e seus produtos deixam de aparecer publicamente e os benefícios do plano são desativados. A conta, o negócio, os produtos, as fotos e o histórico não são excluídos por esse motivo e ficam guardados, conforme a Política de Privacidade, para que o empreendedor possa contratar um plano novamente.
 
-5.7. O plano Destaque oferece maior oportunidade de exposição dentro da plataforma (selo, prioridade na ordenação das listas e espaço em seções de destaque). A plataforma não garante número de visualizações, contatos ou vendas, nem posição fixa nos resultados, e os negócios sem plano ou no plano Essencial continuam visíveis normalmente.
+5.6. A troca de plano é feita por uma nova contratação: confirmado o pagamento do novo plano, o anterior é cancelado e os benefícios passam a ser os do novo plano. Na mudança do Destaque para o Essencial, o negócio continua publicado, sem os benefícios exclusivos do Destaque.
+
+5.7. O plano Destaque oferece maior oportunidade de exposição dentro da plataforma (selo, prioridade na ordenação das listas e espaço em seções de destaque). A plataforma não garante número de visualizações, contatos ou vendas, nem posição fixa nos resultados, e os negócios no plano Essencial continuam visíveis normalmente.
 
 5.8. A divulgação nas redes oficiais do VitrineRondon depende de autorização expressa do empreendedor, do calendário editorial, de critérios de conteúdo e relevância e das regras de cada rede, sem quantidade mínima de publicações. A autorização pode ser retirada a qualquer momento pelo painel.
 
 5.9. Pedidos de reembolso seguem a legislação aplicável e podem ser feitos pelos canais de contato da plataforma.
+
+5.10. Cada assinatura corresponde a um único negócio. Regras para mais de um negócio por conta, se oferecidas, serão informadas na página Planos antes da contratação.
 
 ## 6. Conteúdo proibido
 
@@ -78,7 +84,7 @@ Publicações que violem estas regras podem ser removidas e a conta suspensa.
 
 ## 8. Moderação, suspensão e encerramento
 
-8.1. O administrador pode moderar, editar, ocultar ou remover publicações e suspender ou encerrar contas que violem estes Termos, a legislação ou os direitos de terceiros.
+8.1. O administrador pode moderar, editar, ocultar ou remover publicações e suspender ou encerrar contas que violem estes Termos, a legislação ou os direitos de terceiros. Um negócio suspenso por moderação deixa de aparecer publicamente, ainda que possua assinatura em vigor.
 
 8.2. O usuário pode solicitar o encerramento de sua conta a qualquer momento, observadas as regras de retenção previstas na Política de Privacidade.
 

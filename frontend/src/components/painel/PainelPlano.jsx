@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import api from '../../services/api'
-import { STATUS_ASSINATURA, dataLonga, porCiclo, precoEmReais } from '../../services/planos'
+import { SITUACAO_NEGOCIO, STATUS_ASSINATURA, dataLonga, porCiclo, precoEmReais } from '../../services/planos'
 import Button from '../ui/Button/Button'
 import ConfirmModal from '../ui/ConfirmModal/ConfirmModal'
 import Icone from '../ui/Icone/Icone'
@@ -17,9 +17,14 @@ const INTERVALO_RETORNO_MS = 3000
 
 const nomeCurto = (plano) => plano?.titulo?.replace(/^VitrineRondon /, '') ?? ''
 
+/** A assinatura ainda vale? (ativa, ou cancelada dentro do período pago) */
+const emVigor = (assinatura) =>
+  assinatura?.status === 'ATIVA' ||
+  (assinatura?.status === 'CANCELADA' && assinatura.vigenteAte && new Date(assinatura.vigenteAte) > new Date())
+
 /**
- * Plano do negócio no painel: plano, status, próxima cobrança, troca em
- * andamento e cancelamento.
+ * Plano do negócio no painel: plano, valor, status, próxima cobrança,
+ * vencimento, situação do negócio, troca em andamento e cancelamento.
  * - `voltouDoCheckout`: a página abriu na volta do pagamento
  * - `aoMudar(negocio)`: avisa o painel quando plano/destaque mudam
  */
@@ -105,9 +110,13 @@ function PainelPlano({ voltouDoCheckout = false, aoMudar }) {
     )
   }
 
-  const { assinatura, trocaPendente, modoTeste } = dados
-  const temPlano = assinatura && ['ATIVA', 'INADIMPLENTE', 'PENDENTE'].includes(assinatura.status)
+  const { assinatura, trocaPendente, modoTeste, negocio } = dados
+  const vigente = emVigor(assinatura)
+  const cancelada = assinatura?.status === 'CANCELADA'
+  const temPlano = assinatura && (vigente || ['INADIMPLENTE', 'PENDENTE'].includes(assinatura.status))
   const status = assinatura ? STATUS_ASSINATURA[assinatura.status] : null
+  const situacao = SITUACAO_NEGOCIO[negocio?.situacao]
+  const expirado = negocio?.situacao === 'ASSINATURA_EXPIRADA'
 
   return (
     <div className="painel">
@@ -121,17 +130,18 @@ function PainelPlano({ voltouDoCheckout = false, aoMudar }) {
         <div className="painel__convite">
           <Icone nome="workspace_premium" tamanho={30} />
           <div>
-            <h3>Seu negócio está na vitrine gratuitamente</h3>
+            <h3>{expirado ? 'Seu plano está inativo' : 'Escolha um plano para publicar seu negócio'}</h3>
             <p>
-              Com um plano você acompanha as estatísticas do seu perfil e, no Destaque, ganha selo,
-              prioridade nas listas e a possibilidade de divulgação nas redes oficiais.
+              {expirado
+                ? 'Renove sua assinatura para voltar a divulgar seu negócio no VitrineRondon. Seus dados, produtos e fotos continuam guardados.'
+                : 'Para aparecer na vitrine, escolha o Essencial (R$ 50 por mês) ou o Destaque (R$ 75 por mês), que soma selo, prioridade nas listas, estatísticas ampliadas e a possibilidade de divulgação nas redes oficiais.'}
             </p>
-            {assinatura?.status === 'CANCELADA' && (
-              <p className="painel__detalhe">Sua última assinatura ({nomeCurto(assinatura.plano)}) foi cancelada.</p>
+            {cancelada && (
+              <p className="painel__detalhe">Sua última assinatura ({nomeCurto(assinatura.plano)}) terminou.</p>
             )}
           </div>
           <Button to="/planos" variante="destaque">
-            Conhecer os planos
+            {expirado ? 'Renovar assinatura' : 'Escolher um plano'}
           </Button>
         </div>
       ) : (
@@ -143,7 +153,7 @@ function PainelPlano({ voltouDoCheckout = false, aoMudar }) {
             </div>
             <Tag variante={status.variante}>{status.rotulo}</Tag>
           </div>
-          {assinatura.plano.destaque && assinatura.status === 'ATIVA' && <SeloDestaque />}
+          {assinatura.plano.destaque && vigente && <SeloDestaque />}
 
           <dl className="painel__fatos">
             <div>
@@ -160,18 +170,35 @@ function PainelPlano({ voltouDoCheckout = false, aoMudar }) {
               <dt>Próxima cobrança</dt>
               <dd>{assinatura.status === 'ATIVA' ? dataLonga(assinatura.proximaCobranca) : '—'}</dd>
             </div>
+            <div>
+              <dt>{cancelada ? 'Publicado até' : 'Vencimento'}</dt>
+              <dd>{vigente ? dataLonga(assinatura.vigenteAte) : '—'}</dd>
+            </div>
+            {situacao && (
+              <div>
+                <dt>Seu negócio</dt>
+                <dd>{situacao.rotulo}</dd>
+              </div>
+            )}
           </dl>
 
           {assinatura.status === 'PENDENTE' && assinatura.checkoutUrl && (
             <p className="painel__detalhe">
-              O pagamento ainda não foi concluído.{' '}
-              <a href={assinatura.checkoutUrl}>Continuar pagamento</a>
+              O pagamento ainda não foi concluído: seu negócio será publicado assim que ele for
+              confirmado. <a href={assinatura.checkoutUrl}>Continuar pagamento</a>
             </p>
           )}
           {assinatura.status === 'INADIMPLENTE' && (
             <p className="painel__detalhe painel__detalhe--alerta">
-              A última cobrança foi recusada. Os benefícios do plano ficam suspensos até o pagamento ser
-              aprovado; seu negócio continua na vitrine.
+              A última cobrança foi recusada. Seu negócio saiu da vitrine até o pagamento ser aprovado;
+              os dados continuam guardados.
+            </p>
+          )}
+          {cancelada && vigente && (
+            <p className="painel__detalhe">
+              Assinatura cancelada: não haverá novas cobranças. Seu negócio continua publicado, com os
+              benefícios do plano, até {dataLonga(assinatura.vigenteAte)}. Depois disso sai da vitrine,
+              e os dados ficam guardados para quando quiser voltar.
             </p>
           )}
           {trocaPendente && (
@@ -182,13 +209,21 @@ function PainelPlano({ voltouDoCheckout = false, aoMudar }) {
           )}
 
           <div className="painel__acoes">
-            <Button to="/planos" variante="secundario" tamanho="sm">
-              <Icone nome="swap_horiz" tamanho={18} />
-              Trocar de plano
-            </Button>
-            <Button variante="texto" tamanho="sm" onClick={() => setConfirmarCancelamento(true)}>
-              Cancelar assinatura
-            </Button>
+            {cancelada ? (
+              <Button to="/planos" variante="destaque" tamanho="sm">
+                Assinar de novo
+              </Button>
+            ) : (
+              <>
+                <Button to="/planos" variante="secundario" tamanho="sm">
+                  <Icone nome="swap_horiz" tamanho={18} />
+                  Trocar de plano
+                </Button>
+                <Button variante="texto" tamanho="sm" onClick={() => setConfirmarCancelamento(true)}>
+                  Cancelar assinatura
+                </Button>
+              </>
+            )}
           </div>
         </div>
       )}
@@ -203,7 +238,11 @@ function PainelPlano({ voltouDoCheckout = false, aoMudar }) {
       <ConfirmModal
         aberto={confirmarCancelamento}
         titulo="Cancelar assinatura"
-        mensagem="O cancelamento vale na hora: o selo, a prioridade e as estatísticas do plano deixam de valer. Seu negócio continua na vitrine normalmente. Deseja cancelar?"
+        mensagem={
+          assinatura?.status === 'ATIVA'
+            ? `As próximas cobranças param. Seu negócio continua publicado, com os benefícios do plano, até ${dataLonga(assinatura.vigenteAte)}, o fim do período já pago. Depois disso sai da vitrine; dados, produtos e fotos continuam guardados. Deseja cancelar?`
+            : 'Seu negócio fica fora da vitrine, e os dados continuam guardados para quando quiser voltar. Deseja cancelar?'
+        }
         textoConfirmar="Cancelar assinatura"
         carregando={cancelando}
         onConfirmar={cancelar}

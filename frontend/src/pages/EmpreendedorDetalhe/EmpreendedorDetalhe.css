@@ -21,6 +21,15 @@
   margin-bottom: 0;
 }
 
+/* Aviso de prévia (negócio fora da vitrine, visto pelo dono ou pela administração) */
+.detalhe__previa {
+  padding-top: var(--esp-4);
+}
+
+.detalhe__previa > .status {
+  margin: 0;
+}
+
 .detalhe__migalhas-nav {
   display: flex;
   align-items: center;

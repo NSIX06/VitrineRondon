@@ -69,16 +69,16 @@ function Contato() {
 
         <aside className="contato__lateral">
           <div className="contato__caixa">
-            <h2>Quer publicar seu negócio?</h2>
+            <h2>Quer divulgar seu negócio?</h2>
             <p>
-              Você mesmo cadastra a loja, o serviço ou a produção e aparece na vitrine do bairro, em
-              menos de dois minutos.
+              Você mesmo cadastra a loja, o serviço ou a produção e escolhe um plano mensal para
+              aparecer na vitrine do bairro.
             </p>
             <Button to="/cadastro" variante="secundario">
               <Icone nome="storefront" tamanho={20} />
-              Quero publicar meu negócio
+              Quero divulgar meu negócio
             </Button>
-            <div className="contato__gratuito">Cadastro gratuito, sem comissão sobre as vendas</div>
+            <div className="contato__gratuito">Planos a partir de R$ 50 por mês, sem comissão sobre as vendas</div>
           </div>
 
           <div className="contato__caixa">

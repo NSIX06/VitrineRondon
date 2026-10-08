@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import api from '../../services/api'
 import { useAuth } from '../../contexts/auth'
 import { useConsulta } from '../../hooks/useConsulta'
@@ -15,9 +16,10 @@ import './Planos.css'
 // Linhas da comparação. O que cada plano libera vem dos campos do plano
 // (destaque, metricasAmpliadas, divulgacao), e não do nome dele.
 const COMPARACAO = [
+  { rotulo: 'Publicação do negócio na vitrine', tem: () => true },
   { rotulo: 'Perfil comercial com fotos, produtos e serviços', tem: () => true },
   { rotulo: 'Botão direto para o WhatsApp e redes sociais', tem: () => true },
-  { rotulo: 'Participação na busca, nas listas e no mapa', tem: () => true },
+  { rotulo: 'Presença na busca, nas categorias e no mapa', tem: () => true },
   { rotulo: 'Estatísticas básicas (totais do mês)', tem: () => true },
   { rotulo: 'Selo "Negócio em Destaque"', tem: (p) => p.destaque },
   { rotulo: 'Prioridade na ordem das listas e da busca', tem: (p) => p.destaque },
@@ -28,7 +30,8 @@ const COMPARACAO = [
 
 /**
  * Página de planos: Essencial e Destaque lado a lado, com a escolha levando
- * ao checkout do gateway (modo de teste na demonstração).
+ * ao checkout do gateway (modo de teste na demonstração). Um dos dois é
+ * obrigatório para divulgar um negócio; navegar pela vitrine é gratuito.
  */
 function Planos() {
   const { usuario, carregando: carregandoSessao } = useAuth()
@@ -80,9 +83,10 @@ function Planos() {
     const variante = plano.destaque ? 'destaque' : 'primario'
     if (carregandoSessao) return null
     if (!usuario) {
+      // Sem conta: o cadastro termina na escolha do plano, já marcado
       return (
-        <Button to="/login" state={{ de: '/planos' }} variante={variante}>
-          Entrar para assinar
+        <Button to={`/cadastro?plano=${plano.nome}`} variante={variante}>
+          Criar conta e assinar
         </Button>
       )
     }
@@ -124,8 +128,8 @@ function Planos() {
           <span className="pagina-cabecalho__marca">Para quem vende</span>
           <h1>Planos do VitrineRondon</h1>
           <p>
-            O cadastro na vitrine continua gratuito. Os planos são opcionais e somam estatísticas,
-            selo e mais oportunidade de exposição para o seu negócio.
+            Para divulgar seu negócio no VitrineRondon, escolha um dos planos mensais. Navegar pela
+            vitrine continua gratuito para todo mundo.
           </p>
         </div>
       </header>
@@ -149,6 +153,11 @@ function Planos() {
 
         {planos.length > 0 && (
           <>
+            {!usuario && !carregandoSessao && (
+              <p className="planos__nota">
+                Já tem conta? <Link to="/login" state={{ de: '/planos' }}>Entre</Link> para assinar ou renovar.
+              </p>
+            )}
             <ul className="planos__lista">
               {planos.map((plano) => (
                 <li key={plano.nome} className={`planos__cartao ${plano.destaque ? 'planos__cartao--destaque' : ''}`}>
@@ -222,14 +231,19 @@ function Planos() {
                 <h2>Transparência</h2>
                 <p>
                   O plano Destaque aumenta a <strong>oportunidade de exposição</strong> do seu negócio dentro
-                  da vitrine. Ele não garante número de visitas, contatos ou vendas: isso depende do seu
-                  negócio e de quem procura. Negócios sem plano ou no Essencial continuam aparecendo na busca
-                  e nas listas normalmente.
+                  da vitrine. Ele não garante número de visitas, contatos ou vendas, nem a primeira posição
+                  em todas as buscas: isso depende do seu negócio e de quem procura. Os negócios no
+                  Essencial continuam aparecendo na busca e nas listas normalmente.
+                </p>
+                <p>
+                  O negócio fica publicado enquanto a assinatura estiver em dia. Se você cancelar, ele
+                  continua no ar até o fim do período já pago; depois sai da vitrine, e seus dados,
+                  produtos e fotos ficam guardados para quando quiser voltar.
                 </p>
                 <p>
                   A divulgação nas redes oficiais acontece conforme o calendário editorial, a relevância do
-                  conteúdo e a sua autorização. Não há quantidade fixa de publicações. Você pode cancelar
-                  quando quiser, pelo painel do seu negócio.
+                  conteúdo e a sua autorização. Não há quantidade fixa de publicações. Você pode trocar de
+                  plano ou cancelar quando quiser, pelo painel do seu negócio.
                 </p>
               </div>
             </aside>

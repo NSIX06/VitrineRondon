@@ -105,12 +105,25 @@
   font-size: var(--texto-md);
 }
 
+/* Nome e situação numa linha só: um nome longo quebrando em duas linhas
+   esticaria o quadro e faria o formulário pular ao trocar o destinatário */
 .contato-form__destino-topo {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--esp-2);
-  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.contato-form__destino-topo strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.contato-form__destino-topo .contato-form__atende {
+  flex-shrink: 0;
 }
 
 .contato-form__destino-info {

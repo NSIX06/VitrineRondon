@@ -72,3 +72,10 @@ describe('benefícios do plano só valem no período pago', () => {
     expect(planoEmVigor({ planoAtual: 'ESSENCIAL', publicadoAte: null }, AGORA)).toBe('NENHUM')
   })
 })
+
+describe('frontend e backend falam das mesmas situações', () => {
+  it('cada situação calculada pela API tem nome e mensagem na tela', async () => {
+    const { SITUACAO_NEGOCIO } = await import('../../frontend/src/services/planos.js')
+    expect(Object.keys(SITUACAO_NEGOCIO).sort()).toEqual(Object.values(SITUACAO).sort())
+  })
+})

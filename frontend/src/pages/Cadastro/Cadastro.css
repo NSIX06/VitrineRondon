@@ -18,7 +18,8 @@
   padding: 0;
   margin: 0;
   display: flex;
-  gap: var(--esp-4);
+  flex-wrap: wrap;
+  gap: var(--esp-2) var(--esp-4);
   font-weight: 700;
   font-size: 14px;
   color: var(--cor-cinza);

@@ -22,6 +22,7 @@ import { formatarPreco } from '../../services/formatos'
 import TagTipo from '../../components/ui/Tag/TagTipo'
 import './Admin.css'
 import Voltar from '../../components/ui/Voltar/Voltar'
+import { SITUACAO_NEGOCIO } from '../../services/planos'
 
 const ABAS = [
   { id: 'produtos', rotulo: 'Produtos', icone: 'shopping_bag' },
@@ -207,9 +208,18 @@ function Admin() {
       render: (e) => (
         <span className="admin__celula-principal">
           {e.nomeNegocio}
-          {!e.ativo && <Tag variante="alerta">Inativo</Tag>}
+          {!e.usuarioId && <span className="admin__secundario">Sem conta responsável</span>}
         </span>
       ),
+    },
+    {
+      chave: 'situacao',
+      titulo: 'Situação',
+      // Só ATIVO aparece na vitrine; os demais ficam guardados, fora do público
+      render: (e) => {
+        const s = SITUACAO_NEGOCIO[e.situacao] ?? (e.ativo ? null : SITUACAO_NEGOCIO.SUSPENSO)
+        return s ? <Tag variante={s.variante}>{s.rotulo}</Tag> : '—'
+      },
     },
     { chave: 'responsavel', titulo: 'Responsável' },
     { chave: 'categoria', titulo: 'Categoria', render: (e) => <Tag variante="categoria">{e.categoria}</Tag> },
@@ -492,6 +502,7 @@ function Admin() {
         {modalForm?.entidade === 'empreendedor' && (
           <EmpreendedorForm
             initialData={modalForm.registro}
+            moderacao
             onSubmit={salvar}
             onCancelar={fecharModalForm}
           />

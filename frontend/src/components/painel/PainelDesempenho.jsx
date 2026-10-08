@@ -162,8 +162,9 @@ function PainelDesempenho() {
         <div>
           <h3>Estatísticas do seu perfil</h3>
           <p>
-            Com um plano você acompanha quantas pessoas visitaram seu perfil e clicaram para falar com
-            você. No Destaque, vê também a evolução dia a dia e os produtos mais vistos.
+            Com o negócio publicado por um plano, você acompanha quantas pessoas visitaram seu perfil e
+            clicaram para falar com você. No Destaque, vê também a evolução dia a dia e os produtos
+            mais vistos.
           </p>
         </div>
         <Button to="/planos" variante="destaque">

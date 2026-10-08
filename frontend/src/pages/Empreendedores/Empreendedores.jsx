@@ -159,13 +159,13 @@ function Empreendedores() {
             <div>
               <h3>Você também produz ou atende no bairro?</h3>
               <p>
-                O cadastro no VitrineRondon é gratuito, sem comissão sobre as vendas. Se quiser mais
-                visibilidade, há planos opcionais com selo de destaque e estatísticas.
+                Crie sua conta, cadastre o negócio e escolha um plano mensal para publicá-lo: Essencial
+                ou Destaque. Sem comissão sobre as vendas.
               </p>
             </div>
           </div>
           <Button to="/cadastro" variante="destaque">
-            Cadastrar meu negócio
+            Divulgar meu negócio
           </Button>
         </div>
       </section>

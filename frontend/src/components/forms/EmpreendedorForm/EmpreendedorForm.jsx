@@ -72,7 +72,15 @@ const UFS = [
  * Inclui a localização do negócio: endereço, bairro, CEP e, opcionalmente,
  * as coordenadas encontradas pelo botão "Localizar no mapa" (OpenStreetMap).
  */
-function EmpreendedorForm({ initialData, onSubmit, onCancelar, textoEnviar, textoCancelar = 'Cancelar' }) {
+function EmpreendedorForm({
+  initialData,
+  onSubmit,
+  onCancelar,
+  textoEnviar,
+  textoCancelar = 'Cancelar',
+  // Administração: mostra a suspensão por moderação
+  moderacao = false,
+}) {
   const [valores, setValores] = useState(() => montarEstadoInicial(initialData))
   const [errosCampos, setErrosCampos] = useState({})
   const [erroGeral, setErroGeral] = useState(null)
@@ -204,7 +212,8 @@ function EmpreendedorForm({ initialData, onSubmit, onCancelar, textoEnviar, text
       fotoUrl: valores.fotoUrl.trim() || null,
       // A semana vai inteira: o servidor substitui os horários anteriores
       horarios: valores.horarios,
-      ativo: valores.ativo,
+      // Suspender é moderação: só a administração envia (o servidor ignora o dono)
+      ...(moderacao ? { ativo: valores.ativo } : {}),
     }
 
     setSalvando(true)
@@ -584,16 +593,20 @@ function EmpreendedorForm({ initialData, onSubmit, onCancelar, textoEnviar, text
         </div>
       </div>
 
-      <div className="campo campo--checkbox">
-        <input
-          id="emp-ativo"
-          name="ativo"
-          type="checkbox"
-          checked={valores.ativo}
-          onChange={atualizarCampo}
-        />
-        <label htmlFor="emp-ativo">Negócio ativo</label>
-      </div>
+      {moderacao && (
+        <div className="campo campo--checkbox">
+          <input
+            id="emp-ativo"
+            name="ativo"
+            type="checkbox"
+            checked={valores.ativo}
+            onChange={atualizarCampo}
+          />
+          <label htmlFor="emp-ativo">
+            Liberado pela moderação (desmarque para suspender: o negócio sai da vitrine mesmo com plano pago)
+          </label>
+        </div>
+      )}
 
       <div className="formulario__acoes">
         <Button variante="secundario" onClick={onCancelar} disabled={salvando}>

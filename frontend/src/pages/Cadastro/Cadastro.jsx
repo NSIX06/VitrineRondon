@@ -1,31 +1,38 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import api from '../../services/api'
-import { useAuth, rotaInicialPorPerfil } from '../../contexts/auth'
+import { useAuth } from '../../contexts/auth'
 import StatusMessage from '../../components/ui/StatusMessage/StatusMessage'
 import ContaForm from '../../components/forms/ContaForm/ContaForm'
 import DocumentoLegalModal from '../../components/legal/DocumentoLegalModal/DocumentoLegalModal'
 import EmpreendedorForm from '../../components/forms/EmpreendedorForm/EmpreendedorForm'
+import EscolhaDePlano from '../../components/planos/EscolhaDePlano'
 import './Cadastro.css'
 import Voltar from '../../components/ui/Voltar/Voltar'
 
 /**
- * Cadastro de quem quer publicar um negócio, em duas etapas:
- * etapa 1 (conta + aceite, guardada em memória) e etapa 2 (dados do negócio,
- * reutilizando o EmpreendedorForm). Tudo vai ao servidor em uma única
- * requisição, para não existir conta sem negócio nem aceite órfão.
+ * Cadastro de quem quer divulgar um negócio, em três etapas:
+ * 1. conta + aceite (guardada em memória);
+ * 2. dados do negócio (EmpreendedorForm). Conta, aceite e negócio vão ao
+ *    servidor numa única requisição: não existe conta sem negócio nem aceite
+ *    órfão. O negócio nasce como rascunho, fora da vitrine;
+ * 3. escolha do plano e pagamento. Só com o pagamento confirmado o negócio é
+ *    publicado. Quem para aqui encontra o rascunho salvo no "Meu negócio".
  *
- * Quem só quer navegar pela vitrine não precisa de conta, então não há
- * cadastro de visitante aqui.
+ * Navegar pela vitrine não exige conta, então não há cadastro de visitante.
  */
 function Cadastro() {
   const { entrar } = useAuth()
-  const navigate = useNavigate()
+  // Plano escolhido na página de planos antes de criar a conta
+  const [parametros] = useSearchParams()
+  const planoPedido = parametros.get('plano') || ''
 
   const [versaoTermos, setVersaoTermos] = useState('')
   // Etapa 1 guardada até a etapa 2 concluir
   const [contaPendente, setContaPendente] = useState(null)
   const [erroNegocio, setErroNegocio] = useState(null)
+  // Conta e negócio criados: falta só o plano
+  const [cadastrado, setCadastrado] = useState(false)
   const [documentoAberto, setDocumentoAberto] = useState(null)
 
   useEffect(() => {
@@ -49,7 +56,8 @@ function Cadastro() {
         aceites: contaPendente.aceites,
       })
       entrar(resposta.data)
-      navigate(rotaInicialPorPerfil(resposta.data.usuario), { replace: true, state: { boasVindas: true } })
+      setCadastrado(true)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     } catch (erro) {
       // Erro na conta (ex.: e-mail duplicado) volta para a etapa 1 com a mensagem
       const errosConta = erro.data?.errors?.filter((e) => e.campo.startsWith('conta.'))
@@ -63,7 +71,9 @@ function Cadastro() {
     }
   }
 
-  const etapaNegocio = Boolean(contaPendente)
+  const etapaNegocio = Boolean(contaPendente) && !cadastrado
+  const etapaConta = !contaPendente && !cadastrado
+  const classeEtapa = (ativa, feita) => (ativa ? 'cadastro__etapa--ativa' : feita ? 'cadastro__etapa--feita' : '')
 
   return (
     <>
@@ -71,10 +81,10 @@ function Cadastro() {
         <div className="container">
           <Voltar para="/" rotulo="Início" />
           <span className="pagina-cabecalho__marca">Criar conta</span>
-          <h1>Quero publicar meu negócio</h1>
+          <h1>Quero divulgar meu negócio</h1>
           <p>
-            Cadastre sua loja, serviço ou produção e apareça na vitrine do bairro. Leva menos de dois
-            minutos, sem taxa de cadastro e sem comissão.
+            Crie sua conta e cadastre seu negócio. Para publicar na plataforma, escolha um dos planos
+            mensais: Essencial ou Destaque.
           </p>
         </div>
       </header>
@@ -82,11 +92,14 @@ function Cadastro() {
       <section className="container secao cadastro">
         <div className="cadastro__principal">
           <ol className="cadastro__etapas" aria-label="Etapas do cadastro">
-            <li className={!etapaNegocio ? 'cadastro__etapa--ativa' : 'cadastro__etapa--feita'}>
+            <li className={classeEtapa(etapaConta, !etapaConta)}>
               <span>1</span> Sua conta
             </li>
-            <li className={etapaNegocio ? 'cadastro__etapa--ativa' : ''}>
+            <li className={classeEtapa(etapaNegocio, cadastrado)}>
               <span>2</span> Seu negócio
+            </li>
+            <li className={classeEtapa(cadastrado, false)}>
+              <span>3</span> Plano e pagamento
             </li>
           </ol>
 
@@ -97,10 +110,10 @@ function Cadastro() {
           )}
 
           <div className="cadastro__formulario">
-            {!etapaNegocio && (
+            {etapaConta && (
               <ContaForm
                 onSubmit={guardarConta}
-                textoBotao="Continuar para o negócio"
+                textoBotao="Continuar"
                 versaoTermos={versaoTermos}
                 valoresIniciais={contaPendente}
               />
@@ -121,9 +134,18 @@ function Cadastro() {
                   }}
                   onSubmit={cadastrarEmpreendedor}
                   onCancelar={() => setContaPendente(null)}
-                  textoEnviar="Concluir cadastro"
+                  textoEnviar="Continuar"
                   textoCancelar="Voltar"
                 />
+              </>
+            )}
+
+            {cadastrado && (
+              <>
+                <StatusMessage tipo="sucesso" titulo="Conta e negócio cadastrados">
+                  <p>Falta pouco: escolha o plano e conclua o pagamento para publicar seu negócio na vitrine.</p>
+                </StatusMessage>
+                <EscolhaDePlano planoInicial={planoPedido} />
               </>
             )}
           </div>

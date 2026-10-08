@@ -1,5 +1,8 @@
 // Planos de assinatura do VitrineRondon.
 //
+// Para divulgar um negócio, um destes planos é obrigatório: sem assinatura em
+// vigor, o negócio fica guardado como rascunho, fora da vitrine.
+//
 // É a fonte única dos planos: o seed completo e o "npm run planos:semear" (que
 // roda também em produção, sem apagar nada) leem daqui. Mudar preço, texto ou
 // criar um plano novo é editar esta lista e rodar o comando de novo.
@@ -12,7 +15,7 @@ export const PLANOS = [
   {
     nome: 'ESSENCIAL',
     titulo: 'VitrineRondon Essencial',
-    chamada: 'Tenha seu negócio presente no VitrineRondon.',
+    chamada: 'Seu negócio publicado no VitrineRondon.',
     precoCentavos: 5000,
     ciclo: 'MONTHLY',
     destaque: false,
@@ -20,11 +23,12 @@ export const PLANOS = [
     divulgacao: false,
     ordem: 1,
     descricao: [
+      'Publicação do seu negócio na vitrine enquanto a assinatura estiver em dia',
       'Perfil comercial completo, com nome, descrição e categoria',
       'Endereço, localização no mapa e horário de atendimento',
       'Botão direto para o seu WhatsApp e links das redes sociais',
       'Fotos, produtos e serviços no seu catálogo',
-      'Participação na busca e nas listas da vitrine pelos critérios padrão',
+      'Presença na busca, nas categorias e no mapa, pelos critérios padrão',
       'Recebimento de mensagens pela central de contato',
       'Estatísticas básicas do seu perfil, com os totais do mês',
     ].join('\n'),
@@ -42,7 +46,7 @@ export const PLANOS = [
     descricao: [
       'Tudo o que o plano Essencial oferece',
       'Selo "Negócio em Destaque" no card, no perfil e nos resultados de busca',
-      'Prioridade na ordem das listas, sem tirar ninguém da vitrine',
+      'Prioridade na ordem das listas, sem tirar os demais negócios publicados',
       'Espaço na seção "Negócios em Destaque" da página inicial',
       'Possibilidade de participar de campanhas e da divulgação nas redes oficiais, conforme o calendário editorial',
       'Estatísticas ampliadas: evolução por dia, por produto e impressões em destaque',

@@ -21,7 +21,8 @@ function PainelDivulgacao({ negocio, aoAtualizar }) {
   const divulgacoes = consulta.dados?.data ?? []
   const [salvando, setSalvando] = useState(false)
   const [erro, setErro] = useState(null)
-  const temDestaque = negocio.planoAtual === 'DESTAQUE' || negocio.emDestaque
+  // Benefício do Destaque em vigor: com o negócio publicado
+  const temDestaque = negocio.situacao === 'ATIVO' && (negocio.planoAtual === 'DESTAQUE' || negocio.emDestaque)
 
   const alterarConsentimento = async (evento) => {
     const autoriza = evento.target.checked

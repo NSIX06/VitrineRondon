@@ -27,7 +27,7 @@ Esta Política descreve como o VitrineRondon coleta, utiliza, armazena e protege
 
 **Dados de assinatura (empreendedor que contrata um plano):**
 
-- Plano contratado, status e datas da assinatura (início, próxima cobrança, cancelamento)
+- Plano contratado, status e datas da assinatura (início, próxima cobrança, fim do período pago, cancelamento)
 - Identificadores da cobrança no intermediador de pagamento
 - Os dados do cartão são informados diretamente ao AbacatePay e não são armazenados pelo VitrineRondon
 
@@ -88,6 +88,8 @@ Para segurança e rastreabilidade, registramos ações relevantes (acessos, cada
 ## 8. Retenção
 
 Mantemos seus dados enquanto sua conta estiver ativa e pelo período necessário para cumprir finalidades legais, de segurança e de auditoria. Após esse período, os dados são eliminados ou anonimizados, salvo obrigação legal de retenção.
+
+O fim de uma assinatura não apaga a conta nem o negócio: os dados do negócio, os produtos, as fotos e as estatísticas continuam guardados enquanto a conta existir, fora da vitrine pública, para que o empreendedor possa voltar a publicar. Para apagá-los, basta pedir o encerramento da conta.
 
 ## 9. Seus direitos (art. 18 da LGPD)
 

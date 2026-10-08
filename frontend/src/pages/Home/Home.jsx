@@ -18,7 +18,7 @@ const LIMITE_EMPREENDEDORES = 3
 
 const funcionalidades = [
   { icone: 'storefront', texto: 'Página simples por empreendedor' },
-  { icone: 'money_off', texto: 'Sem taxa de cadastro' },
+  { icone: 'travel_explore', texto: 'Navegação livre, sem precisar de conta' },
   { icone: 'handshake', texto: 'Sem comissão por venda feita pela plataforma' },
   { icone: 'search', texto: 'Busca por segmento e bairro' },
   { icone: 'chat', texto: 'Contato direto com o cliente pelo WhatsApp' },
@@ -301,7 +301,8 @@ function Home() {
               </li>
               <li>
                 <Icone nome="check_circle" tamanho={20} />
-                Sem taxa de cadastro, conforme a política definida para o projeto.
+                Navegar é gratuito. Para divulgar um negócio, o empreendedor assina um plano mensal
+                (Essencial ou Destaque).
               </li>
               <li>
                 <Icone nome="check_circle" tamanho={20} />

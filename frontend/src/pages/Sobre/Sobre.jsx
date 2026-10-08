@@ -47,7 +47,7 @@ const problemas = [
 ]
 
 const passos = [
-  { titulo: '1. Cadastro', texto: 'Sem cartão de crédito, sem CNPJ obrigatório, sem mensalidade.' },
+  { titulo: '1. Cadastro e plano', texto: 'Conta, dados do negócio e um plano mensal, sem CNPJ obrigatório.' },
   { titulo: '2. Vitrine', texto: 'Páginas por negócio, com busca por nome, categoria e bairro.' },
   { titulo: '3. Contato', texto: 'O cliente clica e cai direto na conversa de WhatsApp de quem faz.' },
 ]
@@ -171,13 +171,14 @@ function Sobre() {
           <section className="sobre__bloco">
             <div className="sobre__bloco-rotulo">
               <span>02 // Arquitetura da solução</span>
-              <span className="sobre__bloco-meta">Sem pedágio</span>
+              <span className="sobre__bloco-meta">Sem comissão</span>
             </div>
             <h2>O que a vitrine faz</h2>
             <p className="sobre__paragrafo-grande">
-              O VitrineRondon é um catálogo público, com cadastro gratuito. O empreendedor cadastra o negócio,
-              os produtos ou serviços e o número de WhatsApp. Quem mora na cidade navega pelas
-              categorias, encontra o que precisa e fala direto com quem faz.
+              O VitrineRondon é um catálogo público: navegar é gratuito e não pede conta. O empreendedor
+              cadastra o negócio, os produtos ou serviços e o número de WhatsApp e assina um plano mensal
+              para publicá-los. Quem mora na cidade navega pelas categorias, encontra o que precisa e
+              fala direto com quem faz.
             </p>
             <ol className="sobre__passos">
               {passos.map((passo) => (
@@ -293,10 +294,10 @@ function Sobre() {
               <Icone nome="verified_user" tamanho={22} />
               Garantia comunitária
             </span>
-            <h3>100% sem comissões nem taxas bancárias</h3>
+            <h3>Sem comissão sobre as vendas</h3>
             <p>
-              A plataforma não cobra taxa de intermediação nem retém valores das vendas, pois todo
-              negócio é fechado diretamente no WhatsApp.
+              Além do plano mensal, a plataforma não cobra taxa de intermediação nem retém valores das
+              vendas, pois todo negócio é fechado diretamente no WhatsApp.
             </p>
             <div className="sobre__nota">
               <strong>Sem retenção:</strong> o dinheiro do cliente vai integralmente para quem presta
