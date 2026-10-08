@@ -6,7 +6,7 @@
 
 /* Cabeçalho */
 .planos-topo {
-  background: var(--linhas-escuras), var(--cor-papel);
+  background: var(--linhas-escuras), var(--cor-ceu);
   border-bottom: var(--borda);
 }
 

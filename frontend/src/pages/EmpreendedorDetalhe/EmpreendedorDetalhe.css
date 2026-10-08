@@ -857,8 +857,7 @@
    Localização: faixa larga com o texto e o mapa grande
    -------------------------------------------------------------------------- */
 .detalhe__local-faixa {
-  border-top: var(--borda);
-  background: var(--cor-superficie-baixa);
+  background: var(--cor-branco);
 }
 
 .detalhe__local {

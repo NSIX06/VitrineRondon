@@ -12,6 +12,7 @@
   --cor-anil-escuro: #0f2557;
   --cor-anil-medio: #1e3a8a;
   --cor-anil-claro: #dbe4ff;
+  --cor-ceu: #e4ebfb;
   --cor-ouro: #fbbf24;
   --cor-mostarda: #f59e0b;
   --cor-ouro-claro: #fde68a;
@@ -664,6 +665,70 @@ h2:not(.detalhe__horarios-titulo, .visualmente-oculto) {
   --letra-luz: var(--cor-ouro);
   --letra-sombra: #e09a0e;
   --letra-contorno: var(--cor-contorno);
+}
+
+/* ==========================================================================
+   Faixas de cor: dão ritmo às páginas, alternando com o papel. Cada página
+   abre com uma cor (anil, ouro, céu ou branco) e as seções do meio trocam de
+   fundo, para o bege não se repetir de ponta a ponta.
+   ========================================================================== */
+.faixa {
+  border-bottom: var(--borda);
+}
+
+.faixa:not(:first-child) {
+  border-top: var(--borda);
+}
+
+.faixa--branca {
+  background: var(--cor-branco);
+}
+
+.faixa--ceu {
+  background: var(--linhas-escuras), var(--cor-ceu);
+}
+
+.faixa--ouro {
+  background: var(--linhas-escuras), var(--cor-ouro);
+}
+
+.faixa--ouro .pagina-cabecalho__marca::before {
+  background: var(--cor-branco);
+}
+
+/* Anil: títulos brancos (as cores do letreiro descem por herança) */
+.faixa--anil {
+  --letra-luz: #ffffff;
+  --letra-sombra: #dfe4f3;
+  background: var(--linhas-claras), var(--cor-anil);
+  color: var(--cor-branco);
+}
+
+.faixa--anil p,
+.pagina-cabecalho.faixa--anil p {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.faixa--anil .pagina-cabecalho__marca,
+.faixa--anil :is(.voltar, .avancar:enabled) {
+  color: var(--cor-ouro);
+}
+
+.faixa--anil .voltar:hover,
+.faixa--anil .avancar:enabled:hover {
+  color: var(--cor-anil);
+}
+
+.faixa--anil .avancar:disabled {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.pagina-cabecalho.faixa {
+  padding-block: var(--esp-6);
+}
+
+.pagina-cabecalho.faixa--ouro p {
+  color: var(--cor-tinta);
 }
 
 /* Rótulo pequeno em caixa alta, usado em etiquetas e cabeçalhos de tabela */

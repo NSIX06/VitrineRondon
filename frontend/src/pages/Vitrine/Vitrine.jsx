@@ -41,7 +41,7 @@ function Vitrine() {
 
   return (
     <>
-      <header className="pagina-cabecalho">
+      <header className="pagina-cabecalho faixa faixa--anil">
         <div className="container">
           <Voltar para="/" rotulo="Início" />
           <span className="pagina-cabecalho__marca">Catálogo comunitário</span>

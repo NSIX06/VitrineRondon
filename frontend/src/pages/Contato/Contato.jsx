@@ -36,7 +36,7 @@ function Contato() {
 
   return (
     <>
-      <header className="pagina-cabecalho">
+      <header className="pagina-cabecalho faixa faixa--anil">
         <div className="container">
           <Voltar para="/" rotulo="Início" />
           <span className="pagina-cabecalho__marca">Central de ajuda</span>

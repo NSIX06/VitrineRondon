@@ -86,17 +86,19 @@ const ficha = [
 function Sobre() {
   return (
     <>
-      <header className="container sobre__cabecalho">
-        <Voltar para="/" rotulo="Início" />
-        <div className="sobre__eyebrow">
-          <span className="sobre__eyebrow-marca" />
-          <span className="sobre__eyebrow-texto">Manifesto e documentação pública</span>
-          <span className="sobre__eyebrow-sep">/</span>
-          <span className="sobre__eyebrow-meta">Caderno 01</span>
+      <header className="faixa faixa--ceu">
+        <div className="container sobre__cabecalho">
+          <Voltar para="/" rotulo="Início" />
+          <div className="sobre__eyebrow">
+            <span className="sobre__eyebrow-marca" />
+            <span className="sobre__eyebrow-texto">Manifesto e documentação pública</span>
+            <span className="sobre__eyebrow-sep">/</span>
+            <span className="sobre__eyebrow-meta">Caderno 01</span>
+          </div>
+          <h1>Sobre o projeto.</h1>
+          <p>Por que o VitrineRondon existe e para quem ele foi feito.</p>
+          <div className="sobre__regua" />
         </div>
-        <h1>Sobre o projeto.</h1>
-        <p>Por que o VitrineRondon existe e para quem ele foi feito.</p>
-        <div className="sobre__regua" />
       </header>
 
       <div className="container sobre">

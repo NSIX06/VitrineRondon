@@ -105,146 +105,148 @@ function ProdutoDetalhe() {
         </div>
       </div>
 
-      <section className="container item__principal">
-        <div className="item__coluna">
-          <div className="item__foto">
-            <img decoding="async" src={urlImagem(imagem) || imagemPadrao} alt={nome} onError={trocarPorPadrao} />
-            <div className="item__foto-tags">
-              <TagTipo tipo={tipo} />
-              {!disponivel && <Tag variante="alerta">Indisponível</Tag>}
-            </div>
-            {local && (
-              <span className="item__foto-local">
-                <Icone nome="location_on" tamanho={14} />
-                {empreendedor.bairro || empreendedor.cidade}
-              </span>
-            )}
-          </div>
-
-          {/* O que o VitrineRondon garante (e o que não faz): sem promessa de resultado */}
-          <div className="item__garantias">
-            <h2 className="item__garantias-titulo">
-              <Icone nome="shield_with_heart" tamanho={20} />
-              Como funciona o pedido
-            </h2>
-            <ul>
-              <li>
-                <span className="item__garantias-marca">
-                  <Icone nome="check" tamanho={16} />
-                </span>
-                <span>
-                  <strong>Negociação direta com quem faz</strong>
-                  Você combina prazo, entrega e forma de pagamento com {primeiroNome}, sem intermediários.
-                </span>
-              </li>
-              <li>
-                <span className="item__garantias-marca item__garantias-marca--ouro">
-                  <Icone nome="check" tamanho={16} />
-                </span>
-                <span>
-                  <strong>Sem comissão sobre a venda</strong>
-                  O VitrineRondon não fica com parte do valor: o que você paga vai para o negócio.
-                </span>
-              </li>
-              <li>
-                <span className="item__garantias-marca">
-                  <Icone nome="check" tamanho={16} />
-                </span>
-                <span>
-                  <strong>Atendimento em {local || 'Rondonópolis'}</strong>
-                  Confirme pelo WhatsApp se {primeiroNome} atende o seu bairro.
-                </span>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="item__lado">
-          <div className="item__ficha">
-            <div className="item__ficha-topo">
-              <span className="pagina-cabecalho__marca">{empreendedor.categoria}</span>
-            </div>
-            <h1 className="item__nome">{nome}</h1>
-            {descricao && <p className="item__descricao">{descricao}</p>}
-
-            <div className="item__preco-caixa">
-              <div className="item__preco-linha">
-                <span className="item__a-partir">{ehServico ? 'A partir de' : 'Preço'}</span>
-                <span className="item__preco">{formatarPreco(preco)}</span>
+      <div className="faixa faixa--ceu">
+        <section className="container item__principal">
+          <div className="item__coluna">
+            <div className="item__foto">
+              <img decoding="async" src={urlImagem(imagem) || imagemPadrao} alt={nome} onError={trocarPorPadrao} />
+              <div className="item__foto-tags">
+                <TagTipo tipo={tipo} />
+                {!disponivel && <Tag variante="alerta">Indisponível</Tag>}
               </div>
-              <p className="item__preco-nota">
-                {ehServico
-                  ? `Valor de referência. O preço final depende do serviço e é combinado direto com ${primeiroNome}.`
-                  : `Preço informado pelo negócio. Entrega ou retirada são combinadas pelo WhatsApp.`}
+              {local && (
+                <span className="item__foto-local">
+                  <Icone nome="location_on" tamanho={14} />
+                  {empreendedor.bairro || empreendedor.cidade}
+                </span>
+              )}
+            </div>
+
+            {/* O que o VitrineRondon garante (e o que não faz): sem promessa de resultado */}
+            <div className="item__garantias">
+              <h2 className="item__garantias-titulo">
+                <Icone nome="shield_with_heart" tamanho={20} />
+                Como funciona o pedido
+              </h2>
+              <ul>
+                <li>
+                  <span className="item__garantias-marca">
+                    <Icone nome="check" tamanho={16} />
+                  </span>
+                  <span>
+                    <strong>Negociação direta com quem faz</strong>
+                    Você combina prazo, entrega e forma de pagamento com {primeiroNome}, sem intermediários.
+                  </span>
+                </li>
+                <li>
+                  <span className="item__garantias-marca item__garantias-marca--ouro">
+                    <Icone nome="check" tamanho={16} />
+                  </span>
+                  <span>
+                    <strong>Sem comissão sobre a venda</strong>
+                    O VitrineRondon não fica com parte do valor: o que você paga vai para o negócio.
+                  </span>
+                </li>
+                <li>
+                  <span className="item__garantias-marca">
+                    <Icone nome="check" tamanho={16} />
+                  </span>
+                  <span>
+                    <strong>Atendimento em {local || 'Rondonópolis'}</strong>
+                    Confirme pelo WhatsApp se {primeiroNome} atende o seu bairro.
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="item__lado">
+            <div className="item__ficha">
+              <div className="item__ficha-topo">
+                <span className="pagina-cabecalho__marca">{empreendedor.categoria}</span>
+              </div>
+              <h1 className="item__nome">{nome}</h1>
+              {descricao && <p className="item__descricao">{descricao}</p>}
+
+              <div className="item__preco-caixa">
+                <div className="item__preco-linha">
+                  <span className="item__a-partir">{ehServico ? 'A partir de' : 'Preço'}</span>
+                  <span className="item__preco">{formatarPreco(preco)}</span>
+                </div>
+                <p className="item__preco-nota">
+                  {ehServico
+                    ? `Valor de referência. O preço final depende do serviço e é combinado direto com ${primeiroNome}.`
+                    : `Preço informado pelo negócio. Entrega ou retirada são combinadas pelo WhatsApp.`}
+                </p>
+              </div>
+
+              <Button
+                href={linkDoItem(empreendedor.whatsapp, empreendedor.nomeNegocio, nome)}
+                variante="whatsapp"
+                onClick={pedir}
+                className="item__pedir"
+              >
+                <Icone nome="chat" tamanho={20} />
+                {ehServico ? 'Pedir orçamento no WhatsApp' : 'Pedir pelo WhatsApp'}
+              </Button>
+              <p className="item__pedir-dica">
+                <Icone nome="info" tamanho={15} />
+                Abre a conversa com {primeiroNome} já com o nome deste {ehServico ? 'serviço' : 'produto'}.
               </p>
             </div>
 
-            <Button
-              href={linkDoItem(empreendedor.whatsapp, empreendedor.nomeNegocio, nome)}
-              variante="whatsapp"
-              onClick={pedir}
-              className="item__pedir"
-            >
-              <Icone nome="chat" tamanho={20} />
-              {ehServico ? 'Pedir orçamento no WhatsApp' : 'Pedir pelo WhatsApp'}
-            </Button>
-            <p className="item__pedir-dica">
-              <Icone nome="info" tamanho={15} />
-              Abre a conversa com {primeiroNome} já com o nome deste {ehServico ? 'serviço' : 'produto'}.
-            </p>
-          </div>
-
-          {/* Quem oferece: cartão do negócio com o essencial e o caminho para o perfil */}
-          <div className="item__negocio">
-            {destaque && (
-              <span className="item__negocio-fita">
-                <Icone nome="star" tamanho={14} />
-                Negócio Destaque
-              </span>
-            )}
-            <div className="item__negocio-topo">
-              <span className="item__negocio-rotulo">Quem oferece este {ehServico ? 'serviço' : 'produto'}</span>
-              <span className={`item__situacao ${atendeAgora ? 'item__situacao--aberto' : ''}`}>
-                <span className="item__ponto" aria-hidden="true" />
-                {atendeAgora ? 'Aberto agora' : 'Fechado agora'}
-                {!situacao.semHorario && <span className="item__situacao-quando">· {detalheDaSituacao(situacao)}</span>}
-              </span>
-            </div>
-            <div className="item__negocio-corpo">
-              <img
-                className="item__negocio-foto"
-                decoding="async"
-                src={urlImagem(empreendedor.fotoUrl) || imagemPadrao}
-                alt=""
-                onError={trocarPorPadrao}
-              />
-              <div className="item__negocio-texto">
-                <Link to={perfil} className="item__negocio-nome">
-                  {empreendedor.nomeNegocio}
-                </Link>
-                <span className="item__negocio-meta">
-                  {empreendedor.responsavel}
-                  {local ? ` · ${local}` : ''}
+            {/* Quem oferece: cartão do negócio com o essencial e o caminho para o perfil */}
+            <div className="item__negocio">
+              {destaque && (
+                <span className="item__negocio-fita">
+                  <Icone nome="star" tamanho={14} />
+                  Negócio Destaque
                 </span>
-                <span className="item__negocio-selos">
-                  <Tag variante={destaque ? 'ouro' : 'servico'}>{empreendedor.categoria}</Tag>
-                  {novo && <SeloNovo compacto claro={destaque} />}
+              )}
+              <div className="item__negocio-topo">
+                <span className="item__negocio-rotulo">Quem oferece este {ehServico ? 'serviço' : 'produto'}</span>
+                <span className={`item__situacao ${atendeAgora ? 'item__situacao--aberto' : ''}`}>
+                  <span className="item__ponto" aria-hidden="true" />
+                  {atendeAgora ? 'Aberto agora' : 'Fechado agora'}
+                  {!situacao.semHorario && <span className="item__situacao-quando">· {detalheDaSituacao(situacao)}</span>}
                 </span>
               </div>
-            </div>
-            <div className="item__negocio-rodape">
-              <span>
-                {itensDoNegocio.length > 0 &&
-                  `${itensDoNegocio.length} ${itensDoNegocio.length === 1 ? 'item' : 'itens'} na vitrine`}
-              </span>
-              <Link to={perfil} className="item__negocio-perfil">
-                Ver o perfil completo
-                <Icone nome="arrow_forward" tamanho={18} />
-              </Link>
+              <div className="item__negocio-corpo">
+                <img
+                  className="item__negocio-foto"
+                  decoding="async"
+                  src={urlImagem(empreendedor.fotoUrl) || imagemPadrao}
+                  alt=""
+                  onError={trocarPorPadrao}
+                />
+                <div className="item__negocio-texto">
+                  <Link to={perfil} className="item__negocio-nome">
+                    {empreendedor.nomeNegocio}
+                  </Link>
+                  <span className="item__negocio-meta">
+                    {empreendedor.responsavel}
+                    {local ? ` · ${local}` : ''}
+                  </span>
+                  <span className="item__negocio-selos">
+                    <Tag variante={destaque ? 'ouro' : 'servico'}>{empreendedor.categoria}</Tag>
+                    {novo && <SeloNovo compacto claro={destaque} />}
+                  </span>
+                </div>
+              </div>
+              <div className="item__negocio-rodape">
+                <span>
+                  {itensDoNegocio.length > 0 &&
+                    `${itensDoNegocio.length} ${itensDoNegocio.length === 1 ? 'item' : 'itens'} na vitrine`}
+                </span>
+                <Link to={perfil} className="item__negocio-perfil">
+                  Ver o perfil completo
+                  <Icone nome="arrow_forward" tamanho={18} />
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
 
       {outros.length > 0 && (
         <section className="item__mais" aria-labelledby="titulo-mais">

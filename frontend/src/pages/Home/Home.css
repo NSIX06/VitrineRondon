@@ -135,6 +135,7 @@
 
 /* Contadores com barra à esquerda */
 .numeros {
+  background: var(--cor-branco);
   border-bottom: var(--borda);
   padding-block: var(--esp-7);
 }
@@ -231,7 +232,7 @@
   border: var(--borda);
   border-radius: var(--raio);
   box-shadow: var(--sombra-dura);
-  background: var(--cor-superficie-baixa);
+  background: var(--cor-branco);
   padding: var(--esp-7);
 }
 
@@ -397,6 +398,7 @@
   border: var(--borda);
   border-radius: var(--raio-md);
   box-shadow: 3px 3px 0 0 var(--cor-contorno);
+  color: var(--cor-tinta);
   font-weight: 600;
   font-size: var(--texto-sm);
 }

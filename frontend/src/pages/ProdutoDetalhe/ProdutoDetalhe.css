@@ -385,8 +385,7 @@
 
 /* Mais itens do negócio */
 .item__mais {
-  background: var(--cor-superficie-media);
-  border-top: var(--borda);
+  background: var(--cor-papel);
 }
 
 .item__mais-topo {

@@ -77,7 +77,7 @@ function Cadastro() {
 
   return (
     <>
-      <header className="pagina-cabecalho">
+      <header className="pagina-cabecalho faixa faixa--ceu">
         <div className="container">
           <Voltar para="/" rotulo="Início" />
           <span className="pagina-cabecalho__marca">Criar conta</span>

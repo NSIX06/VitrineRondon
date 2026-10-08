@@ -217,22 +217,24 @@ function Home() {
         </>
       )}
 
-      <section className="container secao" id="o-que-fazemos">
-        <div className="secao__cabecalho">
-          <div>
-            <span className="pagina-cabecalho__marca">O que fazemos</span>
-            <h2>Sua vitrine, sem intermediário</h2>
+      <div className="faixa faixa--anil">
+        <section className="container secao" id="o-que-fazemos">
+          <div className="secao__cabecalho">
+            <div>
+              <span className="pagina-cabecalho__marca">O que fazemos</span>
+              <h2>Sua vitrine, sem intermediário</h2>
+            </div>
           </div>
-        </div>
-        <ul className="funcionalidades">
-          {funcionalidades.map((item) => (
-            <li key={item.texto} className="funcionalidades__item">
-              <Icone nome={item.icone} tamanho={22} />
-              <span>{item.texto}</span>
-            </li>
-          ))}
-        </ul>
-      </section>
+          <ul className="funcionalidades">
+            {funcionalidades.map((item) => (
+              <li key={item.texto} className="funcionalidades__item">
+                <Icone nome={item.icone} tamanho={22} />
+                <span>{item.texto}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </div>
 
       <section className="container secao" id="como-funciona">
         <div className="como-funciona">

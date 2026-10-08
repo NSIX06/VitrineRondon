@@ -41,7 +41,7 @@ function Empreendedores() {
 
   return (
     <>
-      <header className="pagina-cabecalho">
+      <header className="pagina-cabecalho faixa faixa--ouro">
         <div className="container">
           <Voltar para="/" rotulo="Início" />
           <span className="pagina-cabecalho__marca">Comércio de proximidade</span>
