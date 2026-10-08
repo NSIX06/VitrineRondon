@@ -1,11 +1,17 @@
-.produto-detalhe {
+/* ==========================================================================
+   Página do item (produto ou serviço): foto grande e, ao lado, a ficha com
+   preço e pedido e o cartão de quem oferece. Embaixo, mais itens do negócio.
+   ========================================================================== */
+.item__principal {
   display: grid;
-  grid-template-columns: 6fr 6fr;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
   gap: var(--esp-7);
   align-items: start;
+  padding-block: var(--esp-7) var(--esp-8);
 }
 
-.produto-detalhe__imagem {
+/* Foto */
+.item__foto {
   position: relative;
   aspect-ratio: 4 / 3;
   overflow: hidden;
@@ -15,7 +21,7 @@
   box-shadow: var(--sombra-dura);
 }
 
-.produto-detalhe__imagem img {
+.item__foto img {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -23,7 +29,7 @@
   object-fit: cover;
 }
 
-.produto-detalhe__tags {
+.item__foto-tags {
   position: absolute;
   top: var(--esp-3);
   left: var(--esp-3);
@@ -31,49 +37,79 @@
   gap: var(--esp-2);
 }
 
-.produto-detalhe__info {
+.item__lado {
   display: flex;
   flex-direction: column;
-  gap: var(--esp-4);
+  gap: var(--esp-5);
   min-width: 0;
 }
 
-.produto-detalhe__nome {
+/* Ficha: nome, descrição, preço e o pedido */
+.item__ficha {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  padding: var(--esp-5);
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura);
+}
+
+/* Hachura de nanquim no canto da ficha */
+.item__ficha::after {
+  content: '';
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 40px;
+  height: 15px;
+  background: var(--hachura) no-repeat center / contain;
+  pointer-events: none;
+}
+
+.item__ficha .pagina-cabecalho__marca {
+  margin-bottom: 0;
+}
+
+.item__nome {
   margin: 0;
-  font-size: clamp(28px, 3.6vw, 42px);
+  font-size: clamp(28px, 3.4vw, 40px);
+  line-height: 1.08;
   overflow-wrap: anywhere;
 }
 
-.produto-detalhe__descricao {
+.item__descricao {
   margin: 0;
-  font-size: var(--texto-lg);
+  font-size: var(--texto-md);
   line-height: 1.6;
   color: var(--cor-cinza);
 }
 
-.produto-detalhe__preco-caixa {
+.item__preco-caixa {
+  position: relative;
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: var(--esp-3);
-  position: relative;
-  padding: var(--esp-4);
+  padding: var(--esp-3) var(--esp-4);
   background: var(--cor-ouro);
   border: var(--borda);
-  border-radius: var(--raio);
-  box-shadow: var(--sombra-dura), var(--cel);
+  border-radius: var(--raio-md);
+  box-shadow: var(--sombra-dura-sm), var(--cel);
   transform: rotate(-0.6deg);
 }
 
-.produto-detalhe__a-partir {
+.item__a-partir {
   font-size: var(--texto-xs);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--cor-cinza);
+  color: var(--cor-tinta);
 }
 
-.produto-detalhe__preco {
+.item__preco {
   font-family: var(--fonte-titulo);
   font-size: 34px;
   font-weight: 800;
@@ -81,54 +117,261 @@
   color: var(--cor-anil);
 }
 
-.produto-detalhe__acoes {
-  display: flex;
-  gap: var(--esp-3);
-  flex-wrap: wrap;
+.item__pedir {
+  width: 100%;
+  padding-block: 0.9rem;
 }
 
-.produto-detalhe__acoes .botao {
-  flex: 1 1 220px;
-}
-
-.produto-detalhe__aviso {
-  display: flex;
-  align-items: center;
-  gap: var(--esp-2);
+.item__garantias {
+  list-style: none;
   margin: 0;
-  font-size: var(--texto-sm);
-  color: var(--cor-tinta);
+  padding: var(--esp-3) 0 0;
+  border-top: 2px dashed var(--cor-contorno);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-1) var(--esp-4);
+  font-size: var(--texto-xs);
+  font-weight: 600;
+  color: var(--cor-cinza);
 }
 
-.produto-detalhe__aviso .icone {
+.item__garantias li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.item__garantias .icone {
   color: var(--cor-ouro-escuro);
 }
 
-.produto-detalhe__quem {
-  background: var(--cor-superficie-media);
-  border-block: var(--borda);
+/* Quem oferece: cartão compacto que leva ao perfil */
+.item__negocio {
+  position: relative;
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--esp-3);
+  padding: var(--esp-3);
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura);
+  color: var(--cor-tinta);
+  text-decoration: none;
+  transition: var(--transicao-tecla);
 }
 
-.produto-detalhe__quem-card {
-  max-width: 420px;
+.item__negocio:hover,
+.item__negocio:focus-visible {
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 0 0 var(--cor-contorno);
 }
 
-@media (max-width: 800px) {
-  .produto-detalhe {
-    grid-template-columns: 1fr;
-    gap: var(--esp-5);
-  }
+.item__negocio-foto {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border: var(--borda-fina);
+  border-radius: var(--raio-md);
 }
 
-/* Categoria e selo de destaque lado a lado, quebrando linha se faltar espaço */
-.produto-detalhe__marcas {
+.item__negocio-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.item__negocio-rotulo {
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cor-cinza);
+}
+
+.item__negocio-nome {
+  font-family: var(--fonte-titulo);
+  font-size: var(--texto-xl);
+  line-height: 1.15;
+  color: var(--cor-anil);
+}
+
+.item__negocio-meta {
+  font-size: var(--texto-sm);
+  color: var(--cor-cinza);
+}
+
+.item__negocio-selos {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--esp-3);
-  margin-bottom: var(--esp-2);
+  gap: var(--esp-2);
+  margin-top: 4px;
 }
 
-.produto-detalhe__marcas .pagina-cabecalho__marca {
-  margin-bottom: 0;
+.item__situacao {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 1px 8px;
+  border: var(--borda-fina);
+  border-radius: 999px;
+  background: var(--cor-lacre-fundo);
+  color: var(--cor-lacre-escuro);
+  font-size: var(--texto-xs);
+  font-weight: 700;
+}
+
+.item__situacao--aberto {
+  background: var(--cor-sucesso-fundo);
+  color: var(--cor-sucesso-tinta);
+}
+
+.item__situacao-quando {
+  font-weight: 500;
+}
+
+.item__ponto {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1.5px solid var(--cor-contorno);
+  background: var(--cor-lacre);
+}
+
+.item__situacao--aberto .item__ponto {
+  background: var(--cor-whatsapp);
+}
+
+.item__negocio-ir {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: var(--borda-fina);
+  border-radius: 50%;
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
+  box-shadow: var(--sombra-dura-sm);
+}
+
+/* Mais itens do negócio */
+.item__mais {
+  background: var(--cor-superficie-media);
+  border-top: var(--borda);
+}
+
+.item__mais-topo {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--esp-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--esp-5);
+}
+
+.item__mais-topo h2 {
+  margin: var(--esp-1) 0 0;
+  font-size: var(--texto-3xl);
+}
+
+/* --------------------------------------------------------------------------
+   Item de negócio Destaque: o cartão de quem oferece vira o cartão premium
+   (anil profundo, moldura dourada, nome dourado) e a foto ganha moldura dourada
+   -------------------------------------------------------------------------- */
+.item--destaque .item__foto {
+  box-shadow:
+    inset 0 0 0 3px var(--cor-ouro),
+    6px 6px 0 0 var(--cor-ouro),
+    6px 6px 0 3px var(--cor-contorno);
+}
+
+.item--destaque .item__negocio {
+  background:
+    var(--linhas-claras),
+    linear-gradient(160deg, #1e3a8a 0%, var(--cor-anil-escuro) 72%);
+  color: var(--cor-branco);
+  padding-top: var(--esp-5);
+  box-shadow:
+    inset 0 0 0 3px var(--cor-ouro),
+    6px 6px 0 0 var(--cor-ouro),
+    6px 6px 0 3px var(--cor-contorno);
+}
+
+.item--destaque .item__negocio:hover,
+.item--destaque .item__negocio:focus-visible {
+  box-shadow:
+    inset 0 0 0 3px var(--cor-ouro),
+    3px 3px 0 0 var(--cor-ouro),
+    3px 3px 0 3px var(--cor-contorno);
+}
+
+.item--destaque .item__negocio-foto {
+  border-color: var(--cor-ouro);
+}
+
+.item--destaque .item__negocio-rotulo {
+  color: var(--cor-ouro-claro);
+}
+
+.item--destaque .item__negocio-nome {
+  color: var(--cor-ouro);
+}
+
+.item--destaque .item__negocio-meta {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.item__negocio-fita {
+  position: absolute;
+  top: -14px;
+  right: var(--esp-4);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0.2rem 0.65rem;
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
+  border: var(--borda-fina);
+  border-radius: var(--raio-sm);
+  box-shadow: 2px 2px 0 0 var(--cor-contorno), var(--cel-sm);
+  transform: rotate(2deg);
+  font-size: var(--texto-xs);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 860px) {
+  .item__principal {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--esp-5);
+    padding-block: var(--esp-5) var(--esp-7);
+  }
+}
+
+@media (max-width: 600px) {
+  .item__ficha {
+    padding: var(--esp-4);
+  }
+
+  .item__negocio {
+    grid-template-columns: 56px minmax(0, 1fr);
+  }
+
+  .item__negocio-foto {
+    width: 56px;
+    height: 56px;
+  }
+
+  .item__negocio-ir {
+    display: none;
+  }
+
+  .item__mais-topo h2 {
+    font-size: var(--texto-2xl);
+  }
 }

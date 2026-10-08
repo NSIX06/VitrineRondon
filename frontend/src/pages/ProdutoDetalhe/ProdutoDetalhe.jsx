@@ -1,28 +1,67 @@
 import { useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useConsulta } from '../../hooks/useConsulta'
+import { useRelogio } from '../../hooks/useRelogio'
 import { linkWhatsapp } from '../../services/whatsapp'
+import { detalheDaSituacao, situacaoAtendimento } from '../../services/horarios'
 import Spinner from '../../components/ui/Spinner/Spinner'
 import StatusMessage from '../../components/ui/StatusMessage/StatusMessage'
 import Button from '../../components/ui/Button/Button'
 import Tag from '../../components/ui/Tag/Tag'
 import Icone from '../../components/ui/Icone/Icone'
-import EmpreendedorCard from '../../components/cards/EmpreendedorCard/EmpreendedorCard'
+import ProdutoCard from '../../components/cards/ProdutoCard/ProdutoCard'
 import imagemPadrao from '../../assets/imagem-padrao.svg'
 import { formatarPreco } from '../../services/formatos'
 import TagTipo from '../../components/ui/Tag/TagTipo'
 import SeloNovo from '../../components/ui/SeloNovo/SeloNovo'
 import { ehNovidade } from '../../services/novidades'
+import '../detalhe-migalhas.css'
 import './ProdutoDetalhe.css'
 import Voltar from '../../components/ui/Voltar/Voltar'
 import { urlImagem } from '../../services/imagens'
 import { METRICAS, registrarMetrica } from '../../services/metricas'
-import SeloDestaque from '../../components/ui/SeloDestaque/SeloDestaque'
+
+/** Quantos outros itens do mesmo negócio aparecem embaixo */
+const OUTROS_ITENS = 3
 
 function linkDoItem(numero, nomeNegocio, nomeItem) {
   return linkWhatsapp(
     numero,
     `Olá! Vi "${nomeItem}" do ${nomeNegocio} no VitrineRondon e gostaria de mais informações.`
+  )
+}
+
+const trocarPorPadrao = (evento) => {
+  evento.currentTarget.src = imagemPadrao
+}
+
+/** Outros itens do mesmo negócio, sem o que está aberto */
+function MaisDoNegocio({ empreendedor, itemAtual }) {
+  const consulta = useConsulta(`/produtos?empreendedorId=${empreendedor.id}`)
+  const outros = (consulta.dados?.data ?? []).filter((p) => p.id !== itemAtual).slice(0, OUTROS_ITENS)
+  if (outros.length === 0) return null
+
+  return (
+    <section className="item__mais" aria-labelledby="titulo-mais">
+      <div className="container secao">
+        <div className="item__mais-topo">
+          <div>
+            <span className="pagina-cabecalho__marca">Do mesmo negócio</span>
+            <h2 id="titulo-mais">Mais de {empreendedor.nomeNegocio}</h2>
+          </div>
+          <Button to={`/empreendedores/${empreendedor.id}`} variante="secundario" tamanho="sm">
+            Ver o catálogo completo
+          </Button>
+        </div>
+        <ul className="grade-cards">
+          {outros.map((produto) => (
+            <li key={produto.id}>
+              <ProdutoCard produto={produto} />
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
   )
 }
 
@@ -35,6 +74,8 @@ function ProdutoDetalhe() {
   const { carregando, erro } = consulta
   const produtoId = produto?.id
   const negocioId = produto?.empreendedor?.id
+  // O selo de atendimento troca sozinho quando o horário começa ou termina
+  const agora = useRelogio()
 
   // Uma visualização por item aberto (o servidor ignora repetição e o dono)
   useEffect(() => {
@@ -62,9 +103,15 @@ function ProdutoDetalhe() {
 
   const { nome, descricao, preco, tipo, imagem, disponivel, empreendedor } = produto
   const ehServico = tipo === 'servico'
+  const destaque = empreendedor.emDestaque
+  const novo = ehNovidade(empreendedor.publicadoDesde)
+  const situacao = situacaoAtendimento(empreendedor.horarios ?? [], agora)
+  const atendeAgora = empreendedor.ativo !== false && situacao.aberto
+  const local = [empreendedor.bairro, empreendedor.cidade].filter(Boolean).join(', ')
+  const pedir = () => registrarMetrica(empreendedor.id, METRICAS.CLIQUE_WHATSAPP)
 
   return (
-    <>
+    <div className={`item ${destaque ? 'item--destaque' : ''}`}>
       <div className="detalhe__migalhas">
         <div className="container detalhe__migalhas-conteudo">
           <Voltar para="/vitrine" rotulo="Ver a vitrine" />
@@ -78,74 +125,88 @@ function ProdutoDetalhe() {
         </div>
       </div>
 
-      <section className="container secao produto-detalhe">
-        <div className="produto-detalhe__imagem">
-          <img
-            decoding="async"
-            src={urlImagem(imagem) || imagemPadrao}
-            alt={nome}
-            onError={(evento) => {
-              evento.currentTarget.src = imagemPadrao
-            }}
-          />
-          <div className="produto-detalhe__tags">
+      <section className="container item__principal">
+        <div className="item__foto">
+          <img decoding="async" src={urlImagem(imagem) || imagemPadrao} alt={nome} onError={trocarPorPadrao} />
+          <div className="item__foto-tags">
             <TagTipo tipo={tipo} />
             {!disponivel && <Tag variante="alerta">Indisponível</Tag>}
           </div>
         </div>
 
-        <div className="produto-detalhe__info">
-          <div className="produto-detalhe__marcas">
+        <div className="item__lado">
+          <div className="item__ficha">
             <span className="pagina-cabecalho__marca">{empreendedor.categoria}</span>
-            {empreendedor.emDestaque && <SeloDestaque />}
-            {ehNovidade(empreendedor.publicadoDesde) && <SeloNovo />}
-          </div>
-          <h1 className="produto-detalhe__nome">{nome}</h1>
-          {descricao && <p className="produto-detalhe__descricao">{descricao}</p>}
+            <h1 className="item__nome">{nome}</h1>
+            {descricao && <p className="item__descricao">{descricao}</p>}
 
-          <div className="produto-detalhe__preco-caixa">
-            <span className="produto-detalhe__a-partir">{ehServico ? 'A partir de' : 'Preço'}</span>
-            <span className="produto-detalhe__preco">{formatarPreco(preco)}</span>
-          </div>
+            <div className="item__preco-caixa">
+              <span className="item__a-partir">{ehServico ? 'A partir de' : 'Preço'}</span>
+              <span className="item__preco">{formatarPreco(preco)}</span>
+            </div>
 
-          <div className="produto-detalhe__acoes">
             <Button
               href={linkDoItem(empreendedor.whatsapp, empreendedor.nomeNegocio, nome)}
               variante="whatsapp"
-              onClick={() => registrarMetrica(empreendedor.id, METRICAS.CLIQUE_WHATSAPP)}
+              onClick={pedir}
+              className="item__pedir"
             >
               <Icone nome="chat" tamanho={20} />
               {ehServico ? 'Pedir orçamento no WhatsApp' : 'Pedir pelo WhatsApp'}
             </Button>
-            <Button to={`/empreendedores/${empreendedor.id}`} variante="secundario">
-              Ver o negócio
-            </Button>
+
+            <ul className="item__garantias">
+              <li>
+                <Icone nome="handshake" tamanho={16} />
+                Pedido combinado direto com quem faz
+              </li>
+              <li>
+                <Icone nome="payments" tamanho={16} />
+                Sem comissão do VitrineRondon
+              </li>
+            </ul>
           </div>
 
-          <p className="produto-detalhe__aviso">
-            <Icone nome="handshake" tamanho={16} />
-            O pedido é combinado direto com o empreendedor. O VitrineRondon não cobra comissão.
-          </p>
+          {/* Quem oferece: cartão compacto do negócio, no lugar da seção inteira */}
+          <Link to={`/empreendedores/${empreendedor.id}`} className="item__negocio">
+            {destaque && (
+              <span className="item__negocio-fita">
+                <Icone nome="star" tamanho={14} />
+                Negócio Destaque
+              </span>
+            )}
+            <img
+              className="item__negocio-foto"
+              decoding="async"
+              src={urlImagem(empreendedor.fotoUrl) || imagemPadrao}
+              alt=""
+              onError={trocarPorPadrao}
+            />
+            <span className="item__negocio-texto">
+              <span className="item__negocio-rotulo">Quem oferece</span>
+              <strong className="item__negocio-nome">{empreendedor.nomeNegocio}</strong>
+              <span className="item__negocio-meta">
+                {empreendedor.responsavel}
+                {local ? ` · ${local}` : ''}
+              </span>
+              <span className="item__negocio-selos">
+                <span className={`item__situacao ${atendeAgora ? 'item__situacao--aberto' : ''}`}>
+                  <span className="item__ponto" aria-hidden="true" />
+                  {atendeAgora ? 'Aberto agora' : 'Fechado agora'}
+                  {!situacao.semHorario && <span className="item__situacao-quando">· {detalheDaSituacao(situacao)}</span>}
+                </span>
+                {novo && <SeloNovo compacto claro={destaque} />}
+              </span>
+            </span>
+            <span className="item__negocio-ir" aria-hidden="true">
+              <Icone nome="arrow_forward" tamanho={20} />
+            </span>
+          </Link>
         </div>
       </section>
 
-      <section className="produto-detalhe__quem">
-        <div className="container secao">
-          <div className="secao__cabecalho">
-            <div>
-              <h2>Quem oferece</h2>
-              <p className="secao__subtitulo">
-                {empreendedor.bairro ? `${empreendedor.bairro}, ` : ''}
-                {empreendedor.cidade}
-              </p>
-            </div>
-          </div>
-          <div className="produto-detalhe__quem-card">
-            <EmpreendedorCard empreendedor={empreendedor} />
-          </div>
-        </div>
-      </section>
-    </>
+      <MaisDoNegocio empreendedor={empreendedor} itemAtual={produto.id} />
+    </div>
   )
 }
 

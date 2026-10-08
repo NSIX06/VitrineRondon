@@ -7,6 +7,7 @@ import { erroHttp, parseId } from '../utils/erros.js';
 import { lerPaginacao, resumoPaginacao } from '../utils/paginacao.js';
 import { apagarSeOrfa, apagarSeTrocou, campoImagem } from '../services/imagens.js';
 import { estaPublicado, filtroPublicado } from '../services/publicacao.js';
+import { incluirHorarios } from '../services/horarios.js';
 
 const produtoSchema = z.object({
   nome: z.string({ error: 'Nome é obrigatório' }).trim().min(2, 'Nome deve ter ao menos 2 caracteres').max(150),
@@ -129,7 +130,11 @@ export async function buscarProduto(req, res, next) {
       where: { id },
       // Plano e consentimento do negócio são privados: a página do item não precisa
       include: {
-        empreendedor: { omit: { planoAtual: true, autorizaDivulgacao: true, autorizaDivulgacaoEm: true } },
+        // Os horários mostram na página do item se o negócio atende agora
+        empreendedor: {
+          omit: { planoAtual: true, autorizaDivulgacao: true, autorizaDivulgacaoEm: true },
+          include: { horarios: incluirHorarios },
+        },
       },
     });
 
