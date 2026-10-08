@@ -90,12 +90,14 @@ Contas criadas pelo seed:
 | Conta | Perfil | Serve para |
 |---|---|---|
 | `ADMIN_EMAIL` do `.env` | ADMIN | Painel de administração, contas e auditoria |
-| `carlos@silvareparos.com.br` | EMPREENDEDOR | Silva Reparos, no plano **Essencial**: é quem assina o Destaque na demonstração |
 | `maria@ateliefioearte.com.br` | EMPREENDEDOR | Ateliê Fio & Arte, no plano **Destaque**, com divulgação nas redes |
+| `carlos@silvareparos.com.br` | EMPREENDEDOR | Silva Reparos, no **Essencial**: é quem assina o Destaque na demonstração |
+| `luciana@docesdadonalu.com.br`, `juliana@brechodaju.com.br` | EMPREENDEDOR | Doces da Dona Lu e Brechó da Ju, no **Essencial** |
+| `patricia@espacobelaflor.com.br` | EMPREENDEDOR | Espaço Bela Flor, **rascunho** sem plano: fora da vitrine até assinar |
 
 As senhas são as que você definir no `.env` (as duas contas de empreendedor usam
-`DEMO_EMPREENDEDOR_SENHA`). Três dos cinco negócios do seed não têm dono, para mostrar a vitrine
-com cadastros feitos pela administração. As assinaturas e os números de desempenho do seed são de
+`DEMO_EMPREENDEDOR_SENHA`). Todo negócio do seed tem conta, porque só negócio com conta e plano
+em vigor aparece na vitrine. As assinaturas e os números de desempenho do seed são de
 **demonstração**: nunca passaram pelo gateway. O roteiro da apresentação está em [DEMO.md](DEMO.md).
 
 Para subir os dois com um único comando, instale o `concurrently` na raiz e adicione o script:
@@ -211,7 +213,7 @@ VitrineLocal/
 │   │   ├── schema.prisma     modelo de dados (13 tabelas)
 │   │   ├── migrations/       init, localização, autenticação/termos/auditoria,
 │   │   │                     banner, horários de atendimento, índices de busca,
-│   │   │                     perguntas frequentes, assinaturas
+│   │   │                     perguntas frequentes, assinaturas, publicação por assinatura
 │   │   ├── planos.js         os dois planos à venda (preço, benefícios, recursos)
 │   │   ├── reversoes/        SQL para desfazer uma migration (o Prisma só anda para frente)
 │   │   └── seed.js           dados iniciais (senhas vêm do .env)
@@ -348,6 +350,7 @@ erDiagram
         boolean ativo
         varchar plano_atual "NENHUM | ESSENCIAL | DESTAQUE (cópia da assinatura ativa)"
         boolean em_destaque "cópia: ordena a vitrine sem juntar tabelas"
+        datetime publicado_ate "fim do período pago: só aparece ao público antes dele"
         boolean autoriza_divulgacao
         datetime autoriza_divulgacao_em
         datetime created_at
@@ -376,6 +379,7 @@ erDiagram
         varchar checkout_url
         datetime inicio_em
         datetime proxima_cobranca
+        datetime vigente_ate "próxima cobrança + 1 dia; cancelada vale até aqui"
         datetime cancelada_em
     }
 
@@ -560,11 +564,14 @@ zero, reaplicar (sem efeito), reverter e aplicar de novo deixaram o banco idênt
 > **Ambiente de testes.** Os pagamentos usam o AbacatePay em **Dev mode**: nenhum cartão é cobrado.
 > O roteiro da apresentação está em [DEMO.md](DEMO.md).
 
-O cadastro na vitrine continua **gratuito e sem comissão**. Os planos são opcionais:
+**Navegar é gratuito. Divulgar um negócio exige conta + plano em vigor.** Não existe publicação
+gratuita: o empreendedor escolhe um dos dois planos mensais, e a plataforma não cobra comissão sobre
+as vendas.
 
 | | Essencial | Destaque |
 |---|---|---|
 | Preço | R$ 50 por mês | R$ 75 por mês |
+| Publicação do negócio na vitrine (busca, categorias, mapa, contato) | ✓ | ✓ |
 | Estatísticas do perfil | totais do período | totais, gráfico por dia e produtos mais vistos |
 | Selo "Negócio em Destaque" | | ✓ |
 | Prioridade na ordem das listas e da busca | | ✓ |
@@ -576,8 +583,30 @@ atualiza o banco sem apagar nada). A vitrine decide pelos recursos do plano (`de
 `metricasAmpliadas`, `divulgacao`), não pelo nome dele.
 
 **Transparência.** A página `/planos`, os Termos (seção 5) e a FAQ dizem a mesma coisa: o plano aumenta
-a oportunidade de exposição, mas **não garante** visitas, contatos ou vendas. Quem não assina
-continua na busca, nas listas e no mapa: o Destaque muda a ordem e dá o selo, nunca esconde ninguém.
+a oportunidade de exposição, mas **não garante** visitas, contatos ou vendas. O Destaque muda a ordem e
+dá o selo; os negócios do Essencial continuam na busca, nas listas e no mapa.
+
+**Publicação condicionada à assinatura.** A regra mora em
+[services/publicacao.js](backend/src/services/publicacao.js) e vale em toda consulta pública: lista e
+detalhe de negócios, busca, destaques, produtos, mensagens de contato e métricas. Esconder na tela não
+é a trava: a API simplesmente não devolve o negócio a quem não é o dono nem a administração.
+
+| Situação do negócio | Quando | Na vitrine |
+|---|---|---|
+| `RASCUNHO` | cadastrado, nunca teve plano | não |
+| `AGUARDANDO_PAGAMENTO` | plano escolhido, pagamento não confirmado | não |
+| `ATIVO` | assinatura em vigor | sim |
+| `ASSINATURA_EXPIRADA` | já teve plano e o período pago acabou | não (dados guardados) |
+| `SUSPENSO` | retirado pela administração (moderação) | não, mesmo com plano pago |
+
+Cada assinatura paga guarda o fim do período (`vigenteAte` = próxima cobrança + 1 dia de folga para o
+aviso de renovação chegar), e o negócio guarda até quando fica publicado (`publicadoAte`). Ao vencer, o
+negócio sai da vitrine sozinho, pela data; uma varredura de hora em hora só zera plano e selo guardados.
+Nada é apagado: negócio, produtos, fotos e histórico ficam à espera de uma renovação.
+
+Fluxo do cadastro: **conta → negócio → plano → pagamento → publicação**. Quem para antes do pagamento
+encontra o negócio salvo como rascunho no "Meu negócio", com o caminho para publicar. O dono vê o próprio
+rascunho em modo de prévia. Negócio criado pela administração sem conta responsável fica como rascunho.
 
 **Fluxo da assinatura.**
 
@@ -591,19 +620,22 @@ continua na busca, nas listas e no mapa: o Destaque muda a ordem e dá o selo, n
      HMAC-SHA256 do corpo (`X-Webhook-Signature`); qualquer outro pedido recebe `401`;
    - **conciliação**: ao abrir "Meu negócio" com checkout pendente, a API consulta o gateway. É o que
      ativa o plano no localhost, onde o AbacatePay não alcança o webhook.
-4. A assinatura vira `ATIVA`, com início e próxima cobrança, e o negócio ganha os recursos na hora.
+4. A assinatura vira `ATIVA`, com início, próxima cobrança e vencimento, e o negócio é publicado na hora.
 
-| Status | Quando | Benefícios |
+| Status | Quando | Publicado e com benefícios |
 |---|---|---|
 | `PENDENTE` | checkout criado, sem pagamento | não |
-| `ATIVA` | pagamento aprovado ou renovação paga | sim |
+| `ATIVA` | pagamento aprovado ou renovação paga | sim, até o vencimento |
 | `INADIMPLENTE` | renovação recusada | não, até pagar |
-| `CANCELADA` | cancelada pelo empreendedor ou substituída por troca de plano | não |
+| `CANCELADA` pelo empreendedor | não haverá novas cobranças | sim, até o fim do período pago |
+| `CANCELADA` por troca de plano | o novo plano foi pago | não (vale o novo) |
 
 **Regras que o servidor garante:**
 
-- Só a assinatura `ATIVA` dá benefício. O plano é copiado para o negócio (`planoAtual`, `emDestaque`)
-  a cada mudança, na mesma transação.
+- Só a assinatura em vigor publica o negócio e dá benefício. Plano, selo e vencimento são copiados
+  para o negócio (`planoAtual`, `emDestaque`, `publicadoAte`) a cada mudança, na mesma transação.
+- Cancelar respeita o período pago; cobrança recusada e troca de plano encerram na hora.
+- Suspender e reativar é só da administração: o dono não se reativa pela edição do negócio.
 - O mesmo aviso repetido (o gateway reenvia) não muda nada; um aviso atrasado de ativação não
   ressuscita uma assinatura cancelada.
 - Um checkout em andamento por negócio: abrir outro cancela o anterior não pago.
@@ -686,12 +718,12 @@ pertence; o administrador também passa em todas as rotas de dono.
 | GET | `/assinaturas/minha` | dono | Assinatura atual, troca pendente e plano do negócio. Concilia checkouts pendentes com o gateway |
 | POST | `/assinaturas` | dono | Assina `{ "plano": "ESSENCIAL" }`. Devolve `checkoutUrl`. `409` se o plano já está ativo |
 | PUT | `/assinaturas/minha` | dono | Troca de plano (novo checkout; o atual vale até o pagamento) |
-| DELETE | `/assinaturas/minha` | dono | Cancela. O negócio continua na vitrine, sem os benefícios |
+| DELETE | `/assinaturas/minha` | dono | Cancela as próximas cobranças. O negócio segue publicado até o fim do período pago |
 | GET | `/assinaturas` | admin | Assinaturas recentes e se a simulação está disponível |
 | POST | `/assinaturas/:id/simular-aprovacao` | admin | Fora de produção: aplica o pagamento aprovado. Em produção, `404` |
 | POST | `/assinaturas/:id/simular-falha` | admin | Fora de produção: aplica a cobrança recusada. Em produção, `404` |
 | POST | `/webhooks/abacatepay` | gateway | Aviso do AbacatePay. Exige `?webhookSecret=` e `X-Webhook-Signature`; senão `401` |
-| GET | `/metricas/meu-negocio` | dono | Desempenho do período (`dias`, de 7 a 90). `disponivel: false` sem plano |
+| GET | `/metricas/meu-negocio` | dono | Desempenho do período (`dias`, de 7 a 90). `disponivel: false` sem plano em vigor |
 | GET | `/divulgacoes/minhas` | dono | Divulgações do próprio negócio |
 | GET | `/divulgacoes` | admin | Todas as divulgações |
 | POST | `/divulgacoes` | admin | Registra. Exige plano com divulgação e consentimento do negócio (`409` sem eles) |
@@ -897,7 +929,7 @@ Prefeitura de Rondonópolis em domínio público. O crédito aparece ao lado da 
 ### Unidade (sem banco, sem rede, sem servidor)
 
 Cada função do sistema tem o seu arquivo `.test.js` em [`tests/`](tests/), separado por lado:
-`tests/backend/` e `tests/frontend/`. São 623 verificações em 32 arquivos, rodando com Vitest.
+`tests/backend/` e `tests/frontend/`. São 642 verificações em 33 arquivos, rodando com Vitest.
 
 ```bash
 npm test            # roda tudo uma vez
@@ -936,7 +968,7 @@ node teste-erros-ui.mjs       # a tela de erro não mostra pilha de chamadas nem
 node teste-desempenho.mjs     # o que a primeira tela baixa e a compressão da API
 node teste-faq-ui.mjs         # central de ajuda, paginação, contato estável e permissões na tela
 node teste-celular-ui.mjs     # telas a 390px, termos em modal no cadastro e o painel sem repetições
-node teste-planos-ui.mjs      # selo e ordem na vitrine, /planos, painéis e troca de plano no checkout
+node teste-planos-ui.mjs      # só negócio com plano na vitrine, cadastro em 3 etapas, rascunho, troca e cancelamento
 ```
 
 O `teste-planos-ui.mjs` roda o seed no começo e no fim (parte sempre do cenário do
