@@ -349,6 +349,10 @@ input[type='radio'] {
     .como-funciona__numero,
     .sobre__ods-numero,
     .pagina-erro__icone,
+    .planos__icone,
+    .planos__chip,
+    .planos__beneficio-icone,
+    .planos-garantias__icone,
     .mapa__abrir
   ) {
   /* O botão do mapa já é posicionado (absolute) e não pode virar relative.
@@ -404,6 +408,8 @@ input[type='radio'] {
     .sobre__ods-numero,
     .contexto__icone,
     .detalhe__outro-icone,
+    .planos__chip,
+    .planos__beneficio-icone,
     .mapa__abrir
   ) {
   --brilho-tam: 9px;
@@ -427,7 +433,9 @@ input[type='radio'] {
     .horarios-editor__atalho:not(:hover),
     .cadastro__etapas li:not(.cadastro__etapa--ativa, .cadastro__etapa--feita) span,
     .empreendedores__chamada-icone,
-    .detalhe__cta-icone
+    .detalhe__cta-icone,
+    .planos__cartao:not(.planos__cartao--destaque) :is(.planos__icone, .planos__chip),
+    .planos-garantias__icone--branco
   ) {
   --brilho-cor: rgba(23, 52, 110, 0.3);
 }

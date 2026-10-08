@@ -1,22 +1,137 @@
+/* ==========================================================================
+   Página de planos, em cel-shade: contorno de nanquim, sombra dura e faixas de
+   luz e sombra chapadas em cada peça (chips, ícones, caixas de preço).
+   Essencial em papel branco; Destaque em anil, com letras brancas e douradas.
+   ========================================================================== */
+
+/* Cabeçalho */
+.planos-topo {
+  background: var(--linhas-escuras), var(--cor-papel);
+  border-bottom: var(--borda);
+}
+
+.planos-topo__conteudo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--esp-4);
+  padding-block: var(--esp-6) var(--esp-7);
+  text-align: center;
+}
+
+.planos-topo__conteudo > .navegacao {
+  align-self: flex-start;
+}
+
+.planos-topo__chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--esp-2);
+}
+
+.planos-topo__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.3rem 0.75rem;
+  background: var(--cor-branco);
+  border: var(--borda-fina);
+  border-radius: 6px;
+  box-shadow: 3px 3px 0 0 var(--cor-contorno), var(--cel-sm);
+  font-size: var(--texto-xs);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cor-tinta);
+}
+
+.planos-topo__chip--ouro {
+  background: var(--cor-ouro);
+  transform: rotate(-1.5deg);
+}
+
+.planos-topo__titulo {
+  margin: 0;
+  max-width: 18ch;
+  font-size: clamp(32px, 5vw, 56px);
+  line-height: 1.12;
+  text-wrap: balance;
+}
+
+/* Trecho em destaque: marca-texto amarelo, com letras de nanquim */
+.planos-topo__marca-texto {
+  display: inline-block;
+  margin-top: 0.12em;
+  padding: 0 0.3em 0.06em;
+  background: var(--cor-ouro);
+  border: var(--borda);
+  border-radius: 8px;
+  box-shadow: var(--cel);
+  transform: rotate(-1.5deg);
+  -webkit-text-fill-color: var(--cor-anil-escuro);
+  color: var(--cor-anil-escuro);
+}
+
+.planos-topo__texto {
+  margin: 0;
+  max-width: 62ch;
+  font-size: var(--texto-lg);
+  line-height: 1.6;
+  color: var(--cor-cinza);
+}
+
+.planos-topo__whatsapp {
+  padding: 0 0.35em;
+  background: #dcfce7;
+  border: 2px solid #15803d;
+  border-radius: 6px;
+  color: #14532d;
+  white-space: nowrap;
+}
+
+/* No lugar da chave mensal/anual: só existe o plano mensal */
+.planos-topo__ciclo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.45rem 0.9rem;
+  background: var(--cor-anil);
+  border: var(--borda);
+  border-radius: 999px;
+  box-shadow: 3px 3px 0 0 var(--cor-contorno), var(--cel-sm);
+  color: var(--cor-branco);
+  font-size: var(--texto-sm);
+  font-weight: 800;
+}
+
+.planos-topo__ciclo .icone {
+  color: var(--cor-ouro);
+}
+
+/* Área dos cartões */
 .planos {
   display: flex;
   flex-direction: column;
   gap: var(--esp-6);
-  padding-top: 0;
 }
 
 .planos > .status {
   margin: 0;
 }
 
+.planos--depois {
+  padding-top: var(--esp-7);
+}
+
 /* Dois planos lado a lado; um embaixo do outro no estreito */
 .planos__lista {
   list-style: none;
-  margin: 0;
+  margin: var(--esp-4) 0 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
-  gap: var(--esp-6);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  gap: var(--esp-7);
   align-items: stretch;
 }
 
@@ -24,30 +139,30 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--esp-3);
-  padding: var(--esp-6) var(--esp-5) var(--esp-5);
+  gap: var(--esp-4);
+  padding: var(--esp-5);
   background: var(--cor-branco);
+  color: var(--cor-tinta);
   border: var(--borda);
   border-radius: var(--raio);
   box-shadow: var(--sombra-dura);
 }
 
-/* Destaque: fundo amarelo-claro e sombra mais funda */
-.planos__cartao--destaque {
-  background: var(--linhas-escuras), var(--cor-ouro-claro);
-  box-shadow: 7px 7px 0 0 var(--cor-contorno);
-}
-
-.planos__popular {
+/* Fita "Mais popular", colada torta no alto do cartão */
+.planos__fita {
   position: absolute;
-  top: -15px;
+  top: -17px;
   right: var(--esp-5);
-  padding: 0.25rem 0.75rem;
-  background: var(--cor-anil);
-  color: var(--cor-branco);
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.3rem 0.8rem;
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
   border: var(--borda-fina);
-  border-radius: 999px;
-  box-shadow: 3px 3px 0 0 var(--cor-contorno);
+  border-radius: 6px;
+  box-shadow: 3px 3px 0 0 var(--cor-contorno), var(--cel-sm);
   transform: rotate(2deg);
   font-size: var(--texto-xs);
   font-weight: 800;
@@ -55,15 +170,86 @@
   text-transform: uppercase;
 }
 
+/* Topo do cartão: chip à esquerda e ícone em caixinha à direita */
+.planos__topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-3);
+  padding-bottom: var(--esp-4);
+  border-bottom: 2px dashed var(--cor-superficie-alta);
+}
+
+.planos__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.25rem 0.65rem;
+  background: var(--cor-superficie-baixa);
+  border: var(--borda-fina);
+  border-radius: 6px;
+  box-shadow: 2px 2px 0 0 var(--cor-contorno), var(--cel-sm);
+  font-size: var(--texto-xs);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.planos__icone {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-radius: var(--raio-md);
+  box-shadow: 3px 3px 0 0 var(--cor-contorno), var(--cel-sm);
+  color: var(--cor-anil);
+  transform: rotate(-3deg);
+}
+
+.planos__nome {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-3);
+  flex-wrap: wrap;
+}
+
 .planos__titulo {
   margin: 0;
-  font-size: var(--texto-3xl);
+  font-size: var(--texto-4xl);
+}
+
+.planos__etiqueta {
+  padding: 0.2rem 0.55rem;
+  background: var(--cor-superficie-media);
+  border: var(--borda-fina);
+  border-radius: 6px;
+  box-shadow: 2px 2px 0 0 var(--cor-contorno);
+  font-size: var(--texto-xs);
+  font-weight: 800;
+  color: var(--cor-anil);
 }
 
 .planos__chamada {
   margin: 0;
   font-size: var(--texto-md);
+  line-height: 1.5;
   color: var(--cor-cinza);
+}
+
+/* Caixa do preço, em relevo */
+.planos__preco-caixa {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  padding: var(--esp-4);
+  background: var(--cor-superficie-baixa);
+  border: var(--borda);
+  border-radius: var(--raio-md);
+  box-shadow: 4px 4px 0 0 var(--cor-contorno), var(--cel);
 }
 
 .planos__preco {
@@ -71,7 +257,7 @@
   align-items: baseline;
   flex-wrap: wrap;
   gap: var(--esp-2);
-  margin: var(--esp-2) 0 0;
+  margin: 0;
 }
 
 .planos__preco strong {
@@ -79,56 +265,236 @@
   font-size: var(--texto-4xl);
   font-weight: 800;
   letter-spacing: -0.02em;
-  color: var(--cor-anil);
   line-height: 1;
+  color: var(--cor-anil);
 }
 
 .planos__preco span {
-  font-weight: 600;
+  font-weight: 700;
   color: var(--cor-cinza);
 }
 
-.planos__selo {
-  align-self: flex-start;
+.planos__preco-nota {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--texto-sm);
+  font-weight: 700;
+  color: var(--cor-cinza);
 }
 
+.planos__preco-nota .icone {
+  color: var(--cor-sucesso);
+}
+
+/* Benefícios: cada um com o ícone numa caixinha de nanquim */
 .planos__beneficios {
   list-style: none;
-  margin: var(--esp-2) 0 0;
+  margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--esp-2);
+  gap: var(--esp-3);
   flex: 1;
 }
 
 .planos__beneficios li {
   display: flex;
   align-items: flex-start;
-  gap: var(--esp-2);
+  gap: var(--esp-3);
   line-height: 1.45;
 }
 
-.planos__beneficios .icone {
+.planos__beneficio-icone {
+  display: inline-grid;
+  place-items: center;
   flex-shrink: 0;
-  color: var(--cor-sucesso);
-  margin-top: 1px;
+  width: 24px;
+  height: 24px;
+  background: #4ade80;
+  border: 2px solid var(--cor-contorno);
+  border-radius: 6px;
+  box-shadow: 2px 2px 0 0 var(--cor-contorno), var(--cel-sm);
+  color: var(--cor-contorno);
 }
 
 .planos__acao {
   display: flex;
-  margin-top: var(--esp-3);
+  padding-top: var(--esp-4);
+  border-top: 2px dashed var(--cor-superficie-alta);
 }
 
 .planos__acao .botao {
   flex: 1;
   white-space: normal;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .planos__nota {
   margin: 0;
   font-size: var(--texto-sm);
   color: var(--cor-cinza);
+}
+
+/* --------------------------------------------------------------------------
+   Destaque: cartão anil, letras brancas e douradas
+   -------------------------------------------------------------------------- */
+.planos__cartao--destaque {
+  background: var(--linhas-claras), var(--cor-anil);
+  color: var(--cor-branco);
+  box-shadow: 8px 8px 0 0 var(--cor-ouro), 8px 8px 0 3px var(--cor-contorno);
+  border-top-width: 6px;
+  border-top-color: var(--cor-ouro);
+}
+
+.planos__cartao--destaque .planos__topo,
+.planos__cartao--destaque .planos__acao {
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.planos__cartao--destaque .planos__chip {
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
+}
+
+.planos__cartao--destaque .planos__icone {
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
+}
+
+/* Título em letreiro dourado (a regra geral dos títulos lê estas cores) */
+.planos__cartao--destaque .planos__titulo {
+  --letra-luz: #fcd34d;
+  --letra-sombra: #e09a0e;
+  --letra-contorno: var(--cor-contorno);
+}
+
+.planos__cartao--destaque .planos__etiqueta {
+  background: var(--cor-anil-escuro);
+  border-color: var(--cor-ouro);
+  box-shadow: 2px 2px 0 0 var(--cor-ouro);
+  color: var(--cor-ouro);
+}
+
+.planos__cartao--destaque .planos__chamada {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.planos__cartao--destaque .planos__preco-caixa {
+  background: var(--cor-anil-escuro);
+  box-shadow: 4px 4px 0 0 var(--cor-contorno), inset 0 -4px 0 0 rgba(0, 0, 0, 0.3),
+    inset 3px 3px 0 0 rgba(255, 255, 255, 0.12);
+}
+
+.planos__cartao--destaque .planos__preco strong {
+  color: var(--cor-ouro);
+}
+
+.planos__cartao--destaque .planos__preco span {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.planos__cartao--destaque .planos__preco-nota {
+  color: var(--cor-ouro-claro);
+}
+
+.planos__cartao--destaque .planos__preco-nota .icone {
+  color: var(--cor-ouro);
+}
+
+/* "Tudo o que o plano Essencial oferece, e mais:" em faixa dourada clara */
+.planos__inclui {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  margin: 0;
+  padding: var(--esp-2) var(--esp-3);
+  background: var(--cor-ouro-claro);
+  border: var(--borda-fina);
+  border-radius: var(--raio-md);
+  box-shadow: 3px 3px 0 0 var(--cor-contorno), var(--cel-sm);
+  color: var(--cor-tinta);
+  font-weight: 800;
+  font-size: var(--texto-sm);
+}
+
+.planos__cartao--destaque .planos__beneficios li {
+  color: var(--cor-branco);
+}
+
+.planos__cartao--destaque .planos__beneficio-icone {
+  background: var(--cor-ouro);
+}
+
+/* Garantias: faixa anil de ponta a ponta, três cartões escuros */
+.planos-garantias {
+  background: var(--linhas-claras), var(--cor-anil);
+  border-block: var(--borda);
+  padding-block: var(--esp-7);
+}
+
+.planos-garantias__lista {
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: var(--esp-5);
+}
+
+.planos-garantias__item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--esp-4);
+  padding: var(--esp-5);
+  background: var(--cor-anil-escuro);
+  border: var(--borda);
+  border-radius: var(--raio-md);
+  box-shadow: 5px 5px 0 0 var(--cor-contorno), inset 3px 3px 0 0 rgba(255, 255, 255, 0.08);
+  color: var(--cor-branco);
+}
+
+.planos-garantias__item strong {
+  display: block;
+  margin-bottom: 4px;
+  font-family: var(--fonte-titulo);
+  font-size: var(--texto-lg);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--cor-ouro);
+}
+
+.planos-garantias__item p {
+  margin: 0;
+  font-size: var(--texto-sm);
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.planos-garantias__icone {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border: var(--borda);
+  border-radius: 8px;
+  box-shadow: 3px 3px 0 0 var(--cor-contorno), var(--cel-sm);
+  color: var(--cor-tinta);
+}
+
+.planos-garantias__icone--ouro {
+  background: var(--cor-ouro);
+}
+
+.planos-garantias__icone--verde {
+  background: #4ade80;
+}
+
+.planos-garantias__icone--branco {
+  background: var(--cor-branco);
+  color: var(--cor-anil);
 }
 
 /* Comparação */
@@ -162,6 +528,12 @@
   border-bottom: var(--borda);
   font-family: var(--fonte-titulo);
   font-size: var(--texto-md);
+}
+
+/* Coluna do Destaque com o cabeçalho anil, como o cartão */
+.planos__tabela thead th:last-child {
+  background: var(--cor-anil);
+  color: var(--cor-ouro);
 }
 
 .planos__tabela tbody th {
@@ -225,8 +597,16 @@
 }
 
 @media (max-width: 600px) {
+  .planos-topo__conteudo {
+    padding-block: var(--esp-4) var(--esp-6);
+  }
+
   .planos__cartao {
-    padding: var(--esp-6) var(--esp-4) var(--esp-4);
+    padding: var(--esp-4);
+  }
+
+  .planos__titulo {
+    font-size: var(--texto-3xl);
   }
 
   .planos__tabela th,
@@ -236,6 +616,10 @@
 
   .planos__transparencia {
     flex-direction: column;
+    padding: var(--esp-4);
+  }
+
+  .planos-garantias__item {
     padding: var(--esp-4);
   }
 }

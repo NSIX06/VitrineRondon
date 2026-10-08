@@ -92,7 +92,7 @@ async function main() {
     await abrir('/planos', '.planos__cartao')
     checar('dois planos à venda', (await evaluate("document.querySelectorAll('.planos__cartao').length")) === 2)
     checar('preços de R$ 50 e R$ 75', /50,00/.test(await textoDe('.planos__lista')) && /75,00/.test(await textoDe('.planos__lista')))
-    checar('a página diz que o plano é necessário para divulgar', /escolha um dos planos mensais/i.test(await textoDe('.pagina-cabecalho')))
+    checar('a página diz que o plano é necessário para divulgar', /escolha um dos planos mensais/i.test(await textoDe('.planos-topo')))
     checar('nenhum texto fala em plano opcional ou cadastro gratuito', !(await evaluate("/opciona|cadastro (na vitrine )?(continua )?gratuito/i.test(document.body.innerText)")))
     checar('o quadro de transparência não promete resultado', /não garante/i.test(await textoDe('.planos__transparencia')))
     await evaluate("__q('.planos__cartao--destaque .planos__acao .botao').click()")

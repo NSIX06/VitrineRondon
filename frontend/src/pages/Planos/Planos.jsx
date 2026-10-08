@@ -9,7 +9,6 @@ import Icone from '../../components/ui/Icone/Icone'
 import Modal from '../../components/ui/Modal/Modal'
 import Spinner from '../../components/ui/Spinner/Spinner'
 import StatusMessage from '../../components/ui/StatusMessage/StatusMessage'
-import SeloDestaque from '../../components/ui/SeloDestaque/SeloDestaque'
 import Voltar from '../../components/ui/Voltar/Voltar'
 import './Planos.css'
 
@@ -26,6 +25,39 @@ const COMPARACAO = [
   { rotulo: 'Prioridade na vitrine animada da página inicial', tem: (p) => p.destaque },
   { rotulo: 'Possibilidade de divulgação nas redes oficiais', tem: (p) => p.divulgacao },
   { rotulo: 'Estatísticas ampliadas (por dia e por produto)', tem: (p) => p.metricasAmpliadas },
+]
+
+// Ícone de cada benefício do Destaque, pelo assunto do texto (os textos vêm
+// do servidor, em backend/prisma/planos.js)
+const ICONES_BENEFICIO = [
+  [/selo/i, 'verified'],
+  [/ordem das listas/i, 'trending_up'],
+  [/vitrine animada|página inicial/i, 'view_carousel'],
+  [/campanhas|redes/i, 'campaign'],
+  [/estatísticas/i, 'monitoring'],
+]
+const iconeDoBeneficio = (texto) => ICONES_BENEFICIO.find(([regra]) => regra.test(texto))?.[1] ?? 'check'
+
+// Garantias da faixa azul: só o que o sistema cumpre de verdade
+const GARANTIAS = [
+  {
+    icone: 'event_busy',
+    cor: 'ouro',
+    titulo: 'Sem fidelidade',
+    texto: 'Cancele quando quiser pelo painel. O negócio segue no ar até o fim do período já pago.',
+  },
+  {
+    icone: 'percent',
+    cor: 'verde',
+    titulo: '0% sobre as vendas',
+    texto: 'O pagamento do cliente vai direto para você, combinado pelo WhatsApp.',
+  },
+  {
+    icone: 'bolt',
+    cor: 'branco',
+    titulo: 'No ar ao confirmar',
+    texto: 'Pagamento aprovado, negócio publicado na hora, sem esperar análise.',
+  },
 ]
 
 /**
@@ -87,6 +119,7 @@ function Planos() {
       return (
         <Button to={`/cadastro?plano=${plano.nome}`} variante={variante}>
           Criar conta e assinar
+          <Icone nome={plano.destaque ? 'rocket_launch' : 'arrow_forward'} tamanho={18} />
         </Button>
       )
     }
@@ -116,21 +149,39 @@ function Planos() {
     return (
       <Button onClick={() => setEscolhido(plano)} variante={variante}>
         {planoAtivo ? 'Mudar para este plano' : `Assinar o ${plano.titulo.replace(/^VitrineRondon /, '')}`}
+        <Icone nome={plano.destaque ? 'rocket_launch' : 'arrow_forward'} tamanho={18} />
       </Button>
     )
   }
 
   return (
     <>
-      <header className="pagina-cabecalho">
-        <div className="container">
+      <header className="planos-topo">
+        <div className="container planos-topo__conteudo">
           <Voltar para="/" rotulo="Início" />
-          <span className="pagina-cabecalho__marca">Para quem vende</span>
-          <h1>Planos do VitrineRondon</h1>
-          <p>
-            Para divulgar seu negócio no VitrineRondon, escolha um dos planos mensais. Navegar pela
-            vitrine continua gratuito para todo mundo.
+          <div className="planos-topo__chips">
+            <span className="planos-topo__chip planos-topo__chip--ouro">
+              <Icone nome="storefront" tamanho={16} />
+              Planos para o comércio de bairro
+            </span>
+            <span className="planos-topo__chip">
+              <Icone nome="handshake" tamanho={16} />
+              Sem comissão sobre as vendas
+            </span>
+          </div>
+          <h1 className="planos-topo__titulo">
+            Escolha o plano para o seu <span className="planos-topo__marca-texto">negócio aparecer</span>
+          </h1>
+          <p className="planos-topo__texto">
+            Para divulgar seu negócio no VitrineRondon, escolha um dos planos mensais. Sem intermediários
+            nem porcentagem sobre as vendas: o cliente fala direto com você pelo{' '}
+            <strong className="planos-topo__whatsapp">WhatsApp</strong>. Navegar pela vitrine continua
+            gratuito para todo mundo.
           </p>
+          <span className="planos-topo__ciclo">
+            <Icone nome="event_repeat" tamanho={16} />
+            Cobrança mensal, sem fidelidade
+          </span>
         </div>
       </header>
 
@@ -164,22 +215,61 @@ function Planos() {
                   key={plano.nome}
                   className={`planos__cartao reflexo-ao-passar ${plano.destaque ? 'planos__cartao--destaque' : ''}`}
                 >
-                  {plano.destaque && <span className="planos__popular">Mais popular</span>}
-                  <h2 className="planos__titulo">{plano.titulo.replace(/^VitrineRondon /, '')}</h2>
+                  {plano.destaque && (
+                    <span className="planos__fita">
+                      <Icone nome="workspace_premium" tamanho={16} />
+                      Mais popular
+                    </span>
+                  )}
+
+                  <div className="planos__topo">
+                    <span className="planos__chip">
+                      {plano.destaque && <Icone nome="star" tamanho={14} />}
+                      {plano.destaque ? 'Negócio em destaque' : 'Para quem está começando'}
+                    </span>
+                    <span className="planos__icone" aria-hidden="true">
+                      <Icone nome={plano.destaque ? 'campaign' : 'storefront'} tamanho={22} />
+                    </span>
+                  </div>
+
+                  <div className="planos__nome">
+                    <h2 className="planos__titulo">{plano.titulo.replace(/^VitrineRondon /, '')}</h2>
+                    <span className="planos__etiqueta">
+                      {plano.destaque ? 'Prioridade nas listas' : 'Presença local'}
+                    </span>
+                  </div>
                   <p className="planos__chamada">{plano.chamada}</p>
-                  <p className="planos__preco">
-                    <strong>{precoEmReais(plano.precoCentavos)}</strong>
-                    <span>{porCiclo(plano.ciclo)}</span>
-                  </p>
-                  {plano.destaque && <SeloDestaque className="planos__selo" />}
+
+                  <div className="planos__preco-caixa">
+                    <p className="planos__preco">
+                      <strong>{precoEmReais(plano.precoCentavos)}</strong>
+                      <span>{porCiclo(plano.ciclo)}</span>
+                    </p>
+                    <span className="planos__preco-nota">
+                      <Icone nome={plano.destaque ? 'star' : 'event_available'} tamanho={16} />
+                      {plano.destaque ? 'Tudo do Essencial, com mais exposição' : 'Cobrança mensal, sem fidelidade'}
+                    </span>
+                  </div>
+
+                  {plano.destaque && plano.beneficios[0]?.startsWith('Tudo') && (
+                    <p className="planos__inclui">
+                      <Icone nome="done_all" tamanho={18} />
+                      {plano.beneficios[0]}, e mais:
+                    </p>
+                  )}
                   <ul className="planos__beneficios">
-                    {plano.beneficios.map((beneficio) => (
-                      <li key={beneficio}>
-                        <Icone nome="check" tamanho={18} />
-                        {beneficio}
-                      </li>
-                    ))}
+                    {plano.beneficios
+                      .filter((beneficio, i) => !(plano.destaque && i === 0 && beneficio.startsWith('Tudo')))
+                      .map((beneficio) => (
+                        <li key={beneficio}>
+                          <span className="planos__beneficio-icone" aria-hidden="true">
+                            <Icone nome={plano.destaque ? iconeDoBeneficio(beneficio) : 'check'} tamanho={16} />
+                          </span>
+                          <span>{beneficio}</span>
+                        </li>
+                      ))}
                   </ul>
+
                   <div className="planos__acao">{acaoDoPlano(plano)}</div>
                   {pendente?.plano.nome === plano.nome && planoAtivo && (
                     <p className="planos__nota">Troca iniciada: seu plano atual segue até este pagamento ser confirmado.</p>
@@ -188,6 +278,31 @@ function Planos() {
               ))}
             </ul>
 
+          </>
+        )}
+      </section>
+
+      {planos.length > 0 && (
+        <section className="planos-garantias" aria-label="Garantias dos planos">
+          <ul className="container planos-garantias__lista">
+            {GARANTIAS.map((g) => (
+              <li key={g.titulo} className="planos-garantias__item">
+                <span className={`planos-garantias__icone planos-garantias__icone--${g.cor}`} aria-hidden="true">
+                  <Icone nome={g.icone} tamanho={24} />
+                </span>
+                <div>
+                  <strong>{g.titulo}</strong>
+                  <p>{g.texto}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <section className="container secao planos planos--depois">
+        {planos.length > 0 && (
+          <>
             <div className="planos__comparacao">
               <h2>Compare os planos</h2>
               <div className="planos__tabela-rolagem">
