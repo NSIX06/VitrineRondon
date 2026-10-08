@@ -653,7 +653,7 @@ h2:not(.detalhe__horarios-titulo, .visualmente-oculto) {
 }
 
 /* Títulos sobre fundo anil: contorno preto para destacar do azul */
-:is(.hero__titulo, .feira h2) {
+.hero__titulo {
   --letra-luz: #ffffff;
   --letra-sombra: #dfe4f3;
   --letra-contorno: var(--cor-contorno);
@@ -683,5 +683,150 @@ h2:not(.detalhe__horarios-titulo, .visualmente-oculto) {
        por segundo e cada quadro mostrava um estado aleatório (efeito de espasmo) */
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* ==========================================================================
+   Revelar ao rolar (animações guiadas pela rolagem, só CSS)
+   Cada bloco surge subindo e ganhando cor quando entra na tela
+   (animation-timeline: view()). Listas animam em grupo pela linha do tempo do
+   pai (view-timeline-name), em cascata. O deslocamento usa a propriedade
+   "translate", e não "transform": assim não briga com os efeitos de hover,
+   que usam transform. O fim do efeito é medido em pixels depois que o bloco
+   aparece, então até o último bloco da página termina de aparecer.
+   Navegador sem suporte mostra tudo parado, como antes.
+   ========================================================================== */
+@keyframes revelar-subindo {
+  from {
+    opacity: 0;
+    translate: 0 40px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+/* Para quem pede menos movimento: só o esmaecimento, sem deslocar */
+@keyframes revelar-esmaecendo {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  /* Blocos que aparecem sozinhos */
+  :is(
+      .secao__cabecalho,
+      .grade-cards > li,
+      .categorias,
+      .para-quem__conteudo,
+      .como-funciona,
+      .planos__cartao,
+      .planos__comparacao,
+      .planos__transparencia,
+      .sobre__bloco,
+      .sobre__caixa,
+      .contato__caixa,
+      .contexto__item
+    ) {
+    animation: revelar-subindo linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 160px;
+  }
+
+  /* Listas em grupo: os itens seguem a entrada do pai, um pouco depois do outro */
+  :is(.numeros__lista, .funcionalidades, .como-funciona__regras) {
+    view-timeline-name: --revelar-grupo;
+  }
+
+  :is(.numeros__item, .funcionalidades__item, .como-funciona__regras > li) {
+    animation: revelar-subindo linear both;
+    animation-timeline: --revelar-grupo;
+    animation-range: entry 0% entry 180px;
+  }
+
+  :is(.numeros__item, .funcionalidades__item, .como-funciona__regras > li):nth-child(2) {
+    animation-range: entry 30px entry 210px;
+  }
+
+  :is(.numeros__item, .funcionalidades__item, .como-funciona__regras > li):nth-child(3) {
+    animation-range: entry 60px entry 240px;
+  }
+
+  :is(.numeros__item, .funcionalidades__item, .como-funciona__regras > li):nth-child(n + 4) {
+    animation-range: entry 90px entry 270px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* A regra geral de menos movimento encurta as animações por tempo; estas
+       seguem a rolagem e não têm duração em segundos */
+    :is(
+        .secao__cabecalho,
+        .grade-cards > li,
+        .categorias,
+        .para-quem__conteudo,
+        .como-funciona,
+        .planos__cartao,
+        .planos__comparacao,
+        .planos__transparencia,
+        .sobre__bloco,
+        .sobre__caixa,
+        .contato__caixa,
+        .contexto__item,
+        .numeros__item,
+        .funcionalidades__item,
+        .como-funciona__regras > li
+      ) {
+      animation-name: revelar-esmaecendo;
+      animation-duration: auto !important;
+    }
+  }
+}
+
+/* ==========================================================================
+   Barra de rolagem no tema: trilho creme com fio de nanquim, alça anil
+   arredondada com borda de nanquim e um respiro em volta. Chrome, Edge e
+   Safari desenham pelos pseudo-elementos ::-webkit-scrollbar. O Firefox só
+   aceita cores (scrollbar-color); nos outros ela fica de fora de propósito,
+   porque com ela o Chrome ignora o desenho e mostra a barra simples.
+   ========================================================================== */
+::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--cor-superficie-baixa);
+  box-shadow: inset 2px 0 0 0 var(--cor-contorno);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--cor-anil);
+  background-clip: padding-box;
+  border: 3px solid transparent;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 2px var(--cor-contorno);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--cor-anil-medio);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background-color: var(--cor-ouro);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--cor-superficie-baixa);
+}
+
+/* Só o Firefox entende -moz-appearance: é o jeito de mirar só nele */
+@supports (-moz-appearance: none) {
+  html {
+    scrollbar-color: var(--cor-anil) var(--cor-superficie-baixa);
   }
 }

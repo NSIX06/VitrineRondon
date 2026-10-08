@@ -213,7 +213,8 @@ VitrineLocal/
 │   │   ├── schema.prisma     modelo de dados (13 tabelas)
 │   │   ├── migrations/       init, localização, autenticação/termos/auditoria,
 │   │   │                     banner, horários de atendimento, índices de busca,
-│   │   │                     perguntas frequentes, assinaturas, publicação por assinatura
+│   │   │                     perguntas frequentes, assinaturas, publicação por assinatura,
+│   │   │                     remoção do banner
 │   │   ├── planos.js         os dois planos à venda (preço, benefícios, recursos)
 │   │   ├── reversoes/        SQL para desfazer uma migration (o Prisma só anda para frente)
 │   │   └── seed.js           dados iniciais (senhas vêm do .env)
@@ -221,7 +222,7 @@ VitrineLocal/
 │       ├── app.js            Express: cors, json, log, autenticação opcional, rotas, 404, erros
 │       ├── server.js         conecta ao banco e sobe na PORT
 │       ├── config/prisma.js  singleton do PrismaClient
-│       ├── controllers/      empreendedor, produto, contato, auth, usuario, auditoria, configuracao,
+│       ├── controllers/      empreendedor, produto, contato, auth, usuario, auditoria,
 │       │                     faq, upload, assinatura, metrica, divulgacao
 │       ├── middlewares/      auth.js (JWT e perfis), errorHandler.js, validate.js
 │       ├── utils/            erros.js (mensagens exibíveis), paginacao.js (página opcional das listas)
@@ -253,7 +254,7 @@ VitrineLocal/
         │   ├── cards/        ProdutoCard, EmpreendedorCard
         │   ├── forms/        ProdutoForm, EmpreendedorForm, ContatoForm, ContaForm, AceiteTermos,
         │   │                 HorariosEditor, CampoSenha (com o botão de ver a senha), FaqForm
-        │   ├── admin/        PainelAuditoria, PainelUsuarios, PainelFaq, BannerForm,
+        │   ├── admin/        PainelAuditoria, PainelUsuarios, PainelFaq,
         │   │                 PainelAssinaturas, PainelDivulgacoes
         │   ├── painel/       PainelPlano, PainelDesempenho, PainelDivulgacao (abas do "Meu negócio")
         │   ├── faq/          PerguntasFrequentes (a central de ajuda da página de Contato)
@@ -267,7 +268,7 @@ Cada componente e página mora na própria pasta com o `.jsx` e o `.css` ao lado
 
 ## Modelo de dados
 
-Treze tabelas. Onze são relacionadas entre si; as outras duas guardam configurações do site e as perguntas da central de ajuda. Uma conta pode ter um negócio; um negócio tem muitos produtos (exclusão
+Doze tabelas. Onze são relacionadas entre si; a outra guarda as perguntas da central de ajuda. Uma conta pode ter um negócio; um negócio tem muitos produtos (exclusão
 em cascata), tem seus intervalos de horário de atendimento (também em cascata) e pode receber
 muitas mensagens. Os aceites de termos seguem a conta em cascata, mas os
 logs de auditoria sobrevivem à exclusão da conta: apagar um usuário não pode apagar o histórico.
@@ -436,12 +437,6 @@ erDiagram
         varchar fecha "12:00"
     }
 
-    CONFIGURACOES {
-        varchar chave PK "ex.: banner_home"
-        text valor "JSON validado pela API"
-        datetime updated_at
-    }
-
     PERGUNTAS_FREQUENTES {
         int id PK
         varchar pergunta "até 300"
@@ -575,7 +570,7 @@ as vendas.
 | Estatísticas do perfil | totais do período | totais, gráfico por dia e produtos mais vistos |
 | Selo "Negócio em Destaque" | | ✓ |
 | Prioridade na ordem das listas e da busca | | ✓ |
-| Prioridade na vitrine animada da Home ("Quem está na feira") | | ✓ |
+| Prioridade na pilha animada do topo da Home | | ✓ |
 | Possibilidade de divulgação nas redes oficiais | | ✓ |
 
 Os planos ficam em [backend/prisma/planos.js](backend/prisma/planos.js) (`npm run planos:semear`
@@ -701,7 +696,7 @@ pertence; o administrador também passa em todas as rotas de dono.
 | POST | `/produtos` | dono | Cria no próprio negócio |
 | PUT | `/produtos/:id` | dono | Atualiza. O vínculo com o negócio não pode ser trocado |
 | DELETE | `/produtos/:id` | dono | Exclui |
-| POST | `/uploads/imagem` | autenticado | Envia uma imagem do computador (corpo = o arquivo, `Content-Type: image/...`). Devolve `data.url` para usar em `imagem`, `fotoUrl` ou no banner |
+| POST | `/uploads/imagem` | autenticado | Envia uma imagem do computador (corpo = o arquivo, `Content-Type: image/...`). Devolve `data.url` para usar em `imagem` ou `fotoUrl` |
 | POST | `/contatos` | público | Envia mensagem |
 | GET | `/contatos` | admin | Lista as mensagens recebidas |
 | PATCH | `/contatos/:id/lido` | admin | Marca como lida. Corpo opcional `{ "lido": false }` desmarca |
@@ -733,7 +728,7 @@ pertence; o administrador também passa em todas as rotas de dono.
 O consentimento para divulgação é o campo `autorizaDivulgacao` em `PUT /empreendedores/:id`; a data
 é gravada pelo servidor.
 
-**Imagens.** Os campos `imagem` (produto), `fotoUrl` (negócio) e `imagemUrl` (banner) aceitam um
+**Imagens.** Os campos `imagem` (produto) e `fotoUrl` (negócio) aceitam um
 link `http(s)` completo, como sempre, ou o caminho devolvido por `POST /uploads/imagem`
 (`/uploads/<id>.webp`, ou o endereço `https://res.cloudinary.com/...` quando `CLOUDINARY_URL` está
 definida). No envio, o servidor só aceita JPG, PNG, WebP, GIF e AVIF de até 5 MB, abre o
@@ -762,8 +757,6 @@ mudança. Com `pagina`, a resposta ganha o bloco `paginacao`:
 | GET | `/auditoria` | admin | Trilha paginada. Filtros: `acao`, `tipoEntidade`, `status`, `usuarioId`, `de`, `ate`, `busca`, `pagina`, `porPagina` |
 | GET | `/auditoria/opcoes` | admin | Valores existentes na trilha, para montar os filtros |
 | GET | `/auditoria/:id` | admin | Detalhe com os valores antes e depois |
-| GET | `/configuracoes/banner` | público | Imagem e legenda do banner da página inicial; `null` usa a foto do item mais recente |
-| PUT | `/configuracoes/banner` | admin | Troca o banner. Corpo `{ "imagemUrl": "https://...", "legenda": "..." }`; `imagemUrl: null` volta para a foto automática |
 | GET | `/faq/todas` | admin | Todas as perguntas, inclusive as ocultas |
 | POST | `/faq` | admin | Cria. Corpo `{ "pergunta", "resposta", "categoria"?, "ordem"?, "ativo"? }` |
 | PUT | `/faq/:id` | admin | Atualiza só os campos enviados |
@@ -849,9 +842,8 @@ Um intervalo inclui o minuto de início e exclui o de fim: 08:00 às 12:00 atend
 lado a lado (dados, localização e horário). Em telas médias vira duas colunas e, no celular, uma.
 O formulário se organiza pela própria largura, com consulta de contêiner, e não pela largura da tela.
 
-**Banner da página inicial:** o administrador troca a imagem e a legenda pelo botão "Trocar banner"
-no painel, com prévia no formato do cartaz antes de salvar. Sem imagem escolhida, a Home mostra a
-foto do item mais recente da vitrine. Cada troca fica na auditoria.
+**Topo da página inicial:** no lugar do antigo cartaz (e do banner que a administração trocava),
+fica a pilha animada de negócios descrita abaixo, ao lado do texto e da lista "Na vitrine agora".
 
 **Contato:** formulário em duas colunas, com validação ao sair de cada campo, contador de
 caracteres, cartão do destinatário com atalho para o WhatsApp do negócio e confirmação no lugar do
@@ -868,13 +860,20 @@ lógica fica no gancho [frontend/src/hooks/useConsulta.js](frontend/src/hooks/us
 rolagem. Salvar no painel mostra um aviso no canto da tela, que some sozinho, em vez de levar a
 página ao topo. Imagens fora da tela carregam só quando chegam perto dela.
 
-**Pilha de negócios da Home:** a faixa "Quem está na feira" mostra uma pilha de cartões que se
+**Pilha de negócios da Home:** o topo da página mostra uma pilha de cartões que se
 revezam sozinhos, adaptada do CardSwap do React Bits (licença MIT) em
 [components/ui/CardSwap](frontend/src/components/ui/CardSwap/CardSwap.jsx). Os negócios do Destaque vêm
 na frente, com o selo, e os demais publicados em seguida; cada cartão abre a página do negócio. A
 pilha pausa com o mouse em cima, e o gsap só é baixado quando ela aparece, fora do pacote da primeira
 visita. Para quem pede menos movimento ao sistema, os cartões trocam de lugar com um esmaecimento, sem
 cair nem deslizar. Teclado e leitor de tela usam a lista de nomes ao lado da pilha.
+
+**Revelar ao rolar e barra de rolagem:** blocos e cartões surgem subindo e ganhando cor quando entram
+na tela, com animações guiadas pela própria rolagem, só em CSS (`animation-timeline: view()`); listas
+como os números e o "O que fazemos" animam em grupo, em cascata, pela linha do tempo do bloco pai
+(`view-timeline-name`). Para quem pede menos movimento, só esmaecem, sem deslocar; navegador sem
+suporte mostra tudo parado. A barra de rolagem segue o tema (trilho creme, alça anil arredondada com
+contorno de nanquim); no Firefox, que só aceita cores, fica com as mesmas cores.
 
 **Movimento:** o botão "Cadastre-se" alterna com "Vire empreendedor", deslizando. Quem pede menos
 movimento ao sistema vê a troca por esmaecimento, sem deslizar, e a rolagem até "Como funciona" vai
@@ -889,7 +888,7 @@ direto em vez de animar. Nos dois casos, a troca pausa com o mouse ou o foco sob
 
 **Planos e assinaturas:** descritos em [Planos e assinaturas](#planos-e-assinaturas).
 
-**Banco relacional** com treze tabelas, chaves estrangeiras e regras de exclusão definidas no Prisma, incluindo a diferença deliberada entre cascata (aceites seguem a conta) e preservação (logs sobrevivem à conta).
+**Banco relacional** com doze tabelas, chaves estrangeiras e regras de exclusão definidas no Prisma, incluindo a diferença deliberada entre cascata (aceites seguem a conta) e preservação (logs sobrevivem à conta).
 
 **Público:** vitrine com busca, filtro por categoria, tipo e bairro; página do item (`/produtos/:id`); página do empreendedor com endereço, mapa e botão de WhatsApp (`https://wa.me/55<numero>`); formulário de contato; layout responsivo.
 
@@ -937,7 +936,7 @@ Prefeitura de Rondonópolis em domínio público. O crédito aparece ao lado da 
 ### Unidade (sem banco, sem rede, sem servidor)
 
 Cada função do sistema tem o seu arquivo `.test.js` em [`tests/`](tests/), separado por lado:
-`tests/backend/` e `tests/frontend/`. São 642 verificações em 33 arquivos, rodando com Vitest.
+`tests/backend/` e `tests/frontend/`. São 637 verificações em 33 arquivos, rodando com Vitest.
 
 ```bash
 npm test            # roda tudo uma vez
@@ -1003,7 +1002,7 @@ foram escritas em uma pasta temporária e se perderam; o que sobrou está listad
 
 ### API (Thunder Client e Postman)
 
-As coleções prontas, com as 45 requisições na ordem certa e o token preenchido automaticamente
+As coleções prontas, com as 42 requisições na ordem certa e o token preenchido automaticamente
 depois do login, estão em `docs/thunder-client/` e `docs/postman/`. O passo a passo de cada
 requisição, com corpo e resposta esperada, está em
 [`docs/roteiro-testes-api.md`](docs/roteiro-testes-api.md). Pela linha de comando:
