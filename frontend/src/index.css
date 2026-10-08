@@ -252,39 +252,29 @@ input[type='radio'] {
 }
 
 /* ==========================================================================
-   Letreiro cel-shaded (marca): letras de gibi como as da logo.
-   O texto de verdade desenha o contorno grosso e a extrusão em preto; uma cópia
-   (data-texto) por cima pinta a cor, com faixa de sombra chapada embaixo e
-   riscos de brilho brancos em diagonal no alto.
-   Uso: <span class="letreiro" data-texto="Vitrine">Vitrine</span>
+   Letreiro cel-shaded (marca): o nome VitrineRondon com o mesmo letreiro dos
+   títulos. Faixa de luz em cima e de sombra chapada embaixo, riscos de brilho
+   brancos e uma sombra dura só no pé das letras. Sem contorno grosso em volta:
+   ele fechava o miolo do "e" e do "o" e deixava o nome pesado de ler.
+   Uso: <span class="letreiro">Vitrine</span>
    ========================================================================== */
 .letreiro {
   --letreiro-luz: #3b5fc8;
   --letreiro-sombra: #2b4aa6;
   position: relative;
   display: inline-block;
-  color: var(--cor-contorno);
-  -webkit-text-stroke: 0.09em var(--cor-contorno);
-  /* Sombra só para baixo, assentando o pé das letras */
-  text-shadow: 0 0.03em 0 var(--cor-contorno);
-}
-
-.letreiro::after {
-  /* O "/ ''" esconde a cópia dos leitores de tela: o nome é lido uma vez só */
-  content: attr(data-texto) / '';
-  position: absolute;
-  inset: 0;
-  -webkit-text-stroke: 0;
-  text-shadow: none;
-  color: transparent;
-  background:
-    /* Riscos de brilho em SVG (e não em gradiente): em tamanho pequeno, listras
-       de fração de pixel serrilhavam e o brilho ficava granulado */
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 14' fill='none' stroke='%23fff' stroke-opacity='.95' stroke-linecap='round'%3E%3Cpath d='M6 12.5 10.5 1.5' stroke-width='2.4'/%3E%3Cpath d='M10.5 12.5 12.6 7.4' stroke-width='1.6'/%3E%3C/svg%3E")
-      0 0.12em / 0.66em 0.42em repeat-x,
-    linear-gradient(to bottom, var(--letreiro-luz) 0 58%, var(--letreiro-sombra) 58% 100%);
+  letter-spacing: -0.01em;
+  -webkit-text-fill-color: transparent;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cg stroke='%23fff' stroke-opacity='.5' stroke-linecap='round'%3E%3Cpath d='M30 40 36 22' stroke-width='3'/%3E%3Cpath d='M40 40 43 32' stroke-width='2.2'/%3E%3C/g%3E%3C/svg%3E"),
+    linear-gradient(to bottom, var(--letreiro-luz) 0 0.62lh, var(--letreiro-sombra) 0.62lh 1lh);
+  background-size:
+    2.6em 1lh,
+    100% 1lh;
+  background-repeat: repeat, repeat-y;
   -webkit-background-clip: text;
   background-clip: text;
+  filter: drop-shadow(0 max(1px, 0.035em) 0 var(--cor-contorno));
 }
 
 .letreiro--ouro {

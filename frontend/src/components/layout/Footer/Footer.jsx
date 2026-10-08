@@ -39,8 +39,8 @@ function Footer() {
         <div className="footer__colunas">
           <div className="footer__coluna">
             <span className="footer__marca">
-              <span className="letreiro letreiro--claro" data-texto="Vitrine">Vitrine</span>
-              <span className="letreiro letreiro--ouro" data-texto="Rondon">Rondon</span>
+              <span className="letreiro letreiro--claro">Vitrine</span>
+              <span className="letreiro letreiro--ouro">Rondon</span>
             </span>
             <p className="footer__texto">
               Uma vitrine digital para quem produz e trabalha perto de você. Feito para

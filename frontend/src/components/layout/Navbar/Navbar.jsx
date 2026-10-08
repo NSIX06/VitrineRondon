@@ -81,8 +81,8 @@ function Navbar() {
           <img src={logo} alt="" width="64" height="49" className="navbar__logo" />
           <span className="navbar__divisor" aria-hidden="true" />
           <span className="navbar__nome">
-            <span className="letreiro" data-texto="Vitrine">Vitrine</span>
-            <span className="letreiro letreiro--ouro letreiro--brilho" data-texto="Rondon">Rondon</span>
+            <span className="letreiro">Vitrine</span>
+            <span className="letreiro letreiro--ouro letreiro--brilho">Rondon</span>
           </span>
         </Link>
 
