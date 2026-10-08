@@ -1,13 +1,30 @@
 /* ==========================================================================
-   Página do item (produto ou serviço): foto grande e, ao lado, a ficha com
-   preço e pedido e o cartão de quem oferece. Embaixo, mais itens do negócio.
+   Página do item (produto ou serviço): à esquerda a foto e como funciona o
+   pedido; à direita a ficha com preço e pedido e quem oferece. Embaixo, mais
+   itens do mesmo negócio.
    ========================================================================== */
 .item__principal {
   display: grid;
-  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-  gap: var(--esp-7);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--esp-6);
   align-items: start;
-  padding-block: var(--esp-7) var(--esp-8);
+  padding-block: var(--esp-6) var(--esp-8);
+}
+
+.item__coluna,
+.item__lado {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+  min-width: 0;
+}
+
+/* Negócio na trilha de migalhas */
+.item__migalha-negocio {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 22ch;
 }
 
 /* Foto */
@@ -37,11 +54,83 @@
   gap: var(--esp-2);
 }
 
-.item__lado {
+.item__foto-local {
+  position: absolute;
+  top: var(--esp-3);
+  right: var(--esp-3);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
+  border: var(--borda-fina);
+  border-radius: 4px;
+  box-shadow: var(--sombra-dura-sm);
+  transform: rotate(1.5deg);
+  font-size: var(--texto-xs);
+  font-weight: 700;
+}
+
+/* Como funciona o pedido */
+.item__garantias {
+  padding: var(--esp-4) var(--esp-5);
+  background: var(--linhas-escuras), var(--cor-superficie-baixa);
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura);
+}
+
+.item__garantias-titulo {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  margin: 0 0 var(--esp-3);
+  padding-bottom: var(--esp-2);
+  border-bottom: 2px dashed var(--cor-contorno);
+  font-size: var(--texto-lg);
+}
+
+.item__garantias ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--esp-5);
-  min-width: 0;
+  gap: var(--esp-3);
+}
+
+.item__garantias li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--esp-3);
+  font-size: var(--texto-sm);
+  line-height: 1.5;
+  color: var(--cor-cinza);
+}
+
+.item__garantias strong {
+  display: block;
+  color: var(--cor-tinta);
+}
+
+.item__garantias-marca {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  background: var(--cor-anil);
+  color: var(--cor-ouro);
+  border: var(--borda-fina);
+  border-radius: var(--raio-sm);
+  box-shadow: var(--sombra-dura-sm);
+}
+
+.item__garantias-marca--ouro {
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
 }
 
 /* Ficha: nome, descrição, preço e o pedido */
@@ -57,16 +146,20 @@
   box-shadow: var(--sombra-dura);
 }
 
+.item__ficha-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: var(--esp-2);
+  border-bottom: 2px dashed var(--cor-linha);
+}
+
 /* Hachura de nanquim no canto da ficha */
-.item__ficha::after {
+.item__ficha-topo::after {
   content: '';
-  position: absolute;
-  top: 14px;
-  right: 16px;
   width: 40px;
   height: 15px;
   background: var(--hachura) no-repeat center / contain;
-  pointer-events: none;
 }
 
 .item__ficha .pagina-cabecalho__marca {
@@ -75,8 +168,8 @@
 
 .item__nome {
   margin: 0;
-  font-size: clamp(28px, 3.4vw, 40px);
-  line-height: 1.08;
+  font-size: clamp(30px, 3.6vw, 44px);
+  line-height: 1.06;
   overflow-wrap: anywhere;
 }
 
@@ -89,21 +182,24 @@
 
 .item__preco-caixa {
   position: relative;
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--esp-3);
   padding: var(--esp-3) var(--esp-4);
   background: var(--cor-ouro);
   border: var(--borda);
   border-radius: var(--raio-md);
   box-shadow: var(--sombra-dura-sm), var(--cel);
-  transform: rotate(-0.6deg);
+}
+
+.item__preco-linha {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--esp-3);
+  flex-wrap: wrap;
 }
 
 .item__a-partir {
   font-size: var(--texto-xs);
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--cor-tinta);
@@ -111,69 +207,88 @@
 
 .item__preco {
   font-family: var(--fonte-titulo);
-  font-size: 34px;
+  font-size: 40px;
   font-weight: 800;
+  line-height: 1;
   letter-spacing: -0.02em;
   color: var(--cor-anil);
 }
 
+.item__preco-nota {
+  margin: var(--esp-2) 0 0;
+  padding-top: var(--esp-2);
+  border-top: 2px dashed rgba(17, 24, 39, 0.35);
+  font-size: var(--texto-xs);
+  line-height: 1.5;
+  color: var(--cor-tinta);
+}
+
 .item__pedir {
   width: 100%;
-  padding-block: 0.9rem;
+  padding-block: 0.95rem;
 }
 
-.item__garantias {
-  list-style: none;
-  margin: 0;
-  padding: var(--esp-3) 0 0;
-  border-top: 2px dashed var(--cor-contorno);
+.item__pedir-dica {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--esp-1) var(--esp-4);
-  font-size: var(--texto-xs);
-  font-weight: 600;
-  color: var(--cor-cinza);
-}
-
-.item__garantias li {
-  display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
+  margin: calc(-1 * var(--esp-2)) 0 0;
+  font-size: var(--texto-xs);
+  color: var(--cor-cinza);
+  text-align: center;
 }
 
-.item__garantias .icone {
-  color: var(--cor-ouro-escuro);
+.item__pedir-dica .icone {
+  color: var(--cor-anil);
 }
 
-/* Quem oferece: cartão compacto que leva ao perfil */
+/* Quem oferece */
 .item__negocio {
   position: relative;
-  display: grid;
-  grid-template-columns: 72px minmax(0, 1fr) auto;
-  align-items: center;
+  display: flex;
+  flex-direction: column;
   gap: var(--esp-3);
-  padding: var(--esp-3);
+  padding: var(--esp-4);
   background: var(--cor-branco);
   border: var(--borda);
   border-radius: var(--raio);
   box-shadow: var(--sombra-dura);
   color: var(--cor-tinta);
-  text-decoration: none;
-  transition: var(--transicao-tecla);
 }
 
-.item__negocio:hover,
-.item__negocio:focus-visible {
-  transform: translate(2px, 2px);
-  box-shadow: 3px 3px 0 0 var(--cor-contorno);
+.item__negocio-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-2);
+  flex-wrap: wrap;
+  padding-bottom: var(--esp-2);
+  border-bottom: 2px dashed var(--cor-linha);
+}
+
+.item__negocio-rotulo {
+  font-size: var(--texto-xs);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cor-cinza);
+}
+
+.item__negocio-corpo {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
 }
 
 .item__negocio-foto {
+  flex-shrink: 0;
   width: 72px;
   height: 72px;
   object-fit: cover;
   border: var(--borda-fina);
   border-radius: var(--raio-md);
+  box-shadow: var(--sombra-dura-sm);
 }
 
 .item__negocio-texto {
@@ -183,19 +298,17 @@
   min-width: 0;
 }
 
-.item__negocio-rotulo {
-  font-size: var(--texto-xs);
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--cor-cinza);
-}
-
 .item__negocio-nome {
   font-family: var(--fonte-titulo);
   font-size: var(--texto-xl);
+  font-weight: 800;
   line-height: 1.15;
   color: var(--cor-anil);
+  text-decoration: none;
+}
+
+.item__negocio-nome:hover {
+  text-decoration: underline;
 }
 
 .item__negocio-meta {
@@ -209,6 +322,31 @@
   align-items: center;
   gap: var(--esp-2);
   margin-top: 4px;
+}
+
+.item__negocio-rodape {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-2);
+  flex-wrap: wrap;
+  padding-top: var(--esp-2);
+  border-top: 2px dashed var(--cor-linha);
+  font-size: var(--texto-sm);
+  color: var(--cor-cinza);
+}
+
+.item__negocio-perfil {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 800;
+  color: var(--cor-anil);
+  text-decoration: none;
+}
+
+.item__negocio-perfil:hover {
+  text-decoration: underline;
 }
 
 .item__situacao {
@@ -245,19 +383,6 @@
   background: var(--cor-whatsapp);
 }
 
-.item__negocio-ir {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border: var(--borda-fina);
-  border-radius: 50%;
-  background: var(--cor-ouro);
-  color: var(--cor-tinta);
-  box-shadow: var(--sombra-dura-sm);
-}
-
 /* Mais itens do negócio */
 .item__mais {
   background: var(--cor-superficie-media);
@@ -271,6 +396,8 @@
   gap: var(--esp-4);
   flex-wrap: wrap;
   margin-bottom: var(--esp-5);
+  padding-bottom: var(--esp-3);
+  border-bottom: var(--borda);
 }
 
 .item__mais-topo h2 {
@@ -301,12 +428,9 @@
     6px 6px 0 3px var(--cor-contorno);
 }
 
-.item--destaque .item__negocio:hover,
-.item--destaque .item__negocio:focus-visible {
-  box-shadow:
-    inset 0 0 0 3px var(--cor-ouro),
-    3px 3px 0 0 var(--cor-ouro),
-    3px 3px 0 3px var(--cor-contorno);
+.item--destaque .item__negocio-topo,
+.item--destaque .item__negocio-rodape {
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .item--destaque .item__negocio-foto {
@@ -317,11 +441,13 @@
   color: var(--cor-ouro-claro);
 }
 
-.item--destaque .item__negocio-nome {
+.item--destaque .item__negocio-nome,
+.item--destaque .item__negocio-perfil {
   color: var(--cor-ouro);
 }
 
-.item--destaque .item__negocio-meta {
+.item--destaque .item__negocio-meta,
+.item--destaque .item__negocio-rodape {
   color: rgba(255, 255, 255, 0.88);
 }
 
@@ -351,6 +477,23 @@
     gap: var(--esp-5);
     padding-block: var(--esp-5) var(--esp-7);
   }
+
+  /* No celular a ficha vem logo depois da foto; como funciona fica no fim */
+  .item__coluna {
+    display: contents;
+  }
+
+  .item__foto {
+    order: 1;
+  }
+
+  .item__lado {
+    order: 2;
+  }
+
+  .item__garantias {
+    order: 3;
+  }
 }
 
 @media (max-width: 600px) {
@@ -358,8 +501,8 @@
     padding: var(--esp-4);
   }
 
-  .item__negocio {
-    grid-template-columns: 56px minmax(0, 1fr);
+  .item__preco {
+    font-size: 34px;
   }
 
   .item__negocio-foto {
@@ -367,11 +510,15 @@
     height: 56px;
   }
 
-  .item__negocio-ir {
-    display: none;
-  }
-
   .item__mais-topo h2 {
     font-size: var(--texto-2xl);
+  }
+
+  .item__mais-topo .botao {
+    width: 100%;
+  }
+
+  .item__migalha-negocio {
+    max-width: 12ch;
   }
 }

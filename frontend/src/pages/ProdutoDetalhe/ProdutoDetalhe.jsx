@@ -35,36 +35,6 @@ const trocarPorPadrao = (evento) => {
   evento.currentTarget.src = imagemPadrao
 }
 
-/** Outros itens do mesmo negócio, sem o que está aberto */
-function MaisDoNegocio({ empreendedor, itemAtual }) {
-  const consulta = useConsulta(`/produtos?empreendedorId=${empreendedor.id}`)
-  const outros = (consulta.dados?.data ?? []).filter((p) => p.id !== itemAtual).slice(0, OUTROS_ITENS)
-  if (outros.length === 0) return null
-
-  return (
-    <section className="item__mais" aria-labelledby="titulo-mais">
-      <div className="container secao">
-        <div className="item__mais-topo">
-          <div>
-            <span className="pagina-cabecalho__marca">Do mesmo negócio</span>
-            <h2 id="titulo-mais">Mais de {empreendedor.nomeNegocio}</h2>
-          </div>
-          <Button to={`/empreendedores/${empreendedor.id}`} variante="secundario" tamanho="sm">
-            Ver o catálogo completo
-          </Button>
-        </div>
-        <ul className="grade-cards">
-          {outros.map((produto) => (
-            <li key={produto.id}>
-              <ProdutoCard produto={produto} />
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
-  )
-}
-
 function ProdutoDetalhe() {
   const { id } = useParams()
   // Com cache: voltar a um produto já visto é imediato. Sem manter o anterior,
@@ -74,6 +44,8 @@ function ProdutoDetalhe() {
   const { carregando, erro } = consulta
   const produtoId = produto?.id
   const negocioId = produto?.empreendedor?.id
+  // Catálogo do mesmo negócio: conta os itens e mostra outros embaixo
+  const catalogo = useConsulta(negocioId ? '/produtos' : null, negocioId ? { empreendedorId: negocioId } : undefined)
   // O selo de atendimento troca sozinho quando o horário começa ou termina
   const agora = useRelogio()
 
@@ -105,10 +77,14 @@ function ProdutoDetalhe() {
   const ehServico = tipo === 'servico'
   const destaque = empreendedor.emDestaque
   const novo = ehNovidade(empreendedor.publicadoDesde)
+  const primeiroNome = empreendedor.responsavel.split(' ')[0]
   const situacao = situacaoAtendimento(empreendedor.horarios ?? [], agora)
   const atendeAgora = empreendedor.ativo !== false && situacao.aberto
   const local = [empreendedor.bairro, empreendedor.cidade].filter(Boolean).join(', ')
   const pedir = () => registrarMetrica(empreendedor.id, METRICAS.CLIQUE_WHATSAPP)
+  const perfil = `/empreendedores/${empreendedor.id}`
+  const itensDoNegocio = catalogo.dados?.data ?? []
+  const outros = itensDoNegocio.filter((p) => p.id !== produto.id).slice(0, OUTROS_ITENS)
 
   return (
     <div className={`item ${destaque ? 'item--destaque' : ''}`}>
@@ -120,29 +96,87 @@ function ProdutoDetalhe() {
             <span aria-hidden="true">/</span>
             <Link to="/vitrine">Vitrine</Link>
             <span aria-hidden="true">/</span>
+            <Link to={perfil} className="item__migalha-negocio">
+              {empreendedor.nomeNegocio}
+            </Link>
+            <span aria-hidden="true">/</span>
             <span className="detalhe__migalhas-atual">{nome}</span>
           </nav>
         </div>
       </div>
 
       <section className="container item__principal">
-        <div className="item__foto">
-          <img decoding="async" src={urlImagem(imagem) || imagemPadrao} alt={nome} onError={trocarPorPadrao} />
-          <div className="item__foto-tags">
-            <TagTipo tipo={tipo} />
-            {!disponivel && <Tag variante="alerta">Indisponível</Tag>}
+        <div className="item__coluna">
+          <div className="item__foto">
+            <img decoding="async" src={urlImagem(imagem) || imagemPadrao} alt={nome} onError={trocarPorPadrao} />
+            <div className="item__foto-tags">
+              <TagTipo tipo={tipo} />
+              {!disponivel && <Tag variante="alerta">Indisponível</Tag>}
+            </div>
+            {local && (
+              <span className="item__foto-local">
+                <Icone nome="location_on" tamanho={14} />
+                {empreendedor.bairro || empreendedor.cidade}
+              </span>
+            )}
+          </div>
+
+          {/* O que o VitrineRondon garante (e o que não faz): sem promessa de resultado */}
+          <div className="item__garantias">
+            <h2 className="item__garantias-titulo">
+              <Icone nome="shield_with_heart" tamanho={20} />
+              Como funciona o pedido
+            </h2>
+            <ul>
+              <li>
+                <span className="item__garantias-marca">
+                  <Icone nome="check" tamanho={16} />
+                </span>
+                <span>
+                  <strong>Negociação direta com quem faz</strong>
+                  Você combina prazo, entrega e forma de pagamento com {primeiroNome}, sem intermediários.
+                </span>
+              </li>
+              <li>
+                <span className="item__garantias-marca item__garantias-marca--ouro">
+                  <Icone nome="check" tamanho={16} />
+                </span>
+                <span>
+                  <strong>Sem comissão sobre a venda</strong>
+                  O VitrineRondon não fica com parte do valor: o que você paga vai para o negócio.
+                </span>
+              </li>
+              <li>
+                <span className="item__garantias-marca">
+                  <Icone nome="check" tamanho={16} />
+                </span>
+                <span>
+                  <strong>Atendimento em {local || 'Rondonópolis'}</strong>
+                  Confirme pelo WhatsApp se {primeiroNome} atende o seu bairro.
+                </span>
+              </li>
+            </ul>
           </div>
         </div>
 
         <div className="item__lado">
           <div className="item__ficha">
-            <span className="pagina-cabecalho__marca">{empreendedor.categoria}</span>
+            <div className="item__ficha-topo">
+              <span className="pagina-cabecalho__marca">{empreendedor.categoria}</span>
+            </div>
             <h1 className="item__nome">{nome}</h1>
             {descricao && <p className="item__descricao">{descricao}</p>}
 
             <div className="item__preco-caixa">
-              <span className="item__a-partir">{ehServico ? 'A partir de' : 'Preço'}</span>
-              <span className="item__preco">{formatarPreco(preco)}</span>
+              <div className="item__preco-linha">
+                <span className="item__a-partir">{ehServico ? 'A partir de' : 'Preço'}</span>
+                <span className="item__preco">{formatarPreco(preco)}</span>
+              </div>
+              <p className="item__preco-nota">
+                {ehServico
+                  ? `Valor de referência. O preço final depende do serviço e é combinado direto com ${primeiroNome}.`
+                  : `Preço informado pelo negócio. Entrega ou retirada são combinadas pelo WhatsApp.`}
+              </p>
             </div>
 
             <Button
@@ -154,58 +188,87 @@ function ProdutoDetalhe() {
               <Icone nome="chat" tamanho={20} />
               {ehServico ? 'Pedir orçamento no WhatsApp' : 'Pedir pelo WhatsApp'}
             </Button>
-
-            <ul className="item__garantias">
-              <li>
-                <Icone nome="handshake" tamanho={16} />
-                Pedido combinado direto com quem faz
-              </li>
-              <li>
-                <Icone nome="payments" tamanho={16} />
-                Sem comissão do VitrineRondon
-              </li>
-            </ul>
+            <p className="item__pedir-dica">
+              <Icone nome="info" tamanho={15} />
+              Abre a conversa com {primeiroNome} já com o nome deste {ehServico ? 'serviço' : 'produto'}.
+            </p>
           </div>
 
-          {/* Quem oferece: cartão compacto do negócio, no lugar da seção inteira */}
-          <Link to={`/empreendedores/${empreendedor.id}`} className="item__negocio">
+          {/* Quem oferece: cartão do negócio com o essencial e o caminho para o perfil */}
+          <div className="item__negocio">
             {destaque && (
               <span className="item__negocio-fita">
                 <Icone nome="star" tamanho={14} />
                 Negócio Destaque
               </span>
             )}
-            <img
-              className="item__negocio-foto"
-              decoding="async"
-              src={urlImagem(empreendedor.fotoUrl) || imagemPadrao}
-              alt=""
-              onError={trocarPorPadrao}
-            />
-            <span className="item__negocio-texto">
-              <span className="item__negocio-rotulo">Quem oferece</span>
-              <strong className="item__negocio-nome">{empreendedor.nomeNegocio}</strong>
-              <span className="item__negocio-meta">
-                {empreendedor.responsavel}
-                {local ? ` · ${local}` : ''}
+            <div className="item__negocio-topo">
+              <span className="item__negocio-rotulo">Quem oferece este {ehServico ? 'serviço' : 'produto'}</span>
+              <span className={`item__situacao ${atendeAgora ? 'item__situacao--aberto' : ''}`}>
+                <span className="item__ponto" aria-hidden="true" />
+                {atendeAgora ? 'Aberto agora' : 'Fechado agora'}
+                {!situacao.semHorario && <span className="item__situacao-quando">· {detalheDaSituacao(situacao)}</span>}
               </span>
-              <span className="item__negocio-selos">
-                <span className={`item__situacao ${atendeAgora ? 'item__situacao--aberto' : ''}`}>
-                  <span className="item__ponto" aria-hidden="true" />
-                  {atendeAgora ? 'Aberto agora' : 'Fechado agora'}
-                  {!situacao.semHorario && <span className="item__situacao-quando">· {detalheDaSituacao(situacao)}</span>}
+            </div>
+            <div className="item__negocio-corpo">
+              <img
+                className="item__negocio-foto"
+                decoding="async"
+                src={urlImagem(empreendedor.fotoUrl) || imagemPadrao}
+                alt=""
+                onError={trocarPorPadrao}
+              />
+              <div className="item__negocio-texto">
+                <Link to={perfil} className="item__negocio-nome">
+                  {empreendedor.nomeNegocio}
+                </Link>
+                <span className="item__negocio-meta">
+                  {empreendedor.responsavel}
+                  {local ? ` · ${local}` : ''}
                 </span>
-                {novo && <SeloNovo compacto claro={destaque} />}
+                <span className="item__negocio-selos">
+                  <Tag variante={destaque ? 'ouro' : 'servico'}>{empreendedor.categoria}</Tag>
+                  {novo && <SeloNovo compacto claro={destaque} />}
+                </span>
+              </div>
+            </div>
+            <div className="item__negocio-rodape">
+              <span>
+                {itensDoNegocio.length > 0 &&
+                  `${itensDoNegocio.length} ${itensDoNegocio.length === 1 ? 'item' : 'itens'} na vitrine`}
               </span>
-            </span>
-            <span className="item__negocio-ir" aria-hidden="true">
-              <Icone nome="arrow_forward" tamanho={20} />
-            </span>
-          </Link>
+              <Link to={perfil} className="item__negocio-perfil">
+                Ver o perfil completo
+                <Icone nome="arrow_forward" tamanho={18} />
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 
-      <MaisDoNegocio empreendedor={empreendedor} itemAtual={produto.id} />
+      {outros.length > 0 && (
+        <section className="item__mais" aria-labelledby="titulo-mais">
+          <div className="container secao">
+            <div className="item__mais-topo">
+              <div>
+                <span className="pagina-cabecalho__marca">Do mesmo negócio</span>
+                <h2 id="titulo-mais">Mais de {empreendedor.nomeNegocio}</h2>
+              </div>
+              <Button to={perfil} variante="secundario" tamanho="sm">
+                Ver o catálogo completo ({itensDoNegocio.length} {itensDoNegocio.length === 1 ? 'item' : 'itens'})
+                <Icone nome="list_alt" tamanho={18} />
+              </Button>
+            </div>
+            <ul className="grade-cards">
+              {outros.map((item) => (
+                <li key={item.id}>
+                  <ProdutoCard produto={item} />
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
     </div>
   )
 }
