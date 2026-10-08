@@ -1,7 +1,7 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useConsulta } from '../../hooks/useConsulta'
-import { linkWhatsapp, numeroInternacional } from '../../services/whatsapp'
+import { linkWhatsapp } from '../../services/whatsapp'
 import {
   DIAS,
   agoraNoFuso,
@@ -17,16 +17,19 @@ import Icone from '../../components/ui/Icone/Icone'
 import Mapa from '../../components/ui/Mapa/MapaPreguicoso'
 import { SITUACAO_NEGOCIO } from '../../services/planos'
 import { METRICAS, registrarMetrica } from '../../services/metricas'
-import ProdutoCard from '../../components/cards/ProdutoCard/ProdutoCard'
 import imagemPadrao from '../../assets/imagem-padrao.svg'
 import { useRelogio } from '../../hooks/useRelogio'
 import SeloNovo from '../../components/ui/SeloNovo/SeloNovo'
 import SeloDestaque from '../../components/ui/SeloDestaque/SeloDestaque'
 import { ehNovidade } from '../../services/novidades'
+import ItemDoCatalogo from './ItemDoCatalogo'
 import '../detalhe-migalhas.css'
 import './EmpreendedorDetalhe.css'
 import Voltar from '../../components/ui/Voltar/Voltar'
 import { urlImagem } from '../../services/imagens'
+
+/** A busca no catálogo só aparece quando há itens para procurar */
+const MINIMO_PARA_BUSCA = 4
 
 /** Monta o link do WhatsApp com mensagem inicial */
 function montarLinkWhatsapp(numero, nomeNegocio, mensagem) {
@@ -45,6 +48,23 @@ function formatarTelefone(numero) {
   return numero
 }
 
+/** Iniciais do negócio para o monograma: "Ateliê Fio & Arte" -> "AF" */
+function iniciais(nome) {
+  return nome
+    .split(/\s+/)
+    .filter((palavra) => /^[\p{L}\p{N}]/u.test(palavra) && palavra.length > 2)
+    .slice(0, 2)
+    .map((palavra) => palavra[0].toUpperCase())
+    .join('')
+}
+
+/** Busca sem diferenciar acento nem maiúscula */
+const normalizar = (texto) =>
+  String(texto ?? '')
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+
 function EmpreendedorDetalhe() {
   const { id } = useParams()
   // Com cache: voltar a um empreendedor já visto é imediato. Sem manter o anterior,
@@ -53,6 +73,7 @@ function EmpreendedorDetalhe() {
   const empreendedor = consulta.dados?.data ?? null
   const { carregando, erro } = consulta
   const negocioId = empreendedor?.id
+  const [busca, setBusca] = useState('')
 
   // Uma visualização por perfil aberto (o servidor ignora repetição e o dono)
   useEffect(() => {
@@ -108,22 +129,24 @@ function EmpreendedorDetalhe() {
     situacao: situacaoDoNegocio,
   } = empreendedor
   const novo = ehNovidade(publicadoDesde)
-  const capa = urlImagem(fotoUrl) || imagemPadrao
   const previa = situacaoDoNegocio && situacaoDoNegocio !== 'ATIVO' ? SITUACAO_NEGOCIO[situacaoDoNegocio] : null
 
-  const resumoEmpreendedor = { id: empreendedor.id, nomeNegocio, cidade, whatsapp }
-  const produtosComEmpreendedor = produtos.map((produto) => ({
-    ...produto,
-    empreendedor: resumoEmpreendedor,
-  }))
   const instagramUsuario = instagram ? instagram.replace(/^@/, '') : null
   const primeiroNome = responsavel.split(' ')[0]
   const ehServico = produtos.some((p) => p.tipo === 'servico')
   const linkWhatsapp = montarLinkWhatsapp(whatsapp, nomeNegocio)
-  // Base do link usada pelos cards: a mensagem do item é anexada ao final
-  const linkWhatsappBase = `https://wa.me/${numeroInternacional(whatsapp)}?text=${encodeURIComponent(
-    `Olá, ${primeiroNome}! Vi o ${nomeNegocio} no VitrineRondon.`
-  )}`
+  const pedirItem = (item) =>
+    montarLinkWhatsapp(
+      whatsapp,
+      nomeNegocio,
+      `Olá, ${primeiroNome}! Vi "${item.nome}" do ${nomeNegocio} no VitrineRondon e gostaria de ${
+        item.tipo === 'servico' ? 'um orçamento' : 'mais informações'
+      }.`
+    )
+  const termo = normalizar(busca.trim())
+  const itensVisiveis = termo
+    ? produtos.filter((p) => normalizar(`${p.nome} ${p.descricao}`).includes(termo))
+    : produtos
 
   // Localização: com coordenadas confirmadas o mapa é exato; sem elas, usa o
   // endereço digitado. Quando o empreendedor não quer divulgar o endereço,
@@ -144,7 +167,6 @@ function EmpreendedorDetalhe() {
   const situacao = situacaoAtendimento(horarios, agora)
   const atendeAgora = ativo && situacao.aberto
   const diaDeHoje = agoraNoFuso(agora).dia
-
 
   return (
     <div className={`detalhe ${emDestaque ? 'detalhe--destaque' : ''}`}>
@@ -171,133 +193,180 @@ function EmpreendedorDetalhe() {
         </div>
       )}
 
-      <div className="detalhe__capa">
-        <img className="detalhe__capa-fundo" decoding="async" src={capa} alt="" aria-hidden="true" />
-        <div className="container detalhe__capa-moldura">
-          <div className="detalhe__capa-foto">
+      <div className="container detalhe__corpo">
+        {/* Cabeçalho do perfil: capa dentro do cartão, monograma, nome e o essencial */}
+        <header className="detalhe__cabecalho">
+          <div className="detalhe__capa">
             <img
               decoding="async"
-              src={capa}
+              src={urlImagem(fotoUrl) || imagemPadrao}
               alt=""
               onError={(evento) => {
                 evento.currentTarget.src = imagemPadrao
               }}
             />
             <div className="detalhe__capa-sombra" />
+            {emDestaque && (
+              <span className="detalhe__fita" title="Negócio com o plano Destaque do VitrineRondon">
+                <Icone nome="star" tamanho={16} />
+                Negócio Destaque
+              </span>
+            )}
           </div>
-        </div>
-      </div>
 
-      <div className="container detalhe__corpo">
-        {/* Cabeçalho do perfil sobre a capa: quem é, onde fica e se atende agora */}
-        <header className="detalhe__cabecalho">
-          {emDestaque && (
-            <span className="detalhe__fita" title="Negócio com o plano Destaque do VitrineRondon">
-              <Icone nome="star" tamanho={16} />
-              Negócio Destaque
-            </span>
-          )}
-          <div className="detalhe__selos">
-            <Tag variante={emDestaque ? 'ouro' : 'servico'}>{categoria}</Tag>
-            {novo && <SeloNovo compacto claro={emDestaque} />}
-            <span className="detalhe__verificado">
-              <Icone nome="verified" tamanho={16} />
-              Perfil verificado
-            </span>
-            {!ativo && <Tag variante="alerta">Inativo no momento</Tag>}
+          <div className="detalhe__cabecalho-corpo">
+            <div className="detalhe__identidade">
+              <span className="detalhe__monograma" aria-hidden="true">
+                {iniciais(nomeNegocio) || nomeNegocio[0]}
+                {atendeAgora && <span className="detalhe__monograma-aberto" />}
+              </span>
+              <div className="detalhe__titulos">
+                <div className="detalhe__selos">
+                  <Tag variante={emDestaque ? 'ouro' : 'servico'}>{categoria}</Tag>
+                  {novo && <SeloNovo compacto claro={emDestaque} />}
+                  <span className="detalhe__verificado">
+                    <Icone nome="verified" tamanho={16} />
+                    Perfil verificado
+                  </span>
+                  {!ativo && <Tag variante="alerta">Inativo no momento</Tag>}
+                </div>
+                <h1 className="detalhe__nome">{nomeNegocio}</h1>
+                <p className="detalhe__meta">
+                  <span>
+                    <Icone nome="person" tamanho={18} />
+                    {responsavel}
+                  </span>
+                  <span>
+                    <Icone nome="location_on" tamanho={18} />
+                    {localResumo || cidade}
+                  </span>
+                </p>
+              </div>
+              <Button
+                href={linkWhatsapp}
+                variante="whatsapp"
+                onClick={contar(METRICAS.CLIQUE_WHATSAPP)}
+                className="detalhe__whatsapp-topo"
+              >
+                <Icone nome="chat" tamanho={20} />
+                Chamar no WhatsApp
+              </Button>
+            </div>
+
+            {descricao && <p className="detalhe__descricao">{descricao}</p>}
+
+            <ul className="detalhe__fatos">
+              {/* Só o dono liga a disponibilidade no cadastro; sem isso, e com o
+                  negócio inativo, o selo fica vermelho */}
+              <li className={`detalhe__disponivel ${!atendeAgora ? 'detalhe__disponivel--inativo' : ''}`}>
+                <span className="detalhe__ponto" aria-hidden="true" />
+                {atendeAgora ? 'Aberto agora' : 'Fechado agora'}
+                {ativo && !situacao.semHorario && (
+                  <span className="detalhe__disponivel-quando">· {detalheDaSituacao(situacao)}</span>
+                )}
+              </li>
+              <li>
+                <Icone nome="inventory_2" tamanho={18} />
+                {produtos.length}{' '}
+                {ehServico
+                  ? produtos.length === 1
+                    ? 'serviço no catálogo'
+                    : 'serviços no catálogo'
+                  : produtos.length === 1
+                    ? 'item no catálogo'
+                    : 'itens no catálogo'}
+              </li>
+              <li>
+                <Icone nome="handshake" tamanho={18} />
+                Sem intermediários nem comissão
+              </li>
+            </ul>
           </div>
-          <h1 className="detalhe__nome">{nomeNegocio}</h1>
-          <p className="detalhe__meta">
-            <span>
-              <Icone nome="person_check" tamanho={20} />
-              {responsavel}
-            </span>
-            <span>
-              <Icone nome="location_on" tamanho={20} />
-              {localResumo || cidade}
-            </span>
-          </p>
-          {descricao && <p className="detalhe__descricao">{descricao}</p>}
-          <ul className="detalhe__fatos">
-            {/* Só o dono liga a disponibilidade no cadastro; sem isso, e com o
-                negócio inativo, o selo fica vermelho */}
-            <li className={`detalhe__disponivel ${!atendeAgora ? 'detalhe__disponivel--inativo' : ''}`}>
-              <span className="detalhe__ponto" aria-hidden="true" />
-              {atendeAgora ? 'Aberto agora' : 'Fechado agora'}
-              {ativo && !situacao.semHorario && (
-                <span className="detalhe__disponivel-quando">· {detalheDaSituacao(situacao)}</span>
-              )}
-            </li>
-            <li>
-              <Icone nome={ehServico ? 'handyman' : 'sell'} tamanho={18} />
-              {produtos.length} {produtos.length === 1 ? 'item na vitrine' : 'itens na vitrine'}
-            </li>
-            <li>
-              <Icone nome="handshake" tamanho={18} />
-              Sem intermediários nem comissão
-            </li>
-          </ul>
         </header>
 
         <div className="detalhe__grade">
           <section className="detalhe__catalogo" aria-labelledby="titulo-catalogo">
-            <div className="detalhe__secao-topo">
-              <span className="pagina-cabecalho__marca">Catálogo de {ehServico ? 'serviços' : 'produtos'}</span>
-              <h2 id="titulo-catalogo">O que {nomeNegocio} oferece</h2>
-              <p className="secao__subtitulo">
-                {produtos.length === 0
-                  ? 'Nenhum item cadastrado por enquanto.'
-                  : 'Itens disponíveis para pedido direto pelo WhatsApp.'}
-              </p>
+            <div className="detalhe__catalogo-topo">
+              <div className="detalhe__catalogo-titulos">
+                <span className="pagina-cabecalho__marca">Catálogo direto</span>
+                <h2 id="titulo-catalogo">O que {nomeNegocio} oferece</h2>
+                <p className="secao__subtitulo">
+                  {produtos.length === 0
+                    ? 'Nenhum item cadastrado por enquanto.'
+                    : `Escolha o item para pedir ${ehServico ? 'orçamento' : 'pelo WhatsApp'} direto com ${primeiroNome}.`}
+                </p>
+              </div>
+              {produtos.length > 0 && <span className="detalhe__referencia">Preços de referência</span>}
+              {produtos.length >= MINIMO_PARA_BUSCA && (
+                <label className="detalhe__busca">
+                  <Icone nome="search" tamanho={18} />
+                  <span className="visualmente-oculto">Buscar no catálogo</span>
+                  <input
+                    type="search"
+                    value={busca}
+                    onChange={(evento) => setBusca(evento.target.value)}
+                    placeholder={`Buscar em ${produtos.length} itens`}
+                  />
+                </label>
+              )}
             </div>
 
             {produtos.length === 0 ? (
               <StatusMessage tipo="vazio" titulo="Vitrine vazia">
                 <p>Este empreendedor ainda não cadastrou produtos ou serviços.</p>
               </StatusMessage>
+            ) : itensVisiveis.length === 0 ? (
+              <p className="detalhe__sem-resultado">Nenhum item com “{busca.trim()}”.</p>
             ) : (
-              <ul className="grade-cards detalhe__cards">
-                {produtosComEmpreendedor.map((produto) => (
+              <ul className="detalhe__itens">
+                {itensVisiveis.map((produto) => (
                   <li key={produto.id}>
-                    <ProdutoCard produto={produto} linkWhatsapp={linkWhatsappBase} />
+                    <ItemDoCatalogo
+                      produto={produto}
+                      linkPedido={pedirItem(produto)}
+                      aoPedir={contar(METRICAS.CLIQUE_WHATSAPP)}
+                    />
                   </li>
                 ))}
               </ul>
             )}
 
-            <p className="detalhe__outro">
+            <div className="detalhe__outro">
               <span className="detalhe__outro-icone">
-                <Icone nome="info" tamanho={20} />
+                <Icone nome="help" tamanho={24} />
               </span>
-              <span>
-                <strong>Precisa de algo que não está na lista?</strong> {primeiroNome} também atende pedidos sob
-                consulta.{' '}
-                <a
-                  href={montarLinkWhatsapp(
-                    whatsapp,
-                    nomeNegocio,
-                    `Olá, ${primeiroNome}! Tenho uma dúvida sobre um pedido específico.`
-                  )}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={contar(METRICAS.CLIQUE_WHATSAPP)}
-                >
-                  Perguntar pelo WhatsApp
-                </a>
-              </span>
-            </p>
+              <div className="detalhe__outro-texto">
+                <p className="detalhe__outro-titulo">Precisa de algo que não está na lista?</p>
+                <p>{primeiroNome} também atende pedidos sob consulta. Pergunte pelo WhatsApp.</p>
+              </div>
+              <Button
+                href={montarLinkWhatsapp(
+                  whatsapp,
+                  nomeNegocio,
+                  `Olá, ${primeiroNome}! Tenho uma dúvida sobre um pedido específico.`
+                )}
+                variante="secundario"
+                onClick={contar(METRICAS.CLIQUE_WHATSAPP)}
+              >
+                Consultar outro pedido
+                <Icone nome="arrow_forward" tamanho={18} />
+              </Button>
+            </div>
           </section>
 
           <aside className="detalhe__contato" aria-labelledby="titulo-contato">
             <div className="detalhe__contato-cabecalho">
               <span className="detalhe__contato-selo">Contato direto</span>
-              <h2 id="titulo-contato" className="detalhe__contato-titulo">
-                Fale direto com quem faz
-              </h2>
+              <span className="detalhe__contato-sem">Sem intermediários</span>
             </div>
-            <p className="detalhe__contato-texto">
-              Converse com {primeiroNome} no WhatsApp para pedir orçamento, encomendar ou agendar.
-            </p>
+            <div>
+              <h2 id="titulo-contato" className="detalhe__contato-titulo">
+                Fale com {primeiroNome}
+              </h2>
+              <p className="detalhe__contato-texto">
+                Mande no WhatsApp o que precisa (fotos ajudam) para combinar orçamento, encomenda ou horário.
+              </p>
+            </div>
             <div className="detalhe__telefone-caixa">
               <span className="detalhe__telefone-rotulo">Telefone e WhatsApp comercial</span>
               <a
@@ -322,6 +391,10 @@ function EmpreendedorDetalhe() {
               </svg>
               Chamar no WhatsApp
             </Button>
+            <Button to={`/contato?empreendedor=${empreendedor.id}`} variante="secundario" className="detalhe__mensagem">
+              <Icone nome="mail" tamanho={18} />
+              Enviar mensagem pelo site
+            </Button>
             {instagramUsuario && (
               <a
                 className="detalhe__instagram"
@@ -339,17 +412,14 @@ function EmpreendedorDetalhe() {
                 @{instagramUsuario}
               </a>
             )}
-            <Link to={`/contato?empreendedor=${empreendedor.id}`} className="detalhe__mensagem">
-              Ou deixe uma mensagem pelo site
-            </Link>
             <ul className="detalhe__confianca">
               <li>
-                <Icone nome="shield" tamanho={16} />
-                Cadastro conferido pela equipe
+                <Icone nome="verified" tamanho={16} />
+                Cadastro conferido pela equipe VitrineRondon
               </li>
               <li>
                 <Icone nome="payments" tamanho={16} />
-                Pagamento combinado com {primeiroNome}
+                Pagamento combinado direto com {primeiroNome}
               </li>
             </ul>
           </aside>

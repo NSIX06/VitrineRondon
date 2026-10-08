@@ -1,7 +1,6 @@
 /* ==========================================================================
-   Perfil do negócio em três blocos: o cabeçalho sobre a capa (quem é, onde
-   fica, se atende agora), o catálogo e a coluna de contato com horário e mapa.
-   Endereço e WhatsApp aparecem uma vez só cada.
+   Perfil do negócio: cabeçalho em cartão (com a capa dentro), catálogo em
+   lista com o contato ao lado, horário da semana e a faixa de localização.
    ========================================================================== */
 
 /* Aviso de prévia (negócio fora da vitrine, visto pelo dono ou pela administração) */
@@ -13,40 +12,31 @@
   margin: 0;
 }
 
-/* Capa: a foto fica na largura do conteúdo, sobre um fundo com a mesma foto
-   desfocada. Esticada na tela toda, a foto (em geral 800px) estourava */
+.detalhe__corpo {
+  padding-block: var(--esp-6) var(--esp-8);
+}
+
+/* --------------------------------------------------------------------------
+   Cabeçalho: capa no alto do cartão e o monograma subindo sobre ela
+   -------------------------------------------------------------------------- */
+.detalhe__cabecalho {
+  position: relative;
+  overflow: hidden;
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura);
+}
+
 .detalhe__capa {
   position: relative;
-  overflow: hidden;
+  height: clamp(150px, 20vw, 230px);
   background: var(--cor-anil-escuro);
   border-bottom: var(--borda);
-}
-
-.detalhe__capa-fundo {
-  position: absolute;
-  inset: -40px;
-  width: calc(100% + 80px);
-  height: calc(100% + 80px);
-  object-fit: cover;
-  filter: blur(28px) saturate(1.1) brightness(0.55);
-}
-
-.detalhe__capa-moldura {
-  position: relative;
-  height: clamp(180px, 24vw, 300px);
-  padding-block: var(--esp-4) 0;
-}
-
-.detalhe__capa-foto {
-  position: relative;
-  height: 100%;
   overflow: hidden;
-  border: var(--borda);
-  border-bottom: 0;
-  border-radius: var(--raio) var(--raio) 0 0;
 }
 
-.detalhe__capa-foto img {
+.detalhe__capa img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -55,40 +45,75 @@
 .detalhe__capa-sombra {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(17, 24, 39, 0.55), transparent 55%);
+  background: linear-gradient(to top, rgba(15, 37, 87, 0.75), rgba(15, 37, 87, 0.15) 60%, transparent);
 }
 
-.detalhe__corpo {
-  padding-bottom: var(--esp-8);
-}
-
-/* --------------------------------------------------------------------------
-   Cabeçalho do perfil: um cartão que sobe por cima da capa
-   -------------------------------------------------------------------------- */
-.detalhe__cabecalho {
+.detalhe__cabecalho-corpo {
   position: relative;
-  z-index: 1;
-  margin-top: calc(-1 * clamp(56px, 8vw, 104px));
-  padding: var(--esp-6);
-  background: var(--cor-branco);
-  border: var(--borda);
-  border-radius: var(--raio);
-  box-shadow: var(--sombra-dura);
   display: flex;
   flex-direction: column;
   gap: var(--esp-3);
+  padding: 0 var(--esp-6) var(--esp-5);
 }
 
-/* Hachura de nanquim no canto do cabeçalho */
-.detalhe__cabecalho::after {
+/* Hachura de nanquim no canto de baixo do cabeçalho */
+.detalhe__cabecalho-corpo::after {
   content: '';
   position: absolute;
-  top: 14px;
   right: 16px;
+  bottom: 14px;
   width: 40px;
   height: 15px;
   background: var(--hachura) no-repeat center / contain;
   pointer-events: none;
+}
+
+.detalhe__identidade {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--esp-4);
+  margin-top: calc(-1 * var(--esp-7));
+}
+
+/* Monograma do negócio: iniciais em placa de cartaz */
+.detalhe__monograma {
+  position: relative;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 104px;
+  height: 104px;
+  background: var(--linhas-escuras), var(--cor-ouro);
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura), var(--cel);
+  transform: rotate(-2deg);
+  font-family: var(--fonte-titulo);
+  font-size: 42px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--cor-anil);
+}
+
+.detalhe__monograma-aberto {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: var(--borda-fina);
+  background: var(--cor-whatsapp);
+}
+
+.detalhe__titulos {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+  padding-top: var(--esp-7);
 }
 
 .detalhe__selos {
@@ -113,7 +138,7 @@
 
 .detalhe__nome {
   margin: 0;
-  font-size: clamp(30px, 4.4vw, 50px);
+  font-size: clamp(28px, 4vw, 44px);
   line-height: 1.05;
   overflow-wrap: anywhere;
 }
@@ -121,44 +146,53 @@
 .detalhe__meta {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--esp-2) var(--esp-5);
+  gap: var(--esp-1) var(--esp-4);
   margin: 0;
-  font-family: var(--fonte-titulo);
-  font-size: var(--texto-lg);
-  font-weight: 700;
-  color: var(--cor-tinta);
+  font-size: var(--texto-sm);
+  font-weight: 600;
+  color: var(--cor-cinza);
 }
 
 .detalhe__meta > span {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
+}
+
+.detalhe__meta > span:first-child {
+  color: var(--cor-tinta);
+  font-weight: 700;
 }
 
 .detalhe__meta .icone {
   color: var(--cor-anil);
 }
 
+.detalhe__whatsapp-topo {
+  flex-shrink: 0;
+  align-self: flex-end;
+}
+
 .detalhe__descricao {
   margin: 0;
-  max-width: 68ch;
+  max-width: 72ch;
   font-size: var(--texto-md);
   line-height: 1.6;
   color: var(--cor-cinza);
 }
 
-/* Fatos rápidos: atendimento agora, quantos itens e o sem comissão */
+/* Fatos rápidos: atendimento agora, tamanho do catálogo e o sem comissão */
 .detalhe__fatos {
   list-style: none;
-  margin: var(--esp-1) 0 0;
+  margin: 0;
   padding: var(--esp-3) 0 0;
   border-top: 2px dashed var(--cor-linha);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--esp-2) var(--esp-5);
-  font-size: var(--texto-sm);
-  font-weight: 600;
+  gap: var(--esp-2);
+  font-size: var(--texto-xs);
+  font-weight: 700;
   color: var(--cor-tinta);
 }
 
@@ -166,20 +200,20 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  padding: 3px 10px;
+  background: var(--cor-superficie-baixa);
+  border: var(--borda-fina);
+  border-radius: var(--raio-sm);
 }
 
 .detalhe__fatos .icone {
   color: var(--cor-anil);
 }
 
-.detalhe__disponivel {
-  padding: 2px 10px;
+.detalhe__fatos > li.detalhe__disponivel {
   background: var(--cor-sucesso-fundo);
   color: var(--cor-sucesso-tinta);
-  border: var(--borda-fina);
-  border-radius: 999px;
   box-shadow: var(--sombra-dura-sm);
-  font-weight: 700;
 }
 
 .detalhe__ponto {
@@ -191,7 +225,7 @@
   background: var(--cor-whatsapp);
 }
 
-.detalhe__disponivel--inativo {
+.detalhe__fatos > li.detalhe__disponivel--inativo {
   color: var(--cor-lacre-escuro);
   background: var(--cor-lacre-fundo);
 }
@@ -205,9 +239,30 @@
   font-weight: 500;
 }
 
+/* Fita dourada do Destaque, no canto da capa */
+.detalhe__fita {
+  position: absolute;
+  top: var(--esp-3);
+  right: var(--esp-4);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.4rem 0.9rem;
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
+  border: var(--borda);
+  border-radius: var(--raio-sm);
+  box-shadow: 3px 3px 0 0 var(--cor-contorno), var(--cel-sm);
+  transform: rotate(2deg);
+  font-size: var(--texto-sm);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
 /* --------------------------------------------------------------------------
-   Grade: catálogo à esquerda; contato e horário/local à direita.
-   No celular a ordem é cabeçalho, contato, catálogo, horário e local.
+   Grade: catálogo e horário à esquerda, contato fixo à direita.
+   No celular a ordem é contato, catálogo e horário.
    -------------------------------------------------------------------------- */
 .detalhe__grade {
   display: grid;
@@ -216,71 +271,319 @@
     'catalogo contato'
     'horarios contato';
   grid-template-rows: auto 1fr;
-  gap: var(--esp-6) var(--esp-7);
+  gap: var(--esp-6) var(--esp-6);
   align-items: start;
-  margin-top: var(--esp-7);
+  margin-top: var(--esp-6);
 }
 
 .detalhe__catalogo {
   grid-area: catalogo;
   min-width: 0;
-}
-
-.detalhe__contato {
-  grid-area: contato;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
 }
 
 .detalhe__horarios {
   grid-area: horarios;
 }
 
-/* Catálogo */
-.detalhe__secao-topo {
-  margin-bottom: var(--esp-5);
+/* Cabeçalho do catálogo */
+.detalhe__catalogo-topo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--esp-3) var(--esp-4);
+  padding: var(--esp-4) var(--esp-5);
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura);
 }
 
-.detalhe__secao-topo h2 {
+.detalhe__catalogo-titulos h2 {
   margin: var(--esp-1) 0;
   font-size: var(--texto-3xl);
 }
 
-.detalhe__secao-topo .secao__subtitulo {
+.detalhe__catalogo-titulos .secao__subtitulo {
   margin: 0;
 }
 
-.detalhe__cards {
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+.detalhe__catalogo-titulos .pagina-cabecalho__marca {
+  margin-bottom: 0;
 }
 
-.detalhe__outro {
+.detalhe__referencia {
+  padding: 3px 10px;
+  background: var(--cor-anil);
+  color: var(--cor-branco);
+  border: var(--borda-fina);
+  border-radius: 4px;
+  box-shadow: var(--sombra-dura-sm);
+  transform: rotate(1.5deg);
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.detalhe__busca {
+  grid-column: 1 / -1;
   display: flex;
-  max-width: none;
   align-items: center;
-  gap: var(--esp-3);
-  margin: var(--esp-6) 0 0;
-  padding: var(--esp-3) var(--esp-4);
+  gap: var(--esp-2);
+  padding: 0 var(--esp-3);
   background: var(--cor-superficie-baixa);
   border: var(--borda-fina);
-  border-style: dashed;
   border-radius: var(--raio-md);
-  font-size: var(--texto-sm);
   color: var(--cor-cinza);
-  line-height: 1.5;
 }
 
-.detalhe__outro strong {
+.detalhe__busca:focus-within {
+  border-color: var(--cor-anil);
+  background: var(--cor-branco);
+}
+
+.detalhe__busca input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.6rem 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: var(--texto-sm);
+  color: var(--cor-tinta);
+  outline: none;
+}
+
+.detalhe__sem-resultado {
+  margin: 0;
+  padding: var(--esp-4);
+  text-align: center;
+  color: var(--cor-cinza);
+  border: 2px dashed var(--cor-linha);
+  border-radius: var(--raio-md);
+}
+
+.detalhe__itens {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+/* Item do catálogo em linha */
+.item-catalogo {
+  position: relative;
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: var(--esp-4);
+  padding: var(--esp-3);
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura);
+  transition: var(--transicao-tecla);
+}
+
+.item-catalogo:hover,
+.item-catalogo:focus-within {
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 7px 0 0 var(--cor-contorno);
+}
+
+.item-catalogo--indisponivel {
+  opacity: 0.75;
+}
+
+.item-catalogo__foto {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: var(--borda-fina);
+  border-radius: var(--raio-md);
+  background: var(--cor-superficie-media);
+}
+
+.item-catalogo__foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.item-catalogo__tags {
+  position: absolute;
+  top: var(--esp-2);
+  left: var(--esp-2);
+  display: flex;
+  gap: var(--esp-1);
+}
+
+.item-catalogo__corpo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  min-width: 0;
+}
+
+.item-catalogo__topo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--esp-3);
+}
+
+.item-catalogo__nome {
+  margin: 0;
+  font-size: var(--texto-xl);
+  line-height: 1.2;
+}
+
+/* Link estendido: o nome cobre o cartão inteiro */
+.item-catalogo__link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.item-catalogo__link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: var(--raio);
+}
+
+.item-catalogo__link:focus-visible {
+  outline: none;
+}
+
+.item-catalogo__link:focus-visible::after {
+  outline: 3px solid var(--cor-ouro);
+  outline-offset: 2px;
+}
+
+.item-catalogo__preco {
+  flex-shrink: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.1;
+}
+
+.item-catalogo__preco span {
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cor-cinza);
+}
+
+.item-catalogo__preco strong {
+  font-family: var(--fonte-titulo);
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--cor-anil);
+  white-space: nowrap;
+}
+
+.item-catalogo__descricao {
+  margin: 0;
+  font-size: var(--texto-sm);
+  line-height: 1.55;
+  color: var(--cor-cinza);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.item-catalogo__rodape {
+  margin-top: auto;
+  padding-top: var(--esp-2);
+  border-top: 2px dashed var(--cor-superficie-alta);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-3);
+  flex-wrap: wrap;
+}
+
+.item-catalogo__detalhes {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--texto-sm);
+  font-weight: 700;
+  color: var(--cor-anil);
+}
+
+.item-catalogo__pedir {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.5rem 1rem;
+  background: var(--cor-anil);
+  color: var(--cor-branco);
+  border: var(--borda-fina);
+  border-radius: var(--raio-md);
+  box-shadow: var(--sombra-dura-sm), var(--cel-sm);
+  font-size: var(--texto-sm);
+  font-weight: 700;
+  text-decoration: none;
+  transition: var(--transicao-tecla);
+}
+
+.item-catalogo__pedir:hover {
+  background: var(--cor-anil-escuro);
+}
+
+.item-catalogo__pedir:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
+/* Pedido fora da lista: faixa com botão */
+.detalhe__outro {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  padding: var(--esp-4);
+  background: var(--linhas-escuras), var(--cor-ouro-claro);
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura);
+}
+
+.detalhe__outro-texto {
+  flex: 1;
+  min-width: 0;
+}
+
+.detalhe__outro-texto p {
+  margin: 0;
+  font-size: var(--texto-sm);
   color: var(--cor-tinta);
 }
 
-.detalhe__outro a {
+.detalhe__outro-texto .detalhe__outro-titulo {
+  font-family: var(--fonte-titulo);
+  font-size: var(--texto-lg);
   font-weight: 700;
   color: var(--cor-anil);
 }
 
 .detalhe__outro-icone {
   flex-shrink: 0;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   border-radius: var(--raio-md);
   border: var(--borda-fina);
   box-shadow: var(--sombra-dura-sm);
@@ -292,13 +595,16 @@
   justify-content: center;
 }
 
-/* Caixa de contato: acompanha a rolagem no computador */
+/* --------------------------------------------------------------------------
+   Caixa de contato: acompanha a rolagem no computador
+   -------------------------------------------------------------------------- */
 .detalhe__contato {
+  grid-area: contato;
   position: sticky;
   top: 96px;
   display: flex;
   flex-direction: column;
-  gap: var(--esp-4);
+  gap: var(--esp-3);
   padding: var(--esp-5);
   background: var(--cor-branco);
   border: var(--borda);
@@ -306,28 +612,16 @@
   box-shadow: var(--sombra-dura);
 }
 
-/* Hachura de nanquim no canto da caixa de contato */
-.detalhe__contato::after {
-  content: '';
-  position: absolute;
-  top: 8px;
-  right: 14px;
-  width: 40px;
-  height: 15px;
-  background: var(--hachura) no-repeat center / contain;
-  pointer-events: none;
-}
-
 .detalhe__contato-cabecalho {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
   gap: var(--esp-2);
   padding-bottom: var(--esp-3);
   border-bottom: 2px dashed var(--cor-contorno);
 }
 
 .detalhe__contato-selo {
-  align-self: flex-start;
   background: var(--cor-ouro);
   color: var(--cor-tinta);
   padding: 2px 8px;
@@ -341,13 +635,21 @@
   text-transform: uppercase;
 }
 
+.detalhe__contato-sem {
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  color: var(--cor-cinza);
+}
+
 .detalhe__contato-titulo {
   font-size: var(--texto-2xl);
-  margin: 0;
+  margin: 0 0 var(--esp-1);
 }
 
 .detalhe__contato-texto {
   margin: 0;
+  font-size: var(--texto-sm);
+  line-height: 1.5;
   color: var(--cor-cinza);
 }
 
@@ -385,8 +687,11 @@
   color: var(--cor-anil-escuro);
 }
 
-.detalhe__contato .botao--whatsapp {
+.detalhe__contato .botao {
   width: 100%;
+}
+
+.detalhe__contato .botao--whatsapp {
   padding-block: 0.9rem;
 }
 
@@ -395,24 +700,8 @@
   align-items: center;
   justify-content: center;
   gap: var(--esp-2);
-  padding: var(--esp-2) var(--esp-3);
-  background: var(--cor-branco);
-  border: var(--borda-fina);
-  border-radius: var(--raio-md);
-  box-shadow: 3px 3px 0 0 var(--cor-contorno);
   font-size: var(--texto-sm);
   font-weight: 700;
-  text-decoration: none;
-}
-
-.detalhe__instagram:hover {
-  text-decoration: underline;
-}
-
-.detalhe__mensagem {
-  text-align: center;
-  font-size: var(--texto-sm);
-  color: var(--cor-cinza);
 }
 
 .detalhe__confianca {
@@ -435,10 +724,12 @@
 }
 
 .detalhe__confianca .icone {
-  color: var(--cor-ouro-escuro);
+  color: var(--cor-sucesso);
 }
 
-/* Horário de atendimento */
+/* --------------------------------------------------------------------------
+   Horário de atendimento (cartão largo, semana em duas colunas)
+   -------------------------------------------------------------------------- */
 .detalhe__horarios {
   padding: var(--esp-4) var(--esp-5);
   border: var(--borda);
@@ -562,7 +853,9 @@
   color: var(--cor-cinza-claro);
 }
 
-/* Localização: faixa larga com o texto e o mapa grande */
+/* --------------------------------------------------------------------------
+   Localização: faixa larga com o texto e o mapa grande
+   -------------------------------------------------------------------------- */
 .detalhe__local-faixa {
   border-top: var(--borda);
   background: var(--cor-superficie-baixa);
@@ -680,19 +973,10 @@
 }
 
 /* --------------------------------------------------------------------------
-   Perfil premium do plano Destaque: o mesmo anil profundo com moldura
-   dourada dos cartões Destaque, nome em letreiro dourado, fita "Negócio
-   Destaque" no canto e detalhes dourados na caixa de contato.
+   Perfil premium do plano Destaque: o cabeçalho vira o cartão anil com
+   moldura dourada dos cartões Destaque, nome em letreiro dourado, monograma
+   anil com letras douradas e detalhes dourados no contato e nos itens.
    -------------------------------------------------------------------------- */
-.detalhe--destaque .detalhe__capa {
-  border-bottom-color: var(--cor-ouro);
-  border-bottom-width: 6px;
-}
-
-.detalhe--destaque .detalhe__capa-foto {
-  border-color: var(--cor-ouro);
-}
-
 .detalhe--destaque .detalhe__cabecalho {
   background:
     var(--linhas-claras),
@@ -704,9 +988,21 @@
     6px 6px 0 3px var(--cor-contorno);
 }
 
-.detalhe--destaque .detalhe__cabecalho::after {
+.detalhe--destaque .detalhe__capa {
+  margin: 3px 3px 0;
+  border-bottom-color: var(--cor-ouro);
+}
+
+.detalhe--destaque .detalhe__cabecalho-corpo::after {
   background-image: var(--hachura-clara);
   opacity: 0.6;
+}
+
+.detalhe--destaque .detalhe__monograma {
+  background: var(--linhas-claras), var(--cor-anil);
+  color: var(--cor-ouro);
+  border-color: var(--cor-ouro);
+  box-shadow: 4px 4px 0 0 var(--cor-ouro), 4px 4px 0 3px var(--cor-contorno);
 }
 
 .detalhe--destaque .detalhe__nome {
@@ -714,12 +1010,12 @@
   --letra-sombra: #e09a0e;
 }
 
-.detalhe--destaque .detalhe__meta {
+.detalhe--destaque .detalhe__meta,
+.detalhe--destaque .detalhe__meta > span:first-child {
   color: var(--cor-branco);
 }
 
-.detalhe--destaque .detalhe__meta .icone,
-.detalhe--destaque .detalhe__fatos .icone {
+.detalhe--destaque .detalhe__meta .icone {
   color: var(--cor-ouro);
 }
 
@@ -736,35 +1032,7 @@
 }
 
 .detalhe--destaque .detalhe__fatos {
-  color: var(--cor-branco);
   border-top-color: rgba(255, 255, 255, 0.3);
-}
-
-/* Fita dourada no canto de cima do cabeçalho */
-.detalhe__fita {
-  position: absolute;
-  top: -16px;
-  right: var(--esp-6);
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0.4rem 0.9rem;
-  background: var(--cor-ouro);
-  color: var(--cor-tinta);
-  border: var(--borda);
-  border-radius: var(--raio-sm);
-  box-shadow: 3px 3px 0 0 var(--cor-contorno), var(--cel-sm);
-  transform: rotate(2deg);
-  font-size: var(--texto-sm);
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-/* Com a fita no canto, a hachura sai do caminho */
-.detalhe--destaque .detalhe__cabecalho::after {
-  top: auto;
-  bottom: 14px;
 }
 
 .detalhe--destaque .detalhe__contato {
@@ -783,6 +1051,10 @@
   background: var(--cor-ouro-claro);
 }
 
+.detalhe--destaque .item-catalogo__foto {
+  border-color: var(--cor-ouro-escuro);
+}
+
 @media (max-width: 900px) {
   .detalhe__grade {
     grid-template-columns: minmax(0, 1fr);
@@ -791,8 +1063,6 @@
       'catalogo'
       'horarios';
     grid-template-rows: none;
-    gap: var(--esp-6);
-    margin-top: var(--esp-6);
   }
 
   .detalhe__contato {
@@ -804,37 +1074,74 @@
   .detalhe__local {
     grid-template-columns: 1fr;
   }
+
+  .detalhe__whatsapp-topo {
+    display: none;
+  }
 }
 
 @media (max-width: 600px) {
-  .detalhe__cabecalho {
-    padding: var(--esp-5) var(--esp-4);
+  .detalhe__corpo {
+    padding-top: var(--esp-4);
+  }
+
+  .detalhe__cabecalho-corpo {
+    padding: 0 var(--esp-4) var(--esp-4);
+  }
+
+  .detalhe__identidade {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--esp-2);
+    margin-top: -44px;
+  }
+
+  .detalhe__monograma {
+    width: 80px;
+    height: 80px;
+    font-size: 32px;
+  }
+
+  .detalhe__titulos {
+    padding-top: 0;
   }
 
   .detalhe__fita {
-    right: var(--esp-4);
     font-size: var(--texto-xs);
+    right: var(--esp-3);
   }
 
-  .detalhe__secao-topo h2 {
+  .detalhe__catalogo-topo {
+    grid-template-columns: 1fr;
+    padding: var(--esp-4);
+  }
+
+  .detalhe__referencia {
+    justify-self: start;
+  }
+
+  .detalhe__catalogo-titulos h2 {
     font-size: var(--texto-2xl);
   }
 
+  .item-catalogo {
+    grid-template-columns: 1fr;
+  }
+
+  .item-catalogo__pedir {
+    flex: 1;
+    justify-content: center;
+  }
+
   .detalhe__outro {
-    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .detalhe__outro .botao {
+    width: 100%;
   }
 
   .detalhe__mapa {
     height: 220px;
-  }
-
-  .detalhe__capa-moldura {
-    padding-inline: 0;
-    padding-top: 0;
-  }
-
-  .detalhe__capa-foto {
-    border: 0;
-    border-radius: 0;
   }
 }

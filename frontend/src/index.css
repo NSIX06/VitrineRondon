@@ -615,8 +615,8 @@ html .sobre__ods {
    colavam. Os riscos de brilho ficam só nos h1 grandes, onde cabem sem cortar
    as letras. Cores: --letra-luz/--letra-sombra (padrão: anil).
    ========================================================================== */
-/* Nomes nos cartões (negócios, produtos e a pilha da Home) usam o mesmo letreiro */
-:is(h1, h2, .empreendedor-card__nome, .produto-card__nome, .pilha-negocios__nome):not(
+/* Nomes nos cartões (negócios, produtos, a pilha da Home e o catálogo do perfil) usam o mesmo letreiro */
+:is(h1, h2, .empreendedor-card__nome, .produto-card__nome, .pilha-negocios__nome, .item-catalogo__nome):not(
     .detalhe__horarios-titulo,
     .visualmente-oculto
   ) {
