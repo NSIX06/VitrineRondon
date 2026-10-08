@@ -20,7 +20,8 @@ function EmpreendedorCard({ empreendedor }) {
   }
 
   return (
-    <article className="empreendedor-card">
+    // Negócio do plano Destaque: cartão premium, em anil e dourado, com reflexo ao passar
+    <article className={`empreendedor-card ${emDestaque ? 'empreendedor-card--destaque reflexo-ao-passar' : ''}`}>
       <Link to={`/empreendedores/${id}`} className="empreendedor-card__foto-wrapper">
         <img
           decoding="async"
