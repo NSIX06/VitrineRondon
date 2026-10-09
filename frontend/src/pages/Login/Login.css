@@ -1,34 +1,102 @@
+/* ==========================================================================
+   Login em duas metades: o formulário à esquerda e, à direita, um painel com
+   foto do comércio de bairro, campo de pontos e uma frase escrita letra por
+   letra. A chave no alto troca entre entrar e criar conta.
+   ========================================================================== */
 .login {
-  display: flex;
-  justify-content: center;
-  padding-block: var(--esp-8);
+  padding-block: var(--esp-7);
 }
 
-.login__caixa {
-  width: 100%;
-  max-width: 440px;
-  padding: var(--esp-6);
-  position: relative;
+.login__moldura {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  min-height: 600px;
+  overflow: hidden;
   background: var(--cor-branco);
   border: var(--borda);
   border-radius: var(--raio);
   box-shadow: var(--sombra-dura);
+}
+
+/* Lado do formulário */
+.login__lado {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  padding: var(--esp-6) var(--esp-7) var(--esp-7);
+}
+
+.login__lado .navegacao {
+  margin-bottom: 0;
+}
+
+/* Chave entrar / criar conta (mesmo desenho da chave mensal/anual) */
+.login__chave {
+  display: inline-flex;
+  align-self: flex-start;
+  gap: 4px;
+  padding: 4px;
+  background: var(--cor-superficie-baixa);
+  border: var(--borda);
+  border-radius: var(--raio-md);
+  box-shadow: var(--sombra-dura-sm);
+}
+
+.login__chave-opcao {
+  padding: 0.45rem 1rem;
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: var(--raio-sm);
+  font: inherit;
+  font-size: var(--texto-sm);
+  font-weight: 700;
+  color: var(--cor-anil);
+  cursor: pointer;
+  transition: var(--transicao-tecla);
+}
+
+.login__chave-opcao:hover {
+  background: var(--cor-branco);
+}
+
+.login__chave-opcao--ativa,
+.login__chave-opcao--ativa:hover {
+  background: var(--cor-anil);
+  color: var(--cor-branco);
+  border-color: var(--cor-contorno);
+  box-shadow: var(--cel-sm);
+}
+
+/* Conteúdo da aba: entra subindo ao trocar */
+.login__conteudo {
   display: flex;
   flex-direction: column;
   gap: var(--esp-3);
+  animation: login-entrar 0.35s ease-out both;
+}
+
+@keyframes login-entrar {
+  from {
+    opacity: 0;
+    translate: 0 10px;
+  }
+}
+
+.login__conteudo .pagina-cabecalho__marca {
+  margin-bottom: 0;
 }
 
 .login__titulo {
   margin: 0;
-  font-size: clamp(28px, 3.4vw, 38px);
+  font-size: clamp(30px, 3.6vw, 42px);
 }
 
 .login__texto {
-  margin: 0 0 var(--esp-2);
+  margin: 0 0 var(--esp-1);
   color: var(--cor-cinza);
 }
 
-.login__caixa .status {
+.login__conteudo .status {
   margin-block: 0;
 }
 
@@ -38,13 +106,25 @@
 }
 
 .login__rodape {
-  margin: var(--esp-3) 0 0;
+  margin: var(--esp-2) 0 0;
   font-size: var(--texto-sm);
   text-align: center;
 }
 
-.login__rodape a {
+.login__rodape a,
+.login__trocar {
   font-weight: 700;
+}
+
+.login__trocar {
+  padding: 0;
+  background: none;
+  border: 0;
+  font: inherit;
+  font-weight: 700;
+  color: var(--cor-anil);
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .login__rodape--nota {
@@ -52,11 +132,203 @@
   color: var(--cor-cinza);
 }
 
+/* Passos do cadastro na aba "Quero criar" */
+.login__passos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}
+
+.login__passo {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--esp-3);
+  padding: var(--esp-3);
+  background: var(--cor-superficie-baixa);
+  border: var(--borda-fina);
+  border-radius: var(--raio-md);
+  font-size: var(--texto-sm);
+  color: var(--cor-cinza);
+  animation: login-entrar 0.4s ease-out both;
+  animation-delay: var(--atraso, 0ms);
+}
+
+.login__passo strong {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--cor-tinta);
+}
+
+.login__passo strong .icone {
+  color: var(--cor-anil);
+}
+
+.login__passo-numero {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  background: var(--cor-ouro);
+  border: var(--borda-fina);
+  border-radius: var(--raio-sm);
+  box-shadow: var(--sombra-dura-sm);
+  transform: rotate(-4deg);
+  font-family: var(--fonte-titulo);
+  font-weight: 800;
+  color: var(--cor-tinta);
+}
+
+/* --------------------------------------------------------------------------
+   Painel: foto, sombra noite com brilho dourado, pontos e a frase
+   -------------------------------------------------------------------------- */
+.login__painel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--esp-5);
+  padding: var(--esp-6);
+  overflow: hidden;
+  background: #020617;
+  border-left: var(--borda);
+  color: var(--cor-branco);
+}
+
+.login__painel-foto {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transform: scale(1.06);
+  transition:
+    opacity 0.6s ease,
+    transform 1.2s ease;
+}
+
+.login__painel-foto--ativa {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* A foto, o escurecimento e os pontos ficam atrás; selos e frase por cima */
+.com-pontos.login__painel > .login__painel-foto,
+.com-pontos.login__painel > .login__painel-sombra {
+  position: absolute;
+  z-index: 0;
+}
+
+.login__painel-sombra {
+  inset: 0;
+  background:
+    radial-gradient(circle 420px at 50% 100%, rgba(251, 191, 36, 0.35), transparent),
+    linear-gradient(to top, rgba(2, 6, 23, 0.95) 0%, rgba(2, 6, 23, 0.55) 45%, rgba(15, 37, 87, 0.35) 100%);
+}
+
+.login__selos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}
+
+.login__selos li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(2, 6, 23, 0.6);
+  border: 2px solid var(--cor-ouro);
+  border-radius: 999px;
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  color: var(--cor-branco);
+}
+
+.login__selos .icone {
+  color: var(--cor-ouro);
+}
+
+.login__citacao {
+  margin: 0;
+  max-width: 34ch;
+}
+
+.login__citacao p {
+  margin: 0 0 var(--esp-2);
+  min-height: 3lh;
+  font-family: var(--fonte-titulo);
+  font-size: clamp(22px, 2.4vw, 30px);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--cor-branco);
+  text-shadow: 0 2px 0 var(--cor-contorno);
+}
+
+.login__citacao cite {
+  font-size: var(--texto-sm);
+  font-style: normal;
+  font-weight: 700;
+  color: var(--cor-ouro);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login__conteudo,
+  .login__passo {
+    animation: none;
+  }
+
+  .login__painel-foto {
+    transition: opacity 0.3s ease;
+    transform: none;
+  }
+}
+
+/* Celular e tablet: o painel vira uma faixa curta acima do formulário */
+@media (max-width: 860px) {
+  .login__moldura {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+  }
+
+  .login__painel {
+    order: -1;
+    min-height: 230px;
+    padding: var(--esp-5);
+    border-left: 0;
+    border-bottom: var(--borda);
+  }
+
+  .login__citacao p {
+    min-height: 0;
+  }
+}
+
 @media (max-width: 480px) {
   .login {
-    padding-block: var(--esp-6);
+    padding-block: var(--esp-5);
   }
-  .login__caixa {
+
+  .login__lado {
     padding: var(--esp-4);
+  }
+
+  .login__chave {
+    align-self: stretch;
+  }
+
+  .login__chave-opcao {
+    flex: 1;
   }
 }

@@ -1,0 +1,18 @@
+/* Cursor piscando no fim do texto que está sendo escrito */
+.datilografo__cursor {
+  margin-left: 2px;
+  color: var(--cor-ouro);
+  animation: datilografo-piscar 1s steps(1) infinite;
+}
+
+@keyframes datilografo-piscar {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .datilografo__cursor {
+    animation: none;
+  }
+}
