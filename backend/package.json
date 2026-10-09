@@ -21,6 +21,11 @@
     "aiven:seed": "node --env-file=.env.aiven prisma/seed.js",
     "planos:semear": "node scripts/semear-planos.js",
     "aiven:planos": "node --env-file=.env.aiven scripts/semear-planos.js",
+    "nuvem:certificado": "node --env-file=.env.nuvem scripts/certificado-banco.js",
+    "nuvem:status": "node --env-file=.env.nuvem scripts/prisma-admin.js migrate status",
+    "nuvem:migrar": "node --env-file=.env.nuvem scripts/prisma-admin.js migrate deploy",
+    "nuvem:seed": "node --env-file=.env.nuvem prisma/seed.js",
+    "nuvem:planos": "node --env-file=.env.nuvem scripts/semear-planos.js",
     "abacatepay:webhook": "node scripts/abacatepay-webhook.js"
   },
   "prisma": {

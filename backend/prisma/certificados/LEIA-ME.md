@@ -1,4 +1,4 @@
-# Certificado do banco (Aiven)
+# Certificado do banco (Aiven ou Clever Cloud)
 
 Coloque aqui o certificado da autoridade (CA) do seu serviço MySQL no Aiven, com o
 nome `aiven-ca.pem`. Ele é baixado no painel do Aiven, na página do serviço, em
@@ -14,3 +14,10 @@ O caminho na `DATABASE_URL` é relativo à pasta `prisma/`:
 ```
 ...?sslcert=certificados/aiven-ca.pem&sslaccept=strict
 ```
+
+## Clever Cloud
+
+O Clever Cloud não oferece a CA para download. Com o `backend/.env.nuvem` preenchido, rode
+`npm run nuvem:certificado` (ou `node scripts/certificado-banco.js HOST PORTA`): o script lê a
+cadeia que o servidor apresenta, salva a CA como `nuvem-ca.pem` e avisa se o nome do certificado
+confere com o endereço do banco, que o Prisma também exige com `sslaccept=strict`.

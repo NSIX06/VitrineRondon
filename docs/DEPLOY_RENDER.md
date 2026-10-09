@@ -6,7 +6,7 @@ Este guia coloca o projeto no ar usando serviços gratuitos:
 |---|---|---|
 | API (Express) | **Render**, web service gratuito | Hospeda o Node direto do GitHub |
 | Site (React) | **Render**, static site gratuito | CDN, não dorme |
-| Banco MySQL | **Aiven**, plano gratuito | O Render não oferece MySQL gerenciado, e MySQL dentro do Render exige plano pago com disco |
+| Banco MySQL | **Aiven**, plano gratuito (ou Clever Cloud, ver [alternativa](#alternativa-banco-no-clever-cloud)) | O Render não oferece MySQL gerenciado, e MySQL dentro do Render exige plano pago com disco |
 | Fotos enviadas | **Cloudinary**, plano gratuito | O disco do Render gratuito é apagado a cada deploy, reinício ou pausa |
 | Assinaturas | **AbacatePay**, em Dev mode | Checkout dos planos; em Dev mode nada é cobrado |
 
@@ -64,6 +64,49 @@ demonstração. Roda uma vez só; o `backend/.env` de desenvolvimento não é al
 
 Se aparecer `Can't reach database server`, confira host, porta e se o arquivo
 `aiven-ca.pem` está no lugar certo (o caminho na URL é relativo à pasta `backend/prisma`).
+
+### Alternativa: banco no Clever Cloud
+
+Se preferir o MySQL do [Clever Cloud](https://www.clever-cloud.com) no lugar do Aiven, os passos
+1 e 2 mudam assim. O resto do guia continua igual.
+
+1. No console do Clever Cloud, **Create → an add-on → MySQL** e escolha o plano (o DEV é gratuito,
+   com pouco espaço e poucas conexões: serve para a demonstração).
+2. Na página do add-on, em **Environment variables**, anote `MYSQL_ADDON_HOST`, `MYSQL_ADDON_PORT`,
+   `MYSQL_ADDON_DB`, `MYSQL_ADDON_USER` e `MYSQL_ADDON_PASSWORD`.
+3. Copie `backend/.env.nuvem.example` para `backend/.env.nuvem` (fica fora do git) e preencha as
+   duas URLs com esses dados. No plano DEV há um usuário só, então as duas URLs usam a mesma conta
+   e o passo `criar-usuario` não existe aqui.
+4. **Certificado.** O Clever Cloud exige TLS, mas não oferece o arquivo da CA para baixar. O
+   comando abaixo lê a cadeia de certificados direto do servidor (com o `openssl`, que vem com o
+   Git para Windows; rode pelo Git Bash) e salva `backend/prisma/certificados/nuvem-ca.pem`:
+
+   ```bash
+   npm run nuvem:certificado
+   ```
+
+   Ele mostra quem assinou o certificado, a validade e a impressão digital (SHA-256), e diz se o
+   **nome** no certificado confere com o endereço do banco. Isso importa: com `sslaccept=strict`, o
+   Prisma confere a CA **e** o nome. Se o nome não conferir, a conexão é recusada mesmo com a CA
+   certa (foi testado com o MySQL local, cujo certificado gerado automaticamente tem um nome
+   genérico). Nesse caso, veja no painel se existe outro endereço para o banco que bata com o nome
+   do certificado, ou pergunte ao suporte do Clever Cloud qual nome o certificado deles usa.
+
+   > Não troque `sslaccept=strict` por `accept_invalid_certs` em produção: a conexão continua
+   > cifrada, mas a API deixa de conferir se está falando com o seu banco, e uma senha interceptada
+   > dá acesso a tudo.
+
+5. Prepare o banco:
+
+   ```bash
+   npm run nuvem:status    # confere a conexão e mostra as migrations pendentes
+   npm run nuvem:migrar    # cria as tabelas
+   npm run nuvem:seed      # opcional: dados de demonstração (APAGA as tabelas antes)
+   npm run nuvem:planos    # sem o seed: só cria os planos à venda
+   ```
+
+6. No Render, use a `DATABASE_URL` e a `DATABASE_URL_MIGRACAO` do `.env.nuvem` no lugar das do
+   Aiven, e mande o `nuvem-ca.pem` para o git junto (é público, sem senha dentro).
 
 ## 3. Fotos no Cloudinary
 
