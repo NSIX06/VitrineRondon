@@ -6,7 +6,7 @@ Este guia coloca o projeto no ar usando serviços gratuitos:
 |---|---|---|
 | API (Express) | **Render**, web service gratuito | Hospeda o Node direto do GitHub |
 | Site (React) | **Render**, static site gratuito | CDN, não dorme |
-| Banco MySQL | **Aiven**, plano gratuito (ou [TiDB Cloud](#alternativa-banco-no-tidb-cloud) ou [Clever Cloud](#alternativa-banco-no-clever-cloud)) | O Render não oferece MySQL gerenciado, e MySQL dentro do Render exige plano pago com disco |
+| Banco MySQL | **TiDB Cloud Starter**, plano gratuito | O Render não oferece MySQL gerenciado, e MySQL dentro do Render exige plano pago com disco |
 | Fotos enviadas | **Cloudinary**, plano gratuito | O disco do Render gratuito é apagado a cada deploy, reinício ou pausa |
 | Assinaturas | **AbacatePay**, em Dev mode | Checkout dos planos; em Dev mode nada é cobrado |
 
@@ -14,47 +14,45 @@ Tempo estimado: 30 a 40 minutos na primeira vez.
 
 > **Limites do plano gratuito.** A API dorme depois de 15 minutos sem visitas, e a primeira visita
 > seguinte leva cerca de 1 minuto para responder (o site abre na hora, mas as listas demoram). O
-> Aiven pode desligar um banco gratuito que fique muito tempo sem uso; ele avisa por e-mail antes, e
-> dá para religar pelo painel.
+> TiDB Cloud Starter tem uma cota mensal gratuita de uso e espaço; acompanhe em **Overview →
+> Capacity used this month** e deixe o limite de gastos em zero para nunca ser cobrado.
 
 ---
 
-## 1. Banco de dados no Aiven
+## 1. Banco de dados no TiDB Cloud
 
-1. Crie a conta em [aiven.io](https://aiven.io) (não pede cartão).
-2. **Create service → MySQL → plano Free.** Escolha uma região nos Estados Unidos, lado leste,
-   perto da região `virginia` em que a API vai rodar no Render.
-3. Espere o serviço ficar **Running** (alguns minutos).
-4. Na aba **Databases**, crie um banco chamado `vitrine_db`.
-5. Em **Overview → Connection information**, anote **Host**, **Port** e a senha do usuário
-   `avnadmin`. No mesmo bloco, em **CA certificate**, clique em **Download** e salve o arquivo como:
+O [TiDB Cloud Starter](https://tidbcloud.com) é compatível com MySQL (o Prisma usa o mesmo
+`provider = "mysql"`, sem mudar o schema nem as migrations) e tem plano gratuito sem cartão.
 
-   ```
-   backend/prisma/certificados/aiven-ca.pem
-   ```
-
-   Esse certificado é público (não tem senha dentro) e vai para o git: é ele que faz a API recusar
-   qualquer servidor que não seja o seu banco do Aiven.
+1. Crie a conta e, em **My TiDB → Create Resource**, um cluster **Starter**. Escolha a AWS na região
+   `us-east-1` (N. Virginia), perto da API no Render.
+2. No cluster, clique em **Connect**, escolha **Public Endpoint** e **Generate Password** (a senha
+   aparece uma vez só). Anote **HOST**, a porta (**4000**) e o usuário, que vem com o prefixo do
+   cluster (por exemplo `3pTAoNNegb47Uc8.root`).
+3. Não precisa baixar o "CA cert" que o painel sugere: o certificado do TiDB é de uma autoridade
+   pública (Let's Encrypt), e `sslaccept=strict` já confere a autoridade e o nome do servidor.
 
 ## 2. Preparar o banco a partir do seu computador
 
-Isso cria as tabelas, a conta restrita que a API vai usar e, se você quiser, os dados de
+Isso cria o banco, as tabelas, a conta restrita que a API vai usar e, se você quiser, os dados de
 demonstração. Roda uma vez só; o `backend/.env` de desenvolvimento não é alterado.
 
-1. Copie `backend/.env.aiven.example` para `backend/.env.aiven` (este arquivo fica fora do git,
+1. Copie `backend/.env.tidb.example` para `backend/.env.tidb` (este arquivo fica fora do git,
    porque guarda senhas).
-2. Preencha `HOST`, `PORTA` e a senha do `avnadmin` nas duas URLs, e invente a senha da conta
-   `vitrine_app` (16 caracteres ou mais, só letras e números). Defina também `ADMIN_SENHA` e
-   `DEMO_EMPREENDEDOR_SENHA` se for rodar o seed.
+2. Preencha `HOST`, o prefixo e a senha do `root` na `DATABASE_URL_MIGRACAO`. Na `DATABASE_URL`, use
+   o **mesmo prefixo** com o nome `vitrine_app` e invente a senha (16 caracteres ou mais, só letras e
+   números). Defina também `ADMIN_SENHA` e `DEMO_EMPREENDEDOR_SENHA` se for rodar o seed.
 3. No terminal, dentro da pasta `backend`:
 
    ```bash
-   npm run aiven:migrar          # cria as tabelas
-   npm run aiven:criar-usuario   # cria a conta vitrine_app só com SELECT/INSERT/UPDATE/DELETE
-   npm run aiven:seed            # opcional: dados de demonstração e o usuário administrador
+   npm run tidb:banco            # cria o banco vitrine_db (o cluster vem só com o "test")
+   npm run tidb:status           # confere a conexão com TLS e as migrations pendentes
+   npm run tidb:migrar           # cria as tabelas
+   npm run tidb:criar-usuario    # conta PREFIXO.vitrine_app só com SELECT/INSERT/UPDATE/DELETE
+   npm run tidb:seed             # opcional: dados de demonstração e o usuário administrador
    ```
 
-   Se você não rodar o seed, crie os planos à venda com `npm run aiven:planos` (não apaga nada).
+   Se você não rodar o seed, crie os planos à venda com `npm run tidb:planos` (não apaga nada).
    O seed já os cria, junto com assinaturas e números de desempenho **de exemplo** para a
    demonstração (roteiro em [DEMO.md](../DEMO.md)).
 
@@ -62,78 +60,9 @@ demonstração. Roda uma vez só; o `backend/.env` de desenvolvimento não é al
    > que o site estiver em uso. Sem o seed, não existe usuário administrador: crie a conta pelo
    > próprio site e promova-a a `ADMIN` direto no banco.
 
-Se aparecer `Can't reach database server`, confira host, porta e se o arquivo
-`aiven-ca.pem` está no lugar certo (o caminho na URL é relativo à pasta `backend/prisma`).
-
-### Alternativa: banco no TiDB Cloud
-
-O [TiDB Cloud Starter](https://tidbcloud.com) é compatível com MySQL (o Prisma usa o mesmo
-`provider = "mysql"`) e o plano gratuito tem mais espaço que o do Aiven. Os passos 1 e 2 mudam
-assim; o resto do guia continua igual.
-
-1. Crie a conta e um cluster **Starter** (gratuito, sem cartão). Escolha uma região na AWS do
-   leste dos Estados Unidos (`us-east-1`), perto da API no Render.
-2. No cluster, clique em **Connect**, escolha **Public**, gere a senha e anote **HOST**, a porta
-   (**4000**) e o usuário, que vem com o prefixo do cluster (por exemplo `3pTAoNNegb47Uc8.root`).
-3. Copie `backend/.env.tidb.example` para `backend/.env.tidb` (fica fora do git) e preencha. A
-   conta da API usa o **mesmo prefixo**: `PREFIXO.vitrine_app`.
-4. No terminal, dentro da pasta `backend`:
-
-   ```bash
-   npm run tidb:banco           # cria o banco vitrine_db (o cluster vem só com o "test")
-   npm run tidb:status          # confere a conexão com TLS
-   npm run tidb:migrar          # cria as tabelas
-   npm run tidb:criar-usuario   # conta PREFIXO.vitrine_app só com SELECT/INSERT/UPDATE/DELETE
-   npm run tidb:seed            # opcional: dados de demonstração (APAGA as tabelas antes)
-   npm run tidb:planos          # sem o seed: só cria os planos à venda
-   ```
-
-5. No Render, use a `DATABASE_URL` e a `DATABASE_URL_MIGRACAO` do `.env.tidb`. Não precisa de
-   arquivo de certificado: o do TiDB é de uma autoridade pública, e `sslaccept=strict` confere a
-   autoridade e o nome do servidor.
-
-### Alternativa: banco no Clever Cloud
-
-Se preferir o MySQL do [Clever Cloud](https://www.clever-cloud.com) no lugar do Aiven, os passos
-1 e 2 mudam assim. O resto do guia continua igual.
-
-1. No console do Clever Cloud, **Create → an add-on → MySQL** e escolha o plano (o DEV é gratuito,
-   com pouco espaço e poucas conexões: serve para a demonstração).
-2. Na página do add-on, em **Environment variables**, anote `MYSQL_ADDON_HOST`, `MYSQL_ADDON_PORT`,
-   `MYSQL_ADDON_DB`, `MYSQL_ADDON_USER` e `MYSQL_ADDON_PASSWORD`.
-3. Copie `backend/.env.nuvem.example` para `backend/.env.nuvem` (fica fora do git) e preencha as
-   duas URLs com esses dados. No plano DEV há um usuário só, então as duas URLs usam a mesma conta
-   e o passo `criar-usuario` não existe aqui.
-4. **Certificado.** O Clever Cloud exige TLS, mas não oferece o arquivo da CA para baixar. O
-   comando abaixo lê a cadeia de certificados direto do servidor (com o `openssl`, que vem com o
-   Git para Windows; rode pelo Git Bash) e salva `backend/prisma/certificados/nuvem-ca.pem`:
-
-   ```bash
-   npm run nuvem:certificado
-   ```
-
-   Ele mostra quem assinou o certificado, a validade e a impressão digital (SHA-256), e diz se o
-   **nome** no certificado confere com o endereço do banco. Isso importa: com `sslaccept=strict`, o
-   Prisma confere a CA **e** o nome. Se o nome não conferir, a conexão é recusada mesmo com a CA
-   certa (foi testado com o MySQL local, cujo certificado gerado automaticamente tem um nome
-   genérico). Nesse caso, veja no painel se existe outro endereço para o banco que bata com o nome
-   do certificado, ou pergunte ao suporte do Clever Cloud qual nome o certificado deles usa.
-
-   > Não troque `sslaccept=strict` por `accept_invalid_certs` em produção: a conexão continua
-   > cifrada, mas a API deixa de conferir se está falando com o seu banco, e uma senha interceptada
-   > dá acesso a tudo.
-
-5. Prepare o banco:
-
-   ```bash
-   npm run nuvem:status    # confere a conexão e mostra as migrations pendentes
-   npm run nuvem:migrar    # cria as tabelas
-   npm run nuvem:seed      # opcional: dados de demonstração (APAGA as tabelas antes)
-   npm run nuvem:planos    # sem o seed: só cria os planos à venda
-   ```
-
-6. No Render, use a `DATABASE_URL` e a `DATABASE_URL_MIGRACAO` do `.env.nuvem` no lugar das do
-   Aiven, e mande o `nuvem-ca.pem` para o git junto (é público, sem senha dentro).
+Se aparecer `Can't reach database server`, confira host, porta e se o usuário tem o prefixo do
+cluster. Para ver a cadeia de certificados que o servidor apresenta (e se o nome confere), rode
+`node scripts/certificado-banco.js HOST 4000`.
 
 ## 3. Fotos no Cloudinary
 
@@ -149,7 +78,7 @@ Se preferir o MySQL do [Clever Cloud](https://www.clever-cloud.com) no lugar do 
 ## 4. Enviar o código para o GitHub
 
 O Render publica a partir do repositório `NSIX06/VitrineRondon`. Faça o commit de tudo, incluindo
-o `aiven-ca.pem` e o `render.yaml` da raiz, e envie:
+o `render.yaml` da raiz, e envie:
 
 ```bash
 git add .
@@ -158,7 +87,7 @@ git push
 ```
 
 Confira antes que nenhum `.env` com senha entrou no commit (`git status` não deve listar
-`backend/.env` nem `backend/.env.aiven`).
+`backend/.env` nem `backend/.env.tidb`).
 
 ## 5. Criar os serviços no Render
 
@@ -169,8 +98,8 @@ Confira antes que nenhum `.env` com senha entrou no commit (`git status` não de
 
    | Variável | Serviço | Valor |
    |---|---|---|
-   | `DATABASE_URL` | API | A URL da conta `vitrine_app`, igual à do `.env.aiven` |
-   | `DATABASE_URL_MIGRACAO` | API | A URL do `avnadmin`, igual à do `.env.aiven` |
+   | `DATABASE_URL` | API | A URL da conta `PREFIXO.vitrine_app`, igual à do `.env.tidb` |
+   | `DATABASE_URL_MIGRACAO` | API | A URL do `PREFIXO.root`, igual à do `.env.tidb` |
    | `CORS_ORIGINS` | API | `https://vitrinelocal.onrender.com` (endereço do site, sem barra no fim) |
    | `CLOUDINARY_URL` | API | A variável copiada do Cloudinary |
    | `ABACATEPAY_API_KEY` | API | A chave de **Dev mode** do AbacatePay (começa com `abc_dev_`). A API recusa chave de produção |
@@ -233,7 +162,7 @@ A API confere o segredo na URL e a assinatura HMAC de cada aviso; qualquer outro
 |---|---|
 | O site abre, mas nenhuma lista carrega e o console fala em CORS | `CORS_ORIGINS` diferente do endereço real do site (atenção a `https://` e à barra no fim) |
 | O site chama `localhost:3001` | `VITE_API_URL` vazia ou alterada sem novo deploy do site |
-| Build da API falha em `migrate deploy` | `DATABASE_URL_MIGRACAO` errada, banco `vitrine_db` não criado no Aiven, ou `aiven-ca.pem` fora do repositório |
+| Build da API falha em `migrate deploy` | `DATABASE_URL_MIGRACAO` errada, banco `vitrine_db` não criado no TiDB (`npm run tidb:banco`) ou usuário sem o prefixo do cluster |
 | Health check falha logo depois do deploy | `DATABASE_URL` errada, ou a conta `vitrine_app` não foi criada (passo 2) |
 | Envio de foto dá erro | `CLOUDINARY_URL` ausente ou copiada incompleta |
 | Primeira visita demora cerca de 1 minuto | A API estava dormindo (plano gratuito) |

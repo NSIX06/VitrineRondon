@@ -1,14 +1,14 @@
 // Baixa o certificado da autoridade (CA) de um MySQL na nuvem, direto do servidor.
 //
-// Serve para provedores que exigem TLS mas não oferecem o arquivo da CA para
-// download (como o Clever Cloud). O servidor MySQL apresenta a cadeia de
+// Serve para conferir o TLS de um banco antes de usá-lo e para provedores que
+// exigem TLS mas não oferecem o arquivo da CA para download. O servidor MySQL apresenta a cadeia de
 // certificados no início da conexão; este script a lê com o openssl (vem com o
 // Git para Windows), mostra quem assinou o quê e salva a CA em
 // prisma/certificados/<nome>.pem, para o Prisma conferir o servidor com
 // sslaccept=strict (sem desligar a verificação).
 //
 // Uso:
-//   node --env-file=.env.nuvem scripts/certificado-banco.js            (lê host e porta de DATABASE_URL_MIGRACAO)
+//   node --env-file=.env.tidb scripts/certificado-banco.js             (lê host e porta de DATABASE_URL_MIGRACAO)
 //   node scripts/certificado-banco.js HOST PORTA [nome-do-arquivo]
 //
 // Confira a impressão digital (SHA-256) mostrada: se puder, compare com a do
@@ -25,14 +25,14 @@ const pasta = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../pri
 /** Host e porta: da linha de comando ou da URL de migração do .env */
 function destino() {
   const [host, porta, nome] = process.argv.slice(2);
-  if (host) return { host, porta: Number(porta) || 3306, nome: nome || 'nuvem-ca' };
+  if (host) return { host, porta: Number(porta) || 3306, nome: nome || 'banco-ca' };
   const url = process.env.DATABASE_URL_MIGRACAO || process.env.DATABASE_URL;
   if (!url) {
-    console.error('Informe HOST e PORTA, ou rode com --env-file=.env.nuvem (que tem DATABASE_URL_MIGRACAO).');
+    console.error('Informe HOST e PORTA, ou rode com --env-file=.env.tidb (que tem DATABASE_URL_MIGRACAO).');
     process.exit(1);
   }
   const { hostname, port } = new URL(url);
-  return { host: hostname, porta: Number(port) || 3306, nome: 'nuvem-ca' };
+  return { host: hostname, porta: Number(port) || 3306, nome: 'banco-ca' };
 }
 
 /** Cadeia apresentada pelo servidor, com STARTTLS do protocolo MySQL */
@@ -79,7 +79,7 @@ console.log(
     ? `\nO nome do certificado confere com ${host}: a verificação estrita do Prisma vai aceitar.`
     : `\nATENÇÃO: o nome do certificado NÃO confere com ${host}. Com sslaccept=strict o Prisma recusa a conexão\n` +
         'mesmo com a CA certa. Veja no painel do provedor se há outro endereço (o nome que aparece no certificado)\n' +
-        'ou leia a seção "Clever Cloud" em docs/DEPLOY_RENDER.md.'
+        'ou use um provedor cujo certificado tenha o nome do endereço (como o TiDB Cloud).'
 );
 
 // A CA é o último certificado da cadeia que assina a si mesmo (raiz). Se o

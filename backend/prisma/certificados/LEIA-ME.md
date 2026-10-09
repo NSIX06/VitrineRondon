@@ -1,23 +1,17 @@
-# Certificado do banco (Aiven ou Clever Cloud)
+# Certificados do banco
 
-Coloque aqui o certificado da autoridade (CA) do seu serviço MySQL no Aiven, com o
-nome `aiven-ca.pem`. Ele é baixado no painel do Aiven, na página do serviço, em
-**Connection information → CA certificate → Download**.
+O banco de produção (TiDB Cloud Starter) **não precisa de arquivo aqui**: o certificado dele é de
+uma autoridade pública (Let's Encrypt), e a URL só com `?sslaccept=strict` já faz o Prisma conferir
+a autoridade e o nome do servidor.
 
-O arquivo é público (serve só para conferir que o servidor é mesmo o do Aiven, sem
-nenhuma senha dentro), então pode ir para o git. É ele que permite a conexão com
-`sslaccept=strict`: o Prisma recusa qualquer servidor que não apresente um
-certificado assinado por essa CA.
-
-O caminho na `DATABASE_URL` é relativo à pasta `prisma/`:
+Esta pasta fica para um provedor que use CA própria. Nesse caso, salve aqui o certificado da CA
+(é público, sem senha dentro, e pode ir para o git) e aponte na URL, com o caminho relativo à pasta
+`prisma/`:
 
 ```
-...?sslcert=certificados/aiven-ca.pem&sslaccept=strict
+...?sslcert=certificados/NOME-ca.pem&sslaccept=strict
 ```
 
-## Clever Cloud
-
-O Clever Cloud não oferece a CA para download. Com o `backend/.env.nuvem` preenchido, rode
-`npm run nuvem:certificado` (ou `node scripts/certificado-banco.js HOST PORTA`): o script lê a
-cadeia que o servidor apresenta, salva a CA como `nuvem-ca.pem` e avisa se o nome do certificado
-confere com o endereço do banco, que o Prisma também exige com `sslaccept=strict`.
+Se o provedor não oferecer o arquivo para baixar, `node scripts/certificado-banco.js HOST PORTA`
+lê a cadeia que o servidor apresenta, salva a CA aqui e avisa se o nome do certificado confere com
+o endereço do banco (o Prisma também exige isso com `sslaccept=strict`).

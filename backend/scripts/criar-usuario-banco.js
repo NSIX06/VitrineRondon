@@ -9,7 +9,7 @@
 //   DATABASE_URL           a conta da aplicação (é ela que este script cria)
 //   DATABASE_URL_MIGRACAO  a conta de administrador (root), que tem poder para criar
 //   BANCO_HOST_CONTA       de onde a conta pode entrar (padrão: localhost). Num
-//                          banco na nuvem (Aiven), a API conecta de fora, então
+//                          banco na nuvem (TiDB Cloud), a API conecta de fora, então
 //                          use "%" (qualquer endereço; a senha longa e o SSL
 //                          obrigatório do provedor é que protegem)
 //

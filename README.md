@@ -1097,10 +1097,9 @@ tela piscar "Carregando" a cada navegação.
 ## Publicação no Render
 
 O projeto sobe no Render pelo Blueprint [`render.yaml`](render.yaml), que cria a API (web service) e o
-site (static site), os dois no plano gratuito. O MySQL fica no Aiven, no TiDB Cloud Starter
-(comandos `npm run tidb:*`, com `.env.tidb`) ou no Clever Cloud (`npm run nuvem:*`), e as fotos
-enviadas no Cloudinary, também gratuitos. O passo a passo completo, com a preparação do banco pela sua máquina
-(`npm run aiven:migrar`, `aiven:criar-usuario` e `aiven:seed`) e o cadastro do webhook do AbacatePay
+site (static site), os dois no plano gratuito. O MySQL fica no TiDB Cloud Starter e as fotos enviadas no
+Cloudinary, também gratuitos. O passo a passo completo, com a preparação do banco pela sua máquina
+(`npm run tidb:banco`, `tidb:migrar`, `tidb:criar-usuario` e `tidb:seed`) e o cadastro do webhook do AbacatePay
 (`npm run abacatepay:webhook`), está em [docs/DEPLOY_RENDER.md](docs/DEPLOY_RENDER.md).
 
 ## Branches

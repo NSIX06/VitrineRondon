@@ -2,7 +2,7 @@
 // apagar nenhum dado. Pode rodar quantas vezes quiser, inclusive em produção.
 //
 //   npm run planos:semear     banco do .env
-//   npm run aiven:planos      banco de produção (backend/.env.aiven)
+//   npm run tidb:planos       banco de produção (backend/.env.tidb)
 import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
 import { semearPlanos } from '../prisma/planos.js';

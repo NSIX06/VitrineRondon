@@ -1,5 +1,5 @@
 # Blueprint do Render: cria a API e o site de uma vez.
-# Passo a passo (Aiven, Cloudinary e as variáveis) em docs/DEPLOY_RENDER.md.
+# Passo a passo (TiDB Cloud, Cloudinary e as variáveis) em docs/DEPLOY_RENDER.md.
 #
 # Os valores com "sync: false" são pedidos pelo Render só na primeira criação
 # do Blueprint; depois, troque pelo painel (Environment) de cada serviço.
@@ -23,10 +23,10 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
-      # Conta restrita da aplicação (só SELECT/INSERT/UPDATE/DELETE), no Aiven
+      # Conta restrita da aplicação (só SELECT/INSERT/UPDATE/DELETE), no TiDB Cloud
       - key: DATABASE_URL
         sync: false
-      # Conta de administrador do Aiven, usada só nas migrations do build
+      # Conta de administrador do TiDB Cloud, usada só nas migrations do build
       - key: DATABASE_URL_MIGRACAO
         sync: false
       - key: JWT_SECRET
