@@ -716,6 +716,20 @@ h2:not(.detalhe__horarios-titulo, .visualmente-oculto) {
   color: var(--cor-branco);
 }
 
+/* Noite: variação da faixa anil (herda textos e setas claros) com fundo quase
+   preto, brilho dourado no alto do centro e um halo cinza logo abaixo */
+.faixa--anil.faixa--noite {
+  background:
+    radial-gradient(circle 500px at 50% 100px, rgba(251, 191, 36, 0.4), transparent),
+    radial-gradient(circle 500px at 50% 200px, rgba(62, 62, 62, 0.7), transparent),
+    var(--faixa-textura, var(--linhas-claras)),
+    #020617;
+}
+
+.faixa--noite .pagina-cabecalho__marca::before {
+  border-color: var(--cor-ouro);
+}
+
 .faixa--anil p,
 .pagina-cabecalho.faixa--anil p {
   color: rgba(255, 255, 255, 0.88);

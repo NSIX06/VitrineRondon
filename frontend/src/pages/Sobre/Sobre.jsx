@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import FundoDePontos from '../../components/ui/DotField/FundoDePontos'
 import Icone from '../../components/ui/Icone/Icone'
 import Fonte from '../../components/ui/Fonte/Fonte'
 import { FONTES, LISTA_FONTES, CREDITO_BANDEIRA } from '../../services/fontes'
@@ -86,7 +87,8 @@ const ficha = [
 function Sobre() {
   return (
     <>
-      <header className="faixa faixa--ceu">
+      <header className="faixa faixa--anil faixa--noite com-pontos">
+        <FundoDePontos tom="anil" />
         <div className="container sobre__cabecalho">
           <Voltar para="/" rotulo="Início" />
           <div className="sobre__eyebrow">

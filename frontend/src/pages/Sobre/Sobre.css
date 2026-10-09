@@ -47,6 +47,28 @@
   border-radius: 2px;
 }
 
+/* Cabeçalho na faixa noite: a régua vira um fio dourado e o rótulo clareia */
+.faixa--noite .sobre__cabecalho {
+  padding-bottom: var(--esp-6);
+}
+
+.faixa--noite .sobre__cabecalho > p {
+  color: rgba(255, 255, 255, 0.88);
+  margin-bottom: var(--esp-4);
+}
+
+.faixa--noite .sobre__regua {
+  background: var(--cor-ouro);
+}
+
+.faixa--noite .sobre__eyebrow-texto {
+  color: var(--cor-ouro);
+}
+
+.faixa--noite :is(.sobre__eyebrow-sep, .sobre__eyebrow-meta) {
+  color: rgba(255, 255, 255, 0.7);
+}
+
 /* Corpo em duas colunas */
 .sobre {
   display: grid;

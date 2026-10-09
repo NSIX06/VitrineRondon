@@ -42,7 +42,7 @@ function Vitrine() {
 
   return (
     <>
-      <header className="pagina-cabecalho faixa faixa--anil com-pontos">
+      <header className="pagina-cabecalho faixa faixa--anil faixa--noite com-pontos">
         <FundoDePontos tom="anil" />
         <div className="container">
           <Voltar para="/" rotulo="Início" />

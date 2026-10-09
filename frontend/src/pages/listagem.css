@@ -1,6 +1,7 @@
 /* Listagens com filtro na URL (Vitrine e Empreendedores) */
+/* Respiro entre a faixa colorida do cabeçalho e a busca */
 .listagem {
-  padding-top: 0;
+  padding-top: var(--esp-6);
 }
 
 .listagem__filtros {
