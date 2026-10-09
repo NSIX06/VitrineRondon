@@ -34,10 +34,16 @@ function extrairToken(req) {
  */
 async function usuarioDoToken(token) {
   const payload = jwt.verify(token, segredo());
-  return prisma.usuario.findUnique({
+  const usuario = await prisma.usuario.findUnique({
     where: { id: payload.sub },
-    select: { id: true, nome: true, email: true, perfil: true, ativo: true },
+    select: { id: true, nome: true, email: true, perfil: true, ativo: true, senhaAlteradaEm: true },
   });
+  if (!usuario) return null;
+  // Senha trocada depois que o token foi emitido: a sessão antiga não vale mais
+  // (iat é em segundos; o token criado no mesmo segundo da troca continua válido)
+  const { senhaAlteradaEm, ...dados } = usuario;
+  if (senhaAlteradaEm && payload.iat < Math.floor(senhaAlteradaEm.getTime() / 1000)) return null;
+  return dados;
 }
 
 /**

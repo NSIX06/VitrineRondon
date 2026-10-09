@@ -73,6 +73,25 @@ describe('autenticar', () => {
     expect(req.usuario.perfil).toBe(PERFIS.COMUM)
   })
 
+  it('derruba a sessão emitida antes da última troca de senha', async () => {
+    const tokenAntigo = jwt.sign({ sub: ANA.id, perfil: ANA.perfil, iat: Math.floor(Date.now() / 1000) - 3600 }, 'segredo-de-teste')
+    prisma.usuario.findUnique.mockResolvedValue({ ...ANA, senhaAlteradaEm: new Date() })
+    const res = resposta()
+    const seguir = vi.fn()
+    await autenticar(comToken(tokenAntigo), res, seguir)
+    expect(res.saida.codigo).toBe(401)
+    expect(seguir).not.toHaveBeenCalled()
+  })
+
+  it('a sessão criada depois da troca de senha continua valendo (e não expõe a data)', async () => {
+    prisma.usuario.findUnique.mockResolvedValue({ ...ANA, senhaAlteradaEm: new Date(Date.now() - 3600_000) })
+    const req = comToken(gerarToken(ANA))
+    const seguir = vi.fn()
+    await autenticar(req, resposta(), seguir)
+    expect(seguir).toHaveBeenCalled()
+    expect(req.usuario).toEqual(ANA)
+  })
+
   it('recusa quem não mandou token', async () => {
     const res = resposta()
     const seguir = vi.fn()

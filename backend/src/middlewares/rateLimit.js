@@ -59,6 +59,19 @@ export const limiteMetricas = rateLimit({
 });
 
 /**
+ * Pedidos de "esqueci a senha": todos contam (não só os que falham), porque cada
+ * pedido pode disparar um e-mail. Cinco por IP a cada 15 minutos.
+ */
+export const limiteRecuperacao = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 5,
+  skip: ignorarMaquinaLocal,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  handler: recusar('Muitos pedidos de recuperação. Aguarde 15 minutos e tente novamente.'),
+});
+
+/**
  * Limite apertado para login e cadastro: é o que impede força bruta de senha.
  * Só conta as tentativas que falharam, então quem acerta a senha não é punido.
  */

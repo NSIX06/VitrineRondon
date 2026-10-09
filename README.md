@@ -161,6 +161,9 @@ DEMO_EMPREENDEDOR_SENHA="defina-uma-senha-forte"
 | `ABACATEPAY_BASE_URL` | não | Padrão `https://api.abacatepay.com/v2` |
 | `PAGAMENTO_PROVEDOR` | não | Padrão `abacatepay`. Troca o gateway sem mexer no resto (ver [Planos e assinaturas](#planos-e-assinaturas)) |
 | `APP_URL` | sim, com assinaturas | Endereço do site. O checkout volta para `APP_URL/meu-negocio` depois do pagamento |
+| `EMAIL_PROVEDOR` | para recuperar senha | `resend` ou `brevo`. Sem ele, fora de produção o e-mail (com o link) só aparece no log do servidor |
+| `RESEND_API_KEY` / `BREVO_API_KEY` | conforme o provedor | Chave do serviço escolhido. Só a do provedor em `EMAIL_PROVEDOR` é usada e nunca vai para o log |
+| `EMAIL_REMETENTE` | com provedor | `Nome <endereco@dominio>`, de um domínio verificado no serviço |
 | `CORS_ORIGINS` | em produção | Endereços do site que podem chamar a API, separados por vírgula |
 | `BANCO_HOST_CONTA` | não | Padrão `localhost`. De onde a conta da aplicação pode entrar no MySQL; num banco na nuvem use `%` |
 | `ADMIN_SENHA`, `DEMO_EMPREENDEDOR_SENHA` | só para o seed | O seed aborta se faltarem |
@@ -469,6 +472,7 @@ Regras que valem no servidor, independentemente do que a interface mostrar:
 - Um administrador não consegue desativar a própria conta.
 - Senhas são guardadas com bcrypt e nenhum `select` da API inclui o hash.
 - O login devolve a mesma mensagem para e-mail inexistente e senha errada, para não revelar quais e-mails estão cadastrados.
+- **Esqueci a senha:** o link vai por e-mail (Resend ou Brevo, escolhido em `EMAIL_PROVEDOR`), vale 30 minutos e uma vez só. O banco guarda só o SHA-256 do código, um pedido novo anula os anteriores e, para a mesma conta, sai no máximo um e-mail a cada 2 minutos. A resposta do pedido é igual exista a conta ou não, e sai antes do envio, para o tempo de resposta também não denunciar. Ao trocar a senha, `senhaAlteradaEm` derruba os tokens emitidos antes. Sem provedor configurado, fora de produção o e-mail aparece no log da API para testar o fluxo.
 
 No navegador, o componente `RotaProtegida` leva quem não entrou para o login e devolve a pessoa à
 rota pretendida depois. Essa checagem é conveniência de interface: a autorização de verdade está na API.
@@ -688,6 +692,9 @@ pertence; o administrador também passa em todas as rotas de dono.
 | POST | `/auth/registrar` | público | Cria conta sem negócio. Exige o aceite dos dois documentos. Não é usada pela interface, que cadastra conta e negócio juntos |
 | POST | `/auth/registrar-empreendedor` | público | Cria conta e negócio em uma transação, com aceite |
 | POST | `/auth/login` | público | Devolve token e dados da sessão |
+| POST | `/auth/esqueci-senha` | público | Manda o link de nova senha por e-mail. Responde igual exista a conta ou não. 5 pedidos por IP a cada 15 min |
+| POST | `/auth/redefinir-senha/verificar` | público | Diz se o link (`codigo`) ainda vale: `410` com `motivo` `invalido`, `usado` ou `expirado` |
+| POST | `/auth/redefinir-senha` | público | Troca a senha pelo link. Marca o link como usado e derruba as sessões abertas antes |
 | POST | `/auth/logout` | autenticado | Encerra a sessão e registra na auditoria |
 | GET | `/auth/me` | autenticado | Dados da conta atual, sem o hash da senha |
 | GET | `/termos/:tipo` | público | `TERMOS_DE_USO` ou `POLITICA_PRIVACIDADE`, com a versão vigente |

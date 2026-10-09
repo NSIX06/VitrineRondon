@@ -50,6 +50,7 @@ Esta Política descreve como o VitrineRondon coleta, utiliza, armazena e protege
 Utilizamos os dados para:
 
 - Criar e gerenciar sua conta e autenticá-lo(a) na plataforma.
+- Enviar o link para criar uma nova senha, quando você pedir a recuperação de acesso.
 - Exibir os negócios, produtos e serviços dos empreendedores aos usuários.
 - Permitir o contato entre consumidores e empreendedores.
 - Exibir a localização dos estabelecimentos, quando informada.
@@ -69,7 +70,7 @@ O tratamento dos seus dados se fundamenta em: execução de contrato (prestaçã
 
 4.2. Dados de conta (como senha) nunca são exibidos publicamente nem compartilhados com terceiros.
 
-4.3. **Pagamentos e imagens:** os dados necessários à cobrança dos planos são tratados pelo AbacatePay, intermediador de pagamentos, e as imagens enviadas pelos empreendedores são armazenadas no Cloudinary, serviço de hospedagem de imagens. Cada um recebe apenas o necessário para a sua função.
+4.3. **Pagamentos e imagens:** os dados necessários à cobrança dos planos são tratados pelo AbacatePay, intermediador de pagamentos, as imagens enviadas pelos empreendedores são armazenadas no Cloudinary, serviço de hospedagem de imagens, e o e-mail de recuperação de senha é entregue por um serviço de envio de e-mails, que recebe apenas o seu nome, o seu e-mail e a mensagem. Cada um recebe apenas o necessário para a sua função.
 
 4.4. Não vendemos seus dados pessoais. O compartilhamento com terceiros ocorre apenas quando necessário para o funcionamento da plataforma (por exemplo, serviços de mapa) ou por exigência legal.
 
@@ -79,7 +80,7 @@ Caso a localização no mapa seja utilizada, ela pode ser processada por um serv
 
 ## 6. Segurança dos dados
 
-Adotamos medidas técnicas e organizacionais para proteger seus dados, incluindo criptografia de senhas, controle de acesso por perfil e proteção das rotas administrativas. Senhas e tokens de autenticação nunca são armazenados em registros de auditoria.
+Adotamos medidas técnicas e organizacionais para proteger seus dados, incluindo criptografia de senhas, controle de acesso por perfil e proteção das rotas administrativas. Senhas e tokens de autenticação nunca são armazenados em registros de auditoria. O link de recuperação de senha vale por 30 minutos e uma única vez, e guardamos apenas um resumo criptográfico dele; ao trocar a senha, as sessões abertas antes da troca são encerradas.
 
 ## 7. Registros de auditoria
 
