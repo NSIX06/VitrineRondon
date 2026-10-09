@@ -6,8 +6,7 @@ import Button from '../../components/ui/Button/Button'
 import Icone from '../../components/ui/Icone/Icone'
 import CampoSenha from '../../components/forms/CampoSenha/CampoSenha'
 import StatusMessage from '../../components/ui/StatusMessage/StatusMessage'
-import Datilografo from '../../components/ui/Datilografo/Datilografo'
-import FundoDePontos from '../../components/ui/DotField/FundoDePontos'
+import PainelAcesso from './PainelAcesso'
 import './Login.css'
 import Voltar from '../../components/ui/Voltar/Voltar'
 
@@ -144,6 +143,9 @@ function Login() {
                   erro={erros.senha}
                   autoComplete="current-password"
                 />
+                <Link to="/esqueci-senha" state={{ email: valores.email.trim() }} className="login__esqueci">
+                  Esqueci a senha
+                </Link>
                 <Button type="submit" disabled={enviando} className="login__botao">
                   <Icone nome="login" tamanho={18} />
                   {enviando ? 'Entrando...' : 'Entrar'}
@@ -155,9 +157,6 @@ function Login() {
                 <button type="button" className="login__trocar" onClick={() => setAba('criar')}>
                   Criar agora
                 </button>
-              </p>
-              <p className="login__rodape login__rodape--nota">
-                Esqueceu a senha? Fale com a equipe pela página de <Link to="/contato">contato</Link>.
               </p>
             </div>
           ) : (
@@ -198,39 +197,12 @@ function Login() {
           )}
         </div>
 
-        <aside className="login__painel com-pontos" aria-label="VitrineRondon">
-          {Object.entries(PAINEIS).map(([chave, item]) => (
-            <img
-              key={chave}
-              className={`login__painel-foto ${chave === aba ? 'login__painel-foto--ativa' : ''}`}
-              src={item.foto}
-              alt=""
-              decoding="async"
-            />
-          ))}
-          <div className="login__painel-sombra" aria-hidden="true" />
-          <FundoDePontos tom="anil" />
-          <ul className="login__selos">
-            <li>
-              <Icone nome="handshake" tamanho={16} />
-              Sem comissão
-            </li>
-            <li>
-              <Icone nome="chat" tamanho={16} />
-              Contato direto pelo WhatsApp
-            </li>
-            <li>
-              <Icone nome="location_on" tamanho={16} />
-              Rondonópolis-MT
-            </li>
-          </ul>
-          <blockquote className="login__citacao">
-            <p>
-              “<Datilografo key={painel.frase} texto={painel.frase} />”
-            </p>
-            <cite>— {painel.autor}</cite>
-          </blockquote>
-        </aside>
+        <PainelAcesso
+          fotos={{ entrar: PAINEIS.entrar.foto, criar: PAINEIS.criar.foto }}
+          ativa={aba}
+          frase={painel.frase}
+          autor={painel.autor}
+        />
       </div>
     </section>
   )

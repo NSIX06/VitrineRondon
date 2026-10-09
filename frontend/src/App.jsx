@@ -28,6 +28,8 @@ const Sobre = lazy(() => import('./pages/Sobre/Sobre'))
 const Admin = lazy(() => import('./pages/Admin/Admin'))
 const MeuNegocio = lazy(() => import('./pages/MeuNegocio/MeuNegocio'))
 const Login = lazy(() => import('./pages/Login/Login'))
+const EsqueciSenha = lazy(() => import('./pages/RecuperarSenha/EsqueciSenha'))
+const RedefinirSenha = lazy(() => import('./pages/RecuperarSenha/RedefinirSenha'))
 const Cadastro = lazy(() => import('./pages/Cadastro/Cadastro'))
 const Termos = lazy(() => import('./pages/Termos/Termos'))
 const Planos = lazy(() => import('./pages/Planos/Planos'))
@@ -69,6 +71,8 @@ const router = createBrowserRouter(
           <Route path="/sobre" element={<Sobre />} />
           <Route path="/planos" element={<Planos />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/esqueci-senha" element={<EsqueciSenha />} />
+          <Route path="/redefinir-senha" element={<RedefinirSenha />} />
           <Route path="/cadastro" element={<Cadastro />} />
           <Route path="/termos" element={<Termos key="termos" tipo="TERMOS_DE_USO" />} />
           <Route path="/privacidade" element={<Termos key="privacidade" tipo="POLITICA_PRIVACIDADE" />} />

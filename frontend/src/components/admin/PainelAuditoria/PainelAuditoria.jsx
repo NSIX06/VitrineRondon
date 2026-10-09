@@ -29,6 +29,8 @@ const ROTULOS_ACAO = {
   LOGIN: 'Entrada no sistema',
   LOGOUT: 'Saída do sistema',
   LOGIN_RECUSADO: 'Entrada recusada',
+  SENHA_RECUPERACAO: 'Pedido de nova senha',
+  SENHA_REDEFINIDA: 'Senha redefinida',
   CADASTRO: 'Cadastro de conta',
   ACEITE_TERMOS: 'Aceite de termos',
   CREATE: 'Criação',
