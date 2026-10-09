@@ -6,7 +6,7 @@ Este guia coloca o projeto no ar usando serviços gratuitos:
 |---|---|---|
 | API (Express) | **Render**, web service gratuito | Hospeda o Node direto do GitHub |
 | Site (React) | **Render**, static site gratuito | CDN, não dorme |
-| Banco MySQL | **Aiven**, plano gratuito (ou Clever Cloud, ver [alternativa](#alternativa-banco-no-clever-cloud)) | O Render não oferece MySQL gerenciado, e MySQL dentro do Render exige plano pago com disco |
+| Banco MySQL | **Aiven**, plano gratuito (ou [TiDB Cloud](#alternativa-banco-no-tidb-cloud) ou [Clever Cloud](#alternativa-banco-no-clever-cloud)) | O Render não oferece MySQL gerenciado, e MySQL dentro do Render exige plano pago com disco |
 | Fotos enviadas | **Cloudinary**, plano gratuito | O disco do Render gratuito é apagado a cada deploy, reinício ou pausa |
 | Assinaturas | **AbacatePay**, em Dev mode | Checkout dos planos; em Dev mode nada é cobrado |
 
@@ -64,6 +64,33 @@ demonstração. Roda uma vez só; o `backend/.env` de desenvolvimento não é al
 
 Se aparecer `Can't reach database server`, confira host, porta e se o arquivo
 `aiven-ca.pem` está no lugar certo (o caminho na URL é relativo à pasta `backend/prisma`).
+
+### Alternativa: banco no TiDB Cloud
+
+O [TiDB Cloud Starter](https://tidbcloud.com) é compatível com MySQL (o Prisma usa o mesmo
+`provider = "mysql"`) e o plano gratuito tem mais espaço que o do Aiven. Os passos 1 e 2 mudam
+assim; o resto do guia continua igual.
+
+1. Crie a conta e um cluster **Starter** (gratuito, sem cartão). Escolha uma região na AWS do
+   leste dos Estados Unidos (`us-east-1`), perto da API no Render.
+2. No cluster, clique em **Connect**, escolha **Public**, gere a senha e anote **HOST**, a porta
+   (**4000**) e o usuário, que vem com o prefixo do cluster (por exemplo `3pTAoNNegb47Uc8.root`).
+3. Copie `backend/.env.tidb.example` para `backend/.env.tidb` (fica fora do git) e preencha. A
+   conta da API usa o **mesmo prefixo**: `PREFIXO.vitrine_app`.
+4. No terminal, dentro da pasta `backend`:
+
+   ```bash
+   npm run tidb:banco           # cria o banco vitrine_db (o cluster vem só com o "test")
+   npm run tidb:status          # confere a conexão com TLS
+   npm run tidb:migrar          # cria as tabelas
+   npm run tidb:criar-usuario   # conta PREFIXO.vitrine_app só com SELECT/INSERT/UPDATE/DELETE
+   npm run tidb:seed            # opcional: dados de demonstração (APAGA as tabelas antes)
+   npm run tidb:planos          # sem o seed: só cria os planos à venda
+   ```
+
+5. No Render, use a `DATABASE_URL` e a `DATABASE_URL_MIGRACAO` do `.env.tidb`. Não precisa de
+   arquivo de certificado: o do TiDB é de uma autoridade pública, e `sslaccept=strict` confere a
+   autoridade e o nome do servidor.
 
 ### Alternativa: banco no Clever Cloud
 

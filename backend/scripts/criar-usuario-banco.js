@@ -19,6 +19,8 @@ import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
 
 const NOME_VALIDO = /^[A-Za-z0-9_]+$/;
+// No TiDB Cloud Starter o usuário leva o prefixo do cluster: "3pTAoNNegb47Uc8.vitrine_app"
+const USUARIO_VALIDO = /^([A-Za-z0-9]+\.)?[A-Za-z0-9_]+$/;
 const HOST_VALIDO = /^(%|localhost|[A-Za-z0-9._%-]+)$/;
 
 function lerUrl(variavel) {
@@ -40,8 +42,8 @@ if (usuario === decodeURIComponent(admin.username)) {
   console.error('DATABASE_URL e DATABASE_URL_MIGRACAO usam a mesma conta. A da aplicação precisa ser outra.');
   process.exit(1);
 }
-if (!NOME_VALIDO.test(usuario) || !NOME_VALIDO.test(banco)) {
-  console.error('Usuário e banco devem ter só letras, números e _.');
+if (!USUARIO_VALIDO.test(usuario) || !NOME_VALIDO.test(banco)) {
+  console.error('Usuário e banco devem ter só letras, números e _ (o usuário pode ter o prefixo do TiDB com ponto).');
   process.exit(1);
 }
 const host = process.env.BANCO_HOST_CONTA || 'localhost';
@@ -62,8 +64,13 @@ const prisma = new PrismaClient({ datasourceUrl: admin.toString(), log: [] });
 try {
   await prisma.$executeRawUnsafe(`CREATE USER IF NOT EXISTS ${conta} IDENTIFIED BY ${literal(senha)}`);
   await prisma.$executeRawUnsafe(`ALTER USER ${conta} IDENTIFIED BY ${literal(senha)}`);
-  // Parte do zero, para uma permissão antiga não sobrar
-  await prisma.$executeRawUnsafe(`REVOKE ALL PRIVILEGES, GRANT OPTION FROM ${conta}`);
+  // Parte do zero, para uma permissão antiga não sobrar. O TiDB não aceita a
+  // forma curta do MySQL; nele, revoga no banco (conta nova não tem o que revogar)
+  try {
+    await prisma.$executeRawUnsafe(`REVOKE ALL PRIVILEGES, GRANT OPTION FROM ${conta}`);
+  } catch {
+    await prisma.$executeRawUnsafe(`REVOKE ALL PRIVILEGES ON \`${banco}\`.* FROM ${conta}`).catch(() => {});
+  }
   await prisma.$executeRawUnsafe(`GRANT SELECT, INSERT, UPDATE, DELETE ON \`${banco}\`.* TO ${conta}`);
   const permissoes = await prisma.$queryRawUnsafe(`SHOW GRANTS FOR ${conta}`);
   console.log(`Conta ${usuario}@${host} pronta. Permissões:`);
