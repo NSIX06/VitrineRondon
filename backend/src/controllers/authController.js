@@ -256,8 +256,17 @@ export async function login(req, res, next) {
   }
 }
 
-// POST /api/auth/logout  (o token é descartado no cliente; aqui só registramos)
+// POST /api/auth/logout  (encerra a sessão no servidor e registra na auditoria)
 export async function logout(req, res) {
+  // Encerra esta sessão no servidor: o mesmo token passa a receber 401
+  const { jti, exp } = req.usuario.sessao ?? {};
+  if (jti) {
+    await prisma.sessaoEncerrada
+      .upsert({ where: { jti }, update: {}, create: { jti, expiraEm: new Date(exp * 1000) } })
+      .catch((erro) => console.error(`[sessao] Falha ao encerrar a sessão: ${erro.message}`));
+    // Faxina: sessões cujo token já expirou não precisam mais ficar na lista
+    prisma.sessaoEncerrada.deleteMany({ where: { expiraEm: { lt: new Date() } } }).catch(() => {});
+  }
   await registrarLog(req, {
     acao: 'LOGOUT',
     tipoEntidade: 'Usuario',

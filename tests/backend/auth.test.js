@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import jwt from 'jsonwebtoken'
 
 vi.mock('../../backend/src/config/prisma.js', () => ({
-  default: { usuario: { findUnique: vi.fn() } },
+  default: { usuario: { findUnique: vi.fn() }, sessaoEncerrada: { findUnique: vi.fn() } },
 }))
 
 process.env.JWT_SECRET = 'segredo-de-teste'
@@ -35,6 +35,8 @@ function resposta() {
 beforeEach(() => {
   prisma.usuario.findUnique.mockReset()
   prisma.usuario.findUnique.mockResolvedValue(ANA)
+  prisma.sessaoEncerrada.findUnique.mockReset()
+  prisma.sessaoEncerrada.findUnique.mockResolvedValue(null)
 })
 
 describe('gerarToken', () => {
@@ -46,7 +48,7 @@ describe('gerarToken', () => {
 
   it('não leva nome, e-mail nem senha para dentro do token', () => {
     const conteudo = jwt.verify(gerarToken({ ...ANA, senhaHash: '$2b$10$x' }), process.env.JWT_SECRET)
-    expect(Object.keys(conteudo).sort()).toEqual(['exp', 'iat', 'perfil', 'sub'])
+    expect(Object.keys(conteudo).sort()).toEqual(['exp', 'iat', 'jti', 'perfil', 'sub'])
   })
 
   it('tem prazo de validade', () => {
@@ -71,6 +73,35 @@ describe('autenticar', () => {
     const req = comToken(tokenAntigo)
     await autenticar(req, resposta(), vi.fn())
     expect(req.usuario.perfil).toBe(PERFIS.COMUM)
+  })
+
+  it('recusa a sessão encerrada pelo botão Sair (jti na lista)', async () => {
+    const token = gerarToken(ANA)
+    const { jti } = jwt.decode(token)
+    prisma.sessaoEncerrada.findUnique.mockResolvedValue({ jti })
+    const res = resposta()
+    const seguir = vi.fn()
+    await autenticar(comToken(token), res, seguir)
+    expect(res.saida.codigo).toBe(401)
+    expect(seguir).not.toHaveBeenCalled()
+    expect(prisma.sessaoEncerrada.findUnique).toHaveBeenCalledWith(expect.objectContaining({ where: { jti } }))
+  })
+
+  it('cada login gera um jti diferente e a sessão fica disponível ao logout', async () => {
+    const t1 = gerarToken(ANA), t2 = gerarToken(ANA)
+    expect(jwt.decode(t1).jti).toBeTruthy()
+    expect(jwt.decode(t1).jti).not.toBe(jwt.decode(t2).jti)
+    const req = comToken(t1)
+    await autenticar(req, resposta(), vi.fn())
+    expect(req.usuario.sessao.jti).toBe(jwt.decode(t1).jti)
+    expect(Object.keys(req.usuario)).not.toContain('sessao')
+  })
+
+  it('recusa token assinado com outro algoritmo (HS512)', async () => {
+    const token = jwt.sign({ sub: ANA.id, perfil: ANA.perfil }, 'segredo-de-teste', { algorithm: 'HS512' })
+    const res = resposta()
+    await autenticar(comToken(token), res, vi.fn())
+    expect(res.saida.codigo).toBe(401)
   })
 
   it('derruba a sessão emitida antes da última troca de senha', async () => {

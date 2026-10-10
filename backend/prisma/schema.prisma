@@ -131,6 +131,16 @@ model Usuario {
   @@map("usuarios")
 }
 
+// Sessão encerrada pelo botão Sair: o token (identificado pelo jti) deixa de
+// valer antes de expirar. A linha pode ser apagada depois de expiraEm.
+model SessaoEncerrada {
+  jti      String   @id @db.VarChar(36)
+  expiraEm DateTime @map("expira_em")
+
+  @@index([expiraEm])
+  @@map("sessoes_encerradas")
+}
+
 // Pedido de "esqueci a senha". Guarda só o hash (SHA-256) do código do link:
 // quem lê o banco não consegue usar o link. Vale 30 minutos e uma vez só.
 model RedefinicaoSenha {

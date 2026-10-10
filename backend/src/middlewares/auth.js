@@ -1,4 +1,5 @@
 // Autenticação por JWT e controle de acesso por perfil
+import { randomUUID } from 'node:crypto';
 import jwt from 'jsonwebtoken';
 import prisma from '../config/prisma.js';
 
@@ -14,10 +15,15 @@ function segredo() {
   return chave;
 }
 
-/** Gera o token de sessão com o mínimo necessário (id e perfil) */
+/**
+ * Gera o token de sessão com o mínimo necessário (id e perfil). O jti é o
+ * identificador desta sessão: é ele que o logout marca como encerrado.
+ */
 export function gerarToken(usuario) {
   return jwt.sign({ sub: usuario.id, perfil: usuario.perfil }, segredo(), {
+    algorithm: 'HS256',
     expiresIn: process.env.JWT_EXPIRES_IN || '8h',
+    jwtid: randomUUID(),
   });
 }
 
@@ -33,16 +39,23 @@ function extrairToken(req) {
  * agora, não os gravados no token. Token inválido ou expirado lança erro.
  */
 async function usuarioDoToken(token) {
-  const payload = jwt.verify(token, segredo());
-  const usuario = await prisma.usuario.findUnique({
-    where: { id: payload.sub },
-    select: { id: true, nome: true, email: true, perfil: true, ativo: true, senhaAlteradaEm: true },
-  });
-  if (!usuario) return null;
+  // Só HS256: a lista explícita impede trocar o algoritmo pelo cabeçalho do token
+  const payload = jwt.verify(token, segredo(), { algorithms: ['HS256'] });
+  const [usuario, encerrada] = await Promise.all([
+    prisma.usuario.findUnique({
+      where: { id: payload.sub },
+      select: { id: true, nome: true, email: true, perfil: true, ativo: true, senhaAlteradaEm: true },
+    }),
+    // Sessão encerrada pelo botão Sair: o token deixa de valer antes de expirar
+    payload.jti ? prisma.sessaoEncerrada.findUnique({ where: { jti: payload.jti }, select: { jti: true } }) : null,
+  ]);
+  if (!usuario || encerrada) return null;
   // Senha trocada depois que o token foi emitido: a sessão antiga não vale mais
   // (iat é em segundos; o token criado no mesmo segundo da troca continua válido)
   const { senhaAlteradaEm, ...dados } = usuario;
   if (senhaAlteradaEm && payload.iat < Math.floor(senhaAlteradaEm.getTime() / 1000)) return null;
+  // Identificador e validade desta sessão ficam fora do objeto público do usuário
+  Object.defineProperty(dados, 'sessao', { value: { jti: payload.jti ?? null, exp: payload.exp }, enumerable: false });
   return dados;
 }
 
