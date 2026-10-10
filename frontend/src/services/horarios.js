@@ -107,11 +107,67 @@ export function detalheDaSituacao(situacao) {
   return `Abre ${artigo} ${NOME_DO_DIA[proxima.dia]} às ${proxima.abre}`
 }
 
-/** "08:00–12:00 e 13:00–17:00" */
+/**
+ * Intervalos de um dia vistos como expediente: abre, fecha e as pausas entre
+ * eles. [08–12, 13–18] -> { abre: '08:00', fecha: '18:00', pausas: [{ inicio: '12:00', fim: '13:00' }] }
+ * É assim que o comércio fala ("abre às 8, fecha às 18, almoço do meio-dia à
+ * uma"); no banco continuam os intervalos.
+ */
+export function expedienteDoDia(intervalos = []) {
+  if (!intervalos.length) return null
+  const pausas = []
+  for (let k = 1; k < intervalos.length; k++) {
+    pausas.push({ inicio: intervalos[k - 1].fecha, fim: intervalos[k].abre })
+  }
+  return { abre: intervalos[0].abre, fecha: intervalos.at(-1).fecha, pausas }
+}
+
+/** O caminho de volta: expediente com pausas -> intervalos para salvar */
+export function intervalosDoExpediente({ abre, fecha, pausas = [] }) {
+  const intervalos = []
+  let inicio = abre
+  for (const pausa of pausas) {
+    intervalos.push({ abre: inicio, fecha: pausa.inicio })
+    inicio = pausa.fim
+  }
+  intervalos.push({ abre: inicio, fecha })
+  return intervalos
+}
+
+/** Nome da pausa na tela: a primeira é o almoço, as outras são intervalos */
+export const nomeDaPausa = (posicao) => (posicao === 0 ? 'Almoço' : 'Intervalo')
+
+/**
+ * Problema do expediente em linguagem de balcão, ou null. Usado pelo editor
+ * para explicar o erro no próprio dia, em vez de "intervalo 2 inválido".
+ */
+export function problemaDoExpediente({ abre, fecha, pausas = [] }) {
+  if (!HORA.test(abre ?? '') || !HORA.test(fecha ?? '')) return 'Preencha a hora que abre e a que fecha'
+  if (abre >= fecha) return 'A hora de fechar precisa ser depois da de abrir'
+  let anterior = abre
+  for (const [posicao, pausa] of pausas.entries()) {
+    const nome = nomeDaPausa(posicao).toLowerCase()
+    if (!HORA.test(pausa.inicio ?? '') || !HORA.test(pausa.fim ?? '')) return `Preencha o começo e o fim do ${nome}`
+    if (pausa.inicio >= pausa.fim) return `O fim do ${nome} precisa ser depois do começo`
+    if (pausa.inicio <= anterior) {
+      return posicao === 0
+        ? `O ${nome} precisa começar depois que o negócio abre`
+        : `O ${nome} precisa começar depois da pausa anterior`
+    }
+    if (pausa.fim >= fecha) return `O ${nome} precisa terminar antes de fechar`
+    anterior = pausa.fim
+  }
+  return null
+}
+
+/** "08:00 às 18:00 · almoço 12:00–13:00" (sem pausa: "08:00 às 18:00") */
 export function textoDoDia(horarios, dia) {
-  const lista = intervalosDoDia(horarios, dia)
-  if (!lista.length) return 'Fechado'
-  return lista.map((h) => `${h.abre}–${h.fecha}`).join(' e ')
+  const expediente = expedienteDoDia(intervalosDoDia(horarios, dia))
+  if (!expediente) return 'Fechado'
+  const pausas = expediente.pausas.map(
+    (p, i) => `${nomeDaPausa(i).toLowerCase()} ${p.inicio}–${p.fim}`
+  )
+  return [`${expediente.abre} às ${expediente.fecha}`, ...pausas].join(' · ')
 }
 
 /**

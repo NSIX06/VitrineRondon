@@ -74,7 +74,7 @@
   grid-template-columns: 68px minmax(0, 1fr);
   gap: var(--esp-2);
   align-items: start;
-  padding: var(--esp-2) 0;
+  padding: var(--esp-3) 0;
   border-top: 2px dashed var(--cor-superficie-alta);
 }
 
@@ -101,46 +101,102 @@
   cursor: pointer;
 }
 
-.horarios-editor__intervalos {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--esp-2);
-  min-height: 36px;
-}
-
 .horarios-editor__fechado {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
   font-size: var(--texto-sm);
   color: var(--cor-cinza-claro);
 }
 
-.horarios-editor__intervalo {
+/* Dia aberto: linha do expediente, uma linha por pausa e as ações do dia */
+.horarios-editor__expediente {
   display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  min-width: 0;
+}
+
+.horarios-editor__linha,
+.horarios-editor__pausa {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--esp-2) var(--esp-3);
+}
+
+/* A pausa fica num cartãozinho claro, para separar do expediente */
+.horarios-editor__pausa {
+  align-items: center;
+  padding: var(--esp-2) var(--esp-3);
+  background: var(--cor-branco);
+  border: 2px dashed var(--cor-superficie-alta);
+  border-radius: var(--raio-sm);
+}
+
+/* Nome da pausa na própria linha; embaixo, "das __ às __" e o tirar */
+.horarios-editor__pausa-nome {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  font-size: var(--texto-sm);
+  font-weight: 700;
+  color: var(--cor-anil);
+}
+
+.horarios-editor__campo {
+  display: inline-flex;
   flex-direction: column;
   gap: 2px;
 }
 
-.horarios-editor__horas {
-  display: inline-flex;
+.horarios-editor__pausa .horarios-editor__campo {
+  flex-direction: row;
   align-items: center;
-  gap: 4px;
-  background: var(--cor-branco);
-  border: var(--borda-fina);
-  border-radius: var(--raio-sm);
-  padding: 2px 2px 2px 4px;
+  gap: 6px;
+}
+
+.horarios-editor__campo-rotulo {
   font-size: var(--texto-xs);
+  font-weight: 700;
   color: var(--cor-cinza);
 }
 
-.horarios-editor__horas .campo__entrada {
-  width: 6.2rem;
+.horarios-editor__campo .campo__entrada {
+  width: 6.4rem;
   min-width: 0;
-  min-height: 32px;
-  padding: 0.2rem 0.35rem;
+  min-height: 36px;
+  padding: 0.2rem 0.4rem;
   border-width: 2px;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: var(--texto-sm);
   font-variant-numeric: tabular-nums;
+}
+
+.horarios-editor__acoes-dia {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2) var(--esp-3);
+}
+
+.horarios-editor__copiar {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 32px;
+  padding: 0.25rem 0.5rem;
+  border: none;
+  background: none;
+  color: var(--cor-anil);
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.horarios-editor__copiar:hover {
+  color: var(--cor-tinta);
 }
 
 .horarios-editor__remover {
@@ -226,26 +282,25 @@
 /* Com mouse, o relógio nativo do campo de hora só ocupa espaço: digitar
    "0800" já preenche. No celular o seletor nativo continua aparecendo. */
 @media (pointer: fine) {
-  .horarios-editor__horas .campo__entrada {
-    width: 4.6rem;
+  .horarios-editor__campo .campo__entrada {
+    width: 4.8rem;
   }
 
-  .horarios-editor__horas input[type='time']::-webkit-calendar-picker-indicator {
+  .horarios-editor__campo input[type='time']::-webkit-calendar-picker-indicator {
     display: none;
   }
 }
 
 /* Em colunas estreitas (celular): o dia fechado continua numa linha só
-   ("Seg  Fechado"); no dia aberto os intervalos descem e usam a largura toda.
-   Antes todo dia virava duas linhas e a semana passava de uma tela e meia. */
-@container (max-width: 340px) {
+   ("Seg  Fechado"); no dia aberto o expediente desce e usa a largura toda. */
+@container (max-width: 420px) {
   .horarios-editor__dia {
     grid-template-columns: 64px minmax(0, 1fr);
     gap: var(--esp-2);
     padding: var(--esp-3) 0;
   }
 
-  .horarios-editor__dia:not(.horarios-editor__dia--fechado) .horarios-editor__intervalos {
+  .horarios-editor__dia:not(.horarios-editor__dia--fechado) .horarios-editor__expediente {
     grid-column: 1 / -1;
   }
 }
@@ -260,10 +315,6 @@
   .horarios-editor__nome {
     min-height: 40px;
     gap: var(--esp-2);
-  }
-
-  .horarios-editor__intervalos {
-    gap: var(--esp-3);
   }
 
   .horarios-editor__atalhos {

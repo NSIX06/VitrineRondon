@@ -9,6 +9,10 @@ import {
   detalheDaSituacao,
   textoDoDia,
   errosDosHorarios,
+  expedienteDoDia,
+  intervalosDoExpediente,
+  nomeDaPausa,
+  problemaDoExpediente,
 } from '../../frontend/src/services/horarios.js'
 
 const intervalo = (diaSemana, abre, fecha) => ({ diaSemana, abre, fecha })
@@ -164,12 +168,62 @@ describe('detalheDaSituacao', () => {
 })
 
 describe('textoDoDia', () => {
-  it('escreve os dois turnos do dia', () => {
-    expect(textoDoDia(COMERCIAL, 1)).toBe('08:00–12:00 e 13:00–17:00')
+  it('escreve o expediente com a pausa do almoço', () => {
+    expect(textoDoDia(COMERCIAL, 1)).toBe('08:00 às 17:00 · almoço 12:00–13:00')
+  })
+
+  it('sem pausa, só abre e fecha', () => {
+    expect(textoDoDia([intervalo(6, '08:00', '12:00')], 6)).toBe('08:00 às 12:00')
+  })
+
+  it('com almoço e outro intervalo', () => {
+    const dia = [intervalo(2, '08:00', '12:00'), intervalo(2, '13:00', '15:00'), intervalo(2, '15:30', '18:00')]
+    expect(textoDoDia(dia, 2)).toBe('08:00 às 18:00 · almoço 12:00–13:00 · intervalo 15:00–15:30')
   })
 
   it('escreve "Fechado" em dia sem atendimento', () => {
     expect(textoDoDia(COMERCIAL, 0)).toBe('Fechado')
+  })
+})
+
+describe('expediente com pausas', () => {
+  const doDia = [
+    { abre: '08:00', fecha: '12:00' },
+    { abre: '13:00', fecha: '18:00' },
+  ]
+
+  it('intervalos viram abre, fecha e a pausa entre eles', () => {
+    expect(expedienteDoDia(doDia)).toEqual({ abre: '08:00', fecha: '18:00', pausas: [{ inicio: '12:00', fim: '13:00' }] })
+  })
+
+  it('e voltam a ser os mesmos intervalos', () => {
+    expect(intervalosDoExpediente(expedienteDoDia(doDia))).toEqual(doDia)
+  })
+
+  it('dia sem pausa é um intervalo só; dia sem intervalo é fechado', () => {
+    expect(intervalosDoExpediente({ abre: '09:00', fecha: '17:00', pausas: [] })).toEqual([{ abre: '09:00', fecha: '17:00' }])
+    expect(expedienteDoDia([])).toBeNull()
+  })
+
+  it('a primeira pausa é o almoço; as outras, intervalos', () => {
+    expect([0, 1, 2].map(nomeDaPausa)).toEqual(['Almoço', 'Intervalo', 'Intervalo'])
+  })
+
+  it.each([
+    [{ abre: '08:00', fecha: '18:00', pausas: [{ inicio: '12:00', fim: '13:00' }] }, null],
+    [{ abre: '', fecha: '18:00', pausas: [] }, /abre e a que fecha/],
+    [{ abre: '18:00', fecha: '08:00', pausas: [] }, /fechar precisa ser depois/],
+    [{ abre: '08:00', fecha: '18:00', pausas: [{ inicio: '13:00', fim: '12:00' }] }, /fim do almoço/],
+    [{ abre: '08:00', fecha: '18:00', pausas: [{ inicio: '07:00', fim: '08:30' }] }, /almoço precisa começar depois que o negócio abre/],
+    [{ abre: '08:00', fecha: '18:00', pausas: [{ inicio: '17:00', fim: '19:00' }] }, /terminar antes de fechar/],
+    [
+      { abre: '08:00', fecha: '18:00', pausas: [{ inicio: '12:00', fim: '13:00' }, { inicio: '12:30', fim: '14:00' }] },
+      /intervalo precisa começar depois da pausa anterior/,
+    ],
+  ])('explica o problema em linguagem simples (%#)', (expediente, esperado) => {
+    const problema = problemaDoExpediente(expediente)
+    if (esperado === null) expect(problema).toBeNull()
+    else expect(problema).toMatch(esperado)
   })
 })
 

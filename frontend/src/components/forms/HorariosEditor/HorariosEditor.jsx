@@ -1,34 +1,53 @@
+import { useState } from 'react'
 import Icone from '../../ui/Icone/Icone'
 import {
   DIAS,
   agoraNoFuso,
   detalheDaSituacao,
   errosDosHorarios,
-  paraMinutos,
+  expedienteDoDia,
+  intervalosDoExpediente,
+  nomeDaPausa,
+  problemaDoExpediente,
   situacaoAtendimento,
 } from '../../../services/horarios'
 import { useRelogio } from '../../../hooks/useRelogio'
 import CaixaDeMarcar from '../../ui/CaixaDeMarcar/CaixaDeMarcar'
 import './HorariosEditor.css'
 
-// O exemplo mais comum no comércio de bairro: manhã e tarde com pausa para o almoço
-const PADRAO_DO_DIA = [
-  { abre: '08:00', fecha: '12:00' },
-  { abre: '13:00', fecha: '17:00' },
-]
+// O mais comum no comércio de bairro: das 8 às 18, com uma hora de almoço
+const PADRAO_DO_DIA = { abre: '08:00', fecha: '18:00', pausas: [{ inicio: '12:00', fim: '13:00' }] }
 const DIAS_UTEIS = [1, 2, 3, 4, 5]
+const MAXIMO_PAUSAS = 3
 
 const paraHora = (minutos) => {
-  const limitado = Math.min(minutos, 23 * 60 + 59)
+  const limitado = Math.max(0, Math.min(minutos, 23 * 60 + 59))
   return `${String(Math.floor(limitado / 60)).padStart(2, '0')}:${String(limitado % 60).padStart(2, '0')}`
 }
+const minutos = (hora) => Number(hora.slice(0, 2)) * 60 + Number(hora.slice(3, 5))
 
-const ORDINAIS = ['1º', '2º', '3º', '4º']
-const MAXIMO_POR_DIA = 4
+/** Campo de hora com rótulo visível ("Abre às", "Fecha às"...) */
+function CampoHora({ rotulo, valor, onChange, rotuloAcessivel, erro }) {
+  return (
+    <label className="horarios-editor__campo">
+      <span className="horarios-editor__campo-rotulo">{rotulo}</span>
+      <input
+        type="time"
+        step="300"
+        className={`campo__entrada ${erro ? 'campo__entrada--erro' : ''}`}
+        value={valor}
+        onChange={(evento) => onChange(evento.target.value)}
+        aria-label={rotuloAcessivel}
+      />
+    </label>
+  )
+}
 
 /**
- * Editor da semana de atendimento.
- * - `valor`: lista de { diaSemana, abre, fecha } (0 = domingo ... 6 = sábado)
+ * Editor da semana de atendimento, no jeito que o comércio fala: cada dia tem
+ * "abre às", "fecha às" e as pausas (almoço e outros intervalos).
+ * - `valor`: lista de { diaSemana, abre, fecha } (0 = domingo ... 6 = sábado);
+ *   é o formato do banco, e as pausas são o espaço entre os intervalos
  * - `onChange(novaLista)`
  * - `errosServidor`: mensagens vindas da API, por índice do intervalo
  * A prévia no rodapé mostra o que a página pública exibiria agora.
@@ -36,49 +55,78 @@ const MAXIMO_POR_DIA = 4
 function HorariosEditor({ valor = [], onChange, errosServidor = {} }) {
   // Relógio da prévia: recalcula a cada 30 segundos
   const agora = useRelogio()
+  // Rascunho de cada dia enquanto a pessoa digita: um horário pela metade
+  // (pausa depois do fechamento, por exemplo) não reorganiza a tela sozinho
+  const [rascunhos, setRascunhos] = useState({})
 
-  const erros = { ...errosServidor, ...errosDosHorarios(valor) }
-  const comIndice = valor.map((h, indice) => ({ ...h, indice }))
-  const doDia = (dia) =>
-    comIndice.filter((h) => h.diaSemana === dia).sort((a, b) => a.abre.localeCompare(b.abre))
+  const intervalosDe = (dia) => valor.filter((h) => h.diaSemana === dia).map(({ abre, fecha }) => ({ abre, fecha }))
+  const expedienteDe = (dia) => rascunhos[dia] ?? expedienteDoDia(intervalosDe(dia))
 
-  // Ao abrir um dia, repete o dia aberto mais próximo antes dele; se não houver, usa o padrão
+  /** Troca o expediente de um dia (null = fechado) e avisa o formulário */
+  const definirDia = (dia, expediente) => {
+    setRascunhos((anteriores) => ({ ...anteriores, [dia]: expediente ?? undefined }))
+    const outros = valor.filter((h) => h.diaSemana !== dia)
+    const doDia = expediente ? intervalosDoExpediente(expediente).map((h) => ({ diaSemana: dia, ...h })) : []
+    onChange([...outros, ...doDia])
+  }
+
+  // Ao abrir um dia, repete o dia aberto mais próximo antes dele; se não houver, o padrão
   const modeloPara = (dia) => {
     const ordem = DIAS.map((d) => d.indice)
     const posicao = ordem.indexOf(dia)
     for (let passo = 1; passo < 7; passo++) {
-      const anterior = ordem[(posicao - passo + 7) % 7]
-      const intervalos = doDia(anterior)
-      if (intervalos.length) return intervalos.map(({ abre, fecha }) => ({ abre, fecha }))
+      const anterior = expedienteDe(ordem[(posicao - passo + 7) % 7])
+      if (anterior) return structuredClone(anterior)
     }
-    return PADRAO_DO_DIA
+    return structuredClone(PADRAO_DO_DIA)
   }
 
-  const alternarDia = (dia, atende) => {
-    const semODia = valor.filter((h) => h.diaSemana !== dia)
-    onChange(atende ? [...semODia, ...modeloPara(dia).map((h) => ({ diaSemana: dia, ...h }))] : semODia)
+  const alterar = (dia, mudanca) => definirDia(dia, { ...expedienteDe(dia), ...mudanca })
+
+  const alterarPausa = (dia, posicao, campo, hora) => {
+    const atual = expedienteDe(dia)
+    alterar(dia, { pausas: atual.pausas.map((p, i) => (i === posicao ? { ...p, [campo]: hora } : p)) })
   }
 
-  const alterarIntervalo = (indice, campo, hora) => {
-    onChange(valor.map((h, i) => (i === indice ? { ...h, [campo]: hora } : h)))
+  const adicionarPausa = (dia) => {
+    const atual = expedienteDe(dia)
+    // Sem pausa ainda: almoço ao meio-dia. Já com pausas: meia hora depois da última
+    const ultima = atual.pausas.at(-1)
+    const inicio = ultima ? minutos(ultima.fim) + 120 : 12 * 60
+    const nova = { inicio: paraHora(inicio), fim: paraHora(inicio + (ultima ? 15 : 60)) }
+    alterar(dia, { pausas: [...atual.pausas, nova] })
   }
 
-  const removerIntervalo = (indice) => onChange(valor.filter((_, i) => i !== indice))
+  const removerPausa = (dia, posicao) => {
+    const atual = expedienteDe(dia)
+    alterar(dia, { pausas: atual.pausas.filter((_, i) => i !== posicao) })
+  }
 
-  const adicionarIntervalo = (dia) => {
-    const ultimo = doDia(dia).at(-1)
-    const inicio = ultimo ? paraMinutos(ultimo.fecha) + 60 : 8 * 60
-    onChange([...valor, { diaSemana: dia, abre: paraHora(inicio), fecha: paraHora(inicio + 120) }])
+  /** Copia o horário de um dia para todos os outros dias que já estão abertos */
+  const repetirNosAbertos = (origem) => {
+    const modelo = expedienteDe(origem)
+    const abertos = DIAS.map((d) => d.indice).filter((dia) => dia !== origem && expedienteDe(dia))
+    setRascunhos({})
+    const lista = valor.filter((h) => !abertos.includes(h.diaSemana))
+    for (const dia of abertos) lista.push(...intervalosDoExpediente(modelo).map((h) => ({ diaSemana: dia, ...h })))
+    onChange(lista)
   }
 
   const aplicarComercial = () => {
-    onChange(DIAS_UTEIS.flatMap((dia) => PADRAO_DO_DIA.map((h) => ({ diaSemana: dia, ...h }))))
+    setRascunhos({})
+    onChange(DIAS_UTEIS.flatMap((dia) => intervalosDoExpediente(PADRAO_DO_DIA).map((h) => ({ diaSemana: dia, ...h }))))
   }
 
-  const temErro = Object.keys(erros).length > 0
+  const limparSemana = () => {
+    setRascunhos({})
+    onChange([])
+  }
+
+  const temErro = Object.keys({ ...errosServidor, ...errosDosHorarios(valor) }).length > 0
   const situacao = situacaoAtendimento(temErro ? [] : valor, agora)
   const relogio = agoraNoFuso(agora)
   const hoje = DIAS.find((d) => d.indice === relogio.dia)
+  const diasAbertos = DIAS.filter((d) => expedienteDe(d.indice)).length
 
   return (
     <fieldset className="horarios-editor">
@@ -88,20 +136,17 @@ function HorariosEditor({ valor = [], onChange, errosServidor = {} }) {
       </legend>
 
       <p className="horarios-editor__explica">
-        Sua página mostra <strong>Disponível</strong> dentro destes horários e{' '}
-        <strong>Indisponível</strong> fora deles, sozinha, no horário de Rondonópolis.
+        Marque os dias em que você atende, a hora que abre e a que fecha. Se para no almoço ou em
+        outro intervalo, adicione a pausa: nesse período a página mostra <strong>Indisponível</strong>,
+        no horário de Rondonópolis.
       </p>
 
       <div className="horarios-editor__atalhos">
         <button type="button" className="horarios-editor__atalho" onClick={aplicarComercial}>
-          Seg a sex, 08:00–12:00 e 13:00–17:00
+          Seg a sex, 08:00 às 18:00 com almoço 12:00–13:00
         </button>
         {valor.length > 0 && (
-          <button
-            type="button"
-            className="horarios-editor__atalho horarios-editor__atalho--limpar"
-            onClick={() => onChange([])}
-          >
+          <button type="button" className="horarios-editor__atalho horarios-editor__atalho--limpar" onClick={limparSemana}>
             Limpar semana
           </button>
         )}
@@ -109,9 +154,10 @@ function HorariosEditor({ valor = [], onChange, errosServidor = {} }) {
 
       <ul className="horarios-editor__dias">
         {DIAS.map((dia) => {
-          const intervalos = doDia(dia.indice)
-          const atende = intervalos.length > 0
+          const expediente = expedienteDe(dia.indice)
+          const atende = Boolean(expediente)
           const idDia = `horario-dia-${dia.indice}`
+          const problema = atende ? problemaDoExpediente(expediente) : null
           return (
             <li
               key={dia.indice}
@@ -124,62 +170,81 @@ function HorariosEditor({ valor = [], onChange, errosServidor = {} }) {
                   tamanho="sm"
                   id={idDia}
                   checked={atende}
-                  onChange={(evento) => alternarDia(dia.indice, evento.target.checked)}
+                  onChange={(evento) => definirDia(dia.indice, evento.target.checked ? modeloPara(dia.indice) : null)}
                 />
                 {dia.curto}
               </label>
 
-              <div className="horarios-editor__intervalos">
-                {!atende && <span className="horarios-editor__fechado">Fechado</span>}
+              {!atende ? (
+                <span className="horarios-editor__fechado">Fechado</span>
+              ) : (
+                <div className="horarios-editor__expediente">
+                  <div className="horarios-editor__linha">
+                    <CampoHora
+                      rotulo="Abre às"
+                      valor={expediente.abre}
+                      onChange={(hora) => alterar(dia.indice, { abre: hora })}
+                      rotuloAcessivel={`Hora que abre na ${dia.nome}`}
+                      erro={Boolean(problema)}
+                    />
+                    <CampoHora
+                      rotulo="Fecha às"
+                      valor={expediente.fecha}
+                      onChange={(hora) => alterar(dia.indice, { fecha: hora })}
+                      rotuloAcessivel={`Hora que fecha na ${dia.nome}`}
+                      erro={Boolean(problema)}
+                    />
+                  </div>
 
-                {intervalos.map((h, posicao) => (
-                  <div key={h.indice} className="horarios-editor__intervalo">
-                    <div className="horarios-editor__horas">
-                      <input
-                        type="time"
-                        step="300"
-                        className={`campo__entrada ${erros[h.indice] ? 'campo__entrada--erro' : ''}`}
-                        value={h.abre}
-                        onChange={(evento) => alterarIntervalo(h.indice, 'abre', evento.target.value)}
-                        aria-label={`Início do ${ORDINAIS[posicao]} intervalo de ${dia.nome}`}
-                        data-dia={dia.indice}
-                        data-campo="abre"
+                  {expediente.pausas.map((pausa, posicao) => (
+                    <div key={posicao} className="horarios-editor__pausa">
+                      <span className="horarios-editor__pausa-nome">
+                        <Icone nome={posicao === 0 ? 'restaurant' : 'coffee'} tamanho={16} />
+                        {nomeDaPausa(posicao)}
+                      </span>
+                      <CampoHora
+                        rotulo="das"
+                        valor={pausa.inicio}
+                        onChange={(hora) => alterarPausa(dia.indice, posicao, 'inicio', hora)}
+                        rotuloAcessivel={`Começo do ${nomeDaPausa(posicao).toLowerCase()} na ${dia.nome}`}
+                        erro={Boolean(problema)}
                       />
-                      <span aria-hidden="true">às</span>
-                      <input
-                        type="time"
-                        step="300"
-                        className={`campo__entrada ${erros[h.indice] ? 'campo__entrada--erro' : ''}`}
-                        value={h.fecha}
-                        onChange={(evento) => alterarIntervalo(h.indice, 'fecha', evento.target.value)}
-                        aria-label={`Fim do ${ORDINAIS[posicao]} intervalo de ${dia.nome}`}
-                        data-dia={dia.indice}
-                        data-campo="fecha"
+                      <CampoHora
+                        rotulo="às"
+                        valor={pausa.fim}
+                        onChange={(hora) => alterarPausa(dia.indice, posicao, 'fim', hora)}
+                        rotuloAcessivel={`Fim do ${nomeDaPausa(posicao).toLowerCase()} na ${dia.nome}`}
+                        erro={Boolean(problema)}
                       />
                       <button
                         type="button"
                         className="horarios-editor__remover"
-                        onClick={() => removerIntervalo(h.indice)}
-                        aria-label={`Remover o ${ORDINAIS[posicao]} intervalo de ${dia.nome}`}
+                        onClick={() => removerPausa(dia.indice, posicao)}
+                        aria-label={`Tirar o ${nomeDaPausa(posicao).toLowerCase()} da ${dia.nome}`}
                       >
                         <Icone nome="close" tamanho={16} />
                       </button>
                     </div>
-                    {erros[h.indice] && <span className="campo__erro">{erros[h.indice]}</span>}
-                  </div>
-                ))}
+                  ))}
 
-                {atende && intervalos.length < MAXIMO_POR_DIA && (
-                  <button
-                    type="button"
-                    className="horarios-editor__adicionar"
-                    onClick={() => adicionarIntervalo(dia.indice)}
-                  >
-                    <Icone nome="add" tamanho={16} />
-                    Intervalo
-                  </button>
-                )}
-              </div>
+                  {problema && <span className="campo__erro">{problema}</span>}
+
+                  <div className="horarios-editor__acoes-dia">
+                    {expediente.pausas.length < MAXIMO_PAUSAS && (
+                      <button type="button" className="horarios-editor__adicionar" onClick={() => adicionarPausa(dia.indice)}>
+                        <Icone nome="add" tamanho={16} />
+                        {expediente.pausas.length === 0 ? 'Pausa para almoço' : 'Outro intervalo'}
+                      </button>
+                    )}
+                    {diasAbertos > 1 && !problema && (
+                      <button type="button" className="horarios-editor__copiar" onClick={() => repetirNosAbertos(dia.indice)}>
+                        <Icone nome="content_copy" tamanho={16} />
+                        Usar este horário nos outros dias marcados
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
             </li>
           )
         })}
