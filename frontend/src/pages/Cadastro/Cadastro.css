@@ -3,7 +3,9 @@
   grid-template-columns: 7fr 4fr;
   gap: var(--esp-7);
   align-items: start;
-  padding-top: 0;
+  /* Respiro abaixo da faixa do cabeçalho: com 0, as etapas e os cartões da
+     lateral encostavam na linha da faixa */
+  padding-top: var(--esp-6);
 }
 
 .cadastro__principal {

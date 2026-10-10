@@ -18,6 +18,7 @@ import PainelFaq from '../../components/admin/PainelFaq/PainelFaq'
 import PainelAssinaturas from '../../components/admin/PainelAssinaturas/PainelAssinaturas'
 import PainelDivulgacoes from '../../components/admin/PainelDivulgacoes/PainelDivulgacoes'
 import { formatarPreco } from '../../services/formatos'
+import { formatarTelefone } from '../../services/telefone'
 import TagTipo from '../../components/ui/Tag/TagTipo'
 import './Admin.css'
 import Voltar from '../../components/ui/Voltar/Voltar'
@@ -254,7 +255,7 @@ function Admin() {
         <span className="admin__celula-principal">
           {c.nome}
           <span className="admin__secundario">{c.email}</span>
-          {c.telefone && <span className="admin__secundario">{c.telefone}</span>}
+          {c.telefone && <span className="admin__secundario">{formatarTelefone(c.telefone)}</span>}
         </span>
       ),
     },

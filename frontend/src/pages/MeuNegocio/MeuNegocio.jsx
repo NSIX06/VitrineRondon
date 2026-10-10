@@ -14,6 +14,7 @@ import DataTable from '../../components/tables/DataTable/DataTable'
 import ProdutoForm from '../../components/forms/ProdutoForm/ProdutoForm'
 import EmpreendedorForm from '../../components/forms/EmpreendedorForm/EmpreendedorForm'
 import { formatarPreco } from '../../services/formatos'
+import { formatarTelefone } from '../../services/telefone'
 import TagTipo from '../../components/ui/Tag/TagTipo'
 import './MeuNegocio.css'
 import Voltar from '../../components/ui/Voltar/Voltar'
@@ -309,7 +310,7 @@ function MeuNegocio() {
         <div className="meu-negocio__indicador">
           <span className="meu-negocio__indicador-rotulo">Contato</span>
           <strong className="meu-negocio__indicador-numero meu-negocio__indicador-numero--texto">
-            {negocio.whatsapp || '—'}
+            {formatarTelefone(negocio.whatsapp) || '—'}
           </strong>
           <span className="meu-negocio__indicador-detalhe">
             {negocio.instagram ? `@${negocio.instagram.replace('@', '')}` : 'Sem Instagram'}

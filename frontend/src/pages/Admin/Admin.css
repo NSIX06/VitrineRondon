@@ -1,5 +1,7 @@
+/* As setas ficam no alto, com respiro abaixo do menu; o título vem logo
+   depois delas (antes as setas encostavam no menu e o título ficava longe) */
 .admin {
-  padding-top: 0;
+  padding-top: var(--esp-6);
 }
 
 .admin__topo {
@@ -8,7 +10,7 @@
   justify-content: space-between;
   gap: var(--esp-4);
   flex-wrap: wrap;
-  padding-block: var(--esp-7) var(--esp-6);
+  padding-block: var(--esp-2) var(--esp-6);
 }
 
 .admin__topo h1 {

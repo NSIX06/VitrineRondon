@@ -3,7 +3,8 @@
   grid-template-columns: minmax(0, 8fr) 4fr;
   gap: var(--esp-7);
   align-items: start;
-  padding-top: 0;
+  /* Respiro abaixo da faixa do cabeçalho (com 0 o conteúdo encostava nela) */
+  padding-top: var(--esp-6);
 }
 
 /* Quadro do documento; a tipografia do texto fica no DocumentoLegal */

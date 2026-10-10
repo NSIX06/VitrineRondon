@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../../../services/api'
+import { formatarTelefone } from '../../../services/telefone'
 import { useAuth, PERFIS } from '../../../contexts/auth'
 import Button from '../../ui/Button/Button'
 import Tag from '../../ui/Tag/Tag'
@@ -97,7 +98,7 @@ function PainelUsuarios({ aoAlterar }) {
         <span className="usuarios__celula">
           <strong>{u.nome}</strong>
           <span className="usuarios__email">{u.email}</span>
-          {u.telefone && <span className="usuarios__email">{u.telefone}</span>}
+          {u.telefone && <span className="usuarios__email">{formatarTelefone(u.telefone)}</span>}
         </span>
       ),
     },
