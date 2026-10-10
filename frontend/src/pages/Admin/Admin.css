@@ -102,40 +102,146 @@
   color: var(--cor-anil);
 }
 
-/* Abas como plaquinhas presas à tabela */
+/* Abas em "teclas": todas à vista, sem rolagem lateral. Cada uma com o ícone
+   numa caixinha, o nome e a contagem; a ativa fica amarela e levantada. */
 .admin__abas {
-  display: flex;
-  gap: var(--esp-1);
-  border-bottom: var(--borda);
-  overflow-x: auto;
+  display: grid;
+  /* Oito abas: 4 por linha no tablet, as 8 numa linha no computador (abaixo) */
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--esp-3);
+  padding: var(--esp-3);
+  background: var(--cor-superficie-baixa);
+  border: var(--borda);
+  border-radius: var(--raio);
 }
 
 .admin__aba {
-  display: inline-flex;
+  position: relative;
+  display: flex;
   align-items: center;
   gap: var(--esp-2);
-  padding: 0.75rem 1rem;
-  margin-bottom: -3px;
-  background: var(--cor-superficie-baixa);
-  border: var(--borda);
-  border-bottom: none;
-  border-radius: var(--raio-md) var(--raio-md) 0 0;
-  color: var(--cor-cinza);
+  min-height: 52px;
+  padding: 0.5rem 0.6rem;
+  background: var(--cor-branco);
+  border: var(--borda-fina);
+  border-radius: var(--raio-md);
+  box-shadow: var(--sombra-dura-sm);
+  color: var(--cor-tinta);
   font-weight: 700;
-  font-size: 14px;
-  white-space: nowrap;
-  transition: color 0.15s ease, background-color 0.15s ease;
+  font-size: var(--texto-sm);
+  text-align: left;
+  transition: var(--transicao-tecla);
 }
 
 .admin__aba:hover {
-  color: var(--cor-tinta);
   background: var(--cor-ouro-claro);
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 0 var(--cor-contorno);
+}
+
+.admin__aba:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 0 var(--cor-contorno);
 }
 
 .admin__aba--ativa,
 .admin__aba--ativa:hover {
   background: var(--cor-ouro);
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 0 var(--cor-contorno);
+}
+
+.admin__aba-icone {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  background: var(--cor-superficie-baixa);
+  border: 2px solid var(--cor-contorno);
+  border-radius: 8px;
+  color: var(--cor-anil);
+}
+
+.admin__aba--ativa .admin__aba-icone {
+  background: var(--cor-anil);
+  color: var(--cor-ouro);
+}
+
+.admin__aba-texto {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.2;
+}
+
+.admin__aba-rotulo {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin__aba-resumo {
+  font-size: var(--texto-xs);
+  font-weight: 600;
+  color: var(--cor-cinza);
+}
+
+.admin__aba--ativa .admin__aba-resumo {
   color: var(--cor-tinta);
+}
+
+/* Contador de não lidas: no canto, como um selinho */
+.admin__aba .admin__contador {
+  position: absolute;
+  top: -8px;
+  right: -6px;
+}
+
+/* Computador: as oito numa linha, ícone em cima e texto centralizado embaixo
+   (lado a lado, "Empreendedores" não cabia e "Auditoria" caía sozinha) */
+@media (min-width: 1000px) {
+  .admin__abas {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+  }
+
+  .admin__aba {
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    min-height: 84px;
+    padding: 0.55rem 0.3rem;
+    text-align: center;
+  }
+
+  .admin__aba-texto {
+    align-items: center;
+    width: 100%;
+  }
+
+  .admin__aba-rotulo {
+    max-width: 100%;
+  }
+}
+
+/* Painel entra suave ao trocar de aba */
+.admin__painel {
+  animation: admin-painel-entrar 0.2s ease-out;
+}
+
+@keyframes admin-painel-entrar {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin__aba,
+  .admin__painel {
+    transition: none;
+    animation: none;
+  }
 }
 
 .admin__contador {
@@ -223,26 +329,41 @@
     display: none;
   }
 
-  /* Seis abas em grade de duas colunas, todas do mesmo tamanho: soltas, elas
-     quebravam em três linhas desencontradas */
+  /* Celular: grade de quatro teclas compactas (ícone em cima, nome embaixo),
+     as oito abas em duas linhas, sem rolagem */
   .admin__abas {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    overflow: visible;
-    gap: var(--esp-1);
-    border-bottom: none;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--esp-2);
+    padding: var(--esp-2);
   }
 
   .admin__aba {
-    justify-content: flex-start;
-    padding: 0.65rem 0.7rem;
-    font-size: var(--texto-sm);
-    margin-bottom: 0;
-    border-bottom: var(--borda);
-    border-radius: var(--raio-md);
-    white-space: normal;
-    text-align: left;
-    line-height: 1.25;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    min-height: 64px;
+    padding: 0.4rem 0.2rem;
+    font-size: 11px;
+    text-align: center;
+  }
+
+  .admin__aba-icone {
+    width: 28px;
+    height: 28px;
+  }
+
+  .admin__aba-texto {
+    align-items: center;
+    width: 100%;
+  }
+
+  .admin__aba-rotulo {
+    max-width: 100%;
+  }
+
+  /* A contagem fica para o computador: no celular cabe só o nome */
+  .admin__aba-resumo {
+    display: none;
   }
 }
 

@@ -21,7 +21,6 @@ import { formatarPreco } from '../../services/formatos'
 import { formatarTelefone } from '../../services/telefone'
 import TagTipo from '../../components/ui/Tag/TagTipo'
 import './Admin.css'
-import Voltar from '../../components/ui/Voltar/Voltar'
 import { SITUACAO_NEGOCIO } from '../../services/planos'
 
 const ABAS = [
@@ -40,6 +39,7 @@ const plural = (quantidade, singular, pluralizado) =>
   `${quantidade} ${quantidade === 1 ? singular : pluralizado}`
 
 const formatadorData = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' })
+const dataCurta = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short' })
 
 /** Busca as três listas do painel de uma vez */
 async function buscarDadosPainel() {
@@ -58,12 +58,41 @@ async function buscarDadosPainel() {
 }
 
 function Admin() {
-  // O atalho "Administrar perguntas" da central de ajuda chega com ?aba=faq
-  const [searchParams] = useSearchParams()
+  // A aba fica no endereço (?aba=faq): recarregar ou compartilhar abre a mesma.
+  // O atalho "Administrar perguntas" da central de ajuda usa isso.
+  const [searchParams, setSearchParams] = useSearchParams()
   const abaPedida = searchParams.get('aba')
   const [abaAtiva, setAbaAtiva] = useState(() =>
     ABAS.some((aba) => aba.id === abaPedida) ? abaPedida : 'produtos'
   )
+
+  const escolherAba = (id) => {
+    setAbaAtiva(id)
+    setSearchParams(
+      (atual) => {
+        const proximo = new URLSearchParams(atual)
+        proximo.set('aba', id)
+        return proximo
+      },
+      { replace: true, preventScrollReset: true }
+    )
+  }
+
+  // Teclado no grupo de abas: ← → trocam, Home e End vão à primeira e à última
+  const navegarPelasAbas = (evento) => {
+    const posicao = ABAS.findIndex((aba) => aba.id === abaAtiva)
+    const destino = {
+      ArrowRight: (posicao + 1) % ABAS.length,
+      ArrowLeft: (posicao - 1 + ABAS.length) % ABAS.length,
+      Home: 0,
+      End: ABAS.length - 1,
+    }[evento.key]
+    if (destino === undefined) return
+    evento.preventDefault()
+    const id = ABAS[destino].id
+    escolherAba(id)
+    document.getElementById(`aba-admin-${id}`)?.focus()
+  }
 
   // Dados de cada aba
   const [produtos, setProdutos] = useState([])
@@ -232,7 +261,23 @@ function Admin() {
         </span>
       ),
     },
-    { chave: 'whatsapp', titulo: 'WhatsApp' },
+    { chave: 'whatsapp', titulo: 'WhatsApp', render: (e) => formatarTelefone(e.whatsapp) || '—' },
+    {
+      chave: 'autorizaDivulgacao',
+      titulo: 'Redes sociais',
+      // O empreendedor marca (ou retira) a autorização na aba Divulgação do painel dele
+      render: (e) =>
+        e.autorizaDivulgacao ? (
+          <span className="admin__celula-principal admin__celula-principal--normal">
+            <Tag variante="sucesso">Autoriza</Tag>
+            {e.autorizaDivulgacaoEm && (
+              <span className="admin__secundario">desde {dataCurta.format(new Date(e.autorizaDivulgacaoEm))}</span>
+            )}
+          </span>
+        ) : (
+          <Tag variante="neutra">Não autoriza</Tag>
+        ),
+    },
     {
       chave: 'itens',
       titulo: 'Itens',
@@ -278,10 +323,21 @@ function Admin() {
 
   const contatosNaoLidos = contatos.filter((c) => !c.lido).length
 
+  // Contagem mostrada em cada aba (as que carregam os próprios dados ficam sem)
+  const resumoDaAba = (id) => {
+    if (carregando || erroCarregamento) return null
+    const contagens = {
+      produtos: plural(produtos.length, 'item', 'itens'),
+      empreendedores: plural(empreendedores.length, 'negócio', 'negócios'),
+      mensagens: contatosNaoLidos ? plural(contatosNaoLidos, 'nova', 'novas') : 'tudo lido',
+      usuarios: plural(usuarios.length, 'conta', 'contas'),
+    }
+    return contagens[id] ?? null
+  }
+
   return (
     <>
       <section className="container secao admin">
-        <Voltar para="/" rotulo="Início" />
         <div className="admin__topo">
           <div>
             <span className="pagina-cabecalho__marca">Ambiente restrito de gestão</span>
@@ -359,25 +415,39 @@ function Admin() {
           </div>
         )}
 
-        <div className="admin__abas" role="tablist" aria-label="Seções do painel">
-          {ABAS.map((aba) => (
-            <button
-              key={aba.id}
-              type="button"
-              role="tab"
-              aria-selected={abaAtiva === aba.id}
-              className={`admin__aba ${abaAtiva === aba.id ? 'admin__aba--ativa' : ''}`}
-              onClick={() => setAbaAtiva(aba.id)}
-            >
-              <Icone nome={aba.icone} tamanho={18} />
-              {aba.rotulo}
-              {aba.id === 'mensagens' && contatosNaoLidos > 0 && (
-                <span className="admin__contador" aria-label={`${contatosNaoLidos} não lidas`}>
-                  {contatosNaoLidos}
+        {/* Abas em "teclas": todas à vista (sem rolagem lateral), com a contagem
+            de cada seção. Setas, Home e End trocam de aba pelo teclado. */}
+        <div className="admin__abas" role="tablist" aria-label="Seções do painel" onKeyDown={navegarPelasAbas}>
+          {ABAS.map((aba) => {
+            const ativa = abaAtiva === aba.id
+            const resumo = resumoDaAba(aba.id)
+            return (
+              <button
+                key={aba.id}
+                type="button"
+                role="tab"
+                id={`aba-admin-${aba.id}`}
+                aria-selected={ativa}
+                aria-controls="painel-admin"
+                tabIndex={ativa ? 0 : -1}
+                className={`admin__aba ${ativa ? 'admin__aba--ativa' : ''}`}
+                onClick={() => escolherAba(aba.id)}
+              >
+                <span className="admin__aba-icone" aria-hidden="true">
+                  <Icone nome={aba.icone} tamanho={20} />
                 </span>
-              )}
-            </button>
-          ))}
+                <span className="admin__aba-texto">
+                  <span className="admin__aba-rotulo">{aba.rotulo}</span>
+                  {resumo && <small className="admin__aba-resumo">{resumo}</small>}
+                </span>
+                {aba.id === 'mensagens' && contatosNaoLidos > 0 && (
+                  <span className="admin__contador" aria-label={`${contatosNaoLidos} não lidas`}>
+                    {contatosNaoLidos}
+                  </span>
+                )}
+              </button>
+            )
+          })}
         </div>
 
         {carregando && <Spinner texto="Carregando o painel..." />}
@@ -393,7 +463,13 @@ function Admin() {
         )}
 
         {!carregando && !erroCarregamento && (
-          <div className="admin__painel" role="tabpanel">
+          <div
+            className="admin__painel"
+            role="tabpanel"
+            id="painel-admin"
+            aria-labelledby={`aba-admin-${abaAtiva}`}
+            key={abaAtiva}
+          >
             {abaAtiva === 'produtos' && (
               <>
                 <div className="admin__barra">
