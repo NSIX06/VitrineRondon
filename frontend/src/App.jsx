@@ -11,7 +11,6 @@ import Navbar from './components/layout/Navbar/Navbar'
 import Footer from './components/layout/Footer/Footer'
 import Spinner from './components/ui/Spinner/Spinner'
 import PaginaErro from './components/ui/PaginaErro/PaginaErro'
-import Home from './pages/Home/Home'
 import RotaProtegida from './components/auth/RotaProtegida/RotaProtegida'
 import { PERFIS } from './contexts/auth'
 import './App.css'
@@ -19,6 +18,8 @@ import './App.css'
 /* Cada tela vira um arquivo à parte, baixado só quando alguém entra nela: quem
    só olha a vitrine não carrega o painel do administrador nem o mapa. A home
    fica de fora porque é a porta de entrada e precisa aparecer de imediato. */
+// A Home também carrega sob demanda: quem chega por outra página não baixa a Home
+const Home = lazy(() => import('./pages/Home/Home'))
 const Vitrine = lazy(() => import('./pages/Vitrine/Vitrine'))
 const ProdutoDetalhe = lazy(() => import('./pages/ProdutoDetalhe/ProdutoDetalhe'))
 const Empreendedores = lazy(() => import('./pages/Empreendedores/Empreendedores'))
