@@ -59,6 +59,34 @@ export const limiteMetricas = rateLimit({
 });
 
 /**
+ * Formulário de contato (público, sem login): cada envio grava uma mensagem
+ * que a administração precisa ler. Cinco por IP por hora cobrem quem escreve
+ * de verdade e cortam robôs de spam.
+ */
+export const limiteContato = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  limit: 5,
+  skip: ignorarMaquinaLocal,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  handler: recusar('Muitas mensagens enviadas. Aguarde uma hora e tente novamente.'),
+});
+
+/**
+ * Criação de contas: conta todas as tentativas (não só as que falham). Freia
+ * robôs que criam contas em massa ou testam listas de e-mails para descobrir
+ * quem já tem cadastro (a resposta 409 diz que o e-mail existe).
+ */
+export const limiteCadastro = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  limit: 10,
+  skip: ignorarMaquinaLocal,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  handler: recusar('Muitos cadastros a partir desta rede. Aguarde uma hora e tente novamente.'),
+});
+
+/**
  * Pedidos de "esqueci a senha": todos contam (não só os que falham), porque cada
  * pedido pode disparar um e-mail. Cinco por IP a cada 15 minutos.
  */

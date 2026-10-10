@@ -2,7 +2,7 @@
 import { Router } from 'express';
 import { validateBody } from '../middlewares/validate.js';
 import { autenticar } from '../middlewares/auth.js';
-import { limiteLogin, limiteRecuperacao } from '../middlewares/rateLimit.js';
+import { limiteCadastro, limiteLogin, limiteRecuperacao } from '../middlewares/rateLimit.js';
 import {
   registrarComum,
   registrarEmpreendedor,
@@ -22,8 +22,8 @@ import {
 
 const router = Router();
 
-router.post('/registrar', limiteLogin, validateBody(registrarComumSchema), registrarComum);
-router.post('/registrar-empreendedor', limiteLogin, validateBody(registrarEmpreendedorSchema), registrarEmpreendedor);
+router.post('/registrar', limiteCadastro, limiteLogin, validateBody(registrarComumSchema), registrarComum);
+router.post('/registrar-empreendedor', limiteCadastro, limiteLogin, validateBody(registrarEmpreendedorSchema), registrarEmpreendedor);
 router.post('/login', limiteLogin, validateBody(loginSchema), login);
 router.post('/esqueci-senha', limiteRecuperacao, validateBody(esqueciSenhaSchema), esqueciSenha);
 router.post('/redefinir-senha/verificar', limiteLogin, validateBody(codigoRedefinicaoSchema), verificarRedefinicao);

@@ -4,6 +4,7 @@
 import { Router } from 'express';
 import { validateBody } from '../middlewares/validate.js';
 import { autenticar, exigirPerfil, PERFIS } from '../middlewares/auth.js';
+import { limiteContato } from '../middlewares/rateLimit.js';
 import {
   listarContatos,
   criarContato,
@@ -16,7 +17,7 @@ const router = Router();
 
 const somenteAdmin = [autenticar, exigirPerfil(PERFIS.ADMIN)];
 
-router.post('/', validateBody(criarContatoSchema), criarContato);
+router.post('/', limiteContato, validateBody(criarContatoSchema), criarContato);
 router.get('/', ...somenteAdmin, listarContatos);
 router.patch('/:id/lido', ...somenteAdmin, marcarComoLido);
 router.delete('/:id', ...somenteAdmin, excluirContato);

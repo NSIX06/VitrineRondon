@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
-import { limitePadrao, limiteLogin } from '../../backend/src/middlewares/rateLimit.js'
+import { limitePadrao, limiteLogin, limiteContato, limiteCadastro } from '../../backend/src/middlewares/rateLimit.js'
 
 /** Chama o limitador N vezes seguidas, sempre do mesmo IP */
 async function chamar(limitador, vezes, { ip = '203.0.113.7', status = 200 } = {}) {
@@ -102,5 +102,19 @@ describe('a própria máquina, fora de produção', () => {
     const { limiteLogin: limiteDeProducao } = await import('../../backend/src/middlewares/rateLimit.js')
     const respostas = await chamar(limiteDeProducao, 12, { ip: '127.0.0.1', status: 401 })
     expect(respostas[10].passou).toBe(false)
+  })
+})
+
+describe('limites de formulários públicos', () => {
+  it('contato: corta depois de 5 mensagens do mesmo IP na hora', async () => {
+    const respostas = await chamar(limiteContato, 7, { ip: '198.51.100.40' })
+    expect(respostas.slice(0, 5).every((r) => r.passou)).toBe(true)
+    expect(respostas.slice(5).every((r) => !r.passou && r.res.statusCode === 429)).toBe(true)
+  })
+
+  it('cadastro: conta também os bem-sucedidos e corta depois de 10 na hora', async () => {
+    const respostas = await chamar(limiteCadastro, 12, { ip: '198.51.100.41', status: 201 })
+    expect(respostas.slice(0, 10).every((r) => r.passou)).toBe(true)
+    expect(respostas.slice(10).every((r) => !r.passou && r.res.statusCode === 429)).toBe(true)
   })
 })
