@@ -1,0 +1,57 @@
+# Integração contínua: roda a cada push em main/dev e em pull requests.
+# Segurança do próprio pipeline:
+# - Actions fixadas por SHA de commit (uma etiqueta como v7 pode ser movida);
+# - token do GitHub só com leitura do código;
+# - nenhum segredo é usado aqui (os testes simulam banco e gateways).
+name: CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Código
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Node 22
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+
+      - name: Dependências
+        run: |
+          npm ci --legacy-peer-deps
+          npm ci --prefix backend
+          npm ci --prefix frontend
+
+      - name: Cliente do Prisma (sem banco)
+        run: npx prisma generate
+        working-directory: backend
+
+      - name: Testes (Vitest)
+        run: npx vitest run
+
+      - name: Lint
+        run: |
+          (cd frontend && npx oxlint)
+          (cd backend && npx oxlint src)
+
+      - name: Build do site
+        run: npm run build --prefix frontend
+        env:
+          VITE_API_URL: https://api.exemplo.invalid/api
+
+      - name: Dependências de produção sem vulnerabilidade alta
+        run: |
+          npm audit --omit=dev --audit-level=high --prefix backend
+          npm audit --omit=dev --audit-level=high --prefix frontend
