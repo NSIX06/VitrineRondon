@@ -135,8 +135,13 @@ describe('consultarPorCheckout (conciliação)', () => {
   })
 
   it('assinatura CANCELLED vira evento CANCELADA', async () => {
-    apiFalsa([{ success: true, data: [{ id: 'subs_1', status: 'CANCELLED' }] }])
+    apiFalsa([{ success: true, data: [{ id: 'subs_1', status: 'CANCELLED', checkoutId: 'bill_1' }] }])
     expect((await abacatepay.consultarPorCheckout('bill_1')).tipo).toBe(EVENTOS.CANCELADA)
+  })
+
+  it('ignora assinatura de outro checkout (filtro ignorado não cancela a nossa)', async () => {
+    apiFalsa([{ success: true, data: [{ id: 'subs_velha', status: 'CANCELLED', checkoutId: 'bill_outro' }] }])
+    expect(await abacatepay.consultarPorCheckout('bill_1')).toBeNull()
   })
 })
 

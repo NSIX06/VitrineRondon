@@ -16,6 +16,7 @@
 // Troca de plano: é um checkout novo do plano escolhido. Quando ele é pago, a
 // assinatura anterior é cancelada no gateway. Assim o benefício muda na hora
 // (o change-plan do gateway só valeria no próximo ciclo).
+import { randomUUID } from 'node:crypto';
 import prisma from '../config/prisma.js';
 import { registrarLog } from './auditoria.js';
 import { EVENTOS, provedorPagamento } from './pagamento/index.js';
@@ -164,7 +165,11 @@ export async function iniciarAssinatura(req, empreendedorId, nomePlano) {
   try {
     checkout = await provedor.criarCheckoutAssinatura({
       produtoId,
-      referencia: `assinatura-${assinatura.id}`,
+      // Única de verdade: o id sozinho se repete entre bancos (local e
+      // produção usam a mesma conta de testes do gateway, e um banco novo
+      // recomeça do 1). Com "assinatura-1" repetido, o AbacatePay devolvia o
+      // checkout de uma assinatura antiga e cancelada: "link não encontrado".
+      referencia: `assinatura-${assinatura.id}-${randomUUID().slice(0, 8)}`,
       urlRetorno: `${site}/planos`,
       urlConclusao: `${site}/meu-negocio?assinatura=retorno`,
     });

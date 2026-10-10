@@ -115,7 +115,9 @@ describe('proximaCobrancaApos', () => {
 describe('iniciarAssinatura', () => {
   it('cria a assinatura PENDENTE com o checkout do gateway e liga o produto ao plano', async () => {
     const nova = await servico.iniciarAssinatura(REQ, 10, 'destaque')
-    expect(nova).toMatchObject({ status: STATUS.PENDENTE, gatewayCheckoutId: `bill_assinatura-${nova.id}` })
+    expect(nova.status).toBe(STATUS.PENDENTE)
+    // Referência com o id e um sufixo aleatório: o id sozinho se repete entre bancos
+    expect(nova.gatewayCheckoutId).toMatch(new RegExp(`^bill_assinatura-${nova.id}-[0-9a-f]{8}$`))
     expect(nova.checkoutUrl).toMatch(/^https:\/\/pay\//)
     expect(banco.estado.planos[1].gatewayProdutoId).toBe('prod_1')
     // Pendente ainda não dá benefício nenhum

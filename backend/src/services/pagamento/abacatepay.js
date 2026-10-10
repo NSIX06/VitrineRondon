@@ -168,7 +168,10 @@ export async function consultarPorCheckout(checkoutId) {
   if (!checkoutId) return null;
   const lista = await chamar('GET', '/subscriptions/list', { query: { checkoutId } });
   const itens = Array.isArray(lista) ? lista : lista?.items || [];
-  return eventoDaAssinatura(itens[0], checkoutId);
+  // Só vale a assinatura deste checkout: se o filtro for ignorado, a lista
+  // traz as outras assinaturas da conta, e a primeira (de outro checkout)
+  // cancelaria a nossa por engano
+  return eventoDaAssinatura(itens.find((s) => s.checkoutId === checkoutId), checkoutId);
 }
 
 export async function cancelarAssinatura(assinaturaId) {
