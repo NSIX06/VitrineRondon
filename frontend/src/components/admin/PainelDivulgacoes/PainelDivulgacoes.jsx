@@ -71,9 +71,11 @@ function FormDivulgacao({ inicial, negocios, aoSalvar, aoCancelar }) {
             <option value="" disabled>
               Escolha um negócio com plano Destaque
             </option>
+            {/* Sem autorização o servidor recusa: a opção aparece, mas bloqueada */}
             {negocios.map((n) => (
-              <option key={n.id} value={n.id}>
+              <option key={n.id} value={n.id} disabled={!n.autorizaDivulgacao}>
                 {n.nomeNegocio}
+                {n.autorizaDivulgacao ? '' : ' (não autorizou a divulgação)'}
               </option>
             ))}
           </select>
@@ -222,6 +224,33 @@ function PainelDivulgacoes({ empreendedores = [] }) {
         Registro do que entrou no calendário editorial das redes oficiais. Não há cota de publicações por
         negócio, e só entram negócios com o plano Destaque e com a autorização do empreendedor.
       </p>
+
+      {/* Quem deixou (ou não) aparecer nas redes, entre os que podem entrar */}
+      <section className="divulgacoes__autorizacoes" aria-labelledby="titulo-autorizacoes">
+        <h3 id="titulo-autorizacoes">
+          Autorizações dos negócios Destaque{' '}
+          <small>
+            ({comDestaque.filter((e) => e.autorizaDivulgacao).length} de {comDestaque.length} autorizam)
+          </small>
+        </h3>
+        {comDestaque.length === 0 ? (
+          <p className="painel__detalhe">Nenhum negócio com o plano Destaque ativo no momento.</p>
+        ) : (
+          <ul>
+            {comDestaque.map((e) => (
+              <li key={e.id} className={e.autorizaDivulgacao ? 'divulgacoes__autoriza' : 'divulgacoes__nao-autoriza'}>
+                <Icone nome={e.autorizaDivulgacao ? 'check_circle' : 'block'} tamanho={18} />
+                <span className="divulgacoes__autorizacao-nome">{e.nomeNegocio}</span>
+                <span className="divulgacoes__autorizacao-texto">
+                  {e.autorizaDivulgacao
+                    ? `Autoriza${e.autorizaDivulgacaoEm ? ` desde ${dataLonga(e.autorizaDivulgacaoEm)}` : ''}`
+                    : 'Não autorizou: não pode entrar no calendário'}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
       <DataTable
         colunas={colunas}
         dados={lista ?? []}

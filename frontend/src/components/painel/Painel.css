@@ -358,6 +358,67 @@
   font-size: var(--texto-sm);
 }
 
+/* Admin > Divulgações: quem autoriza aparecer nas redes oficiais */
+.divulgacoes__autorizacoes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  padding: var(--esp-4);
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-radius: var(--raio);
+}
+
+.divulgacoes__autorizacoes h3 {
+  margin: 0;
+  font-size: var(--texto-lg);
+}
+
+.divulgacoes__autorizacoes h3 small {
+  font-family: var(--fonte-texto);
+  font-size: var(--texto-sm);
+  font-weight: 600;
+  color: var(--cor-cinza);
+}
+
+.divulgacoes__autorizacoes ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  gap: var(--esp-2) var(--esp-4);
+}
+
+.divulgacoes__autorizacoes li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: var(--esp-2);
+  padding: var(--esp-2) var(--esp-3);
+  border: 2px dashed var(--cor-superficie-alta);
+  border-radius: var(--raio-sm);
+}
+
+.divulgacoes__autorizacao-nome {
+  font-weight: 700;
+  color: var(--cor-tinta);
+}
+
+.divulgacoes__autorizacao-texto {
+  grid-column: 2;
+  font-size: var(--texto-xs);
+  color: var(--cor-cinza);
+}
+
+.divulgacoes__autoriza .icone {
+  color: var(--cor-sucesso);
+}
+
+.divulgacoes__nao-autoriza .icone {
+  color: var(--cor-lacre-escuro);
+}
+
 @media (max-width: 600px) {
   .painel__plano,
   .painel__convite {

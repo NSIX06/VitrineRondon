@@ -38,6 +38,12 @@
   color: var(--cor-tinta);
 }
 
+/* Algo liberado/permitido (ex.: autoriza divulgação) */
+.tag--sucesso {
+  background: #4ade80;
+  color: var(--cor-tinta);
+}
+
 .tag--alerta {
   background: var(--cor-lacre-escuro);
   color: var(--cor-branco);
