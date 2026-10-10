@@ -235,10 +235,46 @@
   }
 }
 
-/* Em colunas estreitas o dia fica em cima e os intervalos embaixo */
+/* Em colunas estreitas (celular): o dia fechado continua numa linha só
+   ("Seg  Fechado"); no dia aberto os intervalos descem e usam a largura toda.
+   Antes todo dia virava duas linhas e a semana passava de uma tela e meia. */
 @container (max-width: 340px) {
   .horarios-editor__dia {
-    grid-template-columns: 1fr;
-    gap: 4px;
+    grid-template-columns: 64px minmax(0, 1fr);
+    gap: var(--esp-2);
+    padding: var(--esp-3) 0;
+  }
+
+  .horarios-editor__dia:not(.horarios-editor__dia--fechado) .horarios-editor__intervalos {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 560px) {
+  .horarios-editor {
+    padding: var(--esp-3);
+    gap: var(--esp-4);
+  }
+
+  /* Alvo de toque confortável para marcar o dia */
+  .horarios-editor__nome {
+    min-height: 40px;
+    gap: var(--esp-2);
+  }
+
+  .horarios-editor__intervalos {
+    gap: var(--esp-3);
+  }
+
+  .horarios-editor__atalhos {
+    gap: var(--esp-3);
+  }
+
+  .horarios-editor__atalho {
+    min-height: 40px;
+  }
+
+  .horarios-editor__adicionar {
+    min-height: 36px;
   }
 }

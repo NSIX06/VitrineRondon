@@ -74,6 +74,17 @@
   color: var(--cor-tinta);
   font-weight: 700;
 }
+
+/* No toque (e em tela estreita, como o zoom alto do navegador), o + e o - do
+   zoom ganham tamanho de dedo (o padrão do Leaflet é 30px) */
+@media (pointer: coarse), (max-width: 600px) {
+  .mapa .leaflet-control-zoom a {
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    font-size: 20px;
+  }
+}
 .mapa .leaflet-bar {
   border: var(--borda-fina);
   border-radius: var(--raio-sm);

@@ -212,10 +212,16 @@ input[type='radio'] {
 /* "body" na frente dá o peso para vencer os tamanhos fixos de cada componente
    (.campo--checkbox, .aceite__item, .horarios-editor__nome) só no celular */
 @media (max-width: 600px) {
-  body input[type='checkbox'],
+  body input[type='checkbox']:not(.caixa-marcar__entrada),
   body input[type='radio'] {
     width: 24px;
     height: 24px;
+  }
+
+  /* A CaixaDeMarcar cresce pela moldura: crescer só o input fazia a caixa
+     vazar da moldura de 18px e cobrir o texto ao lado ("Seg", "Ter"...) */
+  body .caixa-marcar {
+    --caixa-tam: 24px;
   }
 }
 

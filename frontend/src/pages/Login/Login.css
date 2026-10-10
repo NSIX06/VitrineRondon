@@ -192,7 +192,10 @@
 }
 
 .login__trocar {
-  padding: 0;
+  /* Link no meio da frase: o recuo negativo aumenta a área de toque
+     (de 20px para 36px) sem empurrar o texto em volta */
+  padding: 8px 4px;
+  margin: -8px -4px;
   background: none;
   border: 0;
   font: inherit;
