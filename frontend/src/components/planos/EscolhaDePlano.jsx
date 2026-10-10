@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import api from '../../services/api'
 import { useConsulta } from '../../hooks/useConsulta'
+import { useAoVoltarDoHistorico } from '../../hooks/useAoVoltarDoHistorico'
 import { economiaAnual, nomeDoPlano, porCiclo, precoEmReais } from '../../services/planos'
 import ChaveCiclo from './ChaveCiclo'
 import Button from '../ui/Button/Button'
@@ -31,6 +32,9 @@ function EscolhaDePlano({ planoInicial = '' }) {
   }
   const [enviando, setEnviando] = useState(false)
   const [erro, setErro] = useState(null)
+
+  // Voltou do checkout pelo botão do navegador: o botão não pode ficar preso
+  useAoVoltarDoHistorico(() => setEnviando(false))
 
   const irParaPagamento = async () => {
     setErro(null)

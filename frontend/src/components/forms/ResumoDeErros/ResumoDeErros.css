@@ -1,0 +1,34 @@
+.resumo-erros {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+  padding: var(--esp-3);
+  background: var(--cor-lacre-fundo);
+  border: var(--borda-fina);
+  border-left: 6px solid var(--cor-lacre);
+  border-radius: var(--raio-md);
+  color: var(--cor-lacre-escuro);
+  font-size: var(--texto-sm);
+  font-weight: 700;
+}
+
+.resumo-erros span {
+  flex: 1 1 12rem;
+}
+
+.resumo-erros__ir {
+  min-height: 36px;
+  padding: 0.3rem 0.8rem;
+  background: var(--cor-branco);
+  border: var(--borda-fina);
+  border-radius: var(--raio-sm);
+  box-shadow: var(--sombra-dura-sm);
+  color: var(--cor-lacre-escuro);
+  font-weight: 700;
+}
+
+.resumo-erros__ir:hover {
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
+}

@@ -4,6 +4,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import api from '../../services/api'
 import { useAuth } from '../../contexts/auth'
 import { useConsulta } from '../../hooks/useConsulta'
+import { useAoVoltarDoHistorico } from '../../hooks/useAoVoltarDoHistorico'
 import { economiaAnual, nomeDoPlano, porCiclo, precoEmReais } from '../../services/planos'
 import Button from '../../components/ui/Button/Button'
 import Icone from '../../components/ui/Icone/Icone'
@@ -95,6 +96,9 @@ function Planos() {
   const [escolhido, setEscolhido] = useState(null)
   const [enviando, setEnviando] = useState(false)
   const [erro, setErro] = useState(null)
+
+  // Voltou do checkout pelo botão do navegador: o botão não pode ficar preso
+  useAoVoltarDoHistorico(() => setEnviando(false))
 
   useEffect(() => {
     if (!usuario) return undefined

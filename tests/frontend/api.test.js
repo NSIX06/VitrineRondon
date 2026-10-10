@@ -209,6 +209,27 @@ describe('requisição', () => {
     })
   })
 
+  it('desiste de uma resposta que nunca chega, em vez de ficar carregando para sempre', async () => {
+    vi.useFakeTimers()
+    try {
+      // fetch que só termina quando o sinal de cancelamento dispara
+      const fetchPreso = vi.fn(
+        (_url, { signal }) =>
+          new Promise((_, rejeitar) => {
+            signal.addEventListener('abort', () => rejeitar(new DOMException('abortado', 'AbortError')))
+          })
+      )
+      vi.stubGlobal('fetch', fetchPreso)
+      const promessa = api.post('/auth/registrar-empreendedor', {})
+      const verificacao = expect(promessa).rejects.toMatchObject({ status: 0, tempoEsgotado: true })
+      await vi.advanceTimersByTimeAsync(90_000)
+      await verificacao
+      await expect(promessa).rejects.toThrow(/demorou demais/)
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
   it('não usa como mensagem um corpo que não é JSON', async () => {
     vi.stubGlobal(
       'fetch',

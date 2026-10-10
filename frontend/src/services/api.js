@@ -20,6 +20,7 @@ const MENSAGENS_POR_STATUS = {
   503: 'O serviço está fora do ar por um instante. Tente de novo em alguns segundos.',
 }
 const MENSAGEM_PADRAO = 'Não foi possível concluir a operação. Tente novamente.'
+const TEMPO_LIMITE_MS = 90_000
 
 /**
  * Escolhe o que mostrar na tela a partir da mensagem que veio na resposta.
@@ -108,10 +109,27 @@ async function request(caminho, { method = 'GET', body, headers = {} } = {}) {
     opcoes.body = JSON.stringify(body)
   }
 
+  // Sem limite, uma resposta que nunca chega deixava o botão em "Salvando..."
+  // para sempre. 90s cobre o servidor gratuito acordando (cerca de 1 minuto).
+  const controle = new AbortController()
+  const relogio = setTimeout(() => controle.abort(), TEMPO_LIMITE_MS)
+  opcoes.signal = controle.signal
+
   let response
+  let texto
   try {
     response = await fetch(`${BASE_URL}${caminho}`, opcoes)
+    texto = await response.text()
   } catch (falha) {
+    if (controle.signal.aborted) {
+      const erroTempo = new Error(
+        'O servidor demorou demais para responder. Confira sua conexão e tente de novo em instantes.'
+      )
+      erroTempo.status = 0
+      erroTempo.data = null
+      erroTempo.tempoEsgotado = true
+      throw erroTempo
+    }
     // Falha de rede: servidor fora do ar, sem conexão, CORS etc. O motivo
     // técnico só aparece no console de quem desenvolve.
     if (import.meta.env.DEV) console.warn('Falha de rede em', caminho, falha)
@@ -121,11 +139,12 @@ async function request(caminho, { method = 'GET', body, headers = {} } = {}) {
     erroRede.status = 0
     erroRede.data = null
     throw erroRede
+  } finally {
+    clearTimeout(relogio)
   }
 
   // Respostas sem corpo (ex.: 204)
   let data = null
-  const texto = await response.text()
   if (texto) {
     try {
       data = JSON.parse(texto)

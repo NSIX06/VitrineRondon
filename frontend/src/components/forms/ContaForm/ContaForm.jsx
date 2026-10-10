@@ -3,7 +3,11 @@ import Button from '../../ui/Button/Button'
 import StatusMessage from '../../ui/StatusMessage/StatusMessage'
 import AceiteTermos from '../AceiteTermos/AceiteTermos'
 import CampoSenha from '../CampoSenha/CampoSenha'
+import EntradaTelefone from '../EntradaTelefone/EntradaTelefone'
 import { validarAceites, errosDoServidor } from '../../../services/validacoes'
+import { digitosDoTelefone, telefoneCompleto } from '../../../services/telefone'
+import { useFocoNoErro } from '../../../hooks/useFocoNoErro'
+import ResumoDeErros from '../ResumoDeErros/ResumoDeErros'
 import './ContaForm.css'
 
 const estadoInicial = {
@@ -29,6 +33,7 @@ function ContaForm({ onSubmit, textoBotao = 'Criar conta', valoresIniciais, vers
   const [errosCampos, setErrosCampos] = useState({})
   const [erroGeral, setErroGeral] = useState(null)
   const [enviando, setEnviando] = useState(false)
+  const [refForm, irParaErro] = useFocoNoErro()
 
   const atualizarCampo = (evento) => {
     const { name, value } = evento.target
@@ -45,8 +50,7 @@ function ContaForm({ onSubmit, textoBotao = 'Criar conta', valoresIniciais, vers
     const erros = {}
     if (valores.nome.trim().length < 2) erros.nome = 'Informe seu nome'
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valores.email.trim())) erros.email = 'Informe um e-mail válido'
-    const digitos = valores.telefone.replace(/\D/g, '')
-    if (digitos.length < 10 || digitos.length > 13) erros.telefone = 'Informe o telefone com DDD'
+    if (!telefoneCompleto(valores.telefone)) erros.telefone = 'Informe o telefone com DDD, ex.: (66) 99123-4567'
     if (valores.senha.length < 8) erros.senha = 'A senha deve ter ao menos 8 caracteres'
     else if (!/[A-Za-z]/.test(valores.senha) || !/\d/.test(valores.senha)) {
       erros.senha = 'Use letras e números na senha'
@@ -61,6 +65,7 @@ function ContaForm({ onSubmit, textoBotao = 'Criar conta', valoresIniciais, vers
     const erros = validar()
     if (Object.keys(erros).length > 0) {
       setErrosCampos(erros)
+      irParaErro()
       return
     }
     setEnviando(true)
@@ -69,7 +74,7 @@ function ContaForm({ onSubmit, textoBotao = 'Criar conta', valoresIniciais, vers
         conta: {
           nome: valores.nome.trim(),
           email: valores.email.trim().toLowerCase(),
-          telefone: valores.telefone.replace(/\D/g, ''),
+          telefone: digitosDoTelefone(valores.telefone),
           senha: valores.senha,
           confirmacaoSenha: valores.confirmacaoSenha,
         },
@@ -79,6 +84,7 @@ function ContaForm({ onSubmit, textoBotao = 'Criar conta', valoresIniciais, vers
       const erros = errosDoServidor(erro, ['conta.', 'aceites.'])
       if (erros) setErrosCampos(erros)
       setErroGeral(erro.message || 'Não foi possível concluir. Tente novamente.')
+      irParaErro()
     } finally {
       setEnviando(false)
     }
@@ -87,7 +93,7 @@ function ContaForm({ onSubmit, textoBotao = 'Criar conta', valoresIniciais, vers
   const classe = (campo) => `campo__entrada ${errosCampos[campo] ? 'campo__entrada--erro' : ''}`
 
   return (
-    <form className="formulario conta-form" onSubmit={aoEnviar} noValidate>
+    <form ref={refForm} className="formulario conta-form" onSubmit={aoEnviar} noValidate>
       {erroGeral && (
         <StatusMessage tipo="erro" onFechar={() => setErroGeral(null)}>
           {erroGeral}
@@ -131,17 +137,13 @@ function ContaForm({ onSubmit, textoBotao = 'Criar conta', valoresIniciais, vers
           <label className="campo__rotulo" htmlFor="conta-telefone">
             Telefone<span className="campo__obrigatorio">*</span>
           </label>
-          <input
+          <EntradaTelefone
             id="conta-telefone"
             name="telefone"
-            type="tel"
-            inputMode="tel"
             className={classe('telefone')}
             value={valores.telefone}
             onChange={atualizarCampo}
-            maxLength={30}
-            autoComplete="tel"
-            placeholder="66 99123-4567"
+            aria-invalid={Boolean(errosCampos.telefone)}
           />
           {errosCampos.telefone && <span className="campo__erro">{errosCampos.telefone}</span>}
         </div>
@@ -174,6 +176,8 @@ function ContaForm({ onSubmit, textoBotao = 'Criar conta', valoresIniciais, vers
       </div>
 
       <AceiteTermos valores={aceites} onChange={atualizarAceites} erros={errosCampos} versao={versaoTermos} />
+
+      <ResumoDeErros erros={errosCampos} aoIr={irParaErro} />
 
       <div className="formulario__acoes conta-form__acoes">
         <Button type="submit" disabled={enviando}>

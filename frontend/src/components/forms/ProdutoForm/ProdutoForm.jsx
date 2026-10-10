@@ -3,6 +3,7 @@ import Button from '../../ui/Button/Button'
 import StatusMessage from '../../ui/StatusMessage/StatusMessage'
 import CampoImagem from '../CampoImagem/CampoImagem'
 import { errosDoServidor } from '../../../services/validacoes'
+import { useFocoNoErro } from '../../../hooks/useFocoNoErro'
 import CaixaDeMarcar from '../../ui/CaixaDeMarcar/CaixaDeMarcar'
 import './ProdutoForm.css'
 
@@ -50,6 +51,7 @@ function ProdutoForm({ initialData, empreendedores = [], negocioFixo, onSubmit, 
   const [erroGeral, setErroGeral] = useState(null)
   const [salvando, setSalvando] = useState(false)
   const [enviandoImagem, setEnviandoImagem] = useState(false)
+  const [refForm, irParaErro] = useFocoNoErro()
 
   const modoEdicao = Boolean(initialData?.id)
 
@@ -84,6 +86,7 @@ function ProdutoForm({ initialData, empreendedores = [], negocioFixo, onSubmit, 
     const erros = validar()
     if (Object.keys(erros).length > 0) {
       setErrosCampos(erros)
+      irParaErro()
       return
     }
 
@@ -104,13 +107,14 @@ function ProdutoForm({ initialData, empreendedores = [], negocioFixo, onSubmit, 
       const erros = errosDoServidor(erro)
       if (erros) setErrosCampos(erros)
       setErroGeral(erro.message || 'Não foi possível salvar. Tente novamente.')
+      irParaErro()
     } finally {
       setSalvando(false)
     }
   }
 
   return (
-    <form className="formulario produto-form" onSubmit={aoEnviar} noValidate>
+    <form ref={refForm} className="formulario produto-form" onSubmit={aoEnviar} noValidate>
       {erroGeral && (
         <StatusMessage tipo="erro" onFechar={() => setErroGeral(null)}>
           {erroGeral}

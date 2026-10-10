@@ -31,6 +31,11 @@
   margin: 0;
 }
 
+.empreendedor-form__demora {
+  margin: 0;
+  text-align: right;
+}
+
 .formulario__linha--endereco {
   grid-template-columns: minmax(0, 3fr) minmax(120px, 1fr);
 }
@@ -64,6 +69,16 @@
   .formulario__linha--endereco,
   .formulario__linha--cidade {
     grid-template-columns: 1fr;
+  }
+
+  /* Três caixas uma dentro da outra (página, formulário, bloco) comiam a
+     largura: o bloco perde um pouco do recuo para os campos respirarem */
+  .empreendedor-form__grupo {
+    padding: var(--esp-3);
+  }
+
+  .empreendedor-form__grade {
+    gap: var(--esp-6);
   }
 }
 

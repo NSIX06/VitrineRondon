@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Button from '../../ui/Button/Button'
 import Icone from '../../ui/Icone/Icone'
 import StatusMessage from '../../ui/StatusMessage/StatusMessage'
@@ -9,7 +9,11 @@ import { errosDosHorarios } from '../../../services/horarios'
 import { CATEGORIAS } from '../../../services/constantes'
 import { geocodificarEndereco, montarEnderecoTexto } from '../../../services/geocodificacao'
 import { errosDoServidor } from '../../../services/validacoes'
+import { digitosDoTelefone, telefoneCompleto } from '../../../services/telefone'
+import { useFocoNoErro } from '../../../hooks/useFocoNoErro'
 import CaixaDeMarcar from '../../ui/CaixaDeMarcar/CaixaDeMarcar'
+import EntradaTelefone from '../EntradaTelefone/EntradaTelefone'
+import ResumoDeErros from '../ResumoDeErros/ResumoDeErros'
 import './EmpreendedorForm.css'
 
 const estadoInicialPadrao = {
@@ -90,6 +94,18 @@ function EmpreendedorForm({
   // Estado do geocodificador: { tipo: 'ok' | 'erro' | 'aviso', mensagem }
   const [localizacao, setLocalizacao] = useState(null)
   const [localizando, setLocalizando] = useState(false)
+  const [refForm, irParaErro] = useFocoNoErro()
+  // Salvando há mais de alguns segundos: o servidor pode estar acordando
+  const [demorando, setDemorando] = useState(false)
+
+  useEffect(() => {
+    if (!salvando) return undefined
+    const relogio = setTimeout(() => setDemorando(true), 6000)
+    return () => {
+      clearTimeout(relogio)
+      setDemorando(false)
+    }
+  }, [salvando])
 
   const modoEdicao = Boolean(initialData?.id)
 
@@ -122,9 +138,8 @@ function EmpreendedorForm({
     if (Object.keys(errosDosHorarios(valores.horarios)).length > 0) {
       erros.horarios = 'Corrija os horários de atendimento marcados'
     }
-    const somenteDigitos = valores.whatsapp.replace(/\D/g, '')
-    if (somenteDigitos.length < 10 || somenteDigitos.length > 13) {
-      erros.whatsapp = 'Informe o WhatsApp com DDD, ex.: 66 99123-4567'
+    if (!telefoneCompleto(valores.whatsapp)) {
+      erros.whatsapp = 'Informe o WhatsApp com DDD, ex.: (66) 99123-4567'
     }
     const cep = valores.cep.trim()
     if (cep && !/^\d{5}-?\d{3}$/.test(cep)) {
@@ -189,6 +204,7 @@ function EmpreendedorForm({
     const erros = validar()
     if (Object.keys(erros).length > 0) {
       setErrosCampos(erros)
+      irParaErro()
       return
     }
 
@@ -208,7 +224,7 @@ function EmpreendedorForm({
       longitude: valores.longitude === '' ? null : Number(valores.longitude),
       exibirEndereco: valores.exibirEndereco,
       // Guarda apenas os dígitos: facilita montar o link do WhatsApp depois
-      whatsapp: valores.whatsapp.replace(/\D/g, ''),
+      whatsapp: digitosDoTelefone(valores.whatsapp),
       instagram: valores.instagram.trim() || null,
       fotoUrl: valores.fotoUrl.trim() || null,
       // A semana vai inteira: o servidor substitui os horários anteriores
@@ -224,6 +240,7 @@ function EmpreendedorForm({
       const erros = errosDoServidor(erro)
       if (erros) setErrosCampos(erros)
       setErroGeral(erro.message || 'Não foi possível salvar. Tente novamente.')
+      irParaErro()
     } finally {
       setSalvando(false)
     }
@@ -243,7 +260,7 @@ function EmpreendedorForm({
   const temCoordenadas = valores.latitude !== '' && valores.longitude !== ''
 
   return (
-    <form className="formulario empreendedor-form" onSubmit={aoEnviar} noValidate>
+    <form ref={refForm} className="formulario empreendedor-form" onSubmit={aoEnviar} noValidate>
       {erroGeral && (
         <StatusMessage tipo="erro" onFechar={() => setErroGeral(null)}>
           {erroGeral}
@@ -318,19 +335,16 @@ function EmpreendedorForm({
               <label className="campo__rotulo" htmlFor="emp-whatsapp">
                 WhatsApp<span className="campo__obrigatorio">*</span>
               </label>
-              <input
+              <EntradaTelefone
                 id="emp-whatsapp"
                 name="whatsapp"
-                type="tel"
-                inputMode="tel"
                 className={classeEntrada('whatsapp')}
                 value={valores.whatsapp}
                 onChange={atualizarCampo}
-                maxLength={30}
-                placeholder="66 99123-4567"
+                aria-invalid={Boolean(errosCampos.whatsapp)}
               />
               {errosCampos.whatsapp && <span className="campo__erro">{errosCampos.whatsapp}</span>}
-              <span className="campo__ajuda">Com DDD. Só os números são salvos.</span>
+              <span className="campo__ajuda">Com DDD. Celular ou fixo.</span>
             </div>
           </div>
 
@@ -605,6 +619,15 @@ function EmpreendedorForm({
             Liberado pela moderação (desmarque para suspender: o negócio sai da vitrine mesmo com plano pago)
           </label>
         </div>
+      )}
+
+      <ResumoDeErros erros={errosCampos} aoIr={irParaErro} />
+
+      {demorando && (
+        <p className="campo__ajuda empreendedor-form__demora" role="status">
+          Ainda salvando... Se o site ficou um tempo sem uso, o servidor leva até 1 minuto para
+          acordar. Não feche a página.
+        </p>
       )}
 
       <div className="formulario__acoes">
