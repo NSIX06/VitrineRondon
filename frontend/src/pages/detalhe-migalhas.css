@@ -160,19 +160,11 @@
   white-space: nowrap;
 }
 
+/* No celular a barra inteira sai: o voltar do próprio aparelho já faz esse
+   papel, e a página começa direto no conteúdo */
 @media (max-width: 600px) {
-  /* No celular as teclas somem: a trilha ocupa a linha toda e as etapas
-     do meio encolhem para só o ícone */
-  .detalhe__migalhas-nav {
-    width: 100%;
-  }
-
-  .detalhe__migalhas-nav a .detalhe__migalhas-texto {
+  .detalhe__migalhas {
     display: none;
-  }
-
-  .detalhe__migalhas-nav a:first-child .detalhe__migalhas-texto {
-    display: inline;
   }
 }
 
