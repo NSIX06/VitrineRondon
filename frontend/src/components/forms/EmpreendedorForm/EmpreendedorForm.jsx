@@ -35,6 +35,7 @@ const estadoInicialPadrao = {
   whatsapp: '',
   instagram: '',
   fotoUrl: '',
+  logoUrl: '',
   // Semana de atendimento: sem nenhum intervalo, a página mostra "Indisponível"
   horarios: [],
   ativo: true,
@@ -61,6 +62,7 @@ function montarEstadoInicial(initialData) {
     whatsapp: initialData.whatsapp ?? '',
     instagram: initialData.instagram ?? '',
     fotoUrl: initialData.fotoUrl ?? '',
+    logoUrl: initialData.logoUrl ?? '',
     horarios: (initialData.horarios ?? []).map(({ diaSemana, abre, fecha }) => ({ diaSemana, abre, fecha })),
     ativo: initialData.ativo ?? true,
   }
@@ -227,6 +229,7 @@ function EmpreendedorForm({
       whatsapp: digitosDoTelefone(valores.whatsapp),
       instagram: valores.instagram.trim() || null,
       fotoUrl: valores.fotoUrl.trim() || null,
+      logoUrl: valores.logoUrl.trim() || null,
       // A semana vai inteira: o servidor substitui os horários anteriores
       horarios: valores.horarios,
       // Suspender é moderação: só a administração envia (o servidor ignora o dono)
@@ -374,7 +377,20 @@ function EmpreendedorForm({
               if (errosCampos.fotoUrl) setErrosCampos((anterior) => ({ ...anterior, fotoUrl: undefined }))
             }}
             erro={errosCampos.fotoUrl}
-            ajuda="Aparece no card da vitrine e no topo da sua página. Foto horizontal fica melhor."
+            ajuda="Capa: aparece no card da vitrine e no topo da sua página. Foto horizontal fica melhor."
+            onEnviando={setEnviandoImagem}
+          />
+
+          <CampoImagem
+            id="emp-logo"
+            rotulo="Foto do perfil"
+            valor={valores.logoUrl}
+            onChange={(logoUrl) => {
+              setValores((anterior) => ({ ...anterior, logoUrl }))
+              if (errosCampos.logoUrl) setErrosCampos((anterior) => ({ ...anterior, logoUrl: undefined }))
+            }}
+            erro={errosCampos.logoUrl}
+            ajuda="O quadrado ao lado do nome: sua logo ou uma foto sua. Quadrada fica melhor. Sem ela, mostramos as iniciais do negócio."
             onEnviando={setEnviandoImagem}
           />
 

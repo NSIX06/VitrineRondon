@@ -31,6 +31,7 @@ function CampoImagem({
   onEnviando,
 }) {
   const entrada = useRef(null)
+  const camera = useRef(null)
   const [enviando, setEnviando] = useState(false)
   const [erroEnvio, setErroEnvio] = useState(null)
   const [arrastando, setArrastando] = useState(false)
@@ -138,6 +139,19 @@ function CampoImagem({
             aria-hidden="true"
             onChange={aoEscolher}
           />
+          {/* Câmera: no celular, abre direto a câmera traseira. Pedir JPG/PNG/WebP
+              faz o iPhone converter a foto, que seria HEIC */}
+          <input
+            ref={camera}
+            id={`${id}-camera`}
+            type="file"
+            accept={TIPOS_IMAGEM.join(',')}
+            capture="environment"
+            className="visualmente-oculto"
+            tabIndex={-1}
+            aria-hidden="true"
+            onChange={aoEscolher}
+          />
           <div className="campo-imagem__botoes">
             <Button
               variante="secundario"
@@ -146,9 +160,28 @@ function CampoImagem({
               disabled={enviando}
               aria-describedby={idAjuda}
             >
-              <Icone nome="upload" tamanho={18} />
-              {enviando ? 'Enviando...' : temImagem ? 'Trocar imagem' : 'Escolher do computador'}
+              <Icone nome={temImagem ? 'swap_horiz' : 'photo_library'} tamanho={18} />
+              {enviando ? (
+                'Enviando...'
+              ) : (
+                <>
+                  {/* O texto muda com o aparelho: toque (celular) ou mouse (computador) */}
+                  <span className="campo-imagem__so-toque">{temImagem ? 'Trocar pela galeria' : 'Escolher na galeria'}</span>
+                  <span className="campo-imagem__so-mouse">{temImagem ? 'Trocar imagem' : 'Escolher do computador'}</span>
+                </>
+              )}
             </Button>
+            <span className="campo-imagem__so-toque">
+              <Button
+                variante="secundario"
+                tamanho="sm"
+                onClick={() => camera.current?.click()}
+                disabled={enviando}
+              >
+                <Icone nome="photo_camera" tamanho={18} />
+                Tirar foto
+              </Button>
+            </span>
             {temImagem && !enviando && (
               <Button variante="texto" tamanho="sm" onClick={() => mudarValor('')}>
                 Remover
@@ -156,7 +189,8 @@ function CampoImagem({
             )}
           </div>
           <span className="campo__ajuda" id={idAjuda}>
-            JPG, PNG ou WebP de até 5 MB. Também dá para arrastar a imagem até aqui.
+            JPG, PNG ou WebP de até 5 MB.
+            <span className="campo-imagem__so-mouse"> Também dá para arrastar a imagem até aqui.</span>
           </span>
 
           <button

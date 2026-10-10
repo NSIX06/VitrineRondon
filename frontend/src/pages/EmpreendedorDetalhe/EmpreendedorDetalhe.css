@@ -96,6 +96,23 @@
   color: var(--cor-anil);
 }
 
+/* Com foto do perfil: a imagem preenche o quadrado, sem as listras */
+.detalhe__monograma--foto {
+  background: var(--cor-branco);
+  overflow: hidden;
+}
+
+.detalhe__monograma--foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.detalhe--destaque .detalhe__monograma--foto {
+  background: var(--cor-branco);
+}
+
 .detalhe__monograma-aberto {
   position: absolute;
   right: 6px;

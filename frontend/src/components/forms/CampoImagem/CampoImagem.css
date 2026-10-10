@@ -130,6 +130,22 @@
   text-underline-offset: 3px;
 }
 
+/* Textos e botões por aparelho: com toque (celular, tablet) aparecem
+   "Escolher na galeria" e "Tirar foto"; com mouse, "Escolher do computador" */
+.campo-imagem__so-toque {
+  display: none;
+}
+
+@media (pointer: coarse) {
+  .campo-imagem__so-toque {
+    display: inline;
+  }
+
+  .campo-imagem__so-mouse {
+    display: none;
+  }
+}
+
 .campo-imagem__acoes .campo__entrada {
   width: 100%;
 }

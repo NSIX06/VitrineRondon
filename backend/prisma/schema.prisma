@@ -34,6 +34,8 @@ model Empreendedor {
   whatsapp             String               @db.VarChar(30)
   instagram            String?              @db.VarChar(100)
   fotoUrl              String?              @map("foto_url") @db.VarChar(500)
+  // Foto do quadrado do perfil (logo ou rosto de quem atende); sem ela, as iniciais
+  logoUrl              String?              @map("logo_url") @db.VarChar(500)
   ativo                Boolean              @default(true)
   // Plano em vigor, copiado da assinatura vigente para a vitrine não precisar
   // juntar tabelas a cada listagem. Só o serviço de assinaturas escreve aqui.

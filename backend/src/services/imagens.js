@@ -195,7 +195,8 @@ export async function apagarSeOrfa(prisma, caminho) {
   try {
     const [produtos, negocios] = await Promise.all([
       prisma.produto.count({ where: { imagem: caminho } }),
-      prisma.empreendedor.count({ where: { fotoUrl: caminho } }),
+      // A mesma imagem pode ser capa ou foto do perfil de algum negócio
+      prisma.empreendedor.count({ where: { OR: [{ fotoUrl: caminho }, { logoUrl: caminho }] } }),
     ]);
     if (produtos + negocios > 0) return;
     if (idRemoto) {

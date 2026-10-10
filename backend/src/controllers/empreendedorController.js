@@ -65,6 +65,7 @@ const empreendedorSchema = z.object({
     .regex(/^[\d\s()+-]+$/, 'WhatsApp deve conter apenas números e símbolos ( ) + -'),
   instagram: z.string().trim().max(100).optional().nullable(),
   fotoUrl: campoImagem('URL da foto inválida').optional().nullable(),
+  logoUrl: campoImagem('URL da foto do perfil inválida').optional().nullable(),
   // Suspensão por moderação: só a administração muda (ver semModeracao)
   ativo: z.boolean().optional(),
   // Consentimento para a divulgação nas redes oficiais (benefício do Destaque).
@@ -374,6 +375,7 @@ export async function atualizarEmpreendedor(req, res, next) {
       include: { horarios: incluirHorarios },
     });
     if ('fotoUrl' in req.body) await apagarSeTrocou(prisma, antes.fotoUrl, empreendedor.fotoUrl);
+    if ('logoUrl' in req.body) await apagarSeTrocou(prisma, antes.logoUrl, empreendedor.logoUrl);
 
     const mudou = diferencas(antes, empreendedor);
     await registrarLog(req, {
@@ -408,7 +410,7 @@ export async function excluirEmpreendedor(req, res, next) {
     }
 
     await prisma.empreendedor.delete({ where: { id } });
-    for (const caminho of [antes.fotoUrl, ...antes.produtos.map((p) => p.imagem)]) {
+    for (const caminho of [antes.fotoUrl, antes.logoUrl, ...antes.produtos.map((p) => p.imagem)]) {
       await apagarSeOrfa(prisma, caminho);
     }
 

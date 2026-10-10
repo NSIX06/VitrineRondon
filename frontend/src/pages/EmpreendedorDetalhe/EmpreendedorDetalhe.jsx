@@ -74,6 +74,8 @@ function EmpreendedorDetalhe() {
   const { carregando, erro } = consulta
   const negocioId = empreendedor?.id
   const [busca, setBusca] = useState('')
+  // Foto do perfil que não abre (link quebrado): volta para as iniciais
+  const [logoFalhou, setLogoFalhou] = useState(false)
 
   // Uma visualização por perfil aberto (o servidor ignora repetição e o dono)
   useEffect(() => {
@@ -111,6 +113,7 @@ function EmpreendedorDetalhe() {
     whatsapp,
     instagram,
     fotoUrl,
+    logoUrl,
     ativo,
     horarios = [],
     produtos,
@@ -217,8 +220,16 @@ function EmpreendedorDetalhe() {
 
             <div className="detalhe__cabecalho-corpo">
               <div className="detalhe__identidade">
-                <span className="detalhe__monograma" aria-hidden="true">
-                  {iniciais(nomeNegocio) || nomeNegocio[0]}
+                {/* Foto do perfil quando o negócio enviou uma; senão, as iniciais */}
+                <span
+                  className={`detalhe__monograma ${logoUrl && !logoFalhou ? 'detalhe__monograma--foto' : ''}`}
+                  aria-hidden="true"
+                >
+                  {logoUrl && !logoFalhou ? (
+                    <img src={urlImagem(logoUrl)} alt="" decoding="async" onError={() => setLogoFalhou(true)} />
+                  ) : (
+                    iniciais(nomeNegocio) || nomeNegocio[0]
+                  )}
                   {atendeAgora && <span className="detalhe__monograma-aberto" />}
                 </span>
                 <div className="detalhe__titulos">
