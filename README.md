@@ -37,7 +37,7 @@ O sistema é multiusuário: cada empreendedor administra apenas o próprio negó
 | Camada | Tecnologia |
 |---|---|
 | Banco de dados | MySQL 8 (`vitrine_db`) |
-| Backend | Node.js, Express 5, Prisma ORM 6, Zod 4, cors, compression, dotenv, nodemon |
+| Backend | Node.js, Express 5, Prisma ORM 6, Zod 4, cors, compression, dotenv |
 | Frontend | React 19, Vite, React Router 7, Fetch nativo, Leaflet + react-leaflet (mapas), gsap (pilha animada da Home) |
 | Pagamentos | AbacatePay (API v2, em modo de testes), atrás de uma camada própria em `services/pagamento/` |
 | Imagens | sharp (conversão para WebP) e Cloudinary em produção |
