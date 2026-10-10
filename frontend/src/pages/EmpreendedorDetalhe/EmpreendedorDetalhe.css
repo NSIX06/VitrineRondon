@@ -19,25 +19,25 @@
 /* Fundo da página do negócio: azul-noite (#020617) com um brilho radial no
    alto, atrás da capa. Essencial: brilho grafite; Destaque: brilho laranja.
    Os cartões continuam claros por cima, então a leitura não muda. */
+/* Essencial: grafite-azulado claro, com brilho cinza no alto. Brilho maior
+   que o do modelo (500px): com a capa por cima, o círculo ficava escondido */
 .detalhe__fundo {
-  /* Brilho maior que o do modelo (500px): com a capa por cima, o círculo
-     ficava quase todo escondido atrás do cartão */
   background:
-    radial-gradient(circle 760px at 50% 200px, #3e3e3e, transparent),
-    #020617;
-  /* A sombra dura preta sumia no fundo escuro: aqui ela é grafite claro */
-  --sombra-dura: 5px 5px 0 0 #64748b;
+    radial-gradient(circle 760px at 50% 200px, #94a3b8, transparent),
+    #334155;
+  /* Sombra dos cartões escura, que aparece bem nesse fundo médio */
+  --sombra-dura: 5px 5px 0 0 #0f172a;
 }
 
-/* Destaque bem diferente do Essencial à primeira vista: brilho laranja forte
-   e largo no alto, dois focos âmbar nas laterais e listras douradas finas */
+/* Destaque bem diferente à primeira vista: azul-noite com brilho laranja
+   forte e largo no alto e dois focos âmbar nas laterais */
 .detalhe--destaque .detalhe__fundo {
   background:
     radial-gradient(ellipse 1200px 700px at 50% 60px, rgba(249, 115, 22, 0.62), transparent 70%),
     radial-gradient(circle 520px at 0% 55%, rgba(251, 191, 36, 0.28), transparent),
     radial-gradient(circle 560px at 100% 85%, rgba(249, 115, 22, 0.3), transparent),
-    repeating-linear-gradient(135deg, rgba(251, 191, 36, 0.08) 0 2px, transparent 2px 16px),
     #020617;
+  --sombra-dura: 5px 5px 0 0 #64748b;
 }
 
 /* --------------------------------------------------------------------------
