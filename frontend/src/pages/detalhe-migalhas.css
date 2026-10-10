@@ -36,10 +36,7 @@
   background: var(--cor-anil-escuro);
   border: var(--borda-fina);
   border-radius: 999px;
-  /* Sombra dura + filete dourado por dentro */
-  box-shadow:
-    3px 3px 0 0 var(--cor-contorno),
-    inset 0 0 0 1px rgba(251, 191, 36, 0.45);
+  box-shadow: 3px 3px 0 0 var(--cor-contorno);
 }
 
 .detalhe__migalhas-nav a,
@@ -53,22 +50,19 @@
   white-space: nowrap;
 }
 
-/* Cada etapa é uma pílula com contorno claro e um leve brilho; ao passar o
-   mouse, contorno e brilho ficam dourados */
+/* Cada etapa é uma pílula com contorno claro fino, sem brilho; ao passar o
+   mouse só o fundo clareia um pouco */
 .detalhe__migalhas-nav a {
   color: rgba(255, 255, 255, 0.92);
   text-decoration: none;
   background: rgba(255, 255, 255, 0.06);
   border: 1.5px solid rgba(255, 255, 255, 0.35);
-  box-shadow: 0 0 8px rgba(147, 180, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
-  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .detalhe__migalhas-nav a:hover,
 .detalhe__migalhas-nav a:focus-visible {
-  background: rgba(251, 191, 36, 0.12);
-  border-color: var(--cor-ouro);
-  color: var(--cor-ouro);
+  background: rgba(255, 255, 255, 0.16);
+  color: var(--cor-branco);
 }
 
 .detalhe__migalhas-nav .icone {
