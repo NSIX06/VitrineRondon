@@ -5,6 +5,7 @@ import prisma from './config/prisma.js';
 import { encerrarVencidas } from './services/assinaturas.js';
 import { problemaNaSessao } from './middlewares/auth.js';
 import { problemaNoPagamento } from './services/pagamento/index.js';
+import { problemaNasImagens } from './services/imagens.js';
 
 const PORT = process.env.PORT || 3001;
 const UMA_HORA = 60 * 60 * 1000;
@@ -32,6 +33,12 @@ async function iniciarServidor() {
   if (pagamento) {
     console.error(`\n*** PAGAMENTO FORA DO AR: ${pagamento}.`);
     console.error('*** Defina ABACATEPAY_API_KEY (chave de Dev mode, abc_dev_...) nas variáveis de ambiente da API.\n');
+  }
+  // Sem Cloudinary em produção, as fotos enviadas sumiam no deploy seguinte
+  const imagens = problemaNasImagens();
+  if (imagens) {
+    console.error(`\n*** ENVIO DE FOTOS FORA DO AR: ${imagens}.`);
+    console.error('*** Defina CLOUDINARY_URL nas variáveis de ambiente da API (veja docs/DEPLOY_RENDER.md).\n');
   }
   if (process.env.NODE_ENV === 'production' && !process.env.APP_URL) {
     console.error('*** APP_URL não definida: o checkout voltaria para http://localhost:5173. Defina o endereço do site.\n');

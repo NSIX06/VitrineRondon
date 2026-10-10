@@ -88,6 +88,24 @@ describe('verificação de saúde', () => {
     }
   })
 
+  it('diz se o envio de fotos está configurado, sem expor a variável', async () => {
+    prisma.$queryRaw.mockResolvedValue([])
+    const original = process.env.NODE_ENV
+    try {
+      process.env.NODE_ENV = 'production'
+      delete process.env.CLOUDINARY_URL
+      const { codigo, corpo } = await verificar()
+      expect(codigo).toBe(200)
+      expect(corpo.imagens).toBe('indisponivel')
+      expect(JSON.stringify(corpo)).not.toMatch(/CLOUDINARY/)
+      process.env.CLOUDINARY_URL = 'cloudinary://123456:segredo@minhaconta'
+      expect((await verificar()).corpo.imagens).toBe('ok')
+    } finally {
+      process.env.NODE_ENV = original
+      delete process.env.CLOUDINARY_URL
+    }
+  })
+
   it('desiste e responde 503 quando o banco trava sem responder', async () => {
     prisma.$queryRaw.mockReturnValue(new Promise(() => {}))
     const inicio = Date.now()

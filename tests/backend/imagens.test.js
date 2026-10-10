@@ -256,3 +256,39 @@ describe('Cloudinary (produção)', () => {
     expect(imagens.campoImagem('inválida').safeParse(NA_NUVEM).success).toBe(true)
   })
 })
+
+describe('problemaNasImagens (fotos que sumiam no Render)', () => {
+  const nodeEnv = process.env.NODE_ENV
+  afterEach(() => {
+    process.env.NODE_ENV = nodeEnv
+    delete process.env.CLOUDINARY_URL
+  })
+
+  it('em desenvolvimento a pasta local basta', () => {
+    process.env.NODE_ENV = 'development'
+    expect(imagens.problemaNasImagens()).toBeNull()
+  })
+
+  it('em produção sem Cloudinary aponta o problema e recusa o envio com 503', async () => {
+    process.env.NODE_ENV = 'production'
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    expect(imagens.problemaNasImagens()).toMatch(/CLOUDINARY_URL/)
+    const antes = await readdir(pasta)
+    await expect(imagens.salvarImagem(await gerarImagem(50, 50))).rejects.toMatchObject({ status: 503, publico: true })
+    // Nada foi gravado no disco que o deploy apaga
+    expect(await readdir(pasta)).toEqual(antes)
+    vi.mocked(console.error).mockRestore()
+  })
+
+  it('em produção com Cloudinary está tudo certo', () => {
+    process.env.NODE_ENV = 'production'
+    process.env.CLOUDINARY_URL = 'cloudinary://123456:segredo@minhaconta'
+    expect(imagens.problemaNasImagens()).toBeNull()
+  })
+
+  it('acusa CLOUDINARY_URL preenchida no formato errado', () => {
+    process.env.NODE_ENV = 'development'
+    process.env.CLOUDINARY_URL = 'https://123456:segredo@minhaconta'
+    expect(imagens.problemaNasImagens()).toMatch(/inválida/)
+  })
+})

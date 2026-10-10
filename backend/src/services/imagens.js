@@ -74,6 +74,21 @@ export function configuracaoNuvem() {
   }
 }
 
+/**
+ * Motivo para o envio de imagens não funcionar direito, ou null. Em produção
+ * sem Cloudinary a foto ia para o disco do Render, que é apagado a cada deploy:
+ * o envio "dava certo" e a imagem sumia depois (erro 404 em todas as telas).
+ */
+export function problemaNasImagens() {
+  if (process.env.CLOUDINARY_URL && !configuracaoNuvem()) {
+    return 'CLOUDINARY_URL inválida (o formato é cloudinary://chave:segredo@conta)';
+  }
+  if (process.env.NODE_ENV === 'production' && !configuracaoNuvem()) {
+    return 'CLOUDINARY_URL não definida: em produção o disco do servidor é apagado a cada deploy';
+  }
+  return null;
+}
+
 /** Assinatura da API: parâmetros em ordem alfabética, segredo no fim, SHA-1 */
 export function assinarNuvem(parametros, segredo) {
   const texto = Object.keys(parametros)
@@ -152,6 +167,12 @@ export function campoImagem(mensagem) {
 export async function salvarImagem(buffer) {
   if (!Buffer.isBuffer(buffer) || buffer.length === 0) {
     throw erroHttp(400, 'Escolha uma imagem para enviar');
+  }
+  // Melhor recusar agora do que aceitar uma foto que some no próximo deploy
+  const problema = problemaNasImagens();
+  if (problema) {
+    console.error(`Envio de imagem recusado: ${problema}`);
+    throw erroHttp(503, 'O envio de fotos está temporariamente indisponível. Tente novamente mais tarde');
   }
 
   let convertida;
