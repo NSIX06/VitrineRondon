@@ -23,6 +23,8 @@
     "tidb:criar-usuario": "node --env-file=.env.tidb scripts/criar-usuario-banco.js",
     "tidb:seed": "node --env-file=.env.tidb prisma/seed.js",
     "tidb:planos": "node --env-file=.env.tidb scripts/semear-planos.js",
+    "admin:criar": "node scripts/criar-admin.js",
+    "tidb:criar-admin": "node --env-file=.env.tidb scripts/criar-admin.js",
     "abacatepay:webhook": "node scripts/abacatepay-webhook.js"
   },
   "prisma": {
