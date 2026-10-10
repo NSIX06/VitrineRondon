@@ -74,16 +74,6 @@ const ods = [
   },
 ]
 
-const ficha = [
-  ['Interface', 'React 19, Vite e React Router'],
-  ['Servidor', 'Node.js, Express e Prisma'],
-  ['Banco de dados', 'MySQL com três tabelas relacionadas (Empreendedores, Produtos/Serviços, Mensagens)'],
-  ['Validação', 'Zod no servidor e formulários controlados no cliente'],
-  ['Mapas', 'Google Maps (embed) e OpenStreetMap Nominatim'],
-  ['Tipografia', 'Bricolage Grotesque e Inter'],
-  ['Arquitetura', 'API REST sem intermediação financeira'],
-]
-
 function Sobre() {
   return (
     <>
@@ -276,23 +266,6 @@ function Sobre() {
         </article>
 
         <aside className="sobre__lateral">
-          <div className="sobre__caixa">
-            <div className="sobre__caixa-rotulo">
-              <span>Ficha técnica</span>
-              <span className="sobre__bloco-meta">Especificações</span>
-            </div>
-            <h3>Como o projeto foi feito</h3>
-            <p>Arquitetura enxuta, código auditável e nenhum intermediário financeiro ou biblioteca de rastreamento.</p>
-            <dl className="sobre__ficha">
-              {ficha.map(([termo, valor]) => (
-                <div key={termo}>
-                  <dt>{termo}</dt>
-                  <dd>{valor}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-
           <div className="sobre__caixa sobre__caixa--media">
             <span className="sobre__caixa-selo">
               <Icone nome="verified_user" tamanho={22} />

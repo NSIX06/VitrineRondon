@@ -91,8 +91,7 @@
   gap: var(--esp-3);
 }
 
-.sobre__bloco-rotulo,
-.sobre__caixa-rotulo {
+.sobre__bloco-rotulo {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -362,15 +361,6 @@
   background: var(--cor-superficie-media);
 }
 
-.sobre__caixa-rotulo {
-  background: var(--cor-branco);
-  border: var(--borda-fina);
-  border-radius: 4px;
-  transform: rotate(-1deg);
-  padding: var(--esp-1) var(--esp-2);
-  margin-bottom: var(--esp-2);
-}
-
 .sobre__caixa-selo {
   display: inline-flex;
   align-items: center;
@@ -405,36 +395,6 @@
   border-radius: var(--raio-sm);
   font-size: var(--texto-sm);
   line-height: 1.5;
-}
-
-.sobre__ficha {
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.sobre__ficha > div {
-  padding-block: var(--esp-2);
-  border-bottom: 2px dashed var(--cor-superficie-alta);
-}
-
-.sobre__ficha > div:last-child {
-  border-bottom: none;
-}
-
-.sobre__ficha dt {
-  font-size: var(--texto-xs);
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--cor-cinza);
-}
-
-.sobre__ficha dd {
-  margin: 2px 0 0;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--cor-anil);
 }
 
 .sobre__botao {
