@@ -199,7 +199,8 @@ function EmpreendedorDetalhe() {
         </div>
       )}
 
-      <div className="faixa faixa--ceu">
+      {/* Fundo noturno com brilho radial: laranja no Destaque, grafite no Essencial */}
+      <div className="faixa detalhe__fundo">
         <div className="container detalhe__corpo">
           {/* Cabeçalho do perfil: capa dentro do cartão, monograma, nome e o essencial */}
           <header className="detalhe__cabecalho">

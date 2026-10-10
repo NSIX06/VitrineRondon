@@ -16,6 +16,25 @@
   padding-block: var(--esp-6) var(--esp-8);
 }
 
+/* Fundo da página do negócio: azul-noite (#020617) com um brilho radial no
+   alto, atrás da capa. Essencial: brilho grafite; Destaque: brilho laranja.
+   Os cartões continuam claros por cima, então a leitura não muda. */
+.detalhe__fundo {
+  /* Brilho maior que o do modelo (500px): com a capa por cima, o círculo
+     ficava quase todo escondido atrás do cartão */
+  background:
+    radial-gradient(circle 760px at 50% 200px, #3e3e3e, transparent),
+    #020617;
+  /* A sombra dura preta sumia no fundo escuro: aqui ela é grafite claro */
+  --sombra-dura: 5px 5px 0 0 #64748b;
+}
+
+.detalhe--destaque .detalhe__fundo {
+  background:
+    radial-gradient(circle 760px at 50% 100px, rgba(249, 115, 22, 0.4), transparent),
+    #020617;
+}
+
 /* --------------------------------------------------------------------------
    Cabeçalho: capa no alto do cartão e o monograma subindo sobre ela
    -------------------------------------------------------------------------- */
