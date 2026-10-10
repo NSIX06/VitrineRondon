@@ -13,7 +13,8 @@
   justify-content: space-between;
   gap: var(--esp-3);
   flex-wrap: wrap;
-  padding-block: var(--esp-2);
+  /* Folga para as setas, que agora são teclas com contorno e sombra */
+  padding-block: var(--esp-3);
 }
 
 /* Na linha das migalhas as setas ficam centradas, sem o espaço de baixo */

@@ -99,26 +99,35 @@ async function main() {
     checar('sem página anterior, a seta vira link seguro', direto.tag === 'A' && direto.destino === '/', JSON.stringify(direto))
     checar('o link diz para onde leva', direto.texto === 'Início', direto.texto)
 
-    // A seta de avançar só acende depois de voltar, como no navegador
+    // Avançar sempre aceso: sem tela adiante no histórico, segue o caminho do
+    // site; depois de um Voltar, refaz o histórico, como no navegador
     await abrir('/vitrine', '.grade-cards')
     await esperar(600)
-    checar('avançar começa apagado', await evaluate(`__q('.avancar').disabled`))
+    const inicial = await evaluate(`({ desativado: __q('.avancar').disabled, dica: __q('.avancar').getAttribute('aria-label') })`)
+    checar('avançar começa aceso, apontando a próxima tela do site', !inicial.desativado && /Empreendedores/.test(inicial.dica), JSON.stringify(inicial))
     await evaluate(`__q('.grade-cards > li:nth-child(2) .produto-card__link').click()`)
     await esperarPor(`location.pathname.startsWith('/produtos/') && __q('.detalhe__migalhas')`, 10000)
     await clicarEm('.voltar')
     await esperarPor(`location.pathname === '/vitrine'`, 8000)
     await esperar(500)
-    checar('depois de voltar, avançar acende', !(await evaluate(`__q('.avancar').disabled`)))
+    checar('depois de voltar, avançar refaz o histórico', (await evaluate(`__q('.avancar').getAttribute('aria-label')`)) === 'Ir para a tela seguinte')
     await clicarEm('.avancar')
     await esperarPor(`location.pathname.startsWith('/produtos/') && __q('.detalhe__migalhas')`, 8000)
     checar('avançar leva à tela seguinte', true)
     await evaluate(`__q('.navbar__menu a[href="/empreendedores"]').click()`)
     await esperarPor(`location.pathname === '/empreendedores'`, 8000)
     await esperar(500)
-    checar('abrir uma tela nova apaga o avançar', await evaluate(`__q('.avancar').disabled`))
+    checar('abrir uma tela nova: avançar volta a seguir o caminho do site', /Planos/.test(await evaluate(`__q('.avancar').getAttribute('aria-label')`)))
+    await clicarEm('.avancar')
+    await esperarPor(`location.pathname === '/planos'`, 8000)
+    checar('avançar sem histórico leva à próxima tela do site', true)
+    await evaluate(`__q('.navbar__menu a[href="/empreendedores"]').click()`)
+    await esperarPor(`location.pathname === '/empreendedores'`, 8000)
+    await esperar(500)
 
+    // As setas agora são teclas com contorno: a borda da primeira alinha com o título
     const alinhamento = await evaluate(`(() => {
-      const seta = __q('.voltar .icone').getBoundingClientRect()
+      const seta = __q('.voltar').getBoundingClientRect()
       const titulo = __q('.pagina-cabecalho h1').getBoundingClientRect()
       const par = __q('.navegacao').getBoundingClientRect()
       const avancar = __q('.avancar').getBoundingClientRect()
@@ -130,7 +139,7 @@ async function main() {
     checar('a seta alinha com o título da página', Math.abs(alinhamento.desvio) <= 2, `${alinhamento.desvio}px`)
     checar('voltar e avançar na mesma linha', alinhamento.mesmaLinha)
 
-    const paginas = ['/vitrine', '/empreendedores', '/contato', '/sobre', '/login', '/cadastro', '/termos', `/empreendedores/${comEndereco.id}`]
+    const paginas = ['/vitrine', '/empreendedores', '/contato', '/sobre', '/cadastro', '/termos', `/empreendedores/${comEndereco.id}`]
     const faltando = []
     for (const rota of paginas) {
       await abrir(rota)
@@ -138,11 +147,13 @@ async function main() {
       if (!(await evaluate(`Boolean(__q('.voltar'))`))) faltando.push(rota)
     }
     checar('todas as telas internas têm a seta', faltando.length === 0, faltando.join(', '))
+    await abrir('/login', '.login__moldura')
+    checar('o login não tem as setas (o cartão já tem as abas)', !(await evaluate(`Boolean(__q('.navegacao'))`)))
 
     console.log('\n4. Celular (400px)')
     await viewport(400, 900)
-    for (const rota of [`/empreendedores/${comEndereco.id}`, '/login', '/cadastro']) {
-      await abrir(rota, '.voltar')
+    for (const [rota, espera] of [[`/empreendedores/${comEndereco.id}`, '.voltar'], ['/login', '.login__moldura'], ['/cadastro', '.voltar']]) {
+      await abrir(rota, espera)
       await esperar(800)
       const largura = await evaluate('document.documentElement.scrollWidth')
       checar(`sem rolagem horizontal em ${rota}`, largura <= 400, `${largura}px`)

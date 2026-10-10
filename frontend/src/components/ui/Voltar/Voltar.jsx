@@ -28,27 +28,54 @@ function usePodeAvancar() {
   return posicao < maiorPosicao
 }
 
+// Sem tela adiante no histórico, o Avançar segue o caminho do menu do site,
+// e não fica apagado sem levar a lugar nenhum
+const SEQUENCIA = [
+  ['/', '/vitrine', 'Vitrine'],
+  ['/vitrine', '/empreendedores', 'Empreendedores'],
+  ['/produtos/', '/empreendedores', 'Empreendedores'],
+  ['/empreendedores/', '/planos', 'Planos'],
+  ['/empreendedores', '/planos', 'Planos'],
+  ['/planos', '/contato', 'Contato'],
+  ['/cadastro', '/planos', 'Planos'],
+  ['/contato', '/sobre', 'Sobre'],
+  ['/sobre', '/', 'Início'],
+  ['/termos', '/privacidade', 'Política de Privacidade'],
+  ['/privacidade', '/contato', 'Contato'],
+  ['/esqueci-senha', '/login', 'Entrar'],
+]
+
+/** Próxima tela do caminho do site para o endereço atual */
+function proximaDoSite(caminho) {
+  const achada = SEQUENCIA.find(([base]) => (base.endsWith('/') && base !== '/' ? caminho.startsWith(base) : caminho === base))
+  return achada ? { para: achada[1], rotulo: achada[2] } : { para: '/vitrine', rotulo: 'Vitrine' }
+}
+
 /**
- * Setas para ir e voltar entre as telas já vistas.
- * Quando a pessoa chegou por um link de fora ou abriu o endereço direto, não há
- * página anterior dentro do site: aí a seta leva para `para`, um caminho seguro.
- * No roteador de dados, a primeira entrada do histórico tem a chave "default".
+ * Setas para ir e voltar entre as telas.
+ * - Voltar: volta no histórico; quem chegou por um link de fora ou abriu o
+ *   endereço direto não tem tela anterior no site, e aí vai para `para`.
+ *   No roteador de dados, a primeira entrada do histórico tem a chave "default".
+ * - Avançar: refaz o caminho depois de um Voltar; sem tela adiante, segue para
+ *   a próxima do site (ou `proxima`, quando a tela informa a dela).
  */
-function Voltar({ para = '/', rotulo = 'Voltar' }) {
+function Voltar({ para = '/', rotulo = 'Voltar', proxima }) {
   const navigate = useNavigate()
   const location = useLocation()
   const temPaginaAnterior = location.key !== 'default'
   const podeAvancar = usePodeAvancar()
+  const seguinte = proxima ?? proximaDoSite(location.pathname)
+  const dicaAvancar = podeAvancar ? 'Ir para a tela seguinte' : `Avançar para ${seguinte.rotulo}`
 
   return (
     <nav className="navegacao" aria-label="Navegação entre telas">
       {temPaginaAnterior ? (
-        <button type="button" className="voltar" onClick={() => navigate(-1)}>
+        <button type="button" className="navegacao__tecla voltar" onClick={() => navigate(-1)}>
           <Icone nome="arrow_back" tamanho={18} />
           Voltar
         </button>
       ) : (
-        <Link to={para} className="voltar">
+        <Link to={para} className="navegacao__tecla voltar">
           <Icone nome="arrow_back" tamanho={18} />
           {rotulo}
         </Link>
@@ -56,10 +83,10 @@ function Voltar({ para = '/', rotulo = 'Voltar' }) {
 
       <button
         type="button"
-        className="avancar"
-        onClick={() => navigate(1)}
-        disabled={!podeAvancar}
-        title={podeAvancar ? 'Ir para a tela seguinte' : 'Não há tela seguinte'}
+        className="navegacao__tecla avancar"
+        onClick={() => (podeAvancar ? navigate(1) : navigate(seguinte.para))}
+        title={dicaAvancar}
+        aria-label={dicaAvancar}
       >
         Avançar
         <Icone nome="arrow_forward" tamanho={18} />

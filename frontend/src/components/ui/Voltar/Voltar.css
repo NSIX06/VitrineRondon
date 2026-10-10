@@ -1,40 +1,73 @@
-/* A borda e o recuo interno afastariam as setas da margem do texto; o recuo
-   negativo devolve o par para a mesma linha vertical do título abaixo */
+/* Par de setas no topo das telas: duas "teclas" do sistema, com contorno de
+   nanquim e sombra dura, que afundam ao clicar como os outros botões */
 .navegacao {
   /* Linha só das setas: em linha com o texto, a marca do cabeçalho subia para
      o lado delas */
   display: flex;
+  flex-wrap: wrap;
   width: fit-content;
   align-items: center;
-  gap: var(--esp-1);
-  margin-left: -13px;
-  margin-bottom: var(--esp-3);
+  gap: var(--esp-3);
+  margin-bottom: var(--esp-4);
 }
 
-.voltar,
-.avancar {
+.navegacao__tecla {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 0.3rem 0.7rem;
-  background: none;
-  border: 2px solid transparent;
+  min-height: 36px;
+  padding: 0.35rem 0.85rem;
+  background: var(--cor-branco);
+  border: var(--borda-fina);
   border-radius: var(--raio-sm);
+  box-shadow: var(--sombra-dura-sm);
   color: var(--cor-anil);
   font-size: var(--texto-sm);
-  transition: var(--transicao-tecla);
   font-weight: 700;
+  line-height: 1;
   text-decoration: none;
+  cursor: pointer;
+  transition: var(--transicao-tecla);
 }
 
-.voltar:hover,
-.avancar:enabled:hover {
-  border-color: var(--cor-contorno);
-  background: var(--cor-branco);
-  box-shadow: var(--sombra-dura-sm);
+/* Avançar em amarelo: é a ação "para frente", como os botões de destaque */
+.navegacao__tecla.avancar {
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
 }
 
-.avancar:disabled {
-  color: var(--cor-cinza-claro);
-  cursor: not-allowed;
+.navegacao__tecla:hover {
+  background: var(--cor-ouro-claro);
+  color: var(--cor-tinta);
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 0 var(--cor-contorno);
+}
+
+/* Pressionar afunda a tecla */
+.navegacao__tecla:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 0 var(--cor-contorno);
+}
+
+.navegacao__tecla .icone {
+  transition: transform 0.15s ease;
+}
+
+.voltar:hover .icone {
+  transform: translateX(-2px);
+}
+
+.avancar:hover .icone {
+  transform: translateX(2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navegacao__tecla,
+  .navegacao__tecla .icone {
+    transition: none;
+  }
+  .navegacao__tecla:hover,
+  .navegacao__tecla:hover .icone {
+    transform: none;
+  }
 }

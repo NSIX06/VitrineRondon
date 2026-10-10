@@ -741,18 +741,10 @@ h2:not(.detalhe__horarios-titulo, .visualmente-oculto) {
   color: rgba(255, 255, 255, 0.88);
 }
 
-.faixa--anil .pagina-cabecalho__marca,
-.faixa--anil :is(.voltar, .avancar:enabled) {
+/* As setas Voltar/Avançar têm fundo próprio (teclas brancas e amarelas) e
+   ficam legíveis em qualquer faixa, sem cor especial aqui */
+.faixa--anil .pagina-cabecalho__marca {
   color: var(--cor-ouro);
-}
-
-.faixa--anil .voltar:hover,
-.faixa--anil .avancar:enabled:hover {
-  color: var(--cor-anil);
-}
-
-.faixa--anil .avancar:disabled {
-  color: rgba(255, 255, 255, 0.45);
 }
 
 /* Faixa com o campo de pontos (DotField): os pontos substituem as listras e

@@ -26,10 +26,6 @@
   padding: var(--esp-6) var(--esp-7) var(--esp-7);
 }
 
-.login__lado .navegacao {
-  margin-bottom: 0;
-}
-
 /* Chave entrar / criar conta (mesmo desenho da chave mensal/anual) */
 .login__chave {
   display: inline-flex;

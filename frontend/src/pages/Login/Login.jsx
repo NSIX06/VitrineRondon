@@ -9,7 +9,6 @@ import StatusMessage from '../../components/ui/StatusMessage/StatusMessage'
 import PainelAcesso from './PainelAcesso'
 import FundoDePontos from '../../components/ui/DotField/FundoDePontos'
 import './Login.css'
-import Voltar from '../../components/ui/Voltar/Voltar'
 
 /**
  * Painel ao lado do formulário: foto do comércio de bairro, campo de pontos e
@@ -87,8 +86,6 @@ function Login() {
       <section className="container secao login">
         <div className="login__moldura">
           <div className="login__lado">
-            <Voltar para="/" rotulo="Início" />
-
             <div className="login__chave" role="tablist" aria-label="Entrar ou criar conta">
               {[
                 ['entrar', 'Já tenho conta'],
