@@ -7,6 +7,7 @@ import Icone from '../../components/ui/Icone/Icone'
 import CampoSenha from '../../components/forms/CampoSenha/CampoSenha'
 import StatusMessage from '../../components/ui/StatusMessage/StatusMessage'
 import PainelAcesso from './PainelAcesso'
+import FundoDePontos from '../../components/ui/DotField/FundoDePontos'
 import './Login.css'
 import Voltar from '../../components/ui/Voltar/Voltar'
 
@@ -79,146 +80,151 @@ function Login() {
   }
 
   return (
-    <section className="container secao login">
-      <div className="login__moldura">
-        <div className="login__lado">
-          <Voltar para="/" rotulo="Início" />
+    // Campo de pontos no fundo da página toda, atrás do cartão (o painel da
+    // foto tem o seu próprio, em dourado)
+    <div className="login-fundo com-pontos">
+      <FundoDePontos tom="claro" />
+      <section className="container secao login">
+        <div className="login__moldura">
+          <div className="login__lado">
+            <Voltar para="/" rotulo="Início" />
 
-          <div className="login__chave" role="tablist" aria-label="Entrar ou criar conta">
-            {[
-              ['entrar', 'Já tenho conta'],
-              ['criar', 'Quero criar'],
-            ].map(([valor, rotulo]) => (
-              <button
-                key={valor}
-                type="button"
-                role="tab"
-                id={`aba-${valor}`}
-                aria-selected={aba === valor}
-                aria-controls={`painel-${valor}`}
-                className={`login__chave-opcao ${aba === valor ? 'login__chave-opcao--ativa' : ''}`}
-                onClick={() => setAba(valor)}
+            <div className="login__chave" role="tablist" aria-label="Entrar ou criar conta">
+              {[
+                ['entrar', 'Já tenho conta'],
+                ['criar', 'Quero criar'],
+              ].map(([valor, rotulo]) => (
+                <button
+                  key={valor}
+                  type="button"
+                  role="tab"
+                  id={`aba-${valor}`}
+                  aria-selected={aba === valor}
+                  aria-controls={`painel-${valor}`}
+                  className={`login__chave-opcao ${aba === valor ? 'login__chave-opcao--ativa' : ''}`}
+                  onClick={() => setAba(valor)}
+                >
+                  {rotulo}
+                </button>
+              ))}
+            </div>
+
+            {/* As duas abas ficam montadas no mesmo lugar e só a ativa aparece: o cartão
+                mantém a altura da maior e a troca esmaece, sem o cartão "esticar" */}
+            <div className="login__abas">
+              <div
+                id="painel-entrar"
+                role="tabpanel"
+                aria-labelledby="aba-entrar"
+                className={`login__conteudo ${aba === 'entrar' ? 'login__conteudo--ativa' : ''}`}
+                inert={aba !== 'entrar'}
               >
-                {rotulo}
-              </button>
-            ))}
-          </div>
+                <span className="pagina-cabecalho__marca">Acesso</span>
+                <h1 className="login__titulo">Entrar</h1>
+                <p className="login__texto">Acesse sua conta para gerenciar seu negócio ou o painel.</p>
 
-          {/* As duas abas ficam montadas no mesmo lugar e só a ativa aparece: o cartão
-              mantém a altura da maior e a troca esmaece, sem o cartão "esticar" */}
-          <div className="login__abas">
-            <div
-              id="painel-entrar"
-              role="tabpanel"
-              aria-labelledby="aba-entrar"
-              className={`login__conteudo ${aba === 'entrar' ? 'login__conteudo--ativa' : ''}`}
-              inert={aba !== 'entrar'}
-            >
-              <span className="pagina-cabecalho__marca">Acesso</span>
-              <h1 className="login__titulo">Entrar</h1>
-              <p className="login__texto">Acesse sua conta para gerenciar seu negócio ou o painel.</p>
+                {erroGeral && (
+                  <StatusMessage tipo="erro" onFechar={() => setErroGeral(null)}>
+                    {erroGeral}
+                  </StatusMessage>
+                )}
 
-              {erroGeral && (
-                <StatusMessage tipo="erro" onFechar={() => setErroGeral(null)}>
-                  {erroGeral}
-                </StatusMessage>
-              )}
-
-              <form className="formulario" onSubmit={aoEnviar} noValidate>
-                <div className="campo">
-                  <label className="campo__rotulo" htmlFor="login-email">
-                    E-mail
-                  </label>
-                  <input
-                    id="login-email"
-                    name="email"
-                    type="email"
-                    className={`campo__entrada ${erros.email ? 'campo__entrada--erro' : ''}`}
-                    value={valores.email}
+                <form className="formulario" onSubmit={aoEnviar} noValidate>
+                  <div className="campo">
+                    <label className="campo__rotulo" htmlFor="login-email">
+                      E-mail
+                    </label>
+                    <input
+                      id="login-email"
+                      name="email"
+                      type="email"
+                      className={`campo__entrada ${erros.email ? 'campo__entrada--erro' : ''}`}
+                      value={valores.email}
+                      onChange={atualizar}
+                      autoComplete="email"
+                      placeholder="voce@email.com"
+                      autoFocus
+                    />
+                    {erros.email && <span className="campo__erro">{erros.email}</span>}
+                  </div>
+                  <CampoSenha
+                    id="login-senha"
+                    name="senha"
+                    rotulo="Senha"
+                    valor={valores.senha}
                     onChange={atualizar}
-                    autoComplete="email"
-                    placeholder="voce@email.com"
-                    autoFocus
+                    erro={erros.senha}
+                    autoComplete="current-password"
                   />
-                  {erros.email && <span className="campo__erro">{erros.email}</span>}
-                </div>
-                <CampoSenha
-                  id="login-senha"
-                  name="senha"
-                  rotulo="Senha"
-                  valor={valores.senha}
-                  onChange={atualizar}
-                  erro={erros.senha}
-                  autoComplete="current-password"
-                />
-                <Link to="/esqueci-senha" state={{ email: valores.email.trim() }} className="login__esqueci">
-                  Esqueci a senha
-                </Link>
-                <Button type="submit" disabled={enviando} className="login__botao">
-                  <Icone nome="login" tamanho={18} />
-                  {enviando ? 'Entrando...' : 'Entrar'}
+                  <Link to="/esqueci-senha" state={{ email: valores.email.trim() }} className="login__esqueci">
+                    Esqueci a senha
+                  </Link>
+                  <Button type="submit" disabled={enviando} className="login__botao">
+                    <Icone nome="login" tamanho={18} />
+                    {enviando ? 'Entrando...' : 'Entrar'}
+                  </Button>
+                </form>
+
+                <p className="login__rodape">
+                  Ainda não tem conta?{' '}
+                  <button type="button" className="login__trocar" onClick={() => setAba('criar')}>
+                    Criar agora
+                  </button>
+                </p>
+              </div>
+              <div
+                id="painel-criar"
+                role="tabpanel"
+                aria-labelledby="aba-criar"
+                className={`login__conteudo ${aba === 'criar' ? 'login__conteudo--ativa' : ''}`}
+                inert={aba !== 'criar'}
+              >
+                <span className="pagina-cabecalho__marca">Para quem produz no bairro</span>
+                <h1 className="login__titulo">Criar conta</h1>
+                <p className="login__texto">O cadastro tem três etapas e leva poucos minutos.</p>
+
+                <ol className="login__passos">
+                  {PASSOS_DO_CADASTRO.map(([icone, titulo, texto], indice) => (
+                    <li key={titulo} className="login__passo" style={{ '--atraso': `${indice * 90}ms` }}>
+                      <span className="login__passo-numero">{indice + 1}</span>
+                      <span>
+                        <strong>
+                          <Icone nome={icone} tamanho={18} />
+                          {titulo}
+                        </strong>
+                        {texto}
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+
+                <Button to="/cadastro" variante="destaque" className="login__botao">
+                  Começar o cadastro
+                  <Icone nome="arrow_forward" tamanho={18} />
                 </Button>
-              </form>
-
-              <p className="login__rodape">
-                Ainda não tem conta?{' '}
-                <button type="button" className="login__trocar" onClick={() => setAba('criar')}>
-                  Criar agora
-                </button>
-              </p>
-            </div>
-            <div
-              id="painel-criar"
-              role="tabpanel"
-              aria-labelledby="aba-criar"
-              className={`login__conteudo ${aba === 'criar' ? 'login__conteudo--ativa' : ''}`}
-              inert={aba !== 'criar'}
-            >
-              <span className="pagina-cabecalho__marca">Para quem produz no bairro</span>
-              <h1 className="login__titulo">Criar conta</h1>
-              <p className="login__texto">O cadastro tem três etapas e leva poucos minutos.</p>
-
-              <ol className="login__passos">
-                {PASSOS_DO_CADASTRO.map(([icone, titulo, texto], indice) => (
-                  <li key={titulo} className="login__passo" style={{ '--atraso': `${indice * 90}ms` }}>
-                    <span className="login__passo-numero">{indice + 1}</span>
-                    <span>
-                      <strong>
-                        <Icone nome={icone} tamanho={18} />
-                        {titulo}
-                      </strong>
-                      {texto}
-                    </span>
-                  </li>
-                ))}
-              </ol>
-
-              <Button to="/cadastro" variante="destaque" className="login__botao">
-                Começar o cadastro
-                <Icone nome="arrow_forward" tamanho={18} />
-              </Button>
-              <p className="login__rodape">
-                Já tem conta?{' '}
-                <button type="button" className="login__trocar" onClick={() => setAba('entrar')}>
-                  Entrar
-                </button>
-              </p>
-              <p className="login__rodape login__rodape--nota">
-                Só quer olhar? Navegar é gratuito: <Link to="/vitrine">ver a vitrine</Link>.
-              </p>
+                <p className="login__rodape">
+                  Já tem conta?{' '}
+                  <button type="button" className="login__trocar" onClick={() => setAba('entrar')}>
+                    Entrar
+                  </button>
+                </p>
+                <p className="login__rodape login__rodape--nota">
+                  Só quer olhar? Navegar é gratuito: <Link to="/vitrine">ver a vitrine</Link>.
+                </p>
+              </div>
             </div>
           </div>
-        </div>
 
-        <PainelAcesso
-          fotos={{ entrar: PAINEIS.entrar.foto, criar: PAINEIS.criar.foto }}
-          ativa={aba}
-          frase={painel.frase}
-          reserva={[PAINEIS.entrar.frase, PAINEIS.criar.frase].reduce((a, b) => (b.length > a.length ? b : a))}
-          autor={painel.autor}
-        />
-      </div>
-    </section>
+          <PainelAcesso
+            fotos={{ entrar: PAINEIS.entrar.foto, criar: PAINEIS.criar.foto }}
+            ativa={aba}
+            frase={painel.frase}
+            reserva={[PAINEIS.entrar.frase, PAINEIS.criar.frase].reduce((a, b) => (b.length > a.length ? b : a))}
+            autor={painel.autor}
+          />
+        </div>
+      </section>
+    </div>
   )
 }
 
