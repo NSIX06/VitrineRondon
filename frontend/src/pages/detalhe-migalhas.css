@@ -98,22 +98,70 @@
     0 0 16px rgba(251, 191, 36, 0.7);
 }
 
-/* Teclas Voltar/Avançar nesta barra: além da sombra dura, um brilho em volta
-   (branco no Voltar, dourado no Avançar) que se destaca no anil */
+/* Teclas Voltar/Avançar nesta barra: além da sombra dura e da faixa de gibi,
+   um brilho em volta (branco no Voltar, dourado no Avançar) no anil */
 .detalhe__migalhas .navegacao__tecla.voltar {
-  box-shadow: var(--sombra-dura-sm), 0 0 12px rgba(255, 255, 255, 0.45);
+  box-shadow: var(--sombra-dura-sm), var(--cel-sm), 0 0 12px rgba(255, 255, 255, 0.45);
 }
 
 .detalhe__migalhas .navegacao__tecla.avancar {
-  box-shadow: var(--sombra-dura-sm), 0 0 14px rgba(251, 191, 36, 0.75);
+  box-shadow: var(--sombra-dura-sm), var(--cel-sm), 0 0 14px rgba(251, 191, 36, 0.75);
 }
 
 .detalhe__migalhas .navegacao__tecla:hover {
-  box-shadow: 3px 3px 0 0 var(--cor-contorno), 0 0 18px rgba(251, 191, 36, 0.85);
+  box-shadow: 3px 3px 0 0 var(--cor-contorno), var(--cel-sm), 0 0 18px rgba(251, 191, 36, 0.85);
 }
 
 .detalhe__migalhas .navegacao__tecla:active {
-  box-shadow: 0 0 0 0 var(--cor-contorno), 0 0 10px rgba(251, 191, 36, 0.6);
+  box-shadow: 0 0 0 0 var(--cor-contorno), var(--cel-sm), 0 0 10px rgba(251, 191, 36, 0.6);
+}
+
+/* Mesmo acabamento de gibi nas pílulas da trilha: arco de luz com pontinho
+   no canto de cima; na etapa atual, também os riscos "//" e a faixa --cel */
+.detalhe__migalhas-nav a,
+.detalhe__migalhas-atual {
+  position: relative;
+}
+
+.detalhe__migalhas-nav a::before,
+.detalhe__migalhas-atual::before,
+.detalhe__migalhas-atual::after {
+  content: '';
+  position: absolute;
+  background: var(--brilho-cor, rgba(255, 255, 255, 0.85));
+  pointer-events: none;
+}
+
+.detalhe__migalhas-nav a::before,
+.detalhe__migalhas-atual::before {
+  top: 2px;
+  left: 5px;
+  width: 9px;
+  height: 9px;
+  -webkit-mask: var(--mascara-arco) no-repeat center / contain;
+  mask: var(--mascara-arco) no-repeat center / contain;
+}
+
+.detalhe__migalhas-nav a::before {
+  --brilho-cor: rgba(255, 255, 255, 0.55);
+}
+
+.detalhe__migalhas-atual::after {
+  top: 3px;
+  right: 7px;
+  width: 10px;
+  height: 7px;
+  -webkit-mask: var(--mascara-riscos) no-repeat center / contain;
+  mask: var(--mascara-riscos) no-repeat center / contain;
+}
+
+.detalhe__migalhas-atual {
+  padding-right: 1.35rem;
+  box-shadow:
+    2px 2px 0 0 var(--cor-contorno),
+    var(--cel-sm),
+    0 0 0 2px rgba(251, 191, 36, 0.35),
+    0 0 16px rgba(251, 191, 36, 0.7);
 }
 
 .detalhe__migalhas-atual .icone {

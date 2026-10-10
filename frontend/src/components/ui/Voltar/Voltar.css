@@ -36,17 +36,56 @@
   color: var(--cor-tinta);
 }
 
+/* Acabamento de gibi dos botões do site: faixa escura embaixo e luz no alto
+   (--cel), arco de luz com pontinho no canto e dois riscos "//" no outro */
+.navegacao__tecla {
+  position: relative;
+  padding-right: 1.55rem;
+  box-shadow: var(--sombra-dura-sm), var(--cel-sm);
+  --brilho-cor: rgba(23, 52, 110, 0.35);
+}
+
+.navegacao__tecla.avancar {
+  --brilho-cor: rgba(255, 255, 255, 0.9);
+}
+
+.navegacao__tecla::before,
+.navegacao__tecla::after {
+  content: '';
+  position: absolute;
+  background: var(--brilho-cor);
+  pointer-events: none;
+}
+
+.navegacao__tecla::before {
+  top: 3px;
+  left: 3px;
+  width: 11px;
+  height: 11px;
+  -webkit-mask: var(--mascara-arco) no-repeat center / contain;
+  mask: var(--mascara-arco) no-repeat center / contain;
+}
+
+.navegacao__tecla::after {
+  top: 4px;
+  right: 6px;
+  width: 12px;
+  height: 9px;
+  -webkit-mask: var(--mascara-riscos) no-repeat center / contain;
+  mask: var(--mascara-riscos) no-repeat center / contain;
+}
+
 .navegacao__tecla:hover {
   background: var(--cor-ouro-claro);
   color: var(--cor-tinta);
   transform: translate(-1px, -1px);
-  box-shadow: 3px 3px 0 0 var(--cor-contorno);
+  box-shadow: 3px 3px 0 0 var(--cor-contorno), var(--cel-sm);
 }
 
 /* Pressionar afunda a tecla */
 .navegacao__tecla:active {
   transform: translate(2px, 2px);
-  box-shadow: 0 0 0 0 var(--cor-contorno);
+  box-shadow: 0 0 0 0 var(--cor-contorno), var(--cel-sm);
 }
 
 .navegacao__tecla .icone {
