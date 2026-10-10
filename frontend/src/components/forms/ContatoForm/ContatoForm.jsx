@@ -5,6 +5,8 @@ import StatusMessage from '../../ui/StatusMessage/StatusMessage'
 import { linkWhatsapp } from '../../../services/whatsapp'
 import { detalheDaSituacao, situacaoAtendimento } from '../../../services/horarios'
 import { errosDoServidor } from '../../../services/validacoes'
+import { digitosDoTelefone, telefoneCompleto } from '../../../services/telefone'
+import EntradaTelefone from '../EntradaTelefone/EntradaTelefone'
 import './ContatoForm.css'
 
 const estadoInicial = {
@@ -26,6 +28,8 @@ const regras = {
     v.trim().length < MINIMO_MENSAGEM
       ? `Escreva uma mensagem com ao menos ${MINIMO_MENSAGEM} caracteres`
       : null,
+  // Opcional: vazio passa; preenchido, precisa estar completo
+  telefone: (v) => (v && !telefoneCompleto(v) ? 'Telefone incompleto: informe DDD e número' : null),
 }
 
 /**
@@ -85,7 +89,7 @@ function ContatoForm({ empreendedores = [], empreendedorInicial = '', onSubmit }
     const dados = {
       nome: valores.nome.trim(),
       email: valores.email.trim(),
-      telefone: valores.telefone.trim() || null,
+      telefone: digitosDoTelefone(valores.telefone) || null,
       mensagem: valores.mensagem.trim(),
       empreendedorId: valores.empreendedorId ? Number(valores.empreendedorId) : null,
     }
@@ -109,6 +113,8 @@ function ContatoForm({ empreendedores = [], empreendedorInicial = '', onSubmit }
   // Estado visual de um campo obrigatório: erro, ok ou neutro
   const situacao = (campo) => {
     if (errosCampos[campo]) return 'erro'
+    // Campo opcional em branco fica neutro, sem o "ok" verde
+    if (!valores[campo]) return ''
     if (tocados[campo] && !validarCampo(campo, valores[campo])) return 'ok'
     return ''
   }
@@ -200,17 +206,17 @@ function ContatoForm({ empreendedores = [], empreendedorInicial = '', onSubmit }
             <label className="campo__rotulo" htmlFor="contato-telefone">
               Telefone
             </label>
-            <input
+            <EntradaTelefone
               id="contato-telefone"
               name="telefone"
-              type="tel"
-              className="campo__entrada"
+              className={classeEntrada('telefone')}
               value={valores.telefone}
               onChange={atualizarCampo}
-              maxLength={30}
-              autoComplete="tel"
-              placeholder="Opcional"
+              onBlur={aoSair}
+              placeholder="Opcional, ex.: (66) 99123-4567"
+              aria-invalid={Boolean(errosCampos.telefone)}
             />
+            {errosCampos.telefone && <span className="campo__erro">{errosCampos.telefone}</span>}
           </div>
 
           {empreendedores.length > 0 && (
