@@ -117,6 +117,12 @@ describe('emailDeRecuperacao', () => {
     expect(html).toContain('href="http://site/redefinir-senha?codigo=abc"')
   })
 
+  it('cabeçalho com logo e letreiro em imagem, servida pelo site', () => {
+    const { html } = emailDeRecuperacao({ nome: 'Ana', link: 'http://s/x', minutos: 30, site: 'https://vitrine.com.br' })
+    expect(html).toContain('src="https://vitrine.com.br/email/cabecalho.png"')
+    expect(html).toContain('alt="VitrineRondon"')
+  })
+
   it('escapa o nome no HTML', () => {
     const { html } = emailDeRecuperacao({ nome: '<script>x</script>', link: 'http://s', minutos: 30 })
     expect(html).not.toContain('<script>')
