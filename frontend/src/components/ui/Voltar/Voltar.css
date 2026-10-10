@@ -61,10 +61,10 @@
   transform: translateX(2px);
 }
 
-/* No celular fica só o Voltar: o gesto e o botão do próprio aparelho já
-   avançam, e a linha sobra para o conteúdo */
+/* No celular, sem as setas: o gesto e o botão de voltar do próprio aparelho
+   já fazem isso, e a linha sobra para o conteúdo */
 @media (max-width: 600px) {
-  .navegacao__tecla.avancar {
+  .navegacao {
     display: none;
   }
 }

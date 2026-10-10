@@ -122,6 +122,7 @@ async function main() {
 
     console.log('\n3. Layout de "Seu negócio" no celular')
     checar('sem rolagem lateral', await evaluate('document.documentElement.scrollWidth <= innerWidth'))
+    checar('sem os botões Voltar/Avançar no celular', await evaluate("getComputedStyle(__q('.navegacao')).display === 'none'"))
     await clicarEm('.horarios-editor__atalho')
     await esperar(300)
     checar(
