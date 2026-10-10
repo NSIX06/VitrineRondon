@@ -22,6 +22,7 @@ import { formatarTelefone } from '../../services/telefone'
 import TagTipo from '../../components/ui/Tag/TagTipo'
 import './Admin.css'
 import { SITUACAO_NEGOCIO } from '../../services/planos'
+import CabecalhoSecao from '../../components/admin/CabecalhoSecao/CabecalhoSecao'
 
 const ABAS = [
   { id: 'produtos', rotulo: 'Produtos', icone: 'shopping_bag' },
@@ -472,12 +473,16 @@ function Admin() {
           >
             {abaAtiva === 'produtos' && (
               <>
-                <div className="admin__barra">
-                  <Button onClick={() => abrirNovo('produto')}>
-                    <Icone nome="add" tamanho={18} />
-                    Novo produto
-                  </Button>
-                </div>
+                <CabecalhoSecao
+                  titulo="Produtos e serviços"
+                  texto="Todos os itens publicados pelos negócios da vitrine."
+                  acao={
+                    <Button onClick={() => abrirNovo('produto')}>
+                      <Icone nome="add" tamanho={18} />
+                      Novo produto
+                    </Button>
+                  }
+                />
                 <DataTable
                   colunas={colunasProdutos}
                   dados={produtos}
@@ -492,12 +497,16 @@ function Admin() {
 
             {abaAtiva === 'empreendedores' && (
               <>
-                <div className="admin__barra">
-                  <Button onClick={() => abrirNovo('empreendedor')}>
-                    <Icone nome="person_add" tamanho={18} />
-                    Novo empreendedor
-                  </Button>
-                </div>
+                <CabecalhoSecao
+                  titulo="Negócios cadastrados"
+                  texto="Dados de cada negócio, situação do plano e se autoriza a divulgação nas redes sociais."
+                  acao={
+                    <Button onClick={() => abrirNovo('empreendedor')}>
+                      <Icone nome="person_add" tamanho={18} />
+                      Novo empreendedor
+                    </Button>
+                  }
+                />
                 <DataTable
                   colunas={colunasEmpreendedores}
                   dados={empreendedores}
@@ -512,6 +521,10 @@ function Admin() {
 
             {abaAtiva === 'mensagens' && (
               <>
+                <CabecalhoSecao
+                  titulo="Mensagens da central de ajuda"
+                  texto="Recebidas pelo formulário de contato. Responda pelo e-mail de quem escreveu."
+                />
                 <DataTable
                   colunas={colunasContatos}
                   dados={contatos}
@@ -535,12 +548,28 @@ function Admin() {
 
             {/* As abas abaixo carregam os próprios dados: filtrar contas, editar
                 perguntas ou paginar a auditoria não recarrega o painel inteiro */}
-            {abaAtiva === 'usuarios' && <PainelUsuarios aoAlterar={carregarTudo} />}
+            {abaAtiva === 'usuarios' && (
+              <>
+                <CabecalhoSecao titulo="Contas" texto="Quem tem acesso ao sistema. Desative uma conta para bloquear o acesso sem apagar os dados." />
+                <PainelUsuarios aoAlterar={carregarTudo} />
+              </>
+            )}
 
-            {abaAtiva === 'assinaturas' && <PainelAssinaturas aoAlterar={carregarTudo} />}
+            {abaAtiva === 'assinaturas' && (
+              <>
+                <CabecalhoSecao titulo="Assinaturas" texto="Planos contratados por cada negócio e a situação do pagamento." />
+                <PainelAssinaturas aoAlterar={carregarTudo} />
+              </>
+            )}
+            {/* Divulgações e FAQ montam o próprio cabeçalho: o botão deles abre um formulário interno */}
             {abaAtiva === 'divulgacoes' && <PainelDivulgacoes empreendedores={empreendedores} />}
             {abaAtiva === 'faq' && <PainelFaq />}
-            {abaAtiva === 'auditoria' && <PainelAuditoria />}
+            {abaAtiva === 'auditoria' && (
+              <>
+                <CabecalhoSecao titulo="Auditoria" texto="Trilha de tudo o que foi feito no sistema: quem, quando e o que mudou." />
+                <PainelAuditoria />
+              </>
+            )}
           </div>
         )}
       </section>

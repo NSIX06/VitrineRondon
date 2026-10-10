@@ -1,21 +1,7 @@
 .painel-faq {
   display: flex;
   flex-direction: column;
-  gap: var(--esp-4);
-}
-
-.painel-faq__topo {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--esp-4);
-  flex-wrap: wrap;
-}
-
-.painel-faq__resumo {
-  font-size: var(--texto-sm);
-  font-weight: 700;
-  color: var(--cor-cinza);
+  gap: var(--esp-5);
 }
 
 /* O painel impede quebra de linha nas células; a pergunta precisa quebrar */

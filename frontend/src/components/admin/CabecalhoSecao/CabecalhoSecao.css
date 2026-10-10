@@ -1,0 +1,39 @@
+.cabecalho-secao {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--esp-3) var(--esp-5);
+  flex-wrap: wrap;
+}
+
+.cabecalho-secao__textos {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+  flex: 1 1 22rem;
+  min-width: 0;
+}
+
+/* Mesmo título das seções do "Meu negócio" (Produtos e serviços) */
+.cabecalho-secao__titulo {
+  margin: 0;
+  font-family: var(--fonte-titulo);
+  font-size: var(--texto-2xl);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--cor-anil);
+}
+
+.cabecalho-secao__texto {
+  margin: 0;
+  max-width: 70ch;
+  font-size: var(--texto-sm);
+  line-height: 1.5;
+  color: var(--cor-cinza);
+}
+
+.cabecalho-secao__acao {
+  display: flex;
+  gap: var(--esp-3);
+  flex-wrap: wrap;
+}

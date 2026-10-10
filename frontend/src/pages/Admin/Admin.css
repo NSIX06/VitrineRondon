@@ -259,17 +259,22 @@
   justify-content: center;
 }
 
+/* Conteúdo da aba em coluna, com o mesmo respiro entre cabeçalho, avisos,
+   quadros e tabela (como no "Meu negócio"). Antes, margem da barra do botão +
+   espaço do painel davam vãos diferentes entre os blocos. */
 .admin__painel {
-  padding-top: var(--esp-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+  padding-top: var(--esp-6);
 }
 
-.admin__barra {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--esp-4);
-  flex-wrap: wrap;
-  margin-bottom: var(--esp-4);
+.admin__painel > .painel {
+  gap: var(--esp-5);
+}
+
+.admin__painel .status {
+  margin: 0;
 }
 
 .admin__celula-principal {

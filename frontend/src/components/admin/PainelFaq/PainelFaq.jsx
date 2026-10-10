@@ -10,6 +10,7 @@ import Spinner from '../../ui/Spinner/Spinner'
 import StatusMessage from '../../ui/StatusMessage/StatusMessage'
 import DataTable from '../../tables/DataTable/DataTable'
 import FaqForm from '../../forms/FaqForm/FaqForm'
+import CabecalhoSecao from '../CabecalhoSecao/CabecalhoSecao'
 import './PainelFaq.css'
 
 /**
@@ -96,16 +97,18 @@ function PainelFaq() {
 
   return (
     <div className="painel-faq">
-      <div className="painel-faq__topo">
-        <p className="painel-faq__resumo">
-          {perguntas.length} {perguntas.length === 1 ? 'pergunta' : 'perguntas'}, {ativas} visíveis na central de
-          ajuda
-        </p>
-        <Button onClick={() => setEmEdicao({})}>
-          <Icone nome="add" tamanho={18} />
-          Nova pergunta
-        </Button>
-      </div>
+      <CabecalhoSecao
+        titulo="Perguntas frequentes"
+        texto={`${perguntas.length} ${perguntas.length === 1 ? 'pergunta' : 'perguntas'}, ${ativas} ${
+          ativas === 1 ? 'visível' : 'visíveis'
+        } na central de ajuda.`}
+        acao={
+          <Button onClick={() => setEmEdicao({})}>
+            <Icone nome="add" tamanho={18} />
+            Nova pergunta
+          </Button>
+        }
+      />
 
       {status && (
         <StatusMessage tipo={status.tipo} onFechar={() => setStatus(null)}>

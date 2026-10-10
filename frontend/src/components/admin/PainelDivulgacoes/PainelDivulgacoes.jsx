@@ -10,6 +10,7 @@ import StatusMessage from '../../ui/StatusMessage/StatusMessage'
 import Tag from '../../ui/Tag/Tag'
 import DataTable from '../../tables/DataTable/DataTable'
 import { STATUS_DIVULGACAO, TIPOS_DIVULGACAO } from '../../../services/divulgacoes'
+import CabecalhoSecao from '../CabecalhoSecao/CabecalhoSecao'
 import '../../painel/Painel.css'
 
 const VAZIO = { empreendedorId: '', tipo: 'NEGOCIO', titulo: '', canal: 'Instagram', status: 'PLANEJADA', link: '', alcance: '' }
@@ -214,16 +215,16 @@ function PainelDivulgacoes({ empreendedores = [] }) {
           {erro}
         </StatusMessage>
       )}
-      <div className="admin__barra">
-        <Button onClick={() => setEmEdicao({})}>
-          <Icone nome="add" tamanho={18} />
-          Registrar divulgação
-        </Button>
-      </div>
-      <p className="painel__detalhe">
-        Registro do que entrou no calendário editorial das redes oficiais. Não há cota de publicações por
-        negócio, e só entram negócios com o plano Destaque e com a autorização do empreendedor.
-      </p>
+      <CabecalhoSecao
+        titulo="Divulgações nas redes oficiais"
+        texto="Registro do que entrou no calendário editorial. Não há cota por negócio, e só entram negócios com o plano Destaque que autorizaram."
+        acao={
+          <Button onClick={() => setEmEdicao({})}>
+            <Icone nome="add" tamanho={18} />
+            Registrar divulgação
+          </Button>
+        }
+      />
 
       {/* Quem deixou (ou não) aparecer nas redes, entre os que podem entrar */}
       <section className="divulgacoes__autorizacoes" aria-labelledby="titulo-autorizacoes">
