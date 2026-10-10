@@ -29,9 +29,14 @@
   --sombra-dura: 5px 5px 0 0 #64748b;
 }
 
+/* Destaque bem diferente do Essencial à primeira vista: brilho laranja forte
+   e largo no alto, dois focos âmbar nas laterais e listras douradas finas */
 .detalhe--destaque .detalhe__fundo {
   background:
-    radial-gradient(circle 760px at 50% 100px, rgba(249, 115, 22, 0.4), transparent),
+    radial-gradient(ellipse 1200px 700px at 50% 60px, rgba(249, 115, 22, 0.62), transparent 70%),
+    radial-gradient(circle 520px at 0% 55%, rgba(251, 191, 36, 0.28), transparent),
+    radial-gradient(circle 560px at 100% 85%, rgba(249, 115, 22, 0.3), transparent),
+    repeating-linear-gradient(135deg, rgba(251, 191, 36, 0.08) 0 2px, transparent 2px 16px),
     #020617;
 }
 
