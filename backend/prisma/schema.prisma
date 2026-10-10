@@ -131,6 +131,15 @@ model Usuario {
   @@map("usuarios")
 }
 
+// Avisos do gateway de pagamento já processados (id do evento): um aviso
+// repetido é confirmado sem ser aplicado de novo.
+model EventoWebhook {
+  id         String   @id @db.VarChar(100)
+  recebidoEm DateTime @default(now()) @map("recebido_em")
+
+  @@map("eventos_webhook")
+}
+
 // Sessão encerrada pelo botão Sair: o token (identificado pelo jti) deixa de
 // valer antes de expirar. A linha pode ser apagada depois de expiraEm.
 model SessaoEncerrada {

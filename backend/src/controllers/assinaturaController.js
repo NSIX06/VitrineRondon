@@ -245,7 +245,16 @@ export async function receberWebhook(req, res) {
 
   try {
     const evento = provedor.interpretarWebhook(corpo);
+    // Aviso já processado (reenvio do gateway ou repetição de um aviso copiado):
+    // confirma o recebimento sem aplicar de novo
+    if (evento.eventoId && (await prisma.eventoWebhook.findUnique({ where: { id: evento.eventoId } }))) {
+      return res.json({ success: true, repetido: true });
+    }
     const resultado = await aplicarEvento(req, evento, `WEBHOOK ${corpo.event}`);
+    // Registrado só depois de aplicar: se o processamento falhar, a nova tentativa do gateway ainda passa
+    if (evento.eventoId) {
+      await prisma.eventoWebhook.create({ data: { id: evento.eventoId } }).catch(() => {});
+    }
     if (evento.tipo !== EVENTOS.IGNORADO && !resultado) {
       console.warn(`Webhook ${corpo.event} (${corpo.id}) sem assinatura correspondente`);
     }
