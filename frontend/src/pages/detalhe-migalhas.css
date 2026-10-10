@@ -1,13 +1,29 @@
-/* Barra de navegação das páginas de detalhe (negócio e item): faixa anil com
-   filete dourado embaixo; à esquerda as teclas Voltar/Avançar, à direita a
-   trilha "Início > ... > atual" em pílulas de nanquim, com ícones. */
+/* Barra de navegação das páginas de detalhe (negócio e item): fundo anil
+   animado (o degradê desliza devagar); à esquerda as teclas Voltar/Avançar,
+   à direita a trilha "Início > ... > atual" em pílulas de nanquim. */
 .detalhe__migalhas {
-  background: var(--linhas-claras), var(--cor-anil);
+  background: linear-gradient(110deg, #17346e 0%, #1e40af 25%, #0f2557 50%, #2851b8 75%, #17346e 100%);
+  background-size: 300% 100%;
+  animation: migalhas-fundo 18s ease-in-out infinite alternate;
   border-bottom: var(--borda);
-  box-shadow: inset 0 -4px 0 0 var(--cor-ouro);
   font-size: 12px;
   font-weight: 700;
   color: var(--cor-branco);
+}
+
+@keyframes migalhas-fundo {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 100% 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .detalhe__migalhas {
+    animation: none;
+  }
 }
 
 .detalhe__migalhas-conteudo {
@@ -16,8 +32,7 @@
   justify-content: space-between;
   gap: var(--esp-3);
   flex-wrap: wrap;
-  /* Folga para as teclas e para o filete dourado de baixo */
-  padding-block: var(--esp-3) calc(var(--esp-3) + 4px);
+  padding-block: var(--esp-3);
 }
 
 /* Na linha das migalhas as setas ficam centradas, sem o espaço de baixo */
@@ -66,13 +81,13 @@
 }
 
 .detalhe__migalhas-nav .icone {
-  color: var(--cor-ouro);
+  color: var(--cor-branco);
 }
 
-/* Separador: seta dourada pequena */
+/* Separador: seta branca pequena */
 .detalhe__migalhas-sep {
   display: inline-flex;
-  color: rgba(251, 191, 36, 0.7);
+  color: rgba(255, 255, 255, 0.6);
 }
 
 /* Onde a pessoa está: pílula amarela de nanquim */
