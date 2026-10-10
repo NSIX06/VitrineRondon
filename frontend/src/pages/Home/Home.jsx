@@ -1,4 +1,4 @@
-import { Suspense, lazy } from 'react'
+import { Suspense, lazy, useState } from 'react'
 import FundoDePontos from '../../components/ui/DotField/FundoDePontos'
 import { Link } from 'react-router-dom'
 import { useConsulta } from '../../hooks/useConsulta'
@@ -39,11 +39,16 @@ function Home() {
   // Negócios com o plano Destaque, em rodízio (o servidor embaralha a cada consulta)
   const consultaDestaques = useConsulta('/empreendedores/destaques', { limite: LIMITE_PILHA })
   const destaques = consultaDestaques.dados?.data ?? []
+  // Filtro das Novidades: escolher uma categoria troca os cartões aqui mesmo,
+  // sem sair da página inicial (a lista anterior fica na tela até a nova chegar)
+  const [categoria, setCategoria] = useState('')
+  const consultaNovidades = useConsulta('/produtos', categoria ? { categoria } : undefined)
 
   const carregando = consultaProdutos.carregando || consultaEmpreendedores.carregando
   const erro = consultaProdutos.erro || consultaEmpreendedores.erro
   const todosEmpreendedores = consultaEmpreendedores.dados?.data ?? []
-  const produtos = (consultaProdutos.dados?.data ?? []).slice(0, LIMITE_PRODUTOS)
+  const produtos = (consultaNovidades.dados?.data ?? []).slice(0, LIMITE_PRODUTOS)
+  const linkVerTodos = categoria ? `/vitrine?categoria=${encodeURIComponent(categoria)}` : '/vitrine'
   // Pilha do topo: negócios em Destaque (em rodízio) primeiro, depois quem mais está na vitrine
   const idsDestaque = new Set(destaques.map((e) => e.id))
   const feira = [...destaques, ...todosEmpreendedores.filter((e) => !idsDestaque.has(e.id))].slice(0, LIMITE_PILHA)
@@ -159,20 +164,17 @@ function Home() {
 
       <section className="container categorias">
         <h2 className="visualmente-oculto">Categorias</h2>
-        <ul className="categorias__lista">
-          <li>
-            <Link to="/vitrine" className="categorias__item categorias__item--ativo">
-              Todas
-            </Link>
-          </li>
-          {CATEGORIAS.map((categoria) => (
-            <li key={categoria}>
-              <Link
-                to={`/vitrine?categoria=${encodeURIComponent(categoria)}`}
-                className="categorias__item"
+        <ul className="categorias__lista" aria-label="Filtrar as novidades por categoria">
+          {[['', 'Todas'], ...CATEGORIAS.map((nome) => [nome, nome])].map(([valor, rotulo]) => (
+            <li key={rotulo}>
+              <button
+                type="button"
+                className={`categorias__item ${categoria === valor ? 'categorias__item--ativo' : ''}`}
+                aria-pressed={categoria === valor}
+                onClick={() => setCategoria(valor)}
               >
-                {categoria}
-              </Link>
+                {rotulo}
+              </button>
             </li>
           ))}
         </ul>
@@ -190,20 +192,33 @@ function Home() {
 
       {!carregando && !erro && (
         <>
-          <section className="container secao">
+          <section
+            className={`container secao novidades ${consultaNovidades.atualizando ? 'novidades--atualizando' : ''}`}
+            aria-busy={consultaNovidades.atualizando || consultaNovidades.carregando}
+          >
             <div className="secao__cabecalho">
               <div>
-                <h2>Novidades na vitrine</h2>
+                <h2>{categoria ? `Novidades em ${categoria}` : 'Novidades na vitrine'}</h2>
                 <p className="secao__subtitulo">Os itens cadastrados mais recentemente.</p>
               </div>
-              <Link to="/vitrine" className="secao__link">
-                Ver todos
+              <Link to={linkVerTodos} className="secao__link">
+                {categoria ? `Ver todos em ${categoria}` : 'Ver todos'}
               </Link>
             </div>
 
-            {produtos.length === 0 ? (
-              <StatusMessage tipo="vazio" titulo="A vitrine ainda está vazia">
-                <p>Assim que um empreendedor cadastrar um produto, ele aparece aqui.</p>
+            {consultaNovidades.erro ? (
+              <StatusMessage tipo="erro" titulo="Não foi possível carregar esta categoria" aoTentarDeNovo={consultaNovidades.recarregar}>
+                <p>{consultaNovidades.erro.message}</p>
+              </StatusMessage>
+            ) : consultaNovidades.carregando ? (
+              <Spinner texto={`Buscando ${categoria ? categoria.toLowerCase() : 'novidades'}...`} />
+            ) : produtos.length === 0 ? (
+              <StatusMessage tipo="vazio" titulo={categoria ? `Ainda não há itens em ${categoria}` : 'A vitrine ainda está vazia'}>
+                <p>
+                  {categoria
+                    ? 'Escolha outra categoria ou volte para "Todas".'
+                    : 'Assim que um empreendedor cadastrar um produto, ele aparece aqui.'}
+                </p>
               </StatusMessage>
             ) : (
               <ul className="grade-cards">

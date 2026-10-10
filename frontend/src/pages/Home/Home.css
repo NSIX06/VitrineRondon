@@ -187,6 +187,8 @@
 
 .categorias__item {
   display: inline-block;
+  font-family: inherit;
+  cursor: pointer;
   padding: 0.5rem 1rem;
   border: var(--borda);
   border-radius: var(--raio-md);
@@ -211,6 +213,15 @@
   color: var(--cor-tinta);
   transform: rotate(-1.5deg);
   box-shadow: 3px 3px 0 0 var(--cor-contorno), var(--cel-sm);
+}
+
+/* Novidades trocando de categoria: a lista anterior esmaece até a nova chegar */
+.novidades .grade-cards {
+  transition: opacity 0.2s ease;
+}
+
+.novidades--atualizando .grade-cards {
+  opacity: 0.55;
 }
 
 /* Link "Ver todos" no cabeçalho de seção */
