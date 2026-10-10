@@ -32,6 +32,26 @@ const ABAS = [
   { id: 'divulgacao', rotulo: 'Divulgação', icone: 'campaign' },
 ]
 
+// Por que o catálogo está travado, conforme a situação do negócio
+const TRAVA_CATALOGO = {
+  RASCUNHO: {
+    titulo: 'Seu catálogo é liberado com o plano',
+    texto: 'Escolha o Essencial ou o Destaque e conclua o pagamento para cadastrar produtos e serviços.',
+  },
+  AGUARDANDO_PAGAMENTO: {
+    titulo: 'Falta confirmar o pagamento',
+    texto: 'Assim que o pagamento for aprovado, você já pode cadastrar produtos e serviços.',
+  },
+  ASSINATURA_EXPIRADA: {
+    titulo: 'Seu plano está inativo',
+    texto: 'Renove a assinatura para voltar a cadastrar e editar itens. Os itens que já existem continuam guardados.',
+  },
+  SUSPENSO: {
+    titulo: 'Negócio suspenso pela administração',
+    texto: 'Enquanto a suspensão durar, o catálogo não pode ser alterado. Fale com a administração para saber mais.',
+  },
+}
+
 /**
  * Área do empreendedor: cadastro do próprio negócio e gestão do catálogo dele.
  * O servidor decide o que este usuário pode ver e alterar; aqui só consumimos
@@ -331,18 +351,40 @@ function MeuNegocio() {
 
       <div className="meu-negocio__barra">
         <h2 className="meu-negocio__subtitulo">Produtos e serviços</h2>
-        <Button onClick={() => setModalForm({ entidade: 'produto' })} variante="destaque" tamanho="sm">
-          <Icone nome="add" tamanho={18} />
-          Novo item
-        </Button>
+        {publicado && (
+          <Button onClick={() => setModalForm({ entidade: 'produto' })} variante="destaque" tamanho="sm">
+            <Icone nome="add" tamanho={18} />
+            Novo item
+          </Button>
+        )}
       </div>
+
+      {/* Montar o catálogo é benefício do plano (o servidor também confere) */}
+      {!publicado && (
+        <div className="meu-negocio__catalogo-trava" role="note">
+          <Icone nome="lock" tamanho={26} />
+          <div>
+            <strong>{TRAVA_CATALOGO[negocio.situacao]?.titulo ?? TRAVA_CATALOGO.RASCUNHO.titulo}</strong>
+            <p>{TRAVA_CATALOGO[negocio.situacao]?.texto ?? TRAVA_CATALOGO.RASCUNHO.texto}</p>
+          </div>
+          {negocio.situacao !== 'SUSPENSO' && (
+            <Button onClick={() => setAba('plano')} variante="destaque" tamanho="sm">
+              {negocio.situacao === 'AGUARDANDO_PAGAMENTO' ? 'Ver pagamento' : 'Escolher um plano'}
+            </Button>
+          )}
+        </div>
+      )}
 
       <DataTable
         colunas={colunas}
         dados={produtos}
-        mensagemVazia="Seu catálogo está vazio. Clique em “Novo item” para publicar o primeiro produto ou serviço."
+        mensagemVazia={
+          publicado
+            ? 'Seu catálogo está vazio. Clique em “Novo item” para publicar o primeiro produto ou serviço.'
+            : 'Seu catálogo está vazio. Ele é liberado assim que o plano for pago.'
+        }
         acoes={[
-          { rotulo: 'Editar', onClick: (p) => setModalForm({ entidade: 'produto', registro: p }) },
+          ...(publicado ? [{ rotulo: 'Editar', onClick: (p) => setModalForm({ entidade: 'produto', registro: p }) }] : []),
           { rotulo: 'Excluir', variante: 'perigo', onClick: (p) => setConfirmacao(p) },
         ]}
       />

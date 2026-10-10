@@ -112,7 +112,7 @@
   justify-content: space-between;
   gap: var(--esp-4);
   flex-wrap: wrap;
-  margin-top: var(--esp-2);
+  margin-top: var(--esp-3);
 }
 
 .meu-negocio__subtitulo {
@@ -140,9 +140,45 @@
   white-space: nowrap;
 }
 
+/* Catálogo travado: o mesmo cartão tracejado do convite da aba Plano */
+.meu-negocio__catalogo-trava {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-4);
+  flex-wrap: wrap;
+  padding: var(--esp-5);
+  background: var(--cor-branco);
+  border: 2px dashed var(--cor-contorno);
+  border-radius: var(--raio);
+}
+
+.meu-negocio__catalogo-trava > .icone {
+  color: var(--cor-mostarda);
+  flex-shrink: 0;
+}
+
+.meu-negocio__catalogo-trava > div {
+  flex: 1 1 18rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+}
+
+.meu-negocio__catalogo-trava strong {
+  font-family: var(--fonte-titulo);
+  font-size: var(--texto-lg);
+  color: var(--cor-anil);
+}
+
+.meu-negocio__catalogo-trava p {
+  margin: 0;
+  font-size: var(--texto-sm);
+  color: var(--cor-cinza);
+}
+
 .meu-negocio__rodape {
-  /* Afasta da tabela: colado na borda dela, parecia parte do último item */
-  margin: var(--esp-3) 0 0;
+  /* O respiro em relação à tabela vem do gap do painel */
+  margin: 0;
   font-size: var(--texto-sm);
   color: var(--cor-cinza);
 }
@@ -206,8 +242,13 @@
   box-shadow: 3px 3px 0 0 var(--cor-contorno), var(--cel-sm);
 }
 
+/* Conteúdo de cada aba em coluna, com o mesmo respiro entre os blocos
+   (resumo, título, tabela e rodapé ficavam colados uns nos outros) */
 .meu-negocio__painel {
   min-height: 12rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
 }
 
 @media (max-width: 600px) {

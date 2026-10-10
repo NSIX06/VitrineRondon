@@ -8,6 +8,7 @@ import SeloDestaque from '../ui/SeloDestaque/SeloDestaque'
 import Spinner from '../ui/Spinner/Spinner'
 import StatusMessage from '../ui/StatusMessage/StatusMessage'
 import Tag from '../ui/Tag/Tag'
+import EscolhaDePlano from '../planos/EscolhaDePlano'
 import './Painel.css'
 
 // Na volta do checkout o pagamento pode levar alguns segundos para aparecer
@@ -127,23 +128,25 @@ function PainelPlano({ voltouDoCheckout = false, aoMudar }) {
       )}
 
       {!temPlano ? (
-        <div className="painel__convite">
-          <Icone nome="workspace_premium" tamanho={30} />
-          <div>
-            <h3>{expirado ? 'Seu plano está inativo' : 'Escolha um plano para publicar seu negócio'}</h3>
-            <p>
-              {expirado
-                ? 'Renove sua assinatura para voltar a divulgar seu negócio no VitrineRondon. Seus dados, produtos e fotos continuam guardados.'
-                : 'Para aparecer na vitrine, escolha o Essencial (a partir de R$ 50 por mês) ou o Destaque (a partir de R$ 75 por mês), com cobrança mensal ou anual. O Destaque soma selo, prioridade nas listas, estatísticas ampliadas e a possibilidade de divulgação nas redes oficiais.'}
-            </p>
-            {cancelada && (
-              <p className="painel__detalhe">Sua última assinatura ({nomeCurto(assinatura.plano)}) terminou.</p>
-            )}
+        <>
+          <div className="painel__convite">
+            <Icone nome="workspace_premium" tamanho={30} />
+            <div>
+              <h3>{expirado ? 'Seu plano está inativo' : 'Seu negócio ainda não tem plano'}</h3>
+              <p>
+                {expirado
+                  ? 'Renove sua assinatura para voltar a divulgar seu negócio e montar o catálogo. Seus dados, produtos e fotos continuam guardados.'
+                  : 'Com o plano pago, seu negócio aparece na vitrine e o catálogo de produtos e serviços é liberado. O Destaque soma selo, prioridade nas listas, estatísticas ampliadas e a possibilidade de divulgação nas redes oficiais.'}
+              </p>
+              {/* "Terminou" só para assinatura que chegou a valer; checkout não pago não conta */}
+              {cancelada && assinatura.inicioEm && (
+                <p className="painel__detalhe">Sua última assinatura ({nomeCurto(assinatura.plano)}) terminou.</p>
+              )}
+            </div>
           </div>
-          <Button to="/planos" variante="destaque">
-            {expirado ? 'Renovar assinatura' : 'Escolher um plano'}
-          </Button>
-        </div>
+          {/* Escolha e pagamento aqui mesmo, sem sair do painel */}
+          <EscolhaDePlano noPainel />
+        </>
       ) : (
         <div className={`painel__plano ${assinatura.plano.destaque ? 'painel__plano--destaque' : ''}`}>
           <div className="painel__plano-topo">
@@ -228,7 +231,8 @@ function PainelPlano({ voltouDoCheckout = false, aoMudar }) {
         </div>
       )}
 
-      {modoTeste && (
+      {/* Sem plano, a escolha acima já mostra o aviso de testes com o cartão */}
+      {modoTeste && temPlano && (
         <p className="painel__sandbox">
           <Icone nome="science" tamanho={16} />
           Pagamentos em ambiente de testes: nada é cobrado de verdade.

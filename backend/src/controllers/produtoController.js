@@ -57,10 +57,22 @@ async function idDoMeuNegocio(req) {
 }
 
 /** Garante que o item pertence a quem está pedindo (ou que é um admin) */
+/**
+ * Montar o catálogo (criar e editar itens) é um benefício do plano: o dono só
+ * faz isso com a assinatura em vigor. Excluir continua livre, para quem quer
+ * limpar o catálogo depois de cancelar. A administração não tem essa trava.
+ */
+const SEM_PLANO = 'Escolha um plano e conclua o pagamento para montar seu catálogo';
+function exigirPlanoEmVigor(req, negocio) {
+  if (!ehAdmin(req.usuario) && !estaPublicado(negocio)) throw erroHttp(403, SEM_PLANO);
+}
+
 async function carregarComoDono(req, id) {
   const produto = await prisma.produto.findUnique({
     where: { id },
-    include: { empreendedor: { select: { id: true, usuarioId: true, nomeNegocio: true } } },
+    include: {
+      empreendedor: { select: { id: true, usuarioId: true, nomeNegocio: true, ativo: true, publicadoAte: true } },
+    },
   });
   if (!produto) throw erroHttp(404, 'Produto não encontrado');
   const dono = produto.empreendedor.usuarioId && produto.empreendedor.usuarioId === req.usuario?.id;
@@ -162,7 +174,7 @@ export async function criarProduto(req, res, next) {
   try {
     const negocio = await prisma.empreendedor.findUnique({
       where: { id: req.body.empreendedorId },
-      select: { id: true, usuarioId: true, nomeNegocio: true },
+      select: { id: true, usuarioId: true, nomeNegocio: true, ativo: true, publicadoAte: true },
     });
     if (!negocio) {
       return res.status(400).json({
@@ -176,6 +188,7 @@ export async function criarProduto(req, res, next) {
     if (!ehAdmin(req.usuario) && !dono) {
       throw erroHttp(403, 'Você só pode publicar no seu próprio negócio');
     }
+    exigirPlanoEmVigor(req, negocio);
 
     const produto = await prisma.produto.create({
       data: req.body,
@@ -201,6 +214,7 @@ export async function atualizarProduto(req, res, next) {
   try {
     const id = parseId(req.params.id);
     const antes = await carregarComoDono(req, id);
+    exigirPlanoEmVigor(req, antes.empreendedor);
 
     const produto = await prisma.produto.update({
       where: { id },

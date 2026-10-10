@@ -13,9 +13,12 @@ import './EscolhaDePlano.css'
 /**
  * Última etapa do cadastro: escolher o plano e seguir para o pagamento. Sem
  * plano pago, o negócio fica salvo como rascunho, fora da vitrine.
+ * Também aparece na aba Plano do "Meu negócio", para assinar sem sair do painel.
  * - `planoInicial`: nome do plano já escolhido na página de planos (?plano=)
+ * - `noPainel`: dentro do "Meu negócio", sem o "Escolher depois" (a pessoa já
+ *   está no painel) e sem repetir o aviso de ambiente de testes
  */
-function EscolhaDePlano({ planoInicial = '' }) {
+function EscolhaDePlano({ planoInicial = '', noPainel = false }) {
   const consulta = useConsulta('/planos')
   const todosOsPlanos = consulta.dados?.data ?? []
   const [escolhido, setEscolhido] = useState(planoInicial.toUpperCase())
@@ -121,9 +124,11 @@ function EscolhaDePlano({ planoInicial = '' }) {
       )}
 
       <div className="formulario__acoes escolha-plano__acoes">
-        <Button to="/meu-negocio" variante="secundario" disabled={enviando}>
-          Escolher depois
-        </Button>
+        {!noPainel && (
+          <Button to="/meu-negocio" variante="secundario" disabled={enviando}>
+            Escolher depois
+          </Button>
+        )}
         <Button
           variante={plano?.destaque ? 'destaque' : 'primario'}
           onClick={irParaPagamento}
@@ -136,9 +141,11 @@ function EscolhaDePlano({ planoInicial = '' }) {
               : 'Escolha um plano'}
         </Button>
       </div>
-      <p className="escolha-plano__nota">
-        Escolhendo depois, seu negócio fica salvo como rascunho, fora da vitrine, até o plano ser pago.
-      </p>
+      {!noPainel && (
+        <p className="escolha-plano__nota">
+          Escolhendo depois, seu negócio fica salvo como rascunho, fora da vitrine, até o plano ser pago.
+        </p>
+      )}
     </div>
   )
 }
