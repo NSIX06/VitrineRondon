@@ -27,9 +27,10 @@ const emVigor = (assinatura) =>
  * Plano do negócio no painel: plano, valor, status, próxima cobrança,
  * vencimento, situação do negócio, troca em andamento e cancelamento.
  * - `voltouDoCheckout`: a página abriu na volta do pagamento
+ * - `aoConcluirConferencia()`: a conferência da volta terminou (não repetir)
  * - `aoMudar(negocio)`: avisa o painel quando plano/destaque mudam
  */
-function PainelPlano({ voltouDoCheckout = false, aoMudar }) {
+function PainelPlano({ voltouDoCheckout = false, aoConcluirConferencia, aoMudar }) {
   const [dados, setDados] = useState(null)
   const [erro, setErro] = useState(null)
   const [aviso, setAviso] = useState(null)
@@ -55,18 +56,27 @@ function PainelPlano({ voltouDoCheckout = false, aoMudar }) {
     }
   }, [])
 
+  // Lido só na montagem: a conferência roda uma vez por volta do checkout
+  const voltouRef = useRef(voltouDoCheckout)
+  const aoConcluirRef = useRef(aoConcluirConferencia)
+  useEffect(() => {
+    aoConcluirRef.current = aoConcluirConferencia
+  }, [aoConcluirConferencia])
+
   // Volta do checkout: confere até a assinatura sair de "aguardando pagamento"
   useEffect(() => {
     let ativo = true
     let relogio
+    const concluir = () => aoConcluirRef.current?.()
     const conferir = async () => {
       const atual = await carregar()
-      if (!ativo || !voltouDoCheckout) return
+      if (!ativo || !voltouRef.current) return
       const aindaPendente = atual?.trocaPendente || atual?.assinatura?.status === 'PENDENTE'
       if (!aindaPendente) {
         if (atual?.assinatura?.status === 'ATIVA') {
           setAviso({ tipo: 'sucesso', texto: `Pagamento confirmado. Plano ${nomeCurto(atual.assinatura.plano)} ativo.` })
         }
+        concluir()
         return
       }
       tentativas.current += 1
@@ -78,6 +88,7 @@ function PainelPlano({ voltouDoCheckout = false, aoMudar }) {
           tipo: 'aviso',
           texto: 'O pagamento ainda não foi confirmado. Se você concluiu o pagamento, atualize a página em instantes.',
         })
+        concluir()
       }
     }
     conferir()
@@ -85,7 +96,7 @@ function PainelPlano({ voltouDoCheckout = false, aoMudar }) {
       ativo = false
       clearTimeout(relogio)
     }
-  }, [carregar, voltouDoCheckout])
+  }, [carregar])
 
   const cancelar = async () => {
     setCancelando(true)
@@ -118,6 +129,10 @@ function PainelPlano({ voltouDoCheckout = false, aoMudar }) {
   const status = assinatura ? STATUS_ASSINATURA[assinatura.status] : null
   const situacao = SITUACAO_NEGOCIO[negocio?.situacao]
   const expirado = negocio?.situacao === 'ASSINATURA_EXPIRADA'
+  // No Destaque, "Tudo o que o Essencial oferece" abre a lista: vira um item curto
+  const beneficios = (assinatura?.plano?.beneficios ?? []).map((b) =>
+    /^Tudo o que o plano/.test(b) ? 'Tudo o que o Essencial oferece' : b
+  )
 
   return (
     <div className="painel">
@@ -148,11 +163,23 @@ function PainelPlano({ voltouDoCheckout = false, aoMudar }) {
           <EscolhaDePlano noPainel />
         </>
       ) : (
-        <div className={`painel__plano ${assinatura.plano.destaque ? 'painel__plano--destaque' : ''}`}>
+        // Cada plano com a sua cara: Essencial em papel branco com faixa anil
+        // ("vitrine de bairro"); Destaque em anil-noite com dourado, como o
+        // cartão da página de planos. Mesma ordem de blocos nos dois.
+        <div
+          className={`painel__plano ${assinatura.plano.destaque ? 'painel__plano--destaque' : 'painel__plano--essencial'}`}
+        >
           <div className="painel__plano-topo">
-            <div>
+            <span className="painel__plano-icone" aria-hidden="true">
+              <Icone nome={assinatura.plano.destaque ? 'campaign' : 'storefront'} tamanho={26} />
+            </span>
+            <div className="painel__plano-titulo">
               <span className="painel__rotulo">Plano atual</span>
-              <h3 className="painel__plano-nome">{nomeCurto(assinatura.plano)}</h3>
+              <h3 className="painel__plano-nome">{nomeCurto(assinatura.plano).replace(/ Anual$/, '')}</h3>
+              <span className="painel__plano-ciclo">
+                <Icone nome="event_repeat" tamanho={14} />
+                {assinatura.plano.ciclo === 'ANNUALLY' ? 'Cobrança anual' : 'Cobrança mensal'}
+              </span>
             </div>
             <Tag variante={status.variante}>{status.rotulo}</Tag>
           </div>
@@ -184,6 +211,23 @@ function PainelPlano({ voltouDoCheckout = false, aoMudar }) {
               </div>
             )}
           </dl>
+
+          {/* O que o plano dá, no estilo de cada um */}
+          {beneficios.length > 0 && (
+            <div className="painel__plano-inclui">
+              <span className="painel__rotulo">O que seu plano inclui</span>
+              <ul className="painel__plano-beneficios">
+                {beneficios.map((beneficio) => (
+                  <li key={beneficio}>
+                    <span className="painel__plano-beneficio-icone" aria-hidden="true">
+                      <Icone nome={assinatura.plano.destaque ? 'star' : 'check'} tamanho={14} />
+                    </span>
+                    {beneficio}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {assinatura.status === 'PENDENTE' && assinatura.checkoutUrl && (
             <p className="painel__detalhe">

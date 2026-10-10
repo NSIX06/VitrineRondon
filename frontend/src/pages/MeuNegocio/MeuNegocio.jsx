@@ -62,7 +62,11 @@ function MeuNegocio() {
   const [parametros, setParametros] = useSearchParams()
   // Volta do checkout do gateway (?assinatura=retorno): abre no plano e confere
   // o pagamento. O parâmetro sai da URL para um F5 não repetir a conferência.
-  const [voltouDoCheckout] = useState(() => parametros.get('assinatura') === 'retorno')
+  // Vale uma vez só: quando a conferência termina, volta a false. Sem isso,
+  // sair da aba Plano e voltar repetia a conferência e o aviso "Pagamento
+  // confirmado" reaparecia mesmo depois de fechado no X.
+  const [voltouDoCheckout, setVoltouDoCheckout] = useState(() => parametros.get('assinatura') === 'retorno')
+  const conferenciaConcluida = useCallback(() => setVoltouDoCheckout(false), [])
   const [aba, setAba] = useState(() =>
     voltouDoCheckout ? 'plano' : ABAS.some((a) => a.id === parametros.get('aba')) ? parametros.get('aba') : 'catalogo'
   )
@@ -305,7 +309,13 @@ function MeuNegocio() {
       </div>
 
       <div id="painel-negocio" role="tabpanel" aria-labelledby={`aba-${aba}`} className="meu-negocio__painel">
-      {aba === 'plano' && <PainelPlano voltouDoCheckout={voltouDoCheckout} aoMudar={aoMudarPlano} />}
+      {aba === 'plano' && (
+        <PainelPlano
+          voltouDoCheckout={voltouDoCheckout}
+          aoConcluirConferencia={conferenciaConcluida}
+          aoMudar={aoMudarPlano}
+        />
+      )}
       {aba === 'desempenho' && <PainelDesempenho />}
       {aba === 'divulgacao' && (
         <PainelDivulgacao
