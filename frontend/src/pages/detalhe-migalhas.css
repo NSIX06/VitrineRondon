@@ -36,7 +36,11 @@
   background: var(--cor-anil-escuro);
   border: var(--borda-fina);
   border-radius: 999px;
-  box-shadow: 3px 3px 0 0 var(--cor-contorno);
+  /* Sombra dura + filete dourado por dentro + brilho dourado em volta */
+  box-shadow:
+    3px 3px 0 0 var(--cor-contorno),
+    inset 0 0 0 1px rgba(251, 191, 36, 0.45),
+    0 0 14px rgba(251, 191, 36, 0.25);
 }
 
 .detalhe__migalhas-nav a,
@@ -50,15 +54,23 @@
   white-space: nowrap;
 }
 
+/* Cada etapa é uma pílula com contorno claro e um leve brilho; ao passar o
+   mouse, contorno e brilho ficam dourados */
 .detalhe__migalhas-nav a {
-  color: rgba(255, 255, 255, 0.88);
+  color: rgba(255, 255, 255, 0.92);
   text-decoration: none;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 0 8px rgba(147, 180, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.detalhe__migalhas-nav a:hover {
-  background: rgba(255, 255, 255, 0.12);
+.detalhe__migalhas-nav a:hover,
+.detalhe__migalhas-nav a:focus-visible {
+  background: rgba(251, 191, 36, 0.12);
+  border-color: var(--cor-ouro);
   color: var(--cor-ouro);
+  box-shadow: 0 0 12px rgba(251, 191, 36, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 .detalhe__migalhas-nav .icone {
@@ -79,6 +91,29 @@
   background: var(--cor-ouro);
   border: 2px solid var(--cor-contorno);
   color: var(--cor-tinta);
+  /* Halo dourado: é aqui que a pessoa está */
+  box-shadow:
+    2px 2px 0 0 var(--cor-contorno),
+    0 0 0 2px rgba(251, 191, 36, 0.35),
+    0 0 16px rgba(251, 191, 36, 0.7);
+}
+
+/* Teclas Voltar/Avançar nesta barra: além da sombra dura, um brilho em volta
+   (branco no Voltar, dourado no Avançar) que se destaca no anil */
+.detalhe__migalhas .navegacao__tecla.voltar {
+  box-shadow: var(--sombra-dura-sm), 0 0 12px rgba(255, 255, 255, 0.45);
+}
+
+.detalhe__migalhas .navegacao__tecla.avancar {
+  box-shadow: var(--sombra-dura-sm), 0 0 14px rgba(251, 191, 36, 0.75);
+}
+
+.detalhe__migalhas .navegacao__tecla:hover {
+  box-shadow: 3px 3px 0 0 var(--cor-contorno), 0 0 18px rgba(251, 191, 36, 0.85);
+}
+
+.detalhe__migalhas .navegacao__tecla:active {
+  box-shadow: 0 0 0 0 var(--cor-contorno), 0 0 10px rgba(251, 191, 36, 0.6);
 }
 
 .detalhe__migalhas-atual .icone {
