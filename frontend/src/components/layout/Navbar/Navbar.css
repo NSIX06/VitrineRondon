@@ -343,12 +343,9 @@
     transition: opacity 0.3s ease;
   }
 
-  /* Itens: cada nome sobe de baixo, um depois do outro, com o número ao lado */
-  .navbar__links {
-    counter-reset: item-menu;
-  }
+  /* Itens: cada nome sobe de baixo, um depois do outro */
 
-  /* Os itens ocupam a largura do painel: os números ficam numa coluna à direita */
+  /* Os itens ocupam a largura do painel */
   .navbar__links {
     width: 100%;
   }
@@ -358,7 +355,6 @@
     display: block;
     width: 100%;
     overflow: hidden;
-    padding-right: 26px;
   }
 
   .navbar__link-texto {
@@ -374,26 +370,7 @@
     transition-delay: calc(0.3s + var(--item, 0) * 0.07s);
   }
 
-  .navbar__links > .navbar__link::after {
-    counter-increment: item-menu;
-    content: counter(item-menu, decimal-leading-zero);
-    position: absolute;
-    top: 0.4em;
-    right: 0;
-    font-family: var(--fonte-texto);
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0;
-    color: var(--cor-ouro);
-    opacity: 0;
-    transition: opacity 0.2s ease;
-  }
 
-  .navbar--menu-aberto .navbar__links > .navbar__link::after {
-    opacity: 1;
-    transition: opacity 0.4s ease;
-    transition-delay: calc(0.4s + var(--item, 0) * 0.07s);
-  }
 
   /* Entrar, cadastro e conta aparecem depois dos itens */
   .navbar__acoes {
@@ -828,7 +805,6 @@
     transition: none;
   }
 
-  .navbar__links > .navbar__link::after,
   .navbar__acoes {
     opacity: 1;
   }
