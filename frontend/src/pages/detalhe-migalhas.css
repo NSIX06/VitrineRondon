@@ -6,6 +6,8 @@
   background-size: 300% 100%;
   animation: migalhas-fundo 18s ease-in-out infinite alternate;
   border-bottom: var(--borda);
+  /* Filete amarelo na base da faixa */
+  box-shadow: inset 0 -4px 0 0 var(--cor-ouro);
   font-size: 12px;
   font-weight: 700;
   color: var(--cor-branco);
@@ -32,7 +34,8 @@
   justify-content: space-between;
   gap: var(--esp-3);
   flex-wrap: wrap;
-  padding-block: var(--esp-3);
+  /* Folga para as teclas e para o filete amarelo de baixo */
+  padding-block: var(--esp-3) calc(var(--esp-3) + 4px);
 }
 
 /* Na linha das migalhas as setas ficam centradas, sem o espaço de baixo */
