@@ -9,3 +9,30 @@ dist/
 
 # Imagens enviadas pelos usuários (geradas em tempo de execução)
 backend/uploads/
+
+# Relatório da auditoria de segurança: descreve brechas, infraestrutura e o
+# trecho da senha exposta. Fica só na máquina de quem cuida do projeto.
+security-audit/
+
+# Chaves privadas e certificados com chave. A CA pública baixada por
+# scripts/certificado-banco.js não é segredo e pode ir para o git.
+*.pem
+!backend/prisma/certificados/*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+
+# Cópias e despejos do banco trazem dados pessoais dos usuários (LGPD).
+# As migrations (backend/prisma/migrations/**/*.sql) continuam no git.
+*.dump
+*.sql.gz
+*.sqlite
+*.sqlite3
+backups/
+dump*.sql
+backup*.sql
+
+# Capturas soltas dos testes de ponta a ponta fora de docs/
+/*.png
