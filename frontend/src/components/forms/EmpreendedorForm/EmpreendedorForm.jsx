@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Button from '../../ui/Button/Button'
 import Icone from '../../ui/Icone/Icone'
 import StatusMessage from '../../ui/StatusMessage/StatusMessage'
@@ -15,6 +15,7 @@ import CaixaDeMarcar from '../../ui/CaixaDeMarcar/CaixaDeMarcar'
 import EntradaTelefone from '../EntradaTelefone/EntradaTelefone'
 import ResumoDeErros from '../ResumoDeErros/ResumoDeErros'
 import { FOCO_PADRAO } from '../../../services/enquadramento'
+import { ehPreviaLocal } from '../../../services/imagens'
 import './EmpreendedorForm.css'
 
 // Onde cada foto aparece, para a prévia do enquadramento mostrar o corte real
@@ -99,7 +100,11 @@ function EmpreendedorForm({
   textoCancelar = 'Cancelar',
   // Administração: mostra a suspensão por moderação
   moderacao = false,
+  // Cadastro: ainda sem conta (sem login), as fotos escolhidas ficam guardadas
+  // e vão para onSubmit(dados, arquivos), que as envia depois de criar a conta
+  adiarEnvioDeImagens = false,
 }) {
+  const arquivos = useRef({ fotoUrl: null, logoUrl: null })
   const [valores, setValores] = useState(() => montarEstadoInicial(initialData))
   const [errosCampos, setErrosCampos] = useState({})
   const [erroGeral, setErroGeral] = useState(null)
@@ -250,9 +255,19 @@ function EmpreendedorForm({
       ...(moderacao ? { ativo: valores.ativo } : {}),
     }
 
+    // Prévia local ("blob:...") não vale como endereço: o arquivo segue à parte,
+    // com o enquadramento escolhido, e o campo vai vazio até ser enviado
+    const pendentes = {}
+    for (const [campo, campoFoco] of [['fotoUrl', 'fotoFoco'], ['logoUrl', 'logoFoco']]) {
+      if (!ehPreviaLocal(dados[campo])) continue
+      if (arquivos.current[campo]) pendentes[campo] = { arquivo: arquivos.current[campo], foco: dados[campoFoco] }
+      dados[campo] = null
+      dados[campoFoco] = null
+    }
+
     setSalvando(true)
     try {
-      await onSubmit(dados)
+      await onSubmit(dados, pendentes)
     } catch (erro) {
       const erros = errosDoServidor(erro)
       if (erros) setErrosCampos(erros)
@@ -397,6 +412,7 @@ function EmpreendedorForm({
             foco={valores.fotoFoco}
             onFocoChange={(fotoFoco) => setValores((anterior) => ({ ...anterior, fotoFoco }))}
             formatos={FORMATOS_CAPA}
+            onArquivo={adiarEnvioDeImagens ? (arquivo) => (arquivos.current.fotoUrl = arquivo) : undefined}
           />
 
           <CampoImagem
@@ -413,6 +429,7 @@ function EmpreendedorForm({
             foco={valores.logoFoco}
             onFocoChange={(logoFoco) => setValores((anterior) => ({ ...anterior, logoFoco }))}
             formatos={FORMATOS_PERFIL}
+            onArquivo={adiarEnvioDeImagens ? (arquivo) => (arquivos.current.logoUrl = arquivo) : undefined}
           />
 
           <div className="campo">

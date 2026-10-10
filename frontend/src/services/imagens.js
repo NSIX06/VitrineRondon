@@ -16,6 +16,9 @@ const LINK_EXTERNO = /^https?:\/\/\S+$/i
 export const ehImagemEnviada = (valor) =>
   typeof valor === 'string' && (valor.startsWith(PREFIXO_UPLOAD) || valor.startsWith(PREFIXO_NUVEM))
 
+/** Prévia de um arquivo escolhido e ainda não enviado (só existe neste navegador)? */
+export const ehPreviaLocal = (valor) => typeof valor === 'string' && valor.startsWith('blob:')
+
 /** É um link http(s) completo? */
 export const ehLinkDeImagem = (valor) => typeof valor === 'string' && LINK_EXTERNO.test(valor.trim())
 

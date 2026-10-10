@@ -4,6 +4,7 @@ import {
   TIPOS_IMAGEM,
   ehImagemEnviada,
   ehLinkDeImagem,
+  ehPreviaLocal,
   problemaNoArquivo,
   urlImagem,
 } from '../../../services/imagens'
@@ -23,6 +24,10 @@ import './CampoImagem.css'
  * - `onEnviando(bool)`: avisa o formulário para segurar o "Salvar" no envio
  * - `foco` / `onFocoChange` / `formatos`: opcionais; com eles, aparece o ajuste
  *   de enquadramento (arrastar a foto nos formatos em que ela é mostrada)
+ * - `onArquivo(arquivo | null)`: com ele, o arquivo NÃO é enviado agora. O
+ *   campo mostra uma prévia local ("blob:...") e entrega o arquivo ao
+ *   formulário, que envia depois. É o caso do cadastro: a conta só existe no
+ *   fim, e o envio exige login.
  */
 function CampoImagem({
   id,
@@ -36,6 +41,7 @@ function CampoImagem({
   foco,
   onFocoChange,
   formatos,
+  onArquivo,
 }) {
   const entrada = useRef(null)
   const camera = useRef(null)
@@ -46,9 +52,12 @@ function CampoImagem({
   // Quem já usava link continua vendo o link; o padrão é enviar do computador
   const [modoLink, setModoLink] = useState(() => ehLinkDeImagem(valor) && !ehImagemEnviada(valor))
 
-  const mudarValor = (novo) => {
+  const mudarValor = (novo, arquivo = null) => {
     setErroEnvio(null)
     setPreviaFalhou(false)
+    // Qualquer troca (outro arquivo, link, remover) descarta o arquivo guardado
+    if (ehPreviaLocal(valor)) URL.revokeObjectURL(valor)
+    onArquivo?.(arquivo)
     onChange(novo)
   }
 
@@ -56,6 +65,11 @@ function CampoImagem({
     const problema = problemaNoArquivo(arquivo)
     if (problema) {
       setErroEnvio(problema)
+      return
+    }
+    if (onArquivo) {
+      setModoLink(false)
+      mudarValor(URL.createObjectURL(arquivo), arquivo)
       return
     }
     setErroEnvio(null)
@@ -217,7 +231,7 @@ function CampoImagem({
               type="url"
               className={`campo__entrada ${mensagemErro ? 'campo__entrada--erro' : ''}`}
               aria-labelledby={`${id}-rotulo`}
-              value={ehImagemEnviada(valor) ? '' : valor}
+              value={ehImagemEnviada(valor) || ehPreviaLocal(valor) ? '' : valor}
               onChange={(evento) => mudarValor(evento.target.value)}
               maxLength={500}
               placeholder="https://..."

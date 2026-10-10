@@ -33,6 +33,8 @@ function Cadastro() {
   const [erroNegocio, setErroNegocio] = useState(null)
   // Conta e negócio criados: falta só o plano
   const [cadastrado, setCadastrado] = useState(false)
+  // Fotos escolhidas no cadastro que não chegaram a ser enviadas
+  const [fotosFalharam, setFotosFalharam] = useState(false)
   const [documentoAberto, setDocumentoAberto] = useState(null)
 
   useEffect(() => {
@@ -47,7 +49,34 @@ function Cadastro() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  const cadastrarEmpreendedor = async (negocio) => {
+  /**
+   * Envia as fotos escolhidas na etapa do negócio. Só agora dá: o envio exige
+   * login, e a conta acabou de ser criada. Falhar aqui não desfaz o cadastro;
+   * a pessoa vê um aviso e coloca as fotos depois, no "Meu negócio".
+   */
+  const enviarFotosPendentes = async (empreendedorId, pendentes = {}) => {
+    const campos = Object.entries(pendentes)
+    if (!empreendedorId || campos.length === 0) return
+    const alteracoes = {}
+    let falhou = false
+    for (const [campo, { arquivo, foco }] of campos) {
+      try {
+        const resposta = await api.enviarImagem(arquivo)
+        alteracoes[campo] = resposta.data.url
+        alteracoes[campo === 'fotoUrl' ? 'fotoFoco' : 'logoFoco'] = foco
+      } catch {
+        falhou = true
+      }
+    }
+    try {
+      if (Object.keys(alteracoes).length) await api.put(`/empreendedores/${empreendedorId}`, alteracoes)
+    } catch {
+      falhou = true
+    }
+    setFotosFalharam(falhou)
+  }
+
+  const cadastrarEmpreendedor = async (negocio, pendentes) => {
     setErroNegocio(null)
     try {
       const resposta = await api.post('/auth/registrar-empreendedor', {
@@ -56,6 +85,7 @@ function Cadastro() {
         aceites: contaPendente.aceites,
       })
       entrar(resposta.data)
+      await enviarFotosPendentes(resposta.data.usuario?.empreendedorId, pendentes)
       setCadastrado(true)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     } catch (erro) {
@@ -71,6 +101,7 @@ function Cadastro() {
           })
           if (sessao.data?.usuario?.empreendedorId) {
             entrar(sessao.data)
+            await enviarFotosPendentes(sessao.data.usuario.empreendedorId, pendentes)
             setCadastrado(true)
             window.scrollTo({ top: 0, behavior: 'smooth' })
             return
@@ -153,6 +184,7 @@ function Cadastro() {
                     whatsapp: contaPendente.conta.telefone,
                   }}
                   onSubmit={cadastrarEmpreendedor}
+                  adiarEnvioDeImagens
                   onCancelar={() => setContaPendente(null)}
                   textoEnviar="Continuar"
                   textoCancelar="Voltar"
@@ -165,6 +197,11 @@ function Cadastro() {
                 <StatusMessage tipo="sucesso" titulo="Conta e negócio cadastrados">
                   <p>Falta pouco: escolha o plano e conclua o pagamento para publicar seu negócio na vitrine.</p>
                 </StatusMessage>
+                {fotosFalharam && (
+                  <StatusMessage tipo="aviso" titulo="As fotos não foram enviadas">
+                    <p>Seu cadastro está salvo. Coloque as fotos depois, em Meu negócio.</p>
+                  </StatusMessage>
+                )}
                 <EscolhaDePlano planoInicial={planoPedido} />
               </>
             )}
