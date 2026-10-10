@@ -8,6 +8,7 @@ import { registrarLog, contextoDaRequisicao } from '../services/auditoria.js';
 import { montarAceites, versaoVigente } from '../services/termos.js';
 import { criarEmpreendedorSchema } from './empreendedorController.js';
 import { comHorariosParaPrisma } from '../services/horarios.js';
+import { ehSenhaComum } from '../services/senhasComuns.js';
 import { enviarEmail, emailDeRecuperacao } from '../services/email.js';
 import {
   VALIDADE_MINUTOS,
@@ -24,7 +25,8 @@ const senhaSchema = z
   .min(8, 'A senha deve ter ao menos 8 caracteres')
   .max(72, 'A senha deve ter no máximo 72 caracteres')
   .regex(/[A-Za-z]/, 'A senha deve conter letras')
-  .regex(/\d/, 'A senha deve conter números');
+  .regex(/\d/, 'A senha deve conter números')
+  .refine((senha) => !ehSenhaComum(senha), 'Essa senha é muito comum. Escolha outra, mais difícil de adivinhar');
 
 const telefoneSchema = z
   .string({ error: 'Telefone é obrigatório' })

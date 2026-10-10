@@ -10,8 +10,8 @@ const CONTA = {
   nome: 'Ana Souza',
   email: 'Ana@Exemplo.com',
   telefone: '(66) 99123-4567',
-  senha: 'Senha123',
-  confirmacaoSenha: 'Senha123',
+  senha: 'Feira2026x',
+  confirmacaoSenha: 'Feira2026x',
 }
 const NEGOCIO = {
   nomeNegocio: 'Ateliê Fio & Arte',
@@ -43,6 +43,14 @@ describe('conta', () => {
 })
 
 describe('senha', () => {
+  it('recusa senhas comuns e as de exemplo do repositório (NIST 800-63B-4)', () => {
+    for (const senha of ['Senha123', 'senha12345', 'Admin@2026', 'Carlos@2026', 'VITRINE123']) {
+      const r = cadastrar({ senha, confirmacaoSenha: senha })
+      expect(r.success, senha).toBe(false)
+      expect(r.error.issues.some((i) => /muito comum/.test(i.message))).toBe(true)
+    }
+  })
+
   it.each([
     ['curta demais', 'Abc123', 'A senha deve ter ao menos 8 caracteres'],
     ['sem número', 'SenhaSegura', 'A senha deve conter números'],

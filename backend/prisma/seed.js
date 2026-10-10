@@ -9,6 +9,7 @@ import bcrypt from 'bcryptjs';
 import { semearPlanos } from './planos.js';
 import { PREFIXO_DEMO, STATUS, sincronizarNegocio, vigenciaApos } from '../src/services/assinaturas.js';
 import { TIPOS, diaLocal } from '../src/services/metricas.js';
+import { problemaSenhaPrivilegiada } from '../src/services/senhasComuns.js';
 
 const prisma = new PrismaClient();
 
@@ -423,7 +424,34 @@ async function registrarAceites(usuarioId) {
   });
 }
 
+/** Banco na própria máquina? (localhost, 127.0.0.1 ou ::1) */
+function bancoLocal(url = process.env.DATABASE_URL || '') {
+  try {
+    return ['localhost', '127.0.0.1', '[::1]', '::1'].includes(new URL(url).hostname);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Confere as senhas ANTES de apagar qualquer coisa. Fora da máquina local
+ * (banco na nuvem), o admin e as contas de demonstração precisam de senha forte,
+ * fora da lista de senhas comuns e de exemplo: o repositório é público, e uma
+ * senha de exemplo esquecida viraria a senha real do administrador.
+ */
+function conferirSenhas() {
+  const senhas = { ADMIN_SENHA: process.env.ADMIN_SENHA, DEMO_EMPREENDEDOR_SENHA: process.env.DEMO_EMPREENDEDOR_SENHA };
+  for (const [nome, valor] of Object.entries(senhas)) {
+    if (!valor) throw new Error(`Defina ${nome} no arquivo .env antes de rodar o seed.`);
+    if (!bancoLocal()) {
+      const problema = problemaSenhaPrivilegiada(valor);
+      if (problema) throw new Error(`${nome} ${problema}. Gere uma com: openssl rand -base64 24`);
+    }
+  }
+}
+
 async function main() {
+  conferirSenhas();
   console.log('Limpando tabelas...');
   // Ordem respeita as chaves estrangeiras: filhos antes dos pais
   await prisma.logAuditoria.deleteMany();
@@ -446,9 +474,6 @@ async function main() {
   const adminEmail = process.env.ADMIN_EMAIL || 'admin@vitrinelocal.com.br';
   const adminSenha = process.env.ADMIN_SENHA;
   const demoSenha = process.env.DEMO_EMPREENDEDOR_SENHA;
-  if (!adminSenha || !demoSenha) {
-    throw new Error('Defina ADMIN_SENHA e DEMO_EMPREENDEDOR_SENHA no arquivo .env antes de rodar o seed.');
-  }
 
   const admin = await prisma.usuario.create({
     data: {

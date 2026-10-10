@@ -7,6 +7,7 @@ import Spinner from '../../components/ui/Spinner/Spinner'
 import StatusMessage from '../../components/ui/StatusMessage/StatusMessage'
 import CampoSenha from '../../components/forms/CampoSenha/CampoSenha'
 import PainelAcesso from '../Login/PainelAcesso'
+import { errosDoServidor } from '../../services/validacoes'
 import '../Login/Login.css'
 
 const FOTO = 'https://images.unsplash.com/photo-1556740738-b6a63e27c4df?w=1200'
@@ -72,9 +73,13 @@ function RedefinirSenha() {
       setEtapa('concluido')
     } catch (falha) {
       // Link vencido ou usado no meio do caminho: mostra o aviso com o caminho de volta
+      const doServidor = errosDoServidor(falha)
       if (falha.status === 410) {
         setAviso(falha.message)
         setEtapa('invalido')
+      } else if (doServidor) {
+        // Ex.: senha comum recusada pelo servidor: mostra no próprio campo
+        setErros(doServidor)
       } else {
         setErroGeral(falha.message || 'Não foi possível trocar a senha agora. Tente de novo.')
       }
