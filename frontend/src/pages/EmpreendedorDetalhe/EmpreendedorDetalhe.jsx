@@ -403,10 +403,6 @@ function EmpreendedorDetalhe() {
                 </svg>
                 Chamar no WhatsApp
               </Button>
-              <Button to={`/contato?empreendedor=${empreendedor.id}`} variante="secundario" className="detalhe__mensagem">
-                <Icone nome="mail" tamanho={18} />
-                Enviar mensagem pelo site
-              </Button>
               {instagramUsuario && (
                 <a
                   className="detalhe__instagram"

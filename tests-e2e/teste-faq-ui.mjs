@@ -70,19 +70,13 @@ async function main() {
     await screenshot('../docs/imagens-teste-faq-publico.png')
 
     // ================= Contato estável =================
-    console.log('\n2. Formulário de contato fixo e responsivo')
+    console.log('\n2. Formulário de contato: só para a equipe, e responsivo')
     for (const largura of [1280, 820, 390]) {
       await viewport(largura, 1000)
-      await abrir('/contato', '.contato__formulario select')
-      const opcoes = await evaluate("[...__q('.contato__formulario select').options].map(o => o.value)")
-      const alturas = new Set()
-      for (const valor of opcoes) {
-        await evaluate(`__set('.contato__formulario select', ${JSON.stringify(valor)})`)
-        await esperar(150)
-        alturas.add(await evaluate("Math.round(__q('.contato-form').getBoundingClientRect().height)"))
-      }
+      await abrir('/contato', '.contato__formulario .contato-form')
+      checar(`${largura}px: sem escolha de destinatário`, !(await evaluate("Boolean(__q('.contato__formulario select'))")))
+      checar(`${largura}px: a mensagem vai para a equipe`, /equipe do VitrineRondon/.test(await evaluate("__q('.contato-form__destino').innerText")))
       const rolagem = await evaluate('document.documentElement.scrollWidth')
-      checar(`${largura}px: o formulário não muda de altura ao trocar o destinatário`, alturas.size === 1, [...alturas].join(', '))
       checar(`${largura}px: sem rolagem lateral`, rolagem <= largura, `${rolagem}px`)
     }
     await viewport(1280, 1000)

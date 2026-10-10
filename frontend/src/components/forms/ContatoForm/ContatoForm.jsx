@@ -2,8 +2,6 @@ import { useState } from 'react'
 import Button from '../../ui/Button/Button'
 import Icone from '../../ui/Icone/Icone'
 import StatusMessage from '../../ui/StatusMessage/StatusMessage'
-import { linkWhatsapp } from '../../../services/whatsapp'
-import { detalheDaSituacao, situacaoAtendimento } from '../../../services/horarios'
 import { errosDoServidor } from '../../../services/validacoes'
 import { digitosDoTelefone, telefoneCompleto } from '../../../services/telefone'
 import EntradaTelefone from '../EntradaTelefone/EntradaTelefone'
@@ -33,14 +31,13 @@ const regras = {
 }
 
 /**
- * Formulário de mensagem da comunidade, em duas colunas: quem escreve e para
- * quem à esquerda, a mensagem à direita.
- * - `empreendedores`: lista para o select de destinatário (opcional)
- * - `empreendedorInicial`: id pré-selecionado (vindo da página de detalhe)
+ * Formulário da central de ajuda, em duas colunas: quem escreve à esquerda, a
+ * mensagem à direita. Vai sempre para a equipe do VitrineRondon; com um
+ * negócio, o contato é direto pelo WhatsApp dele.
  * - `onSubmit(dados)`: Promise; ao resolver, o formulário mostra a confirmação
  */
-function ContatoForm({ empreendedores = [], empreendedorInicial = '', onSubmit }) {
-  const [valores, setValores] = useState({ ...estadoInicial, empreendedorId: empreendedorInicial })
+function ContatoForm({ onSubmit }) {
+  const [valores, setValores] = useState(estadoInicial)
   const [errosCampos, setErrosCampos] = useState({})
   // Campos que a pessoa já visitou: só eles mostram erro ou confirmação
   const [tocados, setTocados] = useState({})
@@ -48,10 +45,6 @@ function ContatoForm({ empreendedores = [], empreendedorInicial = '', onSubmit }
   const [enviando, setEnviando] = useState(false)
   // Depois de enviar: { destino, email }
   const [enviado, setEnviado] = useState(null)
-
-  const destinatario = empreendedores.find((e) => String(e.id) === String(valores.empreendedorId))
-  // Situação calculada pelo horário informado pelo negócio
-  const situacaoDestino = destinatario ? situacaoAtendimento(destinatario.horarios ?? []) : null
 
   const validarCampo = (nome, valor) => regras[nome]?.(valor) ?? null
 
@@ -91,14 +84,13 @@ function ContatoForm({ empreendedores = [], empreendedorInicial = '', onSubmit }
       email: valores.email.trim(),
       telefone: digitosDoTelefone(valores.telefone) || null,
       mensagem: valores.mensagem.trim(),
-      empreendedorId: valores.empreendedorId ? Number(valores.empreendedorId) : null,
     }
 
     setEnviando(true)
     try {
       await onSubmit(dados)
-      setEnviado({ destino: destinatario?.nomeNegocio ?? 'a equipe do VitrineRondon', email: dados.email })
-      setValores({ ...estadoInicial, empreendedorId: valores.empreendedorId })
+      setEnviado({ destino: 'a equipe do VitrineRondon', email: dados.email })
+      setValores(estadoInicial)
       setErrosCampos({})
       setTocados({})
     } catch (erro) {
@@ -219,71 +211,15 @@ function ContatoForm({ empreendedores = [], empreendedorInicial = '', onSubmit }
             {errosCampos.telefone && <span className="campo__erro">{errosCampos.telefone}</span>}
           </div>
 
-          {empreendedores.length > 0 && (
-            <div className="campo">
-              <label className="campo__rotulo" htmlFor="contato-empreendedor">
-                Para quem é a mensagem?
-              </label>
-              <select
-                id="contato-empreendedor"
-                name="empreendedorId"
-                className="campo__entrada"
-                value={valores.empreendedorId}
-                onChange={atualizarCampo}
-              >
-                <option value="">Equipe do VitrineRondon</option>
-                {empreendedores.map((empreendedor) => (
-                  <option key={empreendedor.id} value={empreendedor.id}>
-                    {empreendedor.nomeNegocio}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          {/* Cartão do destinatário: muda conforme a escolha acima */}
-          <div className="contato-form__destino" aria-live="polite">
-            {destinatario ? (
-              <>
-                <div className="contato-form__destino-topo">
-                  <strong>{destinatario.nomeNegocio}</strong>
-                  <span
-                    className={`contato-form__atende ${situacaoDestino.aberto ? 'contato-form__atende--sim' : ''}`}
-                    title={detalheDaSituacao(situacaoDestino)}
-                  >
-                    <span className="contato-form__ponto" aria-hidden="true" />
-                    {situacaoDestino.aberto ? 'Disponível' : 'Indisponível'}
-                  </span>
-                </div>
-                <span className="contato-form__destino-info">
-                  {[destinatario.categoria, destinatario.bairro || destinatario.cidade]
-                    .filter(Boolean)
-                    .join(' · ')}
-                </span>
-                <span className="contato-form__destino-info">{detalheDaSituacao(situacaoDestino)}</span>
-                {destinatario.whatsapp && (
-                  <a
-                    className="contato-form__whatsapp"
-                    href={linkWhatsapp(
-                      destinatario.whatsapp,
-                      `Olá! Vi o ${destinatario.nomeNegocio} no VitrineRondon.`
-                    )}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Icone nome="chat" tamanho={16} />
-                    Prefere falar agora? Abrir o WhatsApp
-                  </a>
-                )}
-              </>
-            ) : (
-              <>
-                <strong>Equipe do VitrineRondon</strong>
-                <span className="contato-form__destino-info">
-                  Dúvidas, sugestões e problemas no site. Respondemos em até 24 horas úteis.
-                </span>
-              </>
-            )}
+          {/* Destinatário fixo: a central de ajuda fala só com a equipe */}
+          <div className="contato-form__destino">
+            <strong>Para: equipe do VitrineRondon</strong>
+            <span className="contato-form__destino-info">
+              Dúvidas, sugestões e problemas no site. Respondemos em até 24 horas úteis.
+            </span>
+            <span className="contato-form__destino-info">
+              Quer falar com um negócio? Use o botão de WhatsApp na página dele.
+            </span>
           </div>
         </div>
 
@@ -301,11 +237,7 @@ function ContatoForm({ empreendedores = [], empreendedorInicial = '', onSubmit }
               onBlur={aoSair}
               maxLength={MAXIMO_MENSAGEM}
               rows={9}
-              placeholder={
-                destinatario
-                  ? `Conte para ${destinatario.nomeNegocio} o que você precisa`
-                  : 'Conte o que você precisa'
-              }
+              placeholder="Conte para a equipe o que você precisa"
               aria-invalid={Boolean(errosCampos.mensagem)}
               aria-describedby="contato-contador"
             />

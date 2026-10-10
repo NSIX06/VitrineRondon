@@ -28,8 +28,10 @@ describe('mensagem de contato', () => {
     expect(enviar({ mensagem: 'a'.repeat(5001) }).success).toBe(false)
   })
 
-  it('aceita mensagem endereçada a um negócio', () => {
-    expect(enviar({ empreendedorId: '4' }).data.empreendedorId).toBe(4)
+  it('descarta destinatário: a central de ajuda fala só com a equipe', () => {
+    const resultado = enviar({ empreendedorId: '4' })
+    expect(resultado.success).toBe(true)
+    expect(resultado.data).not.toHaveProperty('empreendedorId')
   })
 
   it('aceita mensagem geral, sem destinatário', () => {

@@ -2,8 +2,7 @@
 import { z } from 'zod';
 import prisma from '../config/prisma.js';
 import { registrarLog } from '../services/auditoria.js';
-import { erroHttp, parseId } from '../utils/erros.js';
-import { filtroPublicado } from '../services/publicacao.js';
+import { parseId } from '../utils/erros.js';
 
 export const criarContatoSchema = z.object({
   nome: z.string({ error: 'Nome é obrigatório' }).trim().min(2, 'Nome deve ter ao menos 2 caracteres').max(150),
@@ -14,7 +13,9 @@ export const criarContatoSchema = z.object({
     .trim()
     .min(5, 'Mensagem deve ter ao menos 5 caracteres')
     .max(5000),
-  empreendedorId: z.coerce.number().int().positive().optional().nullable(),
+  // Sem destinatário: a central de ajuda fala só com a equipe do VitrineRondon.
+  // Com um negócio, o contato é direto pelo WhatsApp dele. Um empreendedorId
+  // enviado é descartado pelo Zod, como qualquer campo desconhecido.
 });
 
 // GET /api/contatos  (somente administração: as mensagens têm dados pessoais)
@@ -35,22 +36,16 @@ export async function listarContatos(req, res, next) {
 // POST /api/contatos  (público)
 export async function criarContato(req, res, next) {
   try {
-    // Mensagem para um negócio só se ele estiver na vitrine (assinatura em vigor)
-    if (req.body.empreendedorId) {
-      const negocio = await prisma.empreendedor.findFirst({
-        where: { id: req.body.empreendedorId, ...filtroPublicado() },
-        select: { id: true },
-      });
-      if (!negocio) throw erroHttp(400, 'Esse negócio não está disponível para contato');
-    }
-    const contato = await prisma.contato.create({ data: req.body });
+    // Sempre para a equipe: nenhum destinatário vem do corpo da requisição
+    const { nome, email, telefone, mensagem } = req.body;
+    const contato = await prisma.contato.create({ data: { nome, email, telefone, mensagem } });
     await registrarLog(req, {
       acao: 'CREATE',
       tipoEntidade: 'Contato',
       entidadeId: contato.id,
       // Só o essencial: a mensagem em si não vai para o log de auditoria
       descricao: `Mensagem recebida de ${contato.nome}`,
-      depois: { nome: contato.nome, empreendedorId: contato.empreendedorId },
+      depois: { nome: contato.nome },
     });
     res.status(201).json({
       success: true,
