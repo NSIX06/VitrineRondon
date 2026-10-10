@@ -19,8 +19,8 @@
   min-width: 0;
 }
 
-/* Negócio na trilha de migalhas */
-.item__migalha-negocio {
+/* Negócio na trilha de migalhas: nome longo encurta com reticências */
+.item__migalha-negocio .detalhe__migalhas-texto {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -517,7 +517,7 @@
     width: 100%;
   }
 
-  .item__migalha-negocio {
+  .item__migalha-negocio .detalhe__migalhas-texto {
     max-width: 12ch;
   }
 }

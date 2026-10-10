@@ -1,10 +1,13 @@
-/* Barra de migalhas das páginas de detalhe (negócio e item) */
+/* Barra de navegação das páginas de detalhe (negócio e item): faixa anil com
+   filete dourado embaixo; à esquerda as teclas Voltar/Avançar, à direita a
+   trilha "Início > ... > atual" em pílulas de nanquim, com ícones. */
 .detalhe__migalhas {
-  background: var(--cor-superficie-baixa);
+  background: var(--linhas-claras), var(--cor-anil);
   border-bottom: var(--borda);
+  box-shadow: inset 0 -4px 0 0 var(--cor-ouro);
   font-size: 12px;
-  font-weight: 600;
-  color: var(--cor-cinza);
+  font-weight: 700;
+  color: var(--cor-branco);
 }
 
 .detalhe__migalhas-conteudo {
@@ -13,8 +16,8 @@
   justify-content: space-between;
   gap: var(--esp-3);
   flex-wrap: wrap;
-  /* Folga para as setas, que agora são teclas com contorno e sombra */
-  padding-block: var(--esp-3);
+  /* Folga para as teclas e para o filete dourado de baixo */
+  padding-block: var(--esp-3) calc(var(--esp-3) + 4px);
 }
 
 /* Na linha das migalhas as setas ficam centradas, sem o espaço de baixo */
@@ -22,27 +25,112 @@
   margin-bottom: 0;
 }
 
+/* A trilha: uma "régua" escura com as etapas em pílulas */
 .detalhe__migalhas-nav {
   display: flex;
   align-items: center;
-  gap: var(--esp-2);
+  gap: 4px;
   min-width: 0;
+  max-width: 100%;
+  padding: 4px;
+  background: var(--cor-anil-escuro);
+  border: var(--borda-fina);
+  border-radius: 999px;
+  box-shadow: 3px 3px 0 0 var(--cor-contorno);
+}
+
+.detalhe__migalhas-nav a,
+.detalhe__migalhas-atual {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 28px;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  white-space: nowrap;
 }
 
 .detalhe__migalhas-nav a {
-  color: var(--cor-cinza);
+  color: rgba(255, 255, 255, 0.88);
   text-decoration: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .detalhe__migalhas-nav a:hover {
-  color: var(--cor-anil);
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--cor-ouro);
 }
 
+.detalhe__migalhas-nav .icone {
+  color: var(--cor-ouro);
+}
+
+/* Separador: seta dourada pequena */
+.detalhe__migalhas-sep {
+  display: inline-flex;
+  color: rgba(251, 191, 36, 0.7);
+}
+
+/* Onde a pessoa está: pílula amarela de nanquim */
 .detalhe__migalhas-atual {
-  color: var(--cor-anil);
-  font-weight: 700;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: var(--cor-ouro);
+  border: 2px solid var(--cor-contorno);
+  color: var(--cor-tinta);
+}
+
+.detalhe__migalhas-atual .icone {
+  flex-shrink: 0;
+  color: var(--cor-tinta);
+}
+
+/* Nome longo encurta com reticências dentro da pílula */
+.detalhe__migalhas-nome {
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
+@media (max-width: 600px) {
+  /* No celular as teclas somem: a trilha ocupa a linha toda e as etapas
+     do meio encolhem para só o ícone */
+  .detalhe__migalhas-nav {
+    width: 100%;
+  }
+
+  .detalhe__migalhas-nav a .detalhe__migalhas-texto {
+    display: none;
+  }
+
+  .detalhe__migalhas-nav a:first-child .detalhe__migalhas-texto {
+    display: inline;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Fundo conforme o plano do negócio (página do negócio e dos itens dele)
+   Essencial: azul anil com brilho azul-claro no alto.
+   Destaque: azul-noite com brilho laranja forte e focos âmbar nas laterais;
+   cartões com sombra dourada (cel-shade), como o selo do plano.
+   -------------------------------------------------------------------------- */
+.fundo-plano {
+  /* Brilho maior que o do modelo (500px): com a capa ou a foto por cima, o
+     círculo ficava escondido */
+  background:
+    radial-gradient(circle 760px at 50% 200px, rgba(147, 180, 255, 0.75), transparent),
+    #22408a;
+  /* Sombra dura dos cartões em nanquim escuro, que aparece bem no azul */
+  --sombra-dura: 5px 5px 0 0 #0f172a;
+}
+
+.fundo-plano--destaque {
+  background:
+    radial-gradient(ellipse 1200px 700px at 50% 60px, rgba(249, 115, 22, 0.62), transparent 70%),
+    radial-gradient(circle 520px at 0% 55%, rgba(251, 191, 36, 0.28), transparent),
+    radial-gradient(circle 560px at 100% 85%, rgba(249, 115, 22, 0.3), transparent),
+    #020617;
+  --sombra-dura: 6px 6px 0 0 var(--cor-ouro);
+}

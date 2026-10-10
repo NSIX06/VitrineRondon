@@ -180,11 +180,24 @@ function EmpreendedorDetalhe() {
         <div className="container detalhe__migalhas-conteudo">
           <Voltar para="/empreendedores" rotulo="Ver empreendedores" />
           <nav aria-label="Você está em" className="detalhe__migalhas-nav">
-            <Link to="/">Início</Link>
-            <span aria-hidden="true">/</span>
-            <Link to="/empreendedores">Empreendedores</Link>
-            <span aria-hidden="true">/</span>
-            <span className="detalhe__migalhas-atual">{nomeNegocio}</span>
+            <Link to="/">
+              <Icone nome="home" tamanho={16} />
+              <span className="detalhe__migalhas-texto">Início</span>
+            </Link>
+            <span className="detalhe__migalhas-sep" aria-hidden="true">
+              <Icone nome="chevron_right" tamanho={16} />
+            </span>
+            <Link to="/empreendedores" aria-label="Empreendedores">
+              <Icone nome="groups" tamanho={16} />
+              <span className="detalhe__migalhas-texto">Empreendedores</span>
+            </Link>
+            <span className="detalhe__migalhas-sep" aria-hidden="true">
+              <Icone nome="chevron_right" tamanho={16} />
+            </span>
+            <span className="detalhe__migalhas-atual" aria-current="page">
+              <Icone nome={emDestaque ? 'star' : 'storefront'} tamanho={16} />
+              <span className="detalhe__migalhas-nome">{nomeNegocio}</span>
+            </span>
           </nav>
         </div>
       </div>
@@ -199,8 +212,8 @@ function EmpreendedorDetalhe() {
         </div>
       )}
 
-      {/* Fundo noturno com brilho radial: laranja no Destaque, grafite no Essencial */}
-      <div className="faixa detalhe__fundo">
+      {/* Fundo conforme o plano: laranja-noite no Destaque, azul no Essencial */}
+      <div className={`faixa fundo-plano ${emDestaque ? 'fundo-plano--destaque' : ''}`}>
         <div className="container detalhe__corpo">
           {/* Cabeçalho do perfil: capa dentro do cartão, monograma, nome e o essencial */}
           <header className="detalhe__cabecalho">

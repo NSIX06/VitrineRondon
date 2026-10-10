@@ -93,20 +93,37 @@ function ProdutoDetalhe() {
         <div className="container detalhe__migalhas-conteudo">
           <Voltar para="/vitrine" rotulo="Ver a vitrine" />
           <nav aria-label="Você está em" className="detalhe__migalhas-nav">
-            <Link to="/">Início</Link>
-            <span aria-hidden="true">/</span>
-            <Link to="/vitrine">Vitrine</Link>
-            <span aria-hidden="true">/</span>
-            <Link to={perfil} className="item__migalha-negocio">
-              {empreendedor.nomeNegocio}
+            <Link to="/">
+              <Icone nome="home" tamanho={16} />
+              <span className="detalhe__migalhas-texto">Início</span>
             </Link>
-            <span aria-hidden="true">/</span>
-            <span className="detalhe__migalhas-atual">{nome}</span>
+            <span className="detalhe__migalhas-sep" aria-hidden="true">
+              <Icone nome="chevron_right" tamanho={16} />
+            </span>
+            <Link to="/vitrine" aria-label="Vitrine">
+              <Icone nome="storefront" tamanho={16} />
+              <span className="detalhe__migalhas-texto">Vitrine</span>
+            </Link>
+            <span className="detalhe__migalhas-sep" aria-hidden="true">
+              <Icone nome="chevron_right" tamanho={16} />
+            </span>
+            <Link to={perfil} className="item__migalha-negocio" aria-label={empreendedor.nomeNegocio}>
+              <Icone nome={destaque ? 'star' : 'store'} tamanho={16} />
+              <span className="detalhe__migalhas-texto">{empreendedor.nomeNegocio}</span>
+            </Link>
+            <span className="detalhe__migalhas-sep" aria-hidden="true">
+              <Icone nome="chevron_right" tamanho={16} />
+            </span>
+            <span className="detalhe__migalhas-atual" aria-current="page">
+              <Icone nome={produto.tipo === 'servico' ? 'handyman' : 'shopping_bag'} tamanho={16} />
+              <span className="detalhe__migalhas-nome">{nome}</span>
+            </span>
           </nav>
         </div>
       </div>
 
-      <div className="faixa faixa--ceu">
+      {/* Fundo conforme o plano do negócio dono do item */}
+      <div className={`faixa fundo-plano ${destaque ? 'fundo-plano--destaque' : ''}`}>
         <section className="container item__principal">
           <div className="item__coluna">
             <div className="item__foto">
