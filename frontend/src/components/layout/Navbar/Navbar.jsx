@@ -62,6 +62,21 @@ function Navbar() {
     }
   }, [contaAberta])
 
+  // Painel lateral aberto (celular e tablet): Esc fecha e a página de trás não rola
+  useEffect(() => {
+    if (!menuAberto) return undefined
+    const aoTeclar = (evento) => {
+      if (evento.key === 'Escape') setMenuAberto(false)
+    }
+    const rolagemAntes = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    document.addEventListener('keydown', aoTeclar)
+    return () => {
+      document.body.style.overflow = rolagemAntes
+      document.removeEventListener('keydown', aoTeclar)
+    }
+  }, [menuAberto])
+
   const aoSair = async () => {
     fecharMenu()
     // Sai da rota antes de encerrar a sessão: se a página atual for protegida,
@@ -74,7 +89,7 @@ function Navbar() {
   const primeiroNome = usuario?.nome?.split(' ')[0] ?? ''
 
   return (
-    <header className="navbar">
+    <header className={`navbar ${menuAberto ? 'navbar--menu-aberto' : ''}`}>
       <div className="serrilha" aria-hidden="true" />
       <div className="container navbar__conteudo">
         <Link to="/" className="navbar__marca" onClick={fecharMenu}>
@@ -94,8 +109,20 @@ function Navbar() {
           onClick={() => setMenuAberto((aberto) => !aberto)}
         >
           <span className="visualmente-oculto">{menuAberto ? 'Fechar menu' : 'Abrir menu'}</span>
-          <Icone nome={menuAberto ? 'close' : 'menu'} tamanho={26} />
+          {/* Um "+" que gira até virar "×" ao abrir o painel */}
+          <span className="navbar__toggle-icone" aria-hidden="true">
+            <span />
+            <span />
+          </span>
         </button>
+
+        {/* Celular e tablet: camadas que entram em cascata antes do painel, e o
+            fundo escurecido que fecha o menu ao ser tocado */}
+        <div className="navbar__camadas" aria-hidden="true">
+          <span />
+          <span />
+        </div>
+        <div className="navbar__fundo" aria-hidden="true" onClick={fecharMenu} />
 
         <nav
           id="menu-principal"
@@ -103,15 +130,16 @@ function Navbar() {
           aria-label="Navegação principal"
         >
           <div className="navbar__links">
-            {links.map(({ para, rotulo, exato }) => (
+            {links.map(({ para, rotulo, exato }, indice) => (
               <NavLink
                 key={para}
                 to={para}
                 end={exato}
                 className={({ isActive }) => `navbar__link ${isActive ? 'navbar__link--ativo' : ''}`}
+                style={{ '--item': indice }}
                 onClick={fecharMenu}
               >
-                {rotulo}
+                <span className="navbar__link-texto">{rotulo}</span>
               </NavLink>
             ))}
           </div>

@@ -131,6 +131,40 @@
 }
 
 /* Botão do menu móvel */
+/* Ícone do botão: duas barras em "+" que giram até formar um "×" */
+.navbar__toggle-icone {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  transition: transform 0.35s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.navbar__toggle-icone > span {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  margin-top: -1.5px;
+  border-radius: 2px;
+  background: currentColor;
+}
+
+.navbar__toggle-icone > span:last-child {
+  transform: rotate(90deg);
+}
+
+.navbar--menu-aberto .navbar__toggle-icone {
+  transform: rotate(225deg);
+  transition-duration: 0.8s;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.navbar__camadas,
+.navbar__fundo {
+  display: none;
+}
+
 .navbar__toggle {
   display: none;
   background: var(--cor-ouro);
@@ -195,24 +229,162 @@
     display: inline-flex;
   }
 
-  /* Menu de tela cheia em azul-anil */
-  .navbar__menu {
-    display: none;
+  /* Painel lateral em azul-anil com metade da tela (mínimo para os nomes
+     caberem no celular). Fica sempre montado, fora da tela quando fechado,
+     para entrar deslizando. Fechado, visibility: hidden o tira do teclado e
+     do leitor de tela. */
+  .navbar__menu,
+  .navbar__camadas > span {
     position: fixed;
-    inset: 0;
+    top: 0;
+    right: 0;
+    width: max(50vw, 250px);
+    height: 100dvh;
+    transform: translateX(100%);
+    visibility: hidden;
+    transition:
+      transform 0.32s cubic-bezier(0.5, 0, 0.75, 0),
+      visibility 0s linear 0.32s;
+  }
+
+  .navbar__menu {
+    display: flex;
     margin: 0;
-    padding: calc(64px + 12px + var(--esp-6)) var(--gutter) var(--esp-6);
+    padding: calc(72px + 12px + var(--esp-5)) var(--esp-4) var(--esp-6);
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
     gap: var(--esp-5);
-    background: var(--cor-anil);
+    background: var(--linhas-claras), var(--cor-anil);
+    border-left: var(--borda);
     z-index: 1;
     overflow-y: auto;
+    overscroll-behavior: contain;
   }
 
-  .navbar__menu--aberto {
-    display: flex;
+  .navbar__camadas,
+  .navbar__fundo {
+    display: block;
+  }
+
+  /* Camadas coloridas que passam antes do painel (dourado e azul-claro) */
+  .navbar__camadas > span {
+    z-index: 1;
+    border-left: var(--borda);
+  }
+
+  .navbar__camadas > span:first-child {
+    background: var(--cor-ouro);
+  }
+
+  .navbar__camadas > span:last-child {
+    background: var(--cor-anil-claro);
+  }
+
+  /* Aberto: as camadas entram em cascata e o painel chega por último */
+  .navbar--menu-aberto .navbar__menu,
+  .navbar--menu-aberto .navbar__camadas > span {
+    transform: translateX(0);
+    visibility: visible;
+    transition:
+      transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+      visibility 0s;
+  }
+
+  .navbar--menu-aberto .navbar__camadas > span:last-child {
+    transition-delay: 0.07s;
+  }
+
+  .navbar--menu-aberto .navbar__menu {
+    transition-delay: 0.15s;
+  }
+
+  /* Fundo escurecido do resto da tela: tocar nele fecha o menu */
+  .navbar__fundo {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background: rgba(2, 6, 23, 0.45);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.3s ease,
+      visibility 0s linear 0.3s;
+  }
+
+  .navbar--menu-aberto .navbar__fundo {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.3s ease;
+  }
+
+  /* Itens: cada nome sobe de baixo, um depois do outro, com o número ao lado */
+  .navbar__links {
+    counter-reset: item-menu;
+  }
+
+  /* Os itens ocupam a largura do painel: os números ficam numa coluna à direita */
+  .navbar__links {
+    width: 100%;
+  }
+
+  .navbar__links > .navbar__link {
+    position: relative;
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    padding-right: 26px;
+  }
+
+  .navbar__link-texto {
+    display: inline-block;
+    transform: translateY(140%) rotate(8deg);
+    transform-origin: 0 100%;
+    transition: transform 0.25s ease-in;
+  }
+
+  .navbar--menu-aberto .navbar__link-texto {
+    transform: none;
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: calc(0.3s + var(--item, 0) * 0.07s);
+  }
+
+  .navbar__links > .navbar__link::after {
+    counter-increment: item-menu;
+    content: counter(item-menu, decimal-leading-zero);
+    position: absolute;
+    top: 0.4em;
+    right: 0;
+    font-family: var(--fonte-texto);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0;
+    color: var(--cor-ouro);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .navbar--menu-aberto .navbar__links > .navbar__link::after {
+    opacity: 1;
+    transition: opacity 0.4s ease;
+    transition-delay: calc(0.4s + var(--item, 0) * 0.07s);
+  }
+
+  /* Entrar, cadastro e conta aparecem depois dos itens */
+  .navbar__acoes {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .navbar--menu-aberto .navbar__acoes {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 0.45s ease 0.6s,
+      transform 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.6s;
   }
 
   .navbar__links {
@@ -224,7 +396,7 @@
 
   .navbar__link {
     font-family: var(--fonte-titulo);
-    font-size: 40px;
+    font-size: clamp(22px, 5.4vw, 34px);
     font-weight: 800;
     letter-spacing: -0.02em;
     color: var(--cor-branco);
@@ -552,14 +724,14 @@
 
   .navbar__link--entrar {
     font-family: var(--fonte-titulo);
-    font-size: 40px;
+    font-size: clamp(22px, 5.4vw, 34px);
     color: var(--cor-branco);
   }
 
   .navbar__cadastrar {
     justify-content: center;
-    padding: 0.7rem 1.2rem;
-    font-size: 16px;
+    padding: 0.7rem 0.6rem;
+    font-size: 15px;
     border-width: 3px;
     box-shadow: 4px 4px 0 0 var(--cor-contorno);
   }
@@ -601,5 +773,42 @@
   .navbar__conta-item:hover {
     background: rgba(255, 255, 255, 0.1);
     color: var(--cor-ouro);
+  }
+}
+
+/* Reduzir movimento: o painel só esmaece, sem deslizar, e os itens já aparecem no lugar */
+@media (max-width: 1100px) and (prefers-reduced-motion: reduce) {
+  .navbar__camadas {
+    display: none;
+  }
+
+  .navbar__menu,
+  .navbar--menu-aberto .navbar__menu {
+    transform: none;
+    opacity: 0;
+    transition:
+      opacity 0.2s ease,
+      visibility 0s linear 0.2s;
+  }
+
+  .navbar--menu-aberto .navbar__menu {
+    opacity: 1;
+    transition: opacity 0.2s ease;
+  }
+
+  .navbar__link-texto,
+  .navbar--menu-aberto .navbar__link-texto,
+  .navbar__acoes {
+    transform: none;
+    transition: none;
+  }
+
+  .navbar__links > .navbar__link::after,
+  .navbar__acoes {
+    opacity: 1;
+  }
+
+  .navbar__toggle-icone {
+    transition: none;
   }
 }
