@@ -5,11 +5,23 @@
 // acesso à API), e o "vite preview" usa a 4173.
 const MAQUINA_LOCAL = /^http:\/\/(localhost|127\.0\.0\.1|\[::1\]):\d{1,5}$/;
 
-/** Lê a lista de CORS_ORIGINS (separada por vírgula) */
+/**
+ * Lê a lista de CORS_ORIGINS (separada por vírgula). Perdoa os deslizes comuns
+ * ao colar no painel do servidor: espaços, aspas em volta, barra no fim e
+ * letras maiúsculas. O navegador manda a origem sempre sem barra e em
+ * minúsculas, então nada disso abre a API para outro site.
+ */
 export function lerOrigens(texto = '') {
-  return texto
+  return String(texto ?? '')
     .split(',')
-    .map((origem) => origem.trim())
+    .map((origem) =>
+      origem
+        .trim()
+        .replace(/^["']+|["']+$/g, '')
+        .trim()
+        .replace(/\/+$/, '')
+        .toLowerCase()
+    )
     .filter(Boolean);
 }
 

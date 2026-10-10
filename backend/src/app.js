@@ -58,6 +58,14 @@ app.use(compression());
 
 // CORS restrito às origens conhecidas: a regra está em utils/origens.js
 const listaDeOrigens = lerOrigens(process.env.CORS_ORIGINS);
+// Endereços não são segredo: mostrar a lista ao ligar ajuda a achar um CORS_ORIGINS mal colado
+if (producao) {
+  console.info(
+    listaDeOrigens.length
+      ? `CORS: origens aceitas: ${listaDeOrigens.join(', ')}`
+      : 'CORS: CORS_ORIGINS vazia, nenhum site pode chamar a API'
+  );
+}
 
 app.use(
   cors({

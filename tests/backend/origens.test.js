@@ -2,6 +2,14 @@ import { describe, it, expect } from 'vitest'
 import { lerOrigens, origemPermitida } from '../../backend/src/utils/origens.js'
 
 describe('lerOrigens', () => {
+  it('perdoa aspas, barra no fim, espaços e maiúsculas coladas no painel', () => {
+    expect(lerOrigens(`"https://Vitrine.onrender.com/" , 'https://b.com' ,  https://c.com//`)).toEqual([
+      'https://vitrine.onrender.com',
+      'https://b.com',
+      'https://c.com',
+    ])
+  })
+
   it('separa a lista por vírgula e tira espaços', () => {
     expect(lerOrigens(' https://vitrine.com.br , https://www.vitrine.com.br ')).toEqual([
       'https://vitrine.com.br',
