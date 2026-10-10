@@ -1,0 +1,465 @@
+/* Aba Desempenho do "Meu negócio": período, cartões com variação, barras
+   horizontais (canais, produtos, dias da semana) e o gráfico diário.
+   Cores: o dado em anil, o destaque (melhor dia) em ouro; texto sempre em
+   tinta/cinza; subir e cair levam ícone e texto, não só cor. */
+
+.desempenho {
+  transition: opacity 0.2s ease;
+}
+
+/* Trocando de período: os números antigos ficam, mais claros, até chegar o novo */
+.desempenho--atualizando {
+  opacity: 0.6;
+}
+
+.desempenho__cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-3);
+  flex-wrap: wrap;
+}
+
+.desempenho__cabecalho .painel__detalhe {
+  flex: 1 1 18rem;
+}
+
+/* Período: chave de três teclas, no mesmo desenho da chave mensal/anual */
+.desempenho__periodos {
+  display: inline-flex;
+  padding: 4px;
+  gap: 4px;
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-radius: var(--raio-md);
+  box-shadow: var(--sombra-dura-sm);
+}
+
+.desempenho__periodo {
+  min-height: 36px;
+  padding: 0.3rem 0.85rem;
+  background: none;
+  border: 2px solid transparent;
+  border-radius: var(--raio-sm);
+  font-weight: 700;
+  font-size: var(--texto-sm);
+  color: var(--cor-anil);
+}
+
+.desempenho__periodo:hover {
+  background: var(--cor-ouro-claro);
+}
+
+.desempenho__periodo--ativo {
+  background: var(--cor-anil);
+  border-color: var(--cor-contorno);
+  color: var(--cor-branco);
+}
+
+.desempenho__periodo--ativo:hover {
+  background: var(--cor-anil);
+}
+
+/* Cartões */
+.desempenho__cartoes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  gap: var(--esp-3);
+}
+
+.desempenho__cartao {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--esp-4);
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-radius: var(--raio-md);
+  box-shadow: var(--sombra-botao);
+}
+
+.desempenho__cartao-topo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--texto-sm);
+  font-weight: 700;
+  color: var(--cor-cinza);
+}
+
+.desempenho__cartao-topo .icone {
+  color: var(--cor-anil);
+}
+
+.desempenho__cartao strong {
+  font-family: var(--fonte-titulo);
+  font-size: var(--texto-4xl);
+  font-weight: 800;
+  line-height: 1.05;
+  color: var(--cor-tinta);
+  font-variant-numeric: tabular-nums;
+}
+
+.desempenho__cartao-detalhe {
+  font-size: var(--texto-xs);
+  color: var(--cor-cinza);
+}
+
+.desempenho__variacao {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: auto;
+  padding-top: var(--esp-2);
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  color: var(--cor-cinza);
+}
+
+.desempenho__variacao--sobe {
+  color: var(--cor-sucesso);
+}
+
+.desempenho__variacao--desce {
+  color: var(--cor-lacre-escuro);
+}
+
+/* Blocos lado a lado no computador, um embaixo do outro no celular */
+.desempenho__duas-colunas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: var(--esp-4);
+}
+
+.desempenho__bloco {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  padding: var(--esp-4);
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-radius: var(--raio);
+}
+
+.desempenho__bloco h3 {
+  margin: 0;
+  font-size: var(--texto-lg);
+}
+
+.desempenho__bloco--convite {
+  border-style: dashed;
+  background: var(--cor-superficie-baixa);
+}
+
+.desempenho__bloco--convite > .icone {
+  color: var(--cor-mostarda);
+}
+
+/* Barras horizontais: rótulo, trilho e número na mesma linha */
+.desempenho__barras {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}
+
+.desempenho__barras li {
+  display: grid;
+  grid-template-columns: minmax(7rem, 11rem) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--esp-3);
+  font-size: var(--texto-sm);
+}
+
+.desempenho__barras-rotulo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--cor-tinta);
+}
+
+.desempenho__barras-rotulo .icone {
+  flex-shrink: 0;
+  color: var(--cor-anil);
+}
+
+.desempenho__barras-trilho {
+  height: 12px;
+  background: var(--cor-superficie-baixa);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.desempenho__barras-valor {
+  display: block;
+  height: 100%;
+  min-width: 2px;
+  background: var(--cor-anil);
+  border-radius: 999px;
+  transition: width 0.35s ease;
+}
+
+.desempenho__barras-numero {
+  font-variant-numeric: tabular-nums;
+  color: var(--cor-tinta);
+  text-align: right;
+}
+
+.desempenho__barras-numero small {
+  font-weight: 600;
+  color: var(--cor-cinza);
+}
+
+/* Gráfico diário */
+.desempenho__grafico {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  padding: var(--esp-4);
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-radius: var(--raio);
+}
+
+.desempenho__grafico-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-3);
+  flex-wrap: wrap;
+}
+
+.desempenho__grafico figcaption {
+  font-family: var(--fonte-titulo);
+  font-size: var(--texto-lg);
+  font-weight: 700;
+  color: var(--cor-tinta);
+}
+
+.desempenho__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}
+
+.desempenho__chip {
+  min-height: 34px;
+  padding: 0.25rem 0.75rem;
+  background: var(--cor-branco);
+  border: var(--borda-fina);
+  border-radius: 999px;
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  color: var(--cor-anil);
+}
+
+.desempenho__chip:hover {
+  background: var(--cor-ouro-claro);
+}
+
+.desempenho__chip--ativo {
+  background: var(--cor-anil);
+  color: var(--cor-branco);
+  box-shadow: var(--sombra-dura-sm);
+}
+
+.desempenho__chip--ativo:hover {
+  background: var(--cor-anil);
+}
+
+.desempenho__resumo-grafico {
+  margin: 0;
+  font-size: var(--texto-sm);
+  color: var(--cor-cinza);
+}
+
+.desempenho__resumo-grafico strong {
+  color: var(--cor-tinta);
+}
+
+.desempenho__area {
+  position: relative;
+}
+
+.desempenho__area svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.desempenho__area rect {
+  cursor: pointer;
+}
+
+.desempenho__area rect:focus-visible {
+  outline: 2px solid var(--cor-anil);
+}
+
+/* Grade e eixos discretos: os dados é que aparecem */
+.desempenho__grade {
+  stroke: var(--cor-superficie-alta);
+  stroke-width: 1;
+}
+
+.desempenho__media {
+  stroke: var(--cor-cinza);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 5;
+}
+
+.desempenho__eixo {
+  fill: var(--cor-cinza);
+  font-family: var(--fonte-texto);
+  font-size: 11px;
+}
+
+.desempenho__barra {
+  fill: var(--cor-anil);
+  pointer-events: none;
+  transition: fill 0.15s ease;
+}
+
+.desempenho__barra--melhor {
+  fill: var(--cor-ouro);
+  stroke: var(--cor-contorno);
+  stroke-width: 1.5;
+}
+
+.desempenho__barra--ativa {
+  fill: var(--cor-anil-medio);
+}
+
+.desempenho__dica {
+  position: absolute;
+  top: -6px;
+  transform: translate(-50%, -100%);
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: var(--esp-2) var(--esp-3);
+  background: var(--cor-branco);
+  border: var(--borda-fina);
+  border-radius: var(--raio-sm);
+  box-shadow: var(--sombra-dura-sm);
+  font-size: var(--texto-sm);
+  color: var(--cor-tinta);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.desempenho__dica span {
+  color: var(--cor-cinza);
+}
+
+.desempenho__legenda-media {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  font-size: var(--texto-xs);
+  color: var(--cor-cinza);
+}
+
+.desempenho__traco {
+  display: inline-block;
+  width: 22px;
+  border-top: 2px dashed var(--cor-cinza);
+}
+
+.desempenho__quadrado {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-left: var(--esp-2);
+  background: var(--cor-ouro);
+  border: 1.5px solid var(--cor-contorno);
+  border-radius: 3px;
+}
+
+.desempenho__tabela {
+  font-size: var(--texto-sm);
+}
+
+.desempenho__tabela summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--cor-anil);
+}
+
+.desempenho__tabela table {
+  width: 100%;
+  margin-top: var(--esp-2);
+  border-collapse: collapse;
+}
+
+.desempenho__tabela th,
+.desempenho__tabela td {
+  padding: 4px var(--esp-2);
+  border-bottom: 1px dashed var(--cor-superficie-alta);
+  text-align: left;
+}
+
+.desempenho__tabela td {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 600px) {
+  /* O gráfico encolhe com a tela e o texto junto: em unidades do desenho, o
+     dobro do tamanho volta a dar uns 11px no celular */
+  .desempenho__eixo {
+    font-size: 22px;
+  }
+
+  /* Dois cartões por linha: um por linha, os cinco ocupavam mais de uma tela */
+  .desempenho__cartoes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--esp-2);
+  }
+
+  .desempenho__cartao {
+    padding: var(--esp-3);
+  }
+
+  .desempenho__cartao strong {
+    font-size: var(--texto-2xl);
+  }
+
+  .desempenho__cartao-topo {
+    font-size: var(--texto-xs);
+  }
+
+  .desempenho__barras li {
+    grid-template-columns: minmax(6rem, 8.5rem) minmax(0, 1fr) auto;
+    gap: var(--esp-2);
+  }
+
+  .desempenho__periodos {
+    width: 100%;
+  }
+
+  .desempenho__periodo {
+    flex: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .desempenho,
+  .desempenho__barras-valor,
+  .desempenho__barra {
+    transition: none;
+  }
+}

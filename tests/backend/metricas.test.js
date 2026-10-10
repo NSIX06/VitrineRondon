@@ -131,6 +131,22 @@ describe('resumoDesempenho', () => {
     expect(resumo.periodo.dias).toBe(30)
   })
 
+  it('traz os totais do período anterior, do mesmo tamanho, para comparar', async () => {
+    const antes = new Date(hoje)
+    antes.setUTCDate(antes.getUTCDate() - 10) // fora dos últimos 7 dias, dentro dos 7 anteriores
+    prisma.metricaDiaria.findMany.mockResolvedValueOnce([
+      { dia: antes, tipo: TIPOS.VISUALIZACAO_PERFIL, referenciaId: 0, quantidade: 4 },
+      ...linhas,
+    ])
+    const resumo = await metricas.resumoDesempenho(7, { dias: 7 })
+    expect(resumo.totais.VISUALIZACAO_PERFIL).toBe(10)
+    expect(resumo.anterior.VISUALIZACAO_PERFIL).toBe(4)
+    expect(resumo.anterior.INTERACOES).toBe(0)
+    // Uma consulta só, cobrindo os dois períodos
+    const filtro = prisma.metricaDiaria.findMany.mock.calls.at(-1)[0].where.dia
+    expect(Math.round((filtro.lte - filtro.gte) / 86_400_000)).toBe(13)
+  })
+
   it('ampliado (Destaque): série com todos os dias e produtos mais vistos em ordem', async () => {
     prisma.metricaDiaria.findMany.mockResolvedValueOnce(linhas)
     prisma.produto.findMany.mockResolvedValueOnce([{ id: 5, nome: 'Bolo' }, { id: 6, nome: 'Pão' }])

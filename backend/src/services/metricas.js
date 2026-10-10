@@ -145,20 +145,28 @@ export async function resumoDesempenho(empreendedorId, { dias = 30, ampliado = f
   const fim = diaLocal();
   const inicio = new Date(fim);
   inicio.setUTCDate(inicio.getUTCDate() - (dias - 1));
+  // Período anterior, do mesmo tamanho, para dizer se cada número subiu ou caiu
+  const inicioAnterior = new Date(inicio);
+  inicioAnterior.setUTCDate(inicioAnterior.getUTCDate() - dias);
 
-  const linhas = await prisma.metricaDiaria.findMany({
-    where: { empreendedorId, dia: { gte: inicio, lte: fim } },
+  const todas = await prisma.metricaDiaria.findMany({
+    where: { empreendedorId, dia: { gte: inicioAnterior, lte: fim } },
     orderBy: { dia: 'asc' },
   });
+  const linhas = todas.filter((linha) => linha.dia >= inicio);
 
-  const totais = zerados();
-  for (const linha of linhas) totais[linha.tipo] = (totais[linha.tipo] ?? 0) + linha.quantidade;
-  const interacoes =
-    totais.CLIQUE_WHATSAPP + totais.CLIQUE_TELEFONE + totais.CLIQUE_ENDERECO + totais.CLIQUE_INSTAGRAM;
+  const somar = (lista) => {
+    const soma = zerados();
+    for (const linha of lista) soma[linha.tipo] = (soma[linha.tipo] ?? 0) + linha.quantidade;
+    soma.INTERACOES = soma.CLIQUE_WHATSAPP + soma.CLIQUE_TELEFONE + soma.CLIQUE_ENDERECO + soma.CLIQUE_INSTAGRAM;
+    return soma;
+  };
+  const totais = somar(linhas);
 
   const resumo = {
     periodo: { inicio: formatarDia(inicio), fim: formatarDia(fim), dias },
-    totais: { ...totais, INTERACOES: interacoes },
+    totais,
+    anterior: somar(todas.filter((linha) => linha.dia < inicio)),
     ampliado,
   };
   if (!ampliado) return resumo;
