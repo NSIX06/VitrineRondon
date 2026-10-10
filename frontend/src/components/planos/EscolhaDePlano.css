@@ -1,124 +1,30 @@
+/* Escolha de plano no cadastro e no "Meu negócio": os cartões são os mesmos
+   da página de planos (CartaoPlano.css); aqui só o que fica em volta deles */
 .escolha-plano {
   display: flex;
   flex-direction: column;
-  gap: var(--esp-4);
+  gap: var(--esp-5);
 }
 
 .escolha-plano > .status {
   margin: 0;
 }
 
-.escolha-plano__opcoes {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
-  gap: var(--esp-4);
-}
-
-.escolha-plano__legenda {
-  grid-column: 1 / -1;
-  margin-bottom: var(--esp-3);
-  font-family: var(--fonte-titulo);
-  font-size: var(--texto-xl);
-  font-weight: 700;
-  color: var(--cor-tinta);
-}
-
-/* Cada plano é um cartão clicável com o rádio dentro */
-.escolha-plano__opcao {
-  position: relative;
+.escolha-plano__ciclo {
   display: flex;
-  flex-direction: column;
-  gap: var(--esp-2);
-  padding: var(--esp-4) var(--esp-4) var(--esp-4) calc(var(--esp-4) + 28px);
-  background: var(--cor-branco);
-  border: var(--borda);
-  border-radius: var(--raio);
-  box-shadow: var(--sombra-botao);
-  cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  justify-content: center;
 }
 
-.escolha-plano__opcao--destaque {
-  background: var(--linhas-escuras), var(--cor-ouro-claro);
+/* A fita "Mais popular" sai 17px para cima do cartão: espaço para ela */
+.escolha-plano__lista {
+  margin-top: var(--esp-3);
 }
 
-.escolha-plano__opcao:hover {
-  transform: translate(-1px, -1px);
-}
-
-.escolha-plano__opcao--marcada {
-  box-shadow: var(--sombra-dura);
-  outline: 3px solid var(--cor-anil);
-  outline-offset: 2px;
-}
-
-.escolha-plano__opcao input {
-  position: absolute;
-  top: calc(var(--esp-4) + 4px);
-  left: var(--esp-4);
-  width: 18px;
-  height: 18px;
-  margin: 0;
-  accent-color: var(--cor-anil);
-}
-
-.escolha-plano__topo {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--esp-2);
-  flex-wrap: wrap;
-}
-
-.escolha-plano__topo strong {
-  font-family: var(--fonte-titulo);
-  font-size: var(--texto-2xl);
-  color: var(--cor-tinta);
-}
-
-.escolha-plano__preco {
-  font-family: var(--fonte-titulo);
-  font-size: var(--texto-xl);
-  font-weight: 800;
-  color: var(--cor-anil);
-}
-
-.escolha-plano__preco small {
-  font-family: var(--fonte-texto);
-  font-size: var(--texto-sm);
-  font-weight: 600;
-  color: var(--cor-cinza);
-}
-
-.escolha-plano__chamada {
-  font-size: var(--texto-sm);
-  color: var(--cor-cinza);
-}
-
-.escolha-plano__beneficios {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: var(--texto-sm);
-  line-height: 1.4;
-}
-
-.escolha-plano__beneficios li {
-  display: flex;
-  align-items: flex-start;
-  gap: 6px;
-}
-
-.escolha-plano__beneficios .icone {
-  flex-shrink: 0;
-  margin-top: 1px;
-  color: var(--cor-sucesso);
+/* Em coluna estreita (cadastro no notebook), dois cartões lado a lado ficam
+   espremidos: um embaixo do outro a partir de 300px cada */
+.escolha-plano__lista.planos__lista {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  column-gap: var(--esp-6);
 }
 
 .escolha-plano__nota {
@@ -128,6 +34,15 @@
   line-height: 1.5;
 }
 
-.escolha-plano__acoes {
-  justify-content: flex-end;
+.escolha-plano__depois {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--esp-3);
+  padding-top: var(--esp-4);
+  border-top: 2px dashed var(--cor-superficie-alta);
+}
+
+.escolha-plano__depois .escolha-plano__nota {
+  flex: 1 1 18rem;
 }

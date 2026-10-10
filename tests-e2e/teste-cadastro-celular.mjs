@@ -140,15 +140,13 @@ async function main() {
     await clicarEm('.empreendedor-form button[type=submit]')
     await esperarPor("/Plano e pagamento/.test(__q('.cadastro__etapa--ativa')?.innerText)", 20000)
     checar('chegou em "Plano e pagamento"', true)
-    await esperarPor("__q('.escolha-plano__opcao')", 15000)
-    // A página sobe sozinha (rolagem suave) ao chegar na etapa 3: clicar no
-    // meio do movimento acertava outro ponto da tela
-    await esperarPor('window.scrollY === 0', 5000)
-    await esperar(400)
-    await clicarEm('.escolha-plano__opcao')
-    await esperarPor("__q('.escolha-plano__opcao--marcada')", 3000)
-    const pagar = await evaluate("(b => ({ texto: b.innerText, desativado: b.disabled }))([...document.querySelectorAll('.escolha-plano__acoes button')].at(-1))")
-    checar('botão de pagar liberado com o plano escolhido', /Pagar/.test(pagar.texto) && !pagar.desativado, pagar.texto)
+    await esperarPor("__q('.escolha-plano .planos__cartao')", 15000)
+    // Os mesmos cartões da página de planos, cada um com o seu botão de assinar
+    const cartoes = await evaluate(
+      "[...document.querySelectorAll('.escolha-plano .planos__cartao')].map(c => { const b = c.querySelector('.planos__acao button'); return { texto: b?.innerText ?? '', desativado: b?.disabled } })"
+    )
+    checar('dois planos, com os cartões da página de planos', cartoes.length === 2, JSON.stringify(cartoes))
+    checar('cada cartão tem o botão de assinar liberado', cartoes.every((c) => /assinar/i.test(c.texto) && !c.desativado), JSON.stringify(cartoes))
     checar('planos sem rolagem lateral', await evaluate('document.documentElement.scrollWidth <= innerWidth'))
     const falhas = await evaluate('window.__falhas')
     checar('nenhum erro de JavaScript no caminho', falhas.length === 0, falhas.join(' | '))

@@ -111,7 +111,7 @@ async function main() {
     await evaluate("__clickText('Continuar', 'form button')")
     await esperarPor("__q('.escolha-plano')", 15000)
     checar('depois do negócio vem a escolha do plano', true)
-    checar('o plano escolhido na página de planos já vem marcado', await evaluate("__q('.escolha-plano input[value=DESTAQUE]').checked"))
+    checar('o plano escolhido na página de planos vem indicado', /escolheu na página de planos/.test(await textoDe('.escolha-plano .planos__cartao--destaque')))
     checar('o negócio novo não está na vitrine antes do pagamento', !(await (await fetch(`${API}/empreendedores`)).json()).data.some((e) => e.nomeNegocio === 'Bolos da Rita'))
     await evaluate("__clickText('Escolher depois')")
     await esperarPor("__q('.meu-negocio__abas')", 15000)
