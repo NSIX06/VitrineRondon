@@ -19,6 +19,12 @@ import {
 // negócio fique numa categoria sem filtro na vitrine.
 export const CATEGORIAS = ['Artesanato', 'Alimentação', 'Serviços', 'Moda', 'Beleza'];
 
+// "x% y%" com x e y de 0 a 100: o formato vai direto para o CSS, então nada além disso passa
+const campoFoco = z
+  .string()
+  .trim()
+  .regex(/^(100|\d{1,2})% (100|\d{1,2})%$/, 'Enquadramento inválido');
+
 const empreendedorSchema = z.object({
   nomeNegocio: z
     .string({ error: 'Nome do negócio é obrigatório' })
@@ -66,6 +72,9 @@ const empreendedorSchema = z.object({
   instagram: z.string().trim().max(100).optional().nullable(),
   fotoUrl: campoImagem('URL da foto inválida').optional().nullable(),
   logoUrl: campoImagem('URL da foto do perfil inválida').optional().nullable(),
+  // Ponto de foco do corte: "x% y%", de 0 a 100 (vai direto para object-position)
+  fotoFoco: campoFoco.optional().nullable(),
+  logoFoco: campoFoco.optional().nullable(),
   // Suspensão por moderação: só a administração muda (ver semModeracao)
   ativo: z.boolean().optional(),
   // Consentimento para a divulgação nas redes oficiais (benefício do Destaque).

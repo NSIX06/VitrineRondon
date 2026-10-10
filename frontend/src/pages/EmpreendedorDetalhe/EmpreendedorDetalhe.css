@@ -28,9 +28,11 @@
   box-shadow: var(--sombra-dura);
 }
 
+/* Capa um pouco mais alta (perto de 7:2 no computador): com 230px, banners
+   com texto perdiam o topo. O dono ainda escolhe o enquadramento (fotoFoco). */
 .detalhe__capa {
   position: relative;
-  height: clamp(150px, 20vw, 230px);
+  height: clamp(160px, 28vw, 330px);
   background: var(--cor-anil-escuro);
   border-bottom: var(--borda);
   overflow: hidden;

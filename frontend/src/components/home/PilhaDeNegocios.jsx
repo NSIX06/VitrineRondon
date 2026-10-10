@@ -5,6 +5,7 @@ import Icone from '../ui/Icone/Icone'
 import SeloDestaque from '../ui/SeloDestaque/SeloDestaque'
 import imagemPadrao from '../../assets/imagem-padrao.svg'
 import { urlImagem } from '../../services/imagens'
+import { estiloDoFoco } from '../../services/enquadramento'
 import SeloNovo from '../ui/SeloNovo/SeloNovo'
 import { ehNovidade } from '../../services/novidades'
 import './PilhaDeNegocios.css'
@@ -83,6 +84,7 @@ function Pilha({ negocios, disponivel }) {
               <span className="pilha-negocios__foto">
                 <img
                   src={urlImagem(negocio.fotoUrl) || imagemPadrao}
+                  style={estiloDoFoco(negocio.fotoFoco)}
                   alt=""
                   decoding="async"
                   onError={(evento) => {

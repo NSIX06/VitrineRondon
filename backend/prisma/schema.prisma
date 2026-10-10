@@ -36,6 +36,10 @@ model Empreendedor {
   fotoUrl              String?              @map("foto_url") @db.VarChar(500)
   // Foto do quadrado do perfil (logo ou rosto de quem atende); sem ela, as iniciais
   logoUrl              String?              @map("logo_url") @db.VarChar(500)
+  // Ponto da foto que fica à vista quando ela é cortada ("50% 30%"), escolhido
+  // pelo dono arrastando a prévia; vale em todos os lugares onde a foto aparece
+  fotoFoco             String?              @map("foto_foco") @db.VarChar(20)
+  logoFoco             String?              @map("logo_foco") @db.VarChar(20)
   ativo                Boolean              @default(true)
   // Plano em vigor, copiado da assinatura vigente para a vitrine não precisar
   // juntar tabelas a cada listagem. Só o serviço de assinaturas escreve aqui.

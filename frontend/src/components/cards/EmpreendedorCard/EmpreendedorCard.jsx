@@ -4,6 +4,7 @@ import Icone from '../../ui/Icone/Icone'
 import SeloDestaque from '../../ui/SeloDestaque/SeloDestaque'
 import imagemPadrao from '../../../assets/imagem-padrao.svg'
 import { urlImagem } from '../../../services/imagens'
+import { estiloDoFoco } from '../../../services/enquadramento'
 import SeloNovo from '../../ui/SeloNovo/SeloNovo'
 import { ehNovidade } from '../../../services/novidades'
 import './EmpreendedorCard.css'
@@ -29,6 +30,7 @@ function EmpreendedorCard({ empreendedor }) {
           decoding="async"
           className="empreendedor-card__foto"
           src={urlImagem(fotoUrl) || imagemPadrao}
+          style={estiloDoFoco(empreendedor.fotoFoco)}
           alt={`Foto de ${nomeNegocio}`}
           loading="lazy"
           onError={tratarErroImagem}

@@ -19,6 +19,7 @@ import '../detalhe-migalhas.css'
 import './ProdutoDetalhe.css'
 import Voltar from '../../components/ui/Voltar/Voltar'
 import { urlImagem } from '../../services/imagens'
+import { estiloDoFoco } from '../../services/enquadramento'
 import { METRICAS, registrarMetrica } from '../../services/metricas'
 
 /** Quantos outros itens do mesmo negócio aparecem embaixo */
@@ -216,6 +217,7 @@ function ProdutoDetalhe() {
                   className="item__negocio-foto"
                   decoding="async"
                   src={urlImagem(empreendedor.fotoUrl) || imagemPadrao}
+                  style={estiloDoFoco(empreendedor.fotoFoco)}
                   alt=""
                   onError={trocarPorPadrao}
                 />

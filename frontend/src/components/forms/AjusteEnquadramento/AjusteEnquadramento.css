@@ -1,0 +1,118 @@
+.enquadramento {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  padding: var(--esp-3);
+  background: var(--cor-branco);
+  border: 2px dashed var(--cor-superficie-alta);
+  border-radius: var(--raio-md);
+}
+
+.enquadramento__topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-2);
+  flex-wrap: wrap;
+}
+
+.enquadramento__titulo {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  color: var(--cor-anil);
+}
+
+.enquadramento__centralizar {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 32px;
+  padding: 0.2rem 0.6rem;
+  background: var(--cor-branco);
+  border: var(--borda-fina);
+  border-radius: var(--raio-sm);
+  box-shadow: var(--sombra-dura-sm);
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  color: var(--cor-anil);
+}
+
+.enquadramento__centralizar:disabled {
+  opacity: 0.5;
+  box-shadow: none;
+  cursor: default;
+}
+
+.enquadramento__previas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--esp-3);
+}
+
+.enquadramento__previa {
+  flex: 1 1 140px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+/* A moldura recorta como a página recorta (object-fit: cover) */
+.enquadramento__moldura {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border: var(--borda-fina);
+  border-radius: var(--raio-sm);
+  background: var(--cor-superficie-media);
+  cursor: grab;
+  touch-action: none; /* o dedo arrasta a foto, e não a página */
+  user-select: none;
+}
+
+.enquadramento__moldura:active {
+  cursor: grabbing;
+}
+
+.enquadramento__moldura:focus-visible {
+  outline: 3px solid var(--cor-anil);
+  outline-offset: 2px;
+}
+
+.enquadramento__moldura--redonda {
+  max-width: 120px;
+}
+
+.enquadramento__moldura img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.enquadramento__mao {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid var(--cor-contorno);
+  border-radius: 50%;
+  color: var(--cor-anil);
+  pointer-events: none;
+}
+
+.enquadramento__previa figcaption {
+  font-size: var(--texto-xs);
+  font-weight: 600;
+  color: var(--cor-cinza);
+}

@@ -8,6 +8,8 @@ import {
   urlImagem,
 } from '../../../services/imagens'
 import Button from '../../ui/Button/Button'
+import AjusteEnquadramento from '../AjusteEnquadramento/AjusteEnquadramento'
+import { estiloDoFoco } from '../../../services/enquadramento'
 import Icone from '../../ui/Icone/Icone'
 import './CampoImagem.css'
 
@@ -19,6 +21,8 @@ import './CampoImagem.css'
  * - `valor` / `onChange(novoValor)`: estado controlado pelo formulário
  * - `erro`: mensagem vinda da validação do formulário ou do servidor
  * - `onEnviando(bool)`: avisa o formulário para segurar o "Salvar" no envio
+ * - `foco` / `onFocoChange` / `formatos`: opcionais; com eles, aparece o ajuste
+ *   de enquadramento (arrastar a foto nos formatos em que ela é mostrada)
  */
 function CampoImagem({
   id,
@@ -29,6 +33,9 @@ function CampoImagem({
   ajuda,
   obrigatorio = false,
   onEnviando,
+  foco,
+  onFocoChange,
+  formatos,
 }) {
   const entrada = useRef(null)
   const camera = useRef(null)
@@ -111,6 +118,7 @@ function CampoImagem({
             <img
               key={valor}
               src={urlImagem(valor.trim())}
+              style={formatos ? estiloDoFoco(foco) : undefined}
               alt="Prévia da imagem escolhida"
               onError={() => setPreviaFalhou(true)}
             />
@@ -217,6 +225,10 @@ function CampoImagem({
           )}
         </div>
       </div>
+
+      {temImagem && !previaFalhou && !enviando && formatos && onFocoChange && (
+        <AjusteEnquadramento src={urlImagem(valor.trim())} foco={foco} onChange={onFocoChange} formatos={formatos} />
+      )}
 
       {mensagemErro && <span className="campo__erro">{mensagemErro}</span>}
       {ajuda && <span className="campo__ajuda">{ajuda}</span>}

@@ -111,6 +111,18 @@ describe('contato e foto', () => {
   it('recusa endereço de foto que não é uma URL', () => {
     expect(mensagens(criar({ fotoUrl: 'foto.png' }))).toContain('URL da foto inválida')
   })
+
+  it.each(['50% 50%', '0% 100%', '100% 0%', '12% 7%'])('aceita o enquadramento %s', (foco) => {
+    expect(criar({ fotoFoco: foco, logoFoco: foco }).success).toBe(true)
+  })
+
+  // O valor vai direto para o CSS (object-position): só "x% y%" de 0 a 100 passa
+  it.each(['101% 50%', '50%', 'center', '50% 50%; background:url(x)', '-1% 0%', '50px 20px'])(
+    'recusa enquadramento fora do formato: %s',
+    (foco) => {
+      expect(criar({ fotoFoco: foco }).success).toBe(false)
+    }
+  )
 })
 
 describe('edição parcial', () => {

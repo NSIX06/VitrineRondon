@@ -27,6 +27,7 @@ import '../detalhe-migalhas.css'
 import './EmpreendedorDetalhe.css'
 import Voltar from '../../components/ui/Voltar/Voltar'
 import { urlImagem } from '../../services/imagens'
+import { estiloDoFoco } from '../../services/enquadramento'
 
 /** A busca no catálogo só aparece quando há itens para procurar */
 const MINIMO_PARA_BUSCA = 4
@@ -114,6 +115,8 @@ function EmpreendedorDetalhe() {
     instagram,
     fotoUrl,
     logoUrl,
+    fotoFoco,
+    logoFoco,
     ativo,
     horarios = [],
     produtos,
@@ -204,6 +207,7 @@ function EmpreendedorDetalhe() {
               <img
                 decoding="async"
                 src={urlImagem(fotoUrl) || imagemPadrao}
+                style={estiloDoFoco(fotoFoco)}
                 alt=""
                 onError={(evento) => {
                   evento.currentTarget.src = imagemPadrao
@@ -226,7 +230,13 @@ function EmpreendedorDetalhe() {
                   aria-hidden="true"
                 >
                   {logoUrl && !logoFalhou ? (
-                    <img src={urlImagem(logoUrl)} alt="" decoding="async" onError={() => setLogoFalhou(true)} />
+                    <img
+                      src={urlImagem(logoUrl)}
+                      style={estiloDoFoco(logoFoco)}
+                      alt=""
+                      decoding="async"
+                      onError={() => setLogoFalhou(true)}
+                    />
                   ) : (
                     iniciais(nomeNegocio) || nomeNegocio[0]
                   )}

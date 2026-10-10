@@ -14,7 +14,15 @@ import { useFocoNoErro } from '../../../hooks/useFocoNoErro'
 import CaixaDeMarcar from '../../ui/CaixaDeMarcar/CaixaDeMarcar'
 import EntradaTelefone from '../EntradaTelefone/EntradaTelefone'
 import ResumoDeErros from '../ResumoDeErros/ResumoDeErros'
+import { FOCO_PADRAO } from '../../../services/enquadramento'
 import './EmpreendedorForm.css'
+
+// Onde cada foto aparece, para a prévia do enquadramento mostrar o corte real
+const FORMATOS_CAPA = [
+  { rotulo: 'Topo da sua página', proporcao: '7 / 2' },
+  { rotulo: 'Card da vitrine', proporcao: '16 / 9' },
+]
+const FORMATOS_PERFIL = [{ rotulo: 'Quadrado ao lado do nome', proporcao: '1 / 1', redondo: true }]
 
 const estadoInicialPadrao = {
   nomeNegocio: '',
@@ -36,6 +44,8 @@ const estadoInicialPadrao = {
   instagram: '',
   fotoUrl: '',
   logoUrl: '',
+  fotoFoco: FOCO_PADRAO,
+  logoFoco: FOCO_PADRAO,
   // Semana de atendimento: sem nenhum intervalo, a página mostra "Indisponível"
   horarios: [],
   ativo: true,
@@ -63,6 +73,8 @@ function montarEstadoInicial(initialData) {
     instagram: initialData.instagram ?? '',
     fotoUrl: initialData.fotoUrl ?? '',
     logoUrl: initialData.logoUrl ?? '',
+    fotoFoco: initialData.fotoFoco ?? FOCO_PADRAO,
+    logoFoco: initialData.logoFoco ?? FOCO_PADRAO,
     horarios: (initialData.horarios ?? []).map(({ diaSemana, abre, fecha }) => ({ diaSemana, abre, fecha })),
     ativo: initialData.ativo ?? true,
   }
@@ -230,6 +242,8 @@ function EmpreendedorForm({
       instagram: valores.instagram.trim() || null,
       fotoUrl: valores.fotoUrl.trim() || null,
       logoUrl: valores.logoUrl.trim() || null,
+      fotoFoco: valores.fotoUrl.trim() ? valores.fotoFoco || FOCO_PADRAO : null,
+      logoFoco: valores.logoUrl.trim() ? valores.logoFoco || FOCO_PADRAO : null,
       // A semana vai inteira: o servidor substitui os horários anteriores
       horarios: valores.horarios,
       // Suspender é moderação: só a administração envia (o servidor ignora o dono)
@@ -373,12 +387,16 @@ function EmpreendedorForm({
             rotulo="Foto do negócio"
             valor={valores.fotoUrl}
             onChange={(fotoUrl) => {
-              setValores((anterior) => ({ ...anterior, fotoUrl }))
+              // Foto nova começa centralizada; o ajuste da anterior não vale para ela
+              setValores((anterior) => ({ ...anterior, fotoUrl, fotoFoco: FOCO_PADRAO }))
               if (errosCampos.fotoUrl) setErrosCampos((anterior) => ({ ...anterior, fotoUrl: undefined }))
             }}
             erro={errosCampos.fotoUrl}
             ajuda="Capa: aparece no card da vitrine e no topo da sua página. Foto horizontal fica melhor."
             onEnviando={setEnviandoImagem}
+            foco={valores.fotoFoco}
+            onFocoChange={(fotoFoco) => setValores((anterior) => ({ ...anterior, fotoFoco }))}
+            formatos={FORMATOS_CAPA}
           />
 
           <CampoImagem
@@ -386,12 +404,15 @@ function EmpreendedorForm({
             rotulo="Foto do perfil"
             valor={valores.logoUrl}
             onChange={(logoUrl) => {
-              setValores((anterior) => ({ ...anterior, logoUrl }))
+              setValores((anterior) => ({ ...anterior, logoUrl, logoFoco: FOCO_PADRAO }))
               if (errosCampos.logoUrl) setErrosCampos((anterior) => ({ ...anterior, logoUrl: undefined }))
             }}
             erro={errosCampos.logoUrl}
             ajuda="O quadrado ao lado do nome: sua logo ou uma foto sua. Quadrada fica melhor. Sem ela, mostramos as iniciais do negócio."
             onEnviando={setEnviandoImagem}
+            foco={valores.logoFoco}
+            onFocoChange={(logoFoco) => setValores((anterior) => ({ ...anterior, logoFoco }))}
+            formatos={FORMATOS_PERFIL}
           />
 
           <div className="campo">
