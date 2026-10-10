@@ -104,8 +104,16 @@ function Login() {
             ))}
           </div>
 
-          {aba === 'entrar' ? (
-            <div id="painel-entrar" role="tabpanel" aria-labelledby="aba-entrar" className="login__conteudo">
+          {/* As duas abas ficam montadas no mesmo lugar e só a ativa aparece: o cartão
+              mantém a altura da maior e a troca esmaece, sem o cartão "esticar" */}
+          <div className="login__abas">
+            <div
+              id="painel-entrar"
+              role="tabpanel"
+              aria-labelledby="aba-entrar"
+              className={`login__conteudo ${aba === 'entrar' ? 'login__conteudo--ativa' : ''}`}
+              inert={aba !== 'entrar'}
+            >
               <span className="pagina-cabecalho__marca">Acesso</span>
               <h1 className="login__titulo">Entrar</h1>
               <p className="login__texto">Acesse sua conta para gerenciar seu negócio ou o painel.</p>
@@ -159,8 +167,13 @@ function Login() {
                 </button>
               </p>
             </div>
-          ) : (
-            <div id="painel-criar" role="tabpanel" aria-labelledby="aba-criar" className="login__conteudo">
+            <div
+              id="painel-criar"
+              role="tabpanel"
+              aria-labelledby="aba-criar"
+              className={`login__conteudo ${aba === 'criar' ? 'login__conteudo--ativa' : ''}`}
+              inert={aba !== 'criar'}
+            >
               <span className="pagina-cabecalho__marca">Para quem produz no bairro</span>
               <h1 className="login__titulo">Criar conta</h1>
               <p className="login__texto">O cadastro tem três etapas e leva poucos minutos.</p>
@@ -194,13 +207,14 @@ function Login() {
                 Só quer olhar? Navegar é gratuito: <Link to="/vitrine">ver a vitrine</Link>.
               </p>
             </div>
-          )}
+          </div>
         </div>
 
         <PainelAcesso
           fotos={{ entrar: PAINEIS.entrar.foto, criar: PAINEIS.criar.foto }}
           ativa={aba}
           frase={painel.frase}
+          reserva={[PAINEIS.entrar.frase, PAINEIS.criar.frase].reduce((a, b) => (b.length > a.length ? b : a))}
           autor={painel.autor}
         />
       </div>

@@ -67,12 +67,41 @@
   box-shadow: var(--cel-sm);
 }
 
-/* Conteúdo da aba: entra subindo ao trocar */
+/* As duas abas ocupam a mesma célula: a altura é a da maior e não muda na troca */
+.login__abas {
+  display: grid;
+}
+
+.login__abas > .login__conteudo {
+  grid-area: 1 / 1;
+}
+
 .login__conteudo {
   display: flex;
   flex-direction: column;
   gap: var(--esp-3);
-  animation: login-entrar 0.35s ease-out both;
+}
+
+/* Abas do login: a de fora esmaece e desce um pouco; a ativa aparece no lugar.
+   Só aqui: as telas de recuperação usam .login__conteudo sem abas */
+.login__abas > .login__conteudo {
+  opacity: 0;
+  visibility: hidden;
+  translate: 0 8px;
+  transition:
+    opacity 0.28s ease,
+    translate 0.28s ease,
+    visibility 0s linear 0.28s;
+}
+
+.login__abas > .login__conteudo--ativa {
+  opacity: 1;
+  visibility: visible;
+  translate: 0 0;
+  transition:
+    opacity 0.32s ease 0.06s,
+    translate 0.32s ease 0.06s,
+    visibility 0s;
 }
 
 @keyframes login-entrar {
@@ -198,8 +227,12 @@
   border-radius: var(--raio-md);
   font-size: var(--texto-sm);
   color: var(--cor-cinza);
+}
+
+/* Os passos entram um depois do outro cada vez que a aba "Quero criar" abre */
+.login__conteudo--ativa .login__passo {
   animation: login-entrar 0.4s ease-out both;
-  animation-delay: var(--atraso, 0ms);
+  animation-delay: calc(var(--atraso, 0ms) + 80ms);
 }
 
 .login__passo strong {
@@ -311,8 +344,8 @@
 }
 
 .login__citacao p {
+  display: grid;
   margin: 0 0 var(--esp-2);
-  min-height: 3lh;
   font-family: var(--fonte-titulo);
   font-size: clamp(22px, 2.4vw, 30px);
   font-weight: 800;
@@ -320,6 +353,15 @@
   letter-spacing: -0.01em;
   color: var(--cor-branco);
   text-shadow: 0 2px 0 var(--cor-contorno);
+}
+
+.login__citacao-reserva,
+.login__citacao-texto {
+  grid-area: 1 / 1;
+}
+
+.login__citacao-reserva {
+  visibility: hidden;
 }
 
 .login__citacao cite {
@@ -330,8 +372,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .login__conteudo,
-  .login__passo {
+  .login__abas > .login__conteudo {
+    translate: none;
+  }
+
+  .login__conteudo--ativa .login__passo {
     animation: none;
   }
 
@@ -356,9 +401,6 @@
     border-bottom: var(--borda);
   }
 
-  .login__citacao p {
-    min-height: 0;
-  }
 }
 
 @media (max-width: 480px) {

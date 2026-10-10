@@ -8,7 +8,7 @@ import FundoDePontos from '../../components/ui/DotField/FundoDePontos'
  * letra por letra. Com várias fotos, só a da `ativa` aparece (as outras
  * esmaecem), o que dá a troca suave entre as abas do login.
  */
-function PainelAcesso({ fotos, ativa, frase, autor }) {
+function PainelAcesso({ fotos, ativa, frase, autor, reserva = frase }) {
   return (
     <aside className="login__painel com-pontos" aria-label="VitrineRondon">
       {Object.entries(fotos).map(([chave, foto]) => (
@@ -37,8 +37,15 @@ function PainelAcesso({ fotos, ativa, frase, autor }) {
         </li>
       </ul>
       <blockquote className="login__citacao">
-        <p>
-          “<Datilografo key={frase} texto={frase} />”
+        {/* A cópia invisível da frase mais longa (reserva) segura a altura: o painel
+            não cresce enquanto a frase é escrita nem muda ao trocar de aba */}
+        <p className="login__citacao-frase">
+          <span className="login__citacao-reserva" aria-hidden="true">
+            “{reserva}”
+          </span>
+          <span className="login__citacao-texto">
+            “<Datilografo key={frase} texto={frase} />”
+          </span>
         </p>
         <cite>— {autor}</cite>
       </blockquote>
