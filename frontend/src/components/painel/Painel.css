@@ -78,21 +78,175 @@
   box-shadow: var(--sombra-dura);
 }
 
-.painel__plano--destaque {
-  background: var(--linhas-escuras), var(--cor-ouro-claro);
+.painel__plano {
+  gap: var(--esp-4);
 }
 
 .painel__plano-topo {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--esp-3);
+  align-items: center;
+  gap: var(--esp-4);
   flex-wrap: wrap;
 }
 
+.painel__plano-topo > .tag {
+  margin-left: auto;
+}
+
+.painel__plano-icone {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 54px;
+  height: 54px;
+  border: var(--borda);
+  border-radius: var(--raio-md);
+  box-shadow: var(--sombra-dura-sm);
+  transform: rotate(-3deg);
+}
+
+.painel__plano-titulo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 .painel__plano-nome {
-  margin: 2px 0 0;
+  margin: 0;
   font-size: var(--texto-3xl);
+}
+
+.painel__plano-ciclo {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* "O que seu plano inclui" */
+.painel__plano-inclui {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  padding-top: var(--esp-4);
+  border-top: 2px dashed var(--cor-contorno);
+}
+
+.painel__plano-beneficios {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: var(--esp-3) var(--esp-5);
+}
+
+.painel__plano-beneficios li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--esp-2);
+  font-size: var(--texto-sm);
+  line-height: 1.45;
+}
+
+.painel__plano-beneficio-icone {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--cor-contorno);
+  border-radius: 6px;
+  box-shadow: 2px 2px 0 0 var(--cor-contorno);
+}
+
+/* ---------- Essencial: papel branco, faixa anil à esquerda, vistos verdes
+   ("vitrine de bairro", direto e claro) ---------- */
+.painel__plano--essencial {
+  background: var(--cor-branco);
+  border-left: 10px solid var(--cor-anil);
+}
+
+.painel__plano--essencial .painel__plano-icone {
+  background: var(--cor-ceu, #dbe4ff);
+  color: var(--cor-anil);
+}
+
+.painel__plano--essencial .painel__plano-nome {
+  color: var(--cor-anil);
+}
+
+.painel__plano--essencial .painel__plano-ciclo {
+  color: var(--cor-cinza);
+}
+
+.painel__plano--essencial .painel__plano-beneficio-icone {
+  background: #4ade80;
+  color: var(--cor-tinta);
+}
+
+/* ---------- Destaque: anil-noite com dourado, sombra dourada e letreiro
+   (o mesmo tom do cartão Destaque da página de planos) ---------- */
+.painel__plano--destaque {
+  background: var(--linhas-claras), var(--cor-anil);
+  color: var(--cor-branco);
+  border-top: 6px solid var(--cor-ouro);
+  box-shadow: 8px 8px 0 0 var(--cor-ouro), 8px 8px 0 3px var(--cor-contorno);
+}
+
+.painel__plano--destaque .painel__plano-icone {
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
+}
+
+.painel__plano--destaque .painel__plano-nome {
+  --letra-luz: #fcd34d;
+  --letra-sombra: #e09a0e;
+  --letra-contorno: var(--cor-contorno);
+  color: var(--cor-ouro);
+}
+
+.painel__plano--destaque .painel__rotulo,
+.painel__plano--destaque .painel__plano-ciclo {
+  color: var(--cor-ouro-claro);
+}
+
+.painel__plano--destaque .painel__fatos,
+.painel__plano--destaque .painel__plano-inclui {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.painel__plano--destaque .painel__fatos dt {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.painel__plano--destaque .painel__fatos dd {
+  color: var(--cor-branco);
+}
+
+.painel__plano--destaque .painel__detalhe {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.painel__plano--destaque .painel__detalhe a {
+  color: var(--cor-ouro);
+}
+
+.painel__plano--destaque .painel__plano-beneficios li {
+  color: var(--cor-branco);
+}
+
+.painel__plano--destaque .painel__plano-beneficio-icone {
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
+}
+
+/* Botão de texto ("Cancelar assinatura") legível sobre o anil */
+.painel__plano--destaque .painel__acoes .botao--texto {
+  color: var(--cor-ouro-claro);
 }
 
 .painel__plano > .selo-destaque {

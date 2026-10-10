@@ -281,20 +281,24 @@ function Planos() {
                         <strong>economia de {precoEmReais(economiaAnual(plano, todosOsPlanos).centavos)}</strong>
                       </span>
                     )}
+                    {/* As mesmas duas linhas nos dois planos: cobrança e diferencial */}
                     <span className="planos__preco-nota">
-                      <Icone nome={plano.destaque ? 'star' : 'event_available'} tamanho={16} />
-                      {plano.destaque
-                        ? 'Tudo do Essencial, com mais exposição'
-                        : `Cobrança ${plano.ciclo === 'ANNUALLY' ? 'anual' : 'mensal'}, sem fidelidade`}
+                      <Icone nome="event_available" tamanho={16} />
+                      Cobrança {plano.ciclo === 'ANNUALLY' ? 'anual' : 'mensal'}, sem fidelidade
+                    </span>
+                    <span className="planos__preco-nota">
+                      <Icone nome={plano.destaque ? 'star' : 'storefront'} tamanho={16} />
+                      {plano.destaque ? 'Tudo do Essencial, com mais exposição' : 'Seu negócio na vitrine, na busca e no mapa'}
                     </span>
                   </div>
 
-                  {plano.destaque && plano.beneficios[0]?.startsWith('Tudo') && (
-                    <p className="planos__inclui">
-                      <Icone nome="done_all" tamanho={18} />
-                      {plano.beneficios[0]}, e mais:
-                    </p>
-                  )}
+                  {/* Faixa "o que inclui" nos dois, para as listas começarem na mesma altura */}
+                  <p className="planos__inclui">
+                    <Icone nome={plano.destaque ? 'done_all' : 'checklist'} tamanho={18} />
+                    {plano.destaque && plano.beneficios[0]?.startsWith('Tudo')
+                      ? `${plano.beneficios[0]}, e mais:`
+                      : 'O essencial para vender pelo bairro:'}
+                  </p>
                   <ul className="planos__beneficios">
                     {plano.beneficios
                       .filter((beneficio, i) => !(plano.destaque && i === 0 && beneficio.startsWith('Tudo')))
@@ -308,10 +312,14 @@ function Planos() {
                       ))}
                   </ul>
 
-                  <div className="planos__acao">{acaoDoPlano(plano)}</div>
-                  {pendente?.plano.nome === plano.nome && planoAtivo && (
-                    <p className="planos__nota">Troca iniciada: seu plano atual segue até este pagamento ser confirmado.</p>
-                  )}
+                  {/* A nota da troca fica dentro da linha da ação: o cartão tem
+                      sempre as mesmas 7 linhas, alinhadas com o vizinho (subgrid) */}
+                  <div className="planos__acao">
+                    {acaoDoPlano(plano)}
+                    {pendente?.plano.nome === plano.nome && planoAtivo && (
+                      <p className="planos__nota">Troca iniciada: seu plano atual segue até este pagamento ser confirmado.</p>
+                    )}
+                  </div>
                 </li>
               ))}
             </ul>
