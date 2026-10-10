@@ -108,6 +108,12 @@ Confira antes que nenhum `.env` com senha entrou no commit (`git status` não de
 
    O `JWT_SECRET` e o `ABACATEPAY_WEBHOOK_SECRET` são gerados sozinhos pelo Render.
 
+   > **Criou os serviços à mão (sem Blueprint)?** Aí ninguém gera esses dois: crie na API
+   > **Environment → Add → `JWT_SECRET`** (clique em **Generate** para um valor aleatório) e
+   > **`JWT_EXPIRES_IN` = `8h`**. Sem o `JWT_SECRET` a vitrine abre normalmente, mas todo login
+   > e todo cadastro dão erro. Para conferir, abra `/api/health` da API: tem que mostrar
+   > `"login":"ok"`. O log da API também avisa ao subir: `LOGIN E CADASTRO FORA DO AR`.
+
 4. Clique em **Apply**. O primeiro deploy leva alguns minutos. As migrations rodam no build da API:
    se alguma falhar, o build para e nada é publicado.
 

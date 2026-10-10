@@ -2,6 +2,7 @@
 // Antes respondia "operando" sem olhar o banco: com o MySQL fora do ar, o
 // monitor achava que estava tudo bem enquanto toda rota devolvia erro.
 import prisma from '../config/prisma.js';
+import { problemaNaSessao } from '../middlewares/auth.js';
 
 const TEMPO_LIMITE_MS = 3000;
 
@@ -22,13 +23,15 @@ async function bancoResponde(limiteMs) {
 export function criarVerificacaoDeSaude({ limiteMs = TEMPO_LIMITE_MS } = {}) {
   return async (req, res) => {
     const agora = new Date().toISOString();
+    // Só "ok" ou "indisponivel": o motivo (nome da variável) fica no log
+    const login = problemaNaSessao() ? 'indisponivel' : 'ok';
     try {
       await bancoResponde(limiteMs);
-      res.json({ success: true, message: 'API VitrineRondon operando', banco: 'ok', timestamp: agora });
+      res.json({ success: true, message: 'API VitrineRondon operando', banco: 'ok', login, timestamp: agora });
     } catch (erro) {
       // O motivo (host, porta, código do driver) fica no log do servidor
       console.error('Health check: banco indisponível:', erro.message);
-      res.status(503).json({ success: false, message: 'Banco de dados indisponível', banco: 'indisponivel', timestamp: agora });
+      res.status(503).json({ success: false, message: 'Banco de dados indisponível', banco: 'indisponivel', login, timestamp: agora });
     }
   };
 }

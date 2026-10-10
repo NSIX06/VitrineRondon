@@ -16,6 +16,21 @@ function segredo() {
 }
 
 /**
+ * A API consegue abrir sessões? Sem JWT_SECRET, ou com um JWT_EXPIRES_IN que
+ * o jsonwebtoken não entende, todo login certo e todo cadastro dão erro 500,
+ * enquanto o resto do site funciona. Devolve o problema, ou null.
+ */
+export function problemaNaSessao() {
+  if (!process.env.JWT_SECRET) return 'JWT_SECRET não definido';
+  try {
+    gerarToken({ id: 0, perfil: PERFIS.COMUM });
+    return null;
+  } catch (erro) {
+    return `token não pôde ser gerado (${erro.message}); confira JWT_EXPIRES_IN`;
+  }
+}
+
+/**
  * Gera o token de sessão com o mínimo necessário (id e perfil). O jti é o
  * identificador desta sessão: é ele que o logout marca como encerrado.
  */

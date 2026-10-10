@@ -59,6 +59,26 @@ function Cadastro() {
       setCadastrado(true)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     } catch (erro) {
+      // "Já cadastrado" logo depois de uma tentativa que pareceu falhar: a
+      // primeira chegou a gravar conta e negócio, só a resposta se perdeu
+      // (rede ou servidor acordando). Com o e-mail e a senha que a pessoa
+      // acabou de digitar, entra direto e segue para o plano.
+      if (erro.status === 409) {
+        try {
+          const sessao = await api.post('/auth/login', {
+            email: contaPendente.conta.email,
+            senha: contaPendente.conta.senha,
+          })
+          if (sessao.data?.usuario?.empreendedorId) {
+            entrar(sessao.data)
+            setCadastrado(true)
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+            return
+          }
+        } catch {
+          // Senha não confere: é mesmo de outra pessoa; segue o caminho normal
+        }
+      }
       // Erro na conta (ex.: e-mail duplicado) volta para a etapa 1 com a mensagem
       const errosConta = erro.data?.errors?.filter((e) => e.campo.startsWith('conta.'))
       if (errosConta?.length || erro.status === 409) {

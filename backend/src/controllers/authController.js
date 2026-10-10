@@ -96,7 +96,7 @@ export async function registrarComum(req, res, next) {
   try {
     const senhaHash = await bcrypt.hash(senha, 10);
     // Usuário e aceites na mesma transação: sem cadastro concluído, sem aceite (RN-TERMOS-08)
-    const usuario = await prisma.$transaction(async (tx) => {
+    const { usuario, sessao } = await prisma.$transaction(async (tx) => {
       const criado = await tx.usuario.create({
         data: { nome, email, telefone, senhaHash, perfil: PERFIS.COMUM },
         select: usuarioPublico,
@@ -104,7 +104,8 @@ export async function registrarComum(req, res, next) {
       await tx.aceiteTermos.createMany({
         data: montarAceites(contextoDaRequisicao(req)).map((a) => ({ ...a, usuarioId: criado.id })),
       });
-      return criado;
+      // Sessão antes de gravar: token que falha desfaz o cadastro inteiro
+      return { usuario: criado, sessao: respostaSessao(criado) };
     });
 
     await registrarLog(req, {
@@ -117,7 +118,7 @@ export async function registrarComum(req, res, next) {
     });
     await registrarAceiteNoLog(req, usuario);
 
-    res.status(201).json({ success: true, message: 'Conta criada com sucesso', data: respostaSessao(usuario) });
+    res.status(201).json({ success: true, message: 'Conta criada com sucesso', data: sessao });
   } catch (erro) {
     if (ehEmailDuplicado(erro)) {
       await registrarLog(req, {
@@ -143,7 +144,7 @@ export async function registrarEmpreendedor(req, res, next) {
   try {
     const senhaHash = await bcrypt.hash(conta.senha, 10);
     // Conta, negócio e aceites em uma transação só: ou grava tudo, ou nada.
-    const { usuario, empreendedor } = await prisma.$transaction(async (tx) => {
+    const { usuario, empreendedor, sessao } = await prisma.$transaction(async (tx) => {
       const usuarioCriado = await tx.usuario.create({
         data: {
           nome: conta.nome,
@@ -160,7 +161,11 @@ export async function registrarEmpreendedor(req, res, next) {
       await tx.aceiteTermos.createMany({
         data: montarAceites(contextoDaRequisicao(req)).map((a) => ({ ...a, usuarioId: usuarioCriado.id })),
       });
-      return { usuario: usuarioCriado, empreendedor: empreendedorCriado };
+      // A sessão sai antes de gravar: se o token falhar (ex.: JWT_SECRET
+      // ausente), nada fica salvo. Antes a conta era criada, a resposta vinha
+      // com erro e a nova tentativa dava "e-mail já cadastrado".
+      const sessaoCriada = respostaSessao(usuarioCriado, empreendedorCriado);
+      return { usuario: usuarioCriado, empreendedor: empreendedorCriado, sessao: sessaoCriada };
     });
 
     await registrarLog(req, {
@@ -184,7 +189,7 @@ export async function registrarEmpreendedor(req, res, next) {
     res.status(201).json({
       success: true,
       message: 'Conta e negócio criados com sucesso',
-      data: { ...respostaSessao(usuario, empreendedor), empreendedor },
+      data: { ...sessao, empreendedor },
     });
   } catch (erro) {
     if (ehEmailDuplicado(erro)) {

@@ -3,6 +3,7 @@ import 'dotenv/config';
 import app from './app.js';
 import prisma from './config/prisma.js';
 import { encerrarVencidas } from './services/assinaturas.js';
+import { problemaNaSessao } from './middlewares/auth.js';
 
 const PORT = process.env.PORT || 3001;
 const UMA_HORA = 60 * 60 * 1000;
@@ -18,6 +19,14 @@ async function varrerVencidas() {
 }
 
 async function iniciarServidor() {
+  // Sem chave de sessão a vitrine abre, mas ninguém entra nem se cadastra:
+  // o aviso fica no topo do log, em vez de só aparecer no primeiro login
+  const problema = problemaNaSessao();
+  if (problema) {
+    console.error(`\n*** LOGIN E CADASTRO FORA DO AR: ${problema}.`);
+    console.error('*** Defina JWT_SECRET (texto longo e aleatório) nas variáveis de ambiente da API e reinicie.\n');
+  }
+
   try {
     await prisma.$connect();
     console.log('Conectado ao banco de dados MySQL');

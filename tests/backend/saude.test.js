@@ -55,6 +55,23 @@ describe('verificação de saúde', () => {
     expect(JSON.stringify(corpo)).not.toMatch(/localhost|3306|reach/)
   })
 
+  it('diz se o login está configurado, sem contar o motivo', async () => {
+    prisma.$queryRaw.mockResolvedValue([])
+    const original = process.env.JWT_SECRET
+    try {
+      process.env.JWT_SECRET = 'segredo-de-teste'
+      expect((await verificar()).corpo.login).toBe('ok')
+      delete process.env.JWT_SECRET
+      const { codigo, corpo } = await verificar()
+      // O site continua navegável: o health não derruba o deploy por isso
+      expect(codigo).toBe(200)
+      expect(corpo.login).toBe('indisponivel')
+      expect(JSON.stringify(corpo)).not.toMatch(/JWT/)
+    } finally {
+      process.env.JWT_SECRET = original
+    }
+  })
+
   it('desiste e responde 503 quando o banco trava sem responder', async () => {
     prisma.$queryRaw.mockReturnValue(new Promise(() => {}))
     const inicio = Date.now()
