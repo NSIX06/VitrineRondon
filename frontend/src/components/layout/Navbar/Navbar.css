@@ -131,33 +131,55 @@
 }
 
 /* Botão do menu móvel */
-/* Ícone do botão: duas barras em "+" que giram até formar um "×" */
+/* Ícone do botão: hambúrguer de três barras. Ao abrir, a do meio some e as
+   outras duas giram até formar um "×" */
 .navbar__toggle-icone {
   position: relative;
-  width: 18px;
-  height: 18px;
-  transition: transform 0.35s cubic-bezier(0.65, 0, 0.35, 1);
+  width: 20px;
+  height: 16px;
 }
 
 .navbar__toggle-icone > span {
   position: absolute;
-  top: 50%;
   left: 0;
   width: 100%;
   height: 3px;
-  margin-top: -1.5px;
   border-radius: 2px;
   background: currentColor;
+  transition:
+    transform 0.35s cubic-bezier(0.65, 0, 0.35, 1),
+    opacity 0.2s ease,
+    top 0.35s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
-.navbar__toggle-icone > span:last-child {
-  transform: rotate(90deg);
+.navbar__toggle-icone > span:nth-child(1) {
+  top: 0;
 }
 
-.navbar--menu-aberto .navbar__toggle-icone {
-  transform: rotate(225deg);
-  transition-duration: 0.8s;
-  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+.navbar__toggle-icone > span:nth-child(2) {
+  top: 6.5px;
+}
+
+.navbar__toggle-icone > span:nth-child(3) {
+  top: 13px;
+}
+
+.navbar--menu-aberto .navbar__toggle-icone > span:nth-child(1),
+.navbar--menu-aberto .navbar__toggle-icone > span:nth-child(3) {
+  top: 6.5px;
+}
+
+.navbar--menu-aberto .navbar__toggle-icone > span:nth-child(1) {
+  transform: rotate(45deg);
+}
+
+.navbar--menu-aberto .navbar__toggle-icone > span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0.2);
+}
+
+.navbar--menu-aberto .navbar__toggle-icone > span:nth-child(3) {
+  transform: rotate(-45deg);
 }
 
 .navbar__camadas,
@@ -262,7 +284,10 @@
     overscroll-behavior: contain;
   }
 
-  .navbar__camadas,
+  .navbar__camadas {
+    display: contents;
+  }
+
   .navbar__fundo {
     display: block;
   }
@@ -808,7 +833,7 @@
     opacity: 1;
   }
 
-  .navbar__toggle-icone {
+  .navbar__toggle-icone > span {
     transition: none;
   }
 }

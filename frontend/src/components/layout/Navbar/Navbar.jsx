@@ -109,8 +109,9 @@ function Navbar() {
           onClick={() => setMenuAberto((aberto) => !aberto)}
         >
           <span className="visualmente-oculto">{menuAberto ? 'Fechar menu' : 'Abrir menu'}</span>
-          {/* Um "+" que gira até virar "×" ao abrir o painel */}
+          {/* Hambúrguer: as três barras viram um "×" ao abrir o painel */}
           <span className="navbar__toggle-icone" aria-hidden="true">
+            <span />
             <span />
             <span />
           </span>
