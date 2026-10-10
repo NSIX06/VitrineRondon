@@ -20,6 +20,12 @@ const MENSAGENS_POR_STATUS = {
   503: 'O serviço está fora do ar por um instante. Tente de novo em alguns segundos.',
 }
 const MENSAGEM_PADRAO = 'Não foi possível concluir a operação. Tente novamente.'
+// Erros 5xx conhecidos que a API identifica por código: o texto é daqui, e
+// não da resposta, que acima de 500 nunca é aproveitada
+const MENSAGENS_POR_CODIGO = {
+  PAGAMENTO_INDISPONIVEL:
+    'O pagamento está indisponível no momento. Seu negócio continua salvo; tente de novo mais tarde.',
+}
 const TEMPO_LIMITE_MS = 90_000
 
 /**
@@ -164,7 +170,7 @@ async function request(caminho, { method = 'GET', body, headers = {} } = {}) {
     if (response.status === 401 && token && !caminho.startsWith('/auth/login')) {
       ouvintesSessaoInvalida.forEach((ouvinte) => ouvinte())
     }
-    const erro = new Error(mensagemSegura(data?.message, response.status))
+    const erro = new Error(MENSAGENS_POR_CODIGO[data?.codigo] ?? mensagemSegura(data?.message, response.status))
     erro.status = response.status
     erro.data = data
     throw erro

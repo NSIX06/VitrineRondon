@@ -4,6 +4,7 @@ import app from './app.js';
 import prisma from './config/prisma.js';
 import { encerrarVencidas } from './services/assinaturas.js';
 import { problemaNaSessao } from './middlewares/auth.js';
+import { problemaNoPagamento } from './services/pagamento/index.js';
 
 const PORT = process.env.PORT || 3001;
 const UMA_HORA = 60 * 60 * 1000;
@@ -25,6 +26,15 @@ async function iniciarServidor() {
   if (problema) {
     console.error(`\n*** LOGIN E CADASTRO FORA DO AR: ${problema}.`);
     console.error('*** Defina JWT_SECRET (texto longo e aleatório) nas variáveis de ambiente da API e reinicie.\n');
+  }
+  // Mesma ideia para o pagamento: sem chave, "Ir para o pagamento" dava erro 500
+  const pagamento = problemaNoPagamento();
+  if (pagamento) {
+    console.error(`\n*** PAGAMENTO FORA DO AR: ${pagamento}.`);
+    console.error('*** Defina ABACATEPAY_API_KEY (chave de Dev mode, abc_dev_...) nas variáveis de ambiente da API.\n');
+  }
+  if (process.env.NODE_ENV === 'production' && !process.env.APP_URL) {
+    console.error('*** APP_URL não definida: o checkout voltaria para http://localhost:5173. Defina o endereço do site.\n');
   }
 
   try {

@@ -34,6 +34,18 @@ export function modoTeste() {
   return (process.env.ABACATEPAY_API_KEY || '').startsWith('abc_dev_');
 }
 
+/**
+ * O checkout pode ser aberto com a configuração atual? Devolve o problema
+ * (sem o valor da chave), ou null. Usado no aviso ao subir e no health.
+ */
+export function problemaNaConfiguracao() {
+  if (!process.env.ABACATEPAY_API_KEY) return 'ABACATEPAY_API_KEY não definida';
+  if (!modoTeste() && process.env.ABACATEPAY_PERMITIR_PRODUCAO !== 'true') {
+    return 'ABACATEPAY_API_KEY não é de teste (abc_dev_) e ABACATEPAY_PERMITIR_PRODUCAO não está ligada';
+  }
+  return null;
+}
+
 function chave() {
   const valor = process.env.ABACATEPAY_API_KEY;
   if (!valor) throw new ErroGateway('ABACATEPAY_API_KEY não definida no .env');

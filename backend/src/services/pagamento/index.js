@@ -23,6 +23,15 @@ export { EVENTOS } from './eventos.js';
 
 const PROVEDORES = { abacatepay };
 
+/** Problema de configuração do provedor atual (chave ausente etc.), ou null */
+export function problemaNoPagamento() {
+  try {
+    return provedorPagamento().problemaNaConfiguracao?.() ?? null;
+  } catch (erro) {
+    return erro.message;
+  }
+}
+
 /** Provedor configurado (PAGAMENTO_PROVEDOR, padrão abacatepay) */
 export function provedorPagamento() {
   const nome = process.env.PAGAMENTO_PROVEDOR || 'abacatepay';

@@ -53,6 +53,17 @@ describe('validação (Zod)', () => {
   })
 })
 
+describe('gateway de pagamento', () => {
+  it('chave ausente ou recusa do AbacatePay vira 503 com código, sem o motivo técnico', () => {
+    const erro = Object.assign(new Error('ABACATEPAY_API_KEY não definida no .env'), { name: 'ErroGateway', status: 502 })
+    const { codigo, corpo } = responder(erro, { method: 'POST', originalUrl: '/api/assinaturas' })
+    expect(codigo).toBe(503)
+    expect(corpo.codigo).toBe('PAGAMENTO_INDISPONIVEL')
+    expect(JSON.stringify(corpo)).not.toMatch(/ABACATEPAY|\.env/)
+    expect(logDoServidor).toHaveBeenCalled()
+  })
+})
+
 describe('erros conhecidos do banco', () => {
   it.each([
     ['P2025', 404, /não encontrado/i],

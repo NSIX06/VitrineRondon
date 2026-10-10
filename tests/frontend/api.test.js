@@ -230,6 +230,14 @@ describe('requisição', () => {
     }
   })
 
+  it('pagamento indisponível tem texto próprio, sem repetir o do servidor', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(resposta({ success: false, codigo: 'PAGAMENTO_INDISPONIVEL', message: 'qualquer' }, { status: 503 }))
+    )
+    await expect(api.post('/assinaturas', {})).rejects.toThrow(/pagamento está indisponível/)
+  })
+
   it('não usa como mensagem um corpo que não é JSON', async () => {
     vi.stubGlobal(
       'fetch',

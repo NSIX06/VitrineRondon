@@ -39,6 +39,18 @@ export function errorHandler(erro, req, res, next) {
     });
   }
 
+  // Gateway de pagamento sem chave, recusando ou fora do ar: o defeito não é
+  // da requisição. O motivo (resposta do AbacatePay, variável ausente) fica
+  // no log; o site recebe um código para explicar em linguagem simples.
+  if (erro.name === 'ErroGateway') {
+    registrarNoServidor(req, erro);
+    return res.status(503).json({
+      success: false,
+      codigo: 'PAGAMENTO_INDISPONIVEL',
+      message: 'O pagamento está indisponível no momento. Tente de novo mais tarde',
+    });
+  }
+
   // Erros conhecidos do Prisma
   if (erro instanceof Prisma.PrismaClientKnownRequestError) {
     switch (erro.code) {

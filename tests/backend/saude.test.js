@@ -72,6 +72,22 @@ describe('verificação de saúde', () => {
     }
   })
 
+  it('diz se o pagamento está configurado, sem expor a chave', async () => {
+    prisma.$queryRaw.mockResolvedValue([])
+    const original = process.env.ABACATEPAY_API_KEY
+    try {
+      delete process.env.ABACATEPAY_API_KEY
+      expect((await verificar()).corpo.pagamento).toBe('indisponivel')
+      process.env.ABACATEPAY_API_KEY = 'abc_dev_chave-de-teste'
+      const { corpo } = await verificar()
+      expect(corpo.pagamento).toBe('ok')
+      expect(JSON.stringify(corpo)).not.toMatch(/abc_dev/)
+    } finally {
+      if (original === undefined) delete process.env.ABACATEPAY_API_KEY
+      else process.env.ABACATEPAY_API_KEY = original
+    }
+  })
+
   it('desiste e responde 503 quando o banco trava sem responder', async () => {
     prisma.$queryRaw.mockReturnValue(new Promise(() => {}))
     const inicio = Date.now()

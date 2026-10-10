@@ -108,11 +108,13 @@ Confira antes que nenhum `.env` com senha entrou no commit (`git status` não de
 
    O `JWT_SECRET` e o `ABACATEPAY_WEBHOOK_SECRET` são gerados sozinhos pelo Render.
 
-   > **Criou os serviços à mão (sem Blueprint)?** Aí ninguém gera esses dois: crie na API
-   > **Environment → Add → `JWT_SECRET`** (clique em **Generate** para um valor aleatório) e
-   > **`JWT_EXPIRES_IN` = `8h`**. Sem o `JWT_SECRET` a vitrine abre normalmente, mas todo login
-   > e todo cadastro dão erro. Para conferir, abra `/api/health` da API: tem que mostrar
-   > `"login":"ok"`. O log da API também avisa ao subir: `LOGIN E CADASTRO FORA DO AR`.
+   > **Criou os serviços à mão (sem Blueprint)?** Aí ninguém gera esses valores: crie na API
+   > (**Environment → Add**) `JWT_SECRET` e `ABACATEPAY_WEBHOOK_SECRET` (botão **Generate**),
+   > `JWT_EXPIRES_IN` = `8h`, `ABACATEPAY_API_KEY` (chave de Dev mode, `abc_dev_...`) e
+   > `APP_URL` (endereço do site). Sem o `JWT_SECRET`, login e cadastro dão erro; sem a chave do
+   > AbacatePay, "Ir para o pagamento" dá erro. Para conferir, abra `/api/health` da API: tem que
+   > mostrar `"login":"ok"` e `"pagamento":"ok"`. O log da API também avisa ao subir
+   > (`LOGIN E CADASTRO FORA DO AR`, `PAGAMENTO FORA DO AR`, `APP_URL não definida`).
 
 4. Clique em **Apply**. O primeiro deploy leva alguns minutos. As migrations rodam no build da API:
    se alguma falhar, o build para e nada é publicado.
