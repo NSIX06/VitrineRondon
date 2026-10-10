@@ -57,12 +57,18 @@ describe('ehUpload', () => {
 describe('campoImagem', () => {
   const campo = () => imagens.campoImagem('Imagem inválida')
 
-  it.each(['https://exemplo.com/bolo.jpg', 'http://exemplo.com/bolo.jpg', CAMINHO_VALIDO])(
+  it.each(['https://exemplo.com/bolo.jpg', CAMINHO_VALIDO])(
     'aceita %s',
     (valor) => {
       expect(campo().safeParse(valor).success).toBe(true)
     }
   )
+
+  it('recusa http:// (sem criptografia) com mensagem própria', () => {
+    const resultado = campo().safeParse('http://exemplo.com/bolo.jpg')
+    expect(resultado.success).toBe(false)
+    expect(resultado.error.issues[0].message).toMatch(/https:\/\//)
+  })
 
   it.each(['javascript:alert(1)', 'ftp://exemplo.com/a.jpg', 'foto.png', '/uploads/qualquer.webp'])(
     'recusa %s com a mensagem do campo',

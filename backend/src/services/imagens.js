@@ -41,7 +41,9 @@ const PIXELS_MAXIMOS = 40_000_000;
 // Só o nome que nós mesmos geramos: uuid v4 + .webp. Nada de "../" nem
 // caminhos escolhidos por quem chama a API.
 const NOME_GERADO = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\.webp$/;
-const LINK_EXTERNO = /^https?:\/\/\S+$/i;
+// Só HTTPS: com http:// a imagem viaja sem criptografia (o navegador avisa e
+// pode bloquear) e pode ser trocada no caminho
+const LINK_EXTERNO = /^https:\/\/\S+$/i;
 
 /** O valor é um arquivo enviado por aqui e guardado na pasta local? */
 export function ehUpload(valor) {
@@ -118,12 +120,11 @@ async function chamarNuvem(nuvem, acao, parametros, arquivo) {
   return dados;
 }
 
-/** Link externo completo, http ou https */
+/** Link externo completo, só https */
 function ehLinkExterno(valor) {
   if (!LINK_EXTERNO.test(valor)) return false;
   try {
-    const { protocol } = new URL(valor);
-    return protocol === 'http:' || protocol === 'https:';
+    return new URL(valor).protocol === 'https:';
   } catch {
     return false;
   }
@@ -139,7 +140,8 @@ export function campoImagem(mensagem) {
     .string({ error: mensagem })
     .trim()
     .max(500, 'O endereço da imagem pode ter até 500 caracteres')
-    .refine((valor) => ehUpload(valor) || ehLinkExterno(valor), { error: mensagem });
+    .refine((valor) => !/^http:\/\//i.test(valor), { error: 'Use um link seguro, que comece com https://' })
+    .refine((valor) => /^http:\/\//i.test(valor) || ehUpload(valor) || ehLinkExterno(valor), { error: mensagem });
 }
 
 /**
