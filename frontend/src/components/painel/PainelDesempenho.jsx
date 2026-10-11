@@ -231,30 +231,6 @@ function GraficoDiario({ serie, metrica, aoTrocarMetrica }) {
         <span className="desempenho__traco" aria-hidden="true" /> Linha tracejada: média do período ·
         <span className="desempenho__quadrado" aria-hidden="true" /> Barra amarela: melhor dia
       </p>
-
-      <details className="desempenho__tabela">
-        <summary>Ver os números em tabela</summary>
-        <table>
-          <thead>
-            <tr>
-              <th scope="col">Dia</th>
-              <th scope="col">Visitas</th>
-              <th scope="col">Contatos</th>
-              <th scope="col">Produtos vistos</th>
-            </tr>
-          </thead>
-          <tbody>
-            {serie.map((d) => (
-              <tr key={d.dia}>
-                <th scope="row">{diaLongo.format(new Date(d.dia))}</th>
-                <td>{d.VISUALIZACAO_PERFIL}</td>
-                <td>{contatos(d)}</td>
-                <td>{d.VISUALIZACAO_PRODUTO}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </details>
     </figure>
   )
 }

@@ -389,34 +389,6 @@
   border-radius: 3px;
 }
 
-.desempenho__tabela {
-  font-size: var(--texto-sm);
-}
-
-.desempenho__tabela summary {
-  cursor: pointer;
-  font-weight: 700;
-  color: var(--cor-anil);
-}
-
-.desempenho__tabela table {
-  width: 100%;
-  margin-top: var(--esp-2);
-  border-collapse: collapse;
-}
-
-.desempenho__tabela th,
-.desempenho__tabela td {
-  padding: 4px var(--esp-2);
-  border-bottom: 1px dashed var(--cor-superficie-alta);
-  text-align: left;
-}
-
-.desempenho__tabela td {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
 @media (max-width: 600px) {
   /* O gráfico encolhe com a tela e o texto junto: em unidades do desenho, o
      dobro do tamanho volta a dar uns 11px no celular */
