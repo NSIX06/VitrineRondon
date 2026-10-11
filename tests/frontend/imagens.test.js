@@ -96,3 +96,32 @@ describe('frontend e backend aceitam as mesmas imagens', () => {
     expect(TAMANHO_MAXIMO_IMAGEM).toBe(TAMANHO_MAXIMO)
   })
 })
+
+describe('fontesDaImagem (tamanho certo do Cloudinary)', async () => {
+  const { fontesDaImagem, LARGURAS_IMAGEM } = await import('../../frontend/src/services/imagens.js')
+  const NUVEM = 'https://res.cloudinary.com/conta/image/upload/v1791661223/vitrinelocal/75684a2e.webp'
+
+  it('pede ao Cloudinary versões menores, com formato e qualidade automáticos', () => {
+    const { src, srcSet } = fontesDaImagem(NUVEM)
+    expect(src).toBe('https://res.cloudinary.com/conta/image/upload/f_auto,q_auto,c_limit,w_640/v1791661223/vitrinelocal/75684a2e.webp')
+    const versoes = srcSet.split(', ')
+    expect(versoes).toHaveLength(LARGURAS_IMAGEM.length)
+    expect(versoes[0]).toMatch(/\/upload\/f_auto,q_auto,c_limit,w_320\/v1791661223\/.+ 320w$/)
+  })
+
+  it('aceita outras larguras', () => {
+    expect(fontesDaImagem(NUVEM, [100, 200]).srcSet).toMatch(/w_100\/.+ 100w, .+w_200\/.+ 200w$/)
+  })
+
+  it('link de fora e arquivo local passam do jeito que estão, sem srcset', () => {
+    expect(fontesDaImagem('https://images.unsplash.com/foto?w=800')).toEqual({ src: 'https://images.unsplash.com/foto?w=800' })
+    const local = fontesDaImagem('/uploads/3f2b8c1e-9a4d-4e7f-8b2a-1c5d6e7f8a9b.webp')
+    expect(local.srcSet).toBeUndefined()
+    expect(local.src).toBe(`${ORIGEM_API}/uploads/3f2b8c1e-9a4d-4e7f-8b2a-1c5d6e7f8a9b.webp`)
+  })
+
+  it('sem foto, sem endereço', () => {
+    expect(fontesDaImagem('')).toEqual({ src: '' })
+    expect(fontesDaImagem(null).src).toBeFalsy()
+  })
+})

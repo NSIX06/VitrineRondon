@@ -2,9 +2,7 @@ import { Link } from 'react-router-dom'
 import Tag from '../../components/ui/Tag/Tag'
 import TagTipo from '../../components/ui/Tag/TagTipo'
 import Icone from '../../components/ui/Icone/Icone'
-import imagemPadrao from '../../assets/imagem-padrao.svg'
-import { urlImagem } from '../../services/imagens'
-import { estiloDoFoco } from '../../services/enquadramento'
+import Foto from '../../components/ui/Foto/Foto'
 import { formatarPreco } from '../../services/formatos'
 
 /**
@@ -19,18 +17,7 @@ function ItemDoCatalogo({ produto, linkPedido, aoPedir }) {
   return (
     <article className={`item-catalogo ${!disponivel ? 'item-catalogo--indisponivel' : ''}`}>
       <div className="item-catalogo__foto">
-        <img
-          decoding="async"
-          loading="lazy"
-          src={urlImagem(imagem) || imagemPadrao}
-          style={imagem ? estiloDoFoco(imagemFoco) : undefined}
-          alt=""
-          onError={(evento) => {
-            evento.currentTarget.src = imagemPadrao
-            evento.currentTarget.style.objectPosition = ''
-            evento.currentTarget.style.transform = ''
-          }}
-        />
+        <Foto valor={imagem} foco={imagemFoco} sizes="(max-width: 600px) 100vw, 200px" />
         <span className="item-catalogo__tags">
           <TagTipo tipo={tipo} />
           {!disponivel && <Tag variante="alerta">Indisponível</Tag>}

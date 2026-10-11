@@ -3,9 +3,7 @@ import { Link } from 'react-router-dom'
 import CardSwap, { Card } from '../ui/CardSwap/CardSwap'
 import Icone from '../ui/Icone/Icone'
 import SeloDestaque from '../ui/SeloDestaque/SeloDestaque'
-import imagemPadrao from '../../assets/imagem-padrao.svg'
-import { urlImagem } from '../../services/imagens'
-import { estiloDoFoco } from '../../services/enquadramento'
+import Foto from '../ui/Foto/Foto'
 import SeloNovo from '../ui/SeloNovo/SeloNovo'
 import { ehNovidade } from '../../services/novidades'
 import './PilhaDeNegocios.css'
@@ -82,15 +80,8 @@ function Pilha({ negocios, disponivel }) {
           >
             <Link to={`/empreendedores/${negocio.id}`} className="pilha-negocios__link" tabIndex={-1}>
               <span className="pilha-negocios__foto">
-                <img
-                  src={urlImagem(negocio.fotoUrl) || imagemPadrao}
-                  style={estiloDoFoco(negocio.fotoFoco)}
-                  alt=""
-                  decoding="async"
-                  onError={(evento) => {
-                    evento.currentTarget.src = imagemPadrao
-                  }}
-                />
+                {/* No topo da Home: carrega já, sem esperar a rolagem */}
+                <Foto valor={negocio.fotoUrl} foco={negocio.fotoFoco} sizes="320px" prioridade />
               </span>
               <span className="pilha-negocios__corpo">
                 <span className="pilha-negocios__etiquetas">

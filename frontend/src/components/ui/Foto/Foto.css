@@ -1,0 +1,32 @@
+/* Enquanto a foto não chega, o próprio <img> (ainda vazio) mostra um brilho
+   passando sobre o fundo da moldura; quando chega, esmaece para dentro */
+.foto--carregando {
+  background:
+    linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.55) 50%, transparent 70%) -150% 0 / 60% 100%
+      no-repeat,
+    var(--cor-superficie-media, #e8e4d8);
+  animation: foto-brilho 1.3s ease-in-out infinite;
+}
+
+@keyframes foto-brilho {
+  to {
+    background-position: 250% 0, 0 0;
+  }
+}
+
+.foto--pronta {
+  animation: foto-entra 0.35s ease-out;
+}
+
+@keyframes foto-entra {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .foto--carregando,
+  .foto--pronta {
+    animation: none;
+  }
+}

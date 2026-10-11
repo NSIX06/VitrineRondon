@@ -2,9 +2,7 @@ import { Link } from 'react-router-dom'
 import Tag from '../../ui/Tag/Tag'
 import Icone from '../../ui/Icone/Icone'
 import SeloDestaque from '../../ui/SeloDestaque/SeloDestaque'
-import imagemPadrao from '../../../assets/imagem-padrao.svg'
-import { urlImagem } from '../../../services/imagens'
-import { estiloDoFoco } from '../../../services/enquadramento'
+import Foto from '../../ui/Foto/Foto'
 import SeloNovo from '../../ui/SeloNovo/SeloNovo'
 import { ehNovidade } from '../../../services/novidades'
 import './EmpreendedorCard.css'
@@ -18,22 +16,16 @@ function EmpreendedorCard({ empreendedor }) {
     empreendedor
   const totalItens = _count?.produtos
 
-  const tratarErroImagem = (evento) => {
-    evento.currentTarget.src = imagemPadrao
-  }
-
   return (
     // Negócio do plano Destaque: cartão premium, em anil e dourado, com reflexo ao passar
     <article className={`empreendedor-card ${emDestaque ? 'empreendedor-card--destaque reflexo-ao-passar' : ''}`}>
       <Link to={`/empreendedores/${id}`} className="empreendedor-card__foto-wrapper">
-        <img
-          decoding="async"
+        <Foto
           className="empreendedor-card__foto"
-          src={urlImagem(fotoUrl) || imagemPadrao}
-          style={estiloDoFoco(empreendedor.fotoFoco)}
+          valor={fotoUrl}
+          foco={empreendedor.fotoFoco}
           alt={`Foto de ${nomeNegocio}`}
-          loading="lazy"
-          onError={tratarErroImagem}
+          sizes="(max-width: 600px) 100vw, (max-width: 1100px) 50vw, 380px"
         />
       </Link>
 

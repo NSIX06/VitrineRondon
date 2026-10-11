@@ -17,7 +17,6 @@ import Icone from '../../components/ui/Icone/Icone'
 import Mapa from '../../components/ui/Mapa/MapaPreguicoso'
 import { SITUACAO_NEGOCIO } from '../../services/planos'
 import { METRICAS, registrarMetrica } from '../../services/metricas'
-import imagemPadrao from '../../assets/imagem-padrao.svg'
 import { useRelogio } from '../../hooks/useRelogio'
 import SeloNovo from '../../components/ui/SeloNovo/SeloNovo'
 import SeloDestaque from '../../components/ui/SeloDestaque/SeloDestaque'
@@ -26,8 +25,7 @@ import ItemDoCatalogo from './ItemDoCatalogo'
 import '../detalhe-migalhas.css'
 import './EmpreendedorDetalhe.css'
 import Voltar from '../../components/ui/Voltar/Voltar'
-import { urlImagem } from '../../services/imagens'
-import { estiloDoFoco } from '../../services/enquadramento'
+import Foto from '../../components/ui/Foto/Foto'
 
 /** A busca no catálogo só aparece quando há itens para procurar */
 const MINIMO_PARA_BUSCA = 4
@@ -218,15 +216,7 @@ function EmpreendedorDetalhe() {
           {/* Cabeçalho do perfil: capa dentro do cartão, monograma, nome e o essencial */}
           <header className="detalhe__cabecalho">
             <div className="detalhe__capa">
-              <img
-                decoding="async"
-                src={urlImagem(fotoUrl) || imagemPadrao}
-                style={estiloDoFoco(fotoFoco)}
-                alt=""
-                onError={(evento) => {
-                  evento.currentTarget.src = imagemPadrao
-                }}
-              />
+              <Foto valor={fotoUrl} foco={fotoFoco} sizes="(max-width: 1200px) 100vw, 1140px" prioridade />
               <div className="detalhe__capa-sombra" />
               {emDestaque && (
                 <span className="detalhe__fita" title="Negócio com o plano Destaque do VitrineRondon">
@@ -244,11 +234,11 @@ function EmpreendedorDetalhe() {
                   aria-hidden="true"
                 >
                   {logoUrl && !logoFalhou ? (
-                    <img
-                      src={urlImagem(logoUrl)}
-                      style={estiloDoFoco(logoFoco)}
-                      alt=""
-                      decoding="async"
+                    <Foto
+                      valor={logoUrl}
+                      foco={logoFoco}
+                      sizes="120px"
+                      prioridade
                       onError={() => setLogoFalhou(true)}
                     />
                   ) : (

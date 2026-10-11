@@ -3,9 +3,7 @@ import Tag from '../../ui/Tag/Tag'
 import Icone from '../../ui/Icone/Icone'
 import SeloDestaque from '../../ui/SeloDestaque/SeloDestaque'
 import { METRICAS, registrarMetrica } from '../../../services/metricas'
-import imagemPadrao from '../../../assets/imagem-padrao.svg'
-import { urlImagem } from '../../../services/imagens'
-import { estiloDoFoco } from '../../../services/enquadramento'
+import Foto from '../../ui/Foto/Foto'
 import { formatarPreco } from '../../../services/formatos'
 import TagTipo from '../../ui/Tag/TagTipo'
 import SeloNovo from '../../ui/SeloNovo/SeloNovo'
@@ -21,23 +19,14 @@ import './ProdutoCard.css'
 function ProdutoCard({ produto, linkWhatsapp }) {
   const { id, nome, descricao, preco, tipo, imagem, imagemFoco, disponivel, empreendedor } = produto
 
-  const tratarErroImagem = (evento) => {
-    evento.currentTarget.src = imagemPadrao
-    evento.currentTarget.style.objectPosition = ''
-    evento.currentTarget.style.transform = ''
-  }
-
   return (
     <article className={`produto-card ${!disponivel ? 'produto-card--indisponivel' : ''}`}>
       <div className="produto-card__imagem-wrapper">
-        <img
-          decoding="async"
+        <Foto
           className="produto-card__imagem"
-          src={urlImagem(imagem) || imagemPadrao}
-          style={imagem ? estiloDoFoco(imagemFoco) : undefined}
-          alt=""
-          loading="lazy"
-          onError={tratarErroImagem}
+          valor={imagem}
+          foco={imagemFoco}
+          sizes="(max-width: 600px) 100vw, (max-width: 1100px) 50vw, 380px"
         />
         <div className="produto-card__tags">
           <TagTipo tipo={tipo} />

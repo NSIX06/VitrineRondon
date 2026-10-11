@@ -31,6 +31,32 @@ export function urlImagem(valor) {
   return valor.startsWith(PREFIXO_UPLOAD) ? `${ORIGEM_API}${valor}` : valor
 }
 
+// Larguras pedidas ao Cloudinary para o srcset: o navegador escolhe a menor
+// que preenche o espaço na tela (já contando a densidade da tela do celular)
+export const LARGURAS_IMAGEM = [320, 480, 640, 960, 1280, 1600]
+
+/** Endereço do Cloudinary com uma transformação no lugar certo (logo depois de /upload/) */
+function comTransformacao(url, transformacao) {
+  return url.replace('/image/upload/', `/image/upload/${transformacao}/`)
+}
+
+/**
+ * Fontes para a <img>: { src, srcSet? }. Foto no Cloudinary vem redimensionada
+ * pelo próprio Cloudinary (formato e qualidade automáticos, sem aumentar a
+ * original): um cartão de 350 px baixava a foto inteira de 1600 px. Link de
+ * fora e arquivo da pasta local passam do jeito que estão.
+ * - `larguras`: as versões oferecidas no srcset
+ */
+export function fontesDaImagem(valor, larguras = LARGURAS_IMAGEM) {
+  const src = urlImagem(valor)
+  if (!src || !src.startsWith(PREFIXO_NUVEM) || !src.includes('/image/upload/')) return { src }
+  const versao = (largura) => comTransformacao(src, `f_auto,q_auto,c_limit,w_${largura}`)
+  return {
+    src: versao(larguras[Math.min(2, larguras.length - 1)]),
+    srcSet: larguras.map((largura) => `${versao(largura)} ${largura}w`).join(', '),
+  }
+}
+
 /**
  * Confere o arquivo antes de enviar, para não gastar upload à toa.
  * Devolve a mensagem de erro, ou null se estiver tudo certo.

@@ -10,7 +10,6 @@ import Button from '../../components/ui/Button/Button'
 import Tag from '../../components/ui/Tag/Tag'
 import Icone from '../../components/ui/Icone/Icone'
 import ProdutoCard from '../../components/cards/ProdutoCard/ProdutoCard'
-import imagemPadrao from '../../assets/imagem-padrao.svg'
 import { formatarPreco } from '../../services/formatos'
 import TagTipo from '../../components/ui/Tag/TagTipo'
 import SeloNovo from '../../components/ui/SeloNovo/SeloNovo'
@@ -18,9 +17,8 @@ import { ehNovidade } from '../../services/novidades'
 import '../detalhe-migalhas.css'
 import './ProdutoDetalhe.css'
 import Voltar from '../../components/ui/Voltar/Voltar'
-import { urlImagem } from '../../services/imagens'
-import { estiloDoFoco } from '../../services/enquadramento'
 import { METRICAS, registrarMetrica } from '../../services/metricas'
+import Foto from '../../components/ui/Foto/Foto'
 
 /** Quantos outros itens do mesmo negócio aparecem embaixo */
 const OUTROS_ITENS = 3
@@ -30,12 +28,6 @@ function linkDoItem(numero, nomeNegocio, nomeItem) {
     numero,
     `Olá! Vi "${nomeItem}" do ${nomeNegocio} no VitrineRondon e gostaria de mais informações.`
   )
-}
-
-const trocarPorPadrao = (evento) => {
-  evento.currentTarget.src = imagemPadrao
-  evento.currentTarget.style.objectPosition = ''
-  evento.currentTarget.style.transform = ''
 }
 
 function ProdutoDetalhe() {
@@ -129,13 +121,7 @@ function ProdutoDetalhe() {
         <section className="container item__principal">
           <div className="item__coluna">
             <div className="item__foto">
-              <img
-                decoding="async"
-                src={urlImagem(imagem) || imagemPadrao}
-                style={imagem ? estiloDoFoco(imagemFoco) : undefined}
-                alt={nome}
-                onError={trocarPorPadrao}
-              />
+              <Foto valor={imagem} foco={imagemFoco} alt={nome} sizes="(max-width: 900px) 100vw, 600px" prioridade />
               <div className="item__foto-tags">
                 <TagTipo tipo={tipo} />
                 {!disponivel && <Tag variante="alerta">Indisponível</Tag>}
@@ -238,13 +224,11 @@ function ProdutoDetalhe() {
                 </span>
               </div>
               <div className="item__negocio-corpo">
-                <img
+                <Foto
                   className="item__negocio-foto"
-                  decoding="async"
-                  src={urlImagem(empreendedor.fotoUrl) || imagemPadrao}
-                  style={estiloDoFoco(empreendedor.fotoFoco)}
-                  alt=""
-                  onError={trocarPorPadrao}
+                  valor={empreendedor.fotoUrl}
+                  foco={empreendedor.fotoFoco}
+                  sizes="160px"
                 />
                 <div className="item__negocio-texto">
                   <Link to={perfil} className="item__negocio-nome">
