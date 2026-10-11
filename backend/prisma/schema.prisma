@@ -87,6 +87,8 @@ model Produto {
   preco          Float
   tipo           String       @default("produto") @db.VarChar(20) // "produto" | "servico"
   imagem         String?      @db.VarChar(500)
+  // Enquadramento da foto: "x% y%" e zoom opcional ("50% 30% 1.4")
+  imagemFoco     String?      @map("imagem_foco") @db.VarChar(20)
   disponivel     Boolean      @default(true)
   empreendedorId Int          @map("empreendedor_id")
   createdAt      DateTime     @default(now()) @map("created_at")

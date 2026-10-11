@@ -4,6 +4,7 @@ import TagTipo from '../../components/ui/Tag/TagTipo'
 import Icone from '../../components/ui/Icone/Icone'
 import imagemPadrao from '../../assets/imagem-padrao.svg'
 import { urlImagem } from '../../services/imagens'
+import { estiloDoFoco } from '../../services/enquadramento'
 import { formatarPreco } from '../../services/formatos'
 
 /**
@@ -12,7 +13,7 @@ import { formatarPreco } from '../../services/formatos'
  * (link estendido) e leva à página do item; o botão de pedir fica por cima.
  */
 function ItemDoCatalogo({ produto, linkPedido, aoPedir }) {
-  const { id, nome, descricao, preco, tipo, imagem, disponivel } = produto
+  const { id, nome, descricao, preco, tipo, imagem, imagemFoco, disponivel } = produto
   const ehServico = tipo === 'servico'
 
   return (
@@ -22,9 +23,12 @@ function ItemDoCatalogo({ produto, linkPedido, aoPedir }) {
           decoding="async"
           loading="lazy"
           src={urlImagem(imagem) || imagemPadrao}
+          style={imagem ? estiloDoFoco(imagemFoco) : undefined}
           alt=""
           onError={(evento) => {
             evento.currentTarget.src = imagemPadrao
+            evento.currentTarget.style.objectPosition = ''
+            evento.currentTarget.style.transform = ''
           }}
         />
         <span className="item-catalogo__tags">

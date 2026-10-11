@@ -5,6 +5,7 @@ import CampoImagem from '../CampoImagem/CampoImagem'
 import { errosDoServidor } from '../../../services/validacoes'
 import { useFocoNoErro } from '../../../hooks/useFocoNoErro'
 import CaixaDeMarcar from '../../ui/CaixaDeMarcar/CaixaDeMarcar'
+import { FOCO_PADRAO } from '../../../services/enquadramento'
 import './ProdutoForm.css'
 
 const estadoInicialPadrao = {
@@ -13,9 +14,14 @@ const estadoInicialPadrao = {
   preco: '',
   tipo: 'produto',
   imagem: '',
+  imagemFoco: FOCO_PADRAO,
   disponivel: true,
   empreendedorId: '',
 }
+
+// Onde a foto do item aparece cortada: cartão da vitrine, catálogo do perfil e
+// página do item usam a mesma proporção
+const FORMATOS_ITEM = [{ rotulo: 'Cartão e página do item', proporcao: '4 / 3' }]
 
 /** Converte um registro da API no estado do formulário (modo edição) */
 function montarEstadoInicial(initialData, negocioFixo) {
@@ -29,6 +35,7 @@ function montarEstadoInicial(initialData, negocioFixo) {
     preco: initialData.preco ?? '',
     tipo: initialData.tipo ?? 'produto',
     imagem: initialData.imagem ?? '',
+    imagemFoco: initialData.imagemFoco || FOCO_PADRAO,
     disponivel: initialData.disponivel ?? true,
     empreendedorId: initialData.empreendedorId ?? negocioFixo?.id ?? '',
   }
@@ -96,6 +103,7 @@ function ProdutoForm({ initialData, empreendedores = [], negocioFixo, onSubmit, 
       preco: Number(String(valores.preco).replace(',', '.')),
       tipo: valores.tipo,
       imagem: valores.imagem.trim() || null,
+      imagemFoco: valores.imagem.trim() ? valores.imagemFoco || FOCO_PADRAO : null,
       disponivel: valores.disponivel,
       empreendedorId: Number(valores.empreendedorId),
     }
@@ -231,12 +239,17 @@ function ProdutoForm({ initialData, empreendedores = [], negocioFixo, onSubmit, 
         rotulo="Imagem"
         valor={valores.imagem}
         onChange={(imagem) => {
-          setValores((anterior) => ({ ...anterior, imagem }))
+          // Foto nova começa centralizada e sem zoom
+          setValores((anterior) => ({ ...anterior, imagem, imagemFoco: FOCO_PADRAO }))
           if (errosCampos.imagem) setErrosCampos((anterior) => ({ ...anterior, imagem: undefined }))
         }}
         erro={errosCampos.imagem}
-        ajuda="Opcional. Sem imagem, a vitrine mostra uma ilustração padrão."
+        ajuda="Opcional. Sem imagem, a vitrine mostra uma ilustração padrão. Depois de escolher, arraste e aproxime para ajustar o que aparece no cartão."
         onEnviando={setEnviandoImagem}
+        foco={valores.imagemFoco}
+        onFocoChange={(imagemFoco) => setValores((anterior) => ({ ...anterior, imagemFoco }))}
+        formatos={FORMATOS_ITEM}
+        comZoom
       />
 
       <div className="campo campo--checkbox">

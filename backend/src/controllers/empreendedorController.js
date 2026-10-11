@@ -6,6 +6,7 @@ import { registrarLog, diferencas } from '../services/auditoria.js';
 import { horariosSchema, incluirHorarios, comHorariosParaPrisma } from '../services/horarios.js';
 import { erroHttp, parseId } from '../utils/erros.js';
 import { lerPaginacao, resumoPaginacao } from '../utils/paginacao.js';
+import { campoFoco } from '../utils/enquadramento.js';
 import { apagarSeOrfa, apagarSeTrocou, campoImagem } from '../services/imagens.js';
 import { registrarImpressoes } from '../services/metricas.js';
 import {
@@ -18,12 +19,6 @@ import {
 // Mesma lista do frontend (services/constantes.js). Validar aqui impede que um
 // negócio fique numa categoria sem filtro na vitrine.
 export const CATEGORIAS = ['Artesanato', 'Alimentação', 'Serviços', 'Moda', 'Beleza'];
-
-// "x% y%" com x e y de 0 a 100: o formato vai direto para o CSS, então nada além disso passa
-const campoFoco = z
-  .string()
-  .trim()
-  .regex(/^(100|\d{1,2})% (100|\d{1,2})%$/, 'Enquadramento inválido');
 
 const empreendedorSchema = z.object({
   nomeNegocio: z

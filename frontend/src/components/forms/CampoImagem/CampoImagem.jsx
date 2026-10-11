@@ -24,6 +24,7 @@ import './CampoImagem.css'
  * - `onEnviando(bool)`: avisa o formulário para segurar o "Salvar" no envio
  * - `foco` / `onFocoChange` / `formatos`: opcionais; com eles, aparece o ajuste
  *   de enquadramento (arrastar a foto nos formatos em que ela é mostrada)
+ * - `comZoom`: no ajuste de enquadramento, também o controle de aproximar
  * - `onArquivo(arquivo | null)`: com ele, o arquivo NÃO é enviado agora. O
  *   campo mostra uma prévia local ("blob:...") e entrega o arquivo ao
  *   formulário, que envia depois. É o caso do cadastro: a conta só existe no
@@ -42,6 +43,7 @@ function CampoImagem({
   onFocoChange,
   formatos,
   onArquivo,
+  comZoom = false,
 }) {
   const entrada = useRef(null)
   const camera = useRef(null)
@@ -241,7 +243,13 @@ function CampoImagem({
       </div>
 
       {temImagem && !previaFalhou && !enviando && formatos && onFocoChange && (
-        <AjusteEnquadramento src={urlImagem(valor.trim())} foco={foco} onChange={onFocoChange} formatos={formatos} />
+        <AjusteEnquadramento
+          src={urlImagem(valor.trim())}
+          foco={foco}
+          onChange={onFocoChange}
+          formatos={formatos}
+          comZoom={comZoom}
+        />
       )}
 
       {mensagemErro && <span className="campo__erro">{mensagemErro}</span>}

@@ -5,6 +5,7 @@ import { ehAdmin } from '../middlewares/auth.js';
 import { registrarLog, diferencas } from '../services/auditoria.js';
 import { erroHttp, parseId } from '../utils/erros.js';
 import { lerPaginacao, resumoPaginacao } from '../utils/paginacao.js';
+import { campoFoco } from '../utils/enquadramento.js';
 import { apagarSeOrfa, apagarSeTrocou, campoImagem } from '../services/imagens.js';
 import { estaPublicado, filtroPublicado } from '../services/publicacao.js';
 import { incluirHorarios } from '../services/horarios.js';
@@ -17,6 +18,7 @@ const produtoSchema = z.object({
     .positive('Preço deve ser um valor positivo'),
   tipo: z.enum(['produto', 'servico'], { error: 'Tipo deve ser "produto" ou "servico"' }),
   imagem: campoImagem('URL da imagem inválida').optional().nullable(),
+  imagemFoco: campoFoco.optional().nullable(),
   disponivel: z.boolean().optional(),
   empreendedorId: z.coerce
     .number({ error: 'empreendedorId é obrigatório e deve ser numérico' })

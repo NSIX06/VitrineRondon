@@ -34,6 +34,8 @@ function linkDoItem(numero, nomeNegocio, nomeItem) {
 
 const trocarPorPadrao = (evento) => {
   evento.currentTarget.src = imagemPadrao
+  evento.currentTarget.style.objectPosition = ''
+  evento.currentTarget.style.transform = ''
 }
 
 function ProdutoDetalhe() {
@@ -74,7 +76,7 @@ function ProdutoDetalhe() {
     )
   }
 
-  const { nome, descricao, preco, tipo, imagem, disponivel, empreendedor } = produto
+  const { nome, descricao, preco, tipo, imagem, imagemFoco, disponivel, empreendedor } = produto
   const ehServico = tipo === 'servico'
   const destaque = empreendedor.emDestaque
   const novo = ehNovidade(empreendedor.publicadoDesde)
@@ -127,7 +129,13 @@ function ProdutoDetalhe() {
         <section className="container item__principal">
           <div className="item__coluna">
             <div className="item__foto">
-              <img decoding="async" src={urlImagem(imagem) || imagemPadrao} alt={nome} onError={trocarPorPadrao} />
+              <img
+                decoding="async"
+                src={urlImagem(imagem) || imagemPadrao}
+                style={imagem ? estiloDoFoco(imagemFoco) : undefined}
+                alt={nome}
+                onError={trocarPorPadrao}
+              />
               <div className="item__foto-tags">
                 <TagTipo tipo={tipo} />
                 {!disponivel && <Tag variante="alerta">Indisponível</Tag>}

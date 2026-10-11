@@ -110,3 +110,18 @@ describe('imagem', () => {
     expect(criar({ imagem: null }).success).toBe(true)
   })
 })
+
+describe('enquadramento da foto do item', () => {
+  it.each(['50% 50%', '20% 80% 1.6', '0% 100% 3'])('aceita %s', (foco) => {
+    expect(criar({ imagemFoco: foco }).success).toBe(true)
+  })
+
+  it('aceita sem enquadramento', () => {
+    expect(criar({ imagemFoco: null }).success).toBe(true)
+  })
+
+  // O valor vai direto para o CSS (object-position e scale)
+  it.each(['center', '50% 50% 9', '50% 50%; color:red', '50% 50% 1.2)'])('recusa %s', (foco) => {
+    expect(criar({ imagemFoco: foco }).success).toBe(false)
+  })
+})
