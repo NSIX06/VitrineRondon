@@ -32,7 +32,7 @@ async function main() {
     await abrir('/contato', '.acordeao')
     const publico = await evaluate(`({
       itens: document.querySelectorAll('.acordeao__item').length,
-      abertos: document.querySelectorAll('.acordeao__painel:not([hidden])').length,
+      abertos: document.querySelectorAll('.acordeao__item--aberto').length,
       atalhoAdmin: [...document.querySelectorAll('a')].some(a => a.href.includes('aba=faq')),
     })`)
     checar('mostra as perguntas ativas', publico.itens >= 1, JSON.stringify(publico))
@@ -44,7 +44,7 @@ async function main() {
     await clicarEm('.acordeao__item:nth-child(2) .acordeao__botao')
     await esperar(300)
     const acordeao = await evaluate(`({
-      abertos: document.querySelectorAll('.acordeao__painel:not([hidden])').length,
+      abertos: document.querySelectorAll('.acordeao__item--aberto').length,
       segundoAberto: __q('.acordeao__item:nth-child(2) .acordeao__botao').getAttribute('aria-expanded'),
       primeiroAberto: __q('.acordeao__item:nth-child(1) .acordeao__botao').getAttribute('aria-expanded'),
     })`)
@@ -61,8 +61,8 @@ async function main() {
     await evaluate("__clickText('Limpar busca')")
     await esperar(300)
 
-    const categorias = await evaluate("[...__q('#perguntas-categoria').options].map(o => o.value).filter(Boolean)")
-    await evaluate(`__set('#perguntas-categoria', ${JSON.stringify(categorias[0])})`)
+    const categorias = await evaluate("[...document.querySelectorAll('.perguntas__assunto')].map(b => b.innerText.trim()).filter(t => t !== 'Todos')")
+    await evaluate(`[...document.querySelectorAll('.perguntas__assunto')].find(b => b.innerText.trim() === ${JSON.stringify(categorias[0])}).click()`)
     await esperar(300)
     const filtradas = await evaluate("document.querySelectorAll('.acordeao__item').length")
     const total = (await (await fetch(`${API}/faq`)).json()).data.filter((p) => p.categoria === categorias[0]).length

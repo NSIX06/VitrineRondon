@@ -7,6 +7,8 @@ import './Acordeao.css'
  * - `itens`: [{ id, titulo, conteudo, rotulo? }]
  * O conteúdo é texto puro: o React escapa tudo, e as quebras de linha que a
  * administração digitou são mantidas pelo CSS.
+ * O painel fica sempre no DOM para abrir e fechar deslizando; fechado, ele é
+ * `inert` (fora do Tab e do leitor de tela), como o `hidden` fazia.
  */
 function Acordeao({ itens }) {
   const prefixo = useId()
@@ -41,9 +43,11 @@ function Acordeao({ itens }) {
               role="region"
               aria-labelledby={idBotao}
               className="acordeao__painel"
-              hidden={!estaAberto}
+              inert={!estaAberto}
             >
-              <p className="acordeao__conteudo">{item.conteudo}</p>
+              <div className="acordeao__painel-dentro">
+                <p className="acordeao__conteudo">{item.conteudo}</p>
+              </div>
             </div>
           </li>
         )

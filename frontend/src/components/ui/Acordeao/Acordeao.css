@@ -24,7 +24,9 @@
   justify-content: space-between;
   gap: var(--esp-4);
   width: 100%;
+  min-height: 56px;
   padding: var(--esp-4) var(--esp-5);
+  transition: background-color 0.2s ease, color 0.2s ease;
   background: none;
   border: none;
   border-left: 5px solid transparent;
@@ -56,29 +58,78 @@
   font-size: var(--texto-xs);
   font-weight: 700;
   letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--cor-cinza-claro);
 }
 
+.acordeao__item--aberto .acordeao__rotulo {
+  color: var(--cor-tinta);
+  opacity: 0.7;
+}
+
+/* A seta fica num círculo: alvo maior e mais claro que dá para tocar */
 .acordeao__seta {
   flex-shrink: 0;
-  transition: transform 0.2s ease;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: var(--borda-fina);
+  border-radius: 50%;
+  background: var(--cor-branco);
+  transition: transform 0.25s ease;
 }
 
 .acordeao__item--aberto .acordeao__seta {
   transform: rotate(180deg);
 }
 
+/* Abre e fecha deslizando: a linha da grade vai de 0 à altura do texto */
 .acordeao__painel {
-  padding: 0 var(--esp-5) var(--esp-5);
+  display: grid;
+  grid-template-rows: 0fr;
   background: var(--cor-superficie-baixa);
-  border-left: 5px solid var(--cor-mostarda);
+  border-left: 5px solid transparent;
+  transition: grid-template-rows 0.28s ease, border-color 0.28s ease;
+}
+
+.acordeao__item--aberto .acordeao__painel {
+  grid-template-rows: 1fr;
+  border-left-color: var(--cor-mostarda);
+}
+
+.acordeao__painel-dentro {
+  min-height: 0;
+  overflow: hidden;
 }
 
 .acordeao__conteudo {
   margin: 0;
+  padding: var(--esp-4) var(--esp-5) var(--esp-5);
   max-width: 70ch;
+  font-size: var(--texto-md);
   color: var(--cor-tinta);
   line-height: 1.65;
   /* Mantém as quebras de linha que a administração digitou, sem aceitar HTML */
   white-space: pre-line;
+}
+
+@media (max-width: 640px) {
+  .acordeao__botao {
+    gap: var(--esp-3);
+    padding: var(--esp-3) var(--esp-4);
+    font-size: var(--texto-sm);
+  }
+
+  .acordeao__conteudo {
+    padding: var(--esp-3) var(--esp-4) var(--esp-4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .acordeao__painel,
+  .acordeao__seta,
+  .acordeao__botao {
+    transition: none;
+  }
 }

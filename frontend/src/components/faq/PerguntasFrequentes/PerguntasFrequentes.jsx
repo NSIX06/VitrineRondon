@@ -83,27 +83,25 @@ function PerguntasFrequentes() {
               </div>
             </div>
 
-            {categorias.length > 0 && (
-              <div className="campo perguntas__categoria">
-                <label className="campo__rotulo" htmlFor="perguntas-categoria">
-                  Assunto
-                </label>
-                <select
-                  id="perguntas-categoria"
-                  className="campo__entrada"
-                  value={categoria}
-                  onChange={(evento) => setCategoria(evento.target.value)}
-                >
-                  <option value="">Todos os assuntos</option>
-                  {categorias.map((opcao) => (
-                    <option key={opcao} value={opcao}>
-                      {opcao}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
           </div>
+
+          {/* Assuntos em botões: no celular, um toque (e a fileira rola de lado),
+              em vez de abrir uma lista suspensa */}
+          {categorias.length > 0 && (
+            <div className="perguntas__assuntos" role="group" aria-label="Filtrar por assunto">
+              {['', ...categorias].map((opcao) => (
+                <button
+                  key={opcao || 'todos'}
+                  type="button"
+                  className={`perguntas__assunto ${categoria === opcao ? 'perguntas__assunto--ativo' : ''}`}
+                  aria-pressed={categoria === opcao}
+                  onClick={() => setCategoria(opcao)}
+                >
+                  {opcao || 'Todos'}
+                </button>
+              ))}
+            </div>
+          )}
 
           <p className="perguntas__contagem" aria-live="polite">
             {temFiltro

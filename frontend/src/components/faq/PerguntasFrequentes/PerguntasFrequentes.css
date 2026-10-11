@@ -22,9 +22,7 @@
 
 .perguntas__filtros {
   display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
   gap: var(--esp-4);
-  align-items: end;
 }
 
 .perguntas__filtros .campo {
@@ -54,8 +52,65 @@
   color: var(--cor-cinza);
 }
 
+/* Assuntos: pílulas que se quebram em linhas; no celular, uma fileira que rola de lado */
+.perguntas__assuntos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}
+
+.perguntas__assunto {
+  min-height: 40px;
+  padding: 0.4rem 1rem;
+  background: var(--cor-branco);
+  border: var(--borda-fina);
+  border-radius: 999px;
+  box-shadow: var(--sombra-dura-sm);
+  font: inherit;
+  font-size: var(--texto-sm);
+  font-weight: 700;
+  color: var(--cor-anil);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: var(--transicao-tecla);
+}
+
+.perguntas__assunto:hover {
+  background: var(--cor-ouro-claro);
+  transform: translate(-1px, -1px);
+}
+
+.perguntas__assunto:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
+.perguntas__assunto--ativo,
+.perguntas__assunto--ativo:hover {
+  background: var(--cor-anil);
+  color: var(--cor-branco);
+}
+
 @media (max-width: 640px) {
-  .perguntas__filtros {
-    grid-template-columns: 1fr;
+  .perguntas__cabecalho {
+    align-items: flex-start;
+  }
+
+  .perguntas__assuntos {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    /* espaço para a sombra dura não ser cortada pela rolagem */
+    padding: 2px 4px 6px 2px;
+    margin-inline: -2px;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+  }
+
+  .perguntas__assuntos::-webkit-scrollbar {
+    display: none;
+  }
+
+  .perguntas__assunto {
+    scroll-snap-align: start;
   }
 }
