@@ -11,15 +11,15 @@ import Spinner from '../../components/ui/Spinner/Spinner'
 import StatusMessage from '../../components/ui/StatusMessage/StatusMessage'
 import ProdutoCard from '../../components/cards/ProdutoCard/ProdutoCard'
 import SeloDestaque from '../../components/ui/SeloDestaque/SeloDestaque'
+import { CONSULTAS_DA_HOME, LIMITE_PILHA, carregarPilha } from './consultas'
 import './Home.css'
 
-// A pilha animada (e o gsap) só carrega quando a Home a desenha: fica fora do
-// pacote da primeira visita
-const PilhaDeNegocios = lazy(() => import('../../components/home/PilhaDeNegocios'))
+// A pilha animada (e o gsap) fica fora do pacote da primeira visita, mas o
+// download começa junto com a Home, sem esperar os dados chegarem
+const PilhaDeNegocios = lazy(carregarPilha)
+carregarPilha()
 
 const LIMITE_PRODUTOS = 6
-// Cartões na pilha do topo: os do Destaque primeiro, completando com os demais
-const LIMITE_PILHA = 6
 
 const funcionalidades = [
   { icone: 'storefront', texto: 'Página simples por empreendedor' },
@@ -32,12 +32,23 @@ const funcionalidades = [
   { icone: 'campaign', texto: 'Divulgação de produtos e serviços locais' },
 ]
 
+/** Esqueleto da pilha enquanto os dados ou o código dela chegam: o lugar já tem forma */
+function EsperaDaPilha() {
+  return (
+    <div className="hero__espera" aria-hidden="true">
+      <span className="hero__espera-cartao" />
+      <span className="hero__espera-cartao" />
+      <span className="hero__espera-cartao" />
+    </div>
+  )
+}
+
 function Home() {
   // Leituras guardadas em cache: ao voltar para a página inicial, tudo aparece na hora
-  const consultaProdutos = useConsulta('/produtos')
-  const consultaEmpreendedores = useConsulta('/empreendedores')
+  const consultaProdutos = useConsulta(CONSULTAS_DA_HOME.produtos)
+  const consultaEmpreendedores = useConsulta(CONSULTAS_DA_HOME.empreendedores)
   // Negócios com o plano Destaque, em rodízio (o servidor embaralha a cada consulta)
-  const consultaDestaques = useConsulta('/empreendedores/destaques', { limite: LIMITE_PILHA })
+  const consultaDestaques = useConsulta(CONSULTAS_DA_HOME.destaques)
   const destaques = consultaDestaques.dados?.data ?? []
   // Filtro das Novidades: escolher uma categoria troca os cartões aqui mesmo,
   // sem sair da página inicial (a lista anterior fica na tela até a nova chegar)
@@ -114,11 +125,11 @@ function Home() {
           {/* Pilha de negócios no lugar do cartaz: Destaque na frente, depois os demais */}
           <div className="hero__palco">
             {feira.length > 0 ? (
-              <Suspense fallback={<div className="hero__espera" aria-hidden="true" />}>
+              <Suspense fallback={<EsperaDaPilha />}>
                 <PilhaDeNegocios negocios={feira} />
               </Suspense>
             ) : (
-              <div className="hero__espera" aria-hidden="true" />
+              <EsperaDaPilha />
             )}
           </div>
         </div>

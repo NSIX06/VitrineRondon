@@ -191,8 +191,23 @@ export function montarQuery(params = {}) {
   return `?${new URLSearchParams(entradas).toString()}`
 }
 
+// Leituras a caminho: o mesmo GET pedido de novo antes de a resposta chegar
+// (pré-carga da Home e a própria Home, duas telas com o mesmo dado) espera a
+// mesma resposta, em vez de bater no servidor duas vezes
+const leiturasEmAndamento = new Map()
+
+function lerUmaVez(caminhoComQuery) {
+  // O token entra na chave: troca de sessão no meio do caminho não reaproveita
+  const chave = `${obterToken() ?? ''} ${caminhoComQuery}`
+  if (!leiturasEmAndamento.has(chave)) {
+    const pedido = request(caminhoComQuery).finally(() => leiturasEmAndamento.delete(chave))
+    leiturasEmAndamento.set(chave, pedido)
+  }
+  return leiturasEmAndamento.get(chave)
+}
+
 const api = {
-  get: (caminho, params) => request(`${caminho}${montarQuery(params)}`),
+  get: (caminho, params) => lerUmaVez(`${caminho}${montarQuery(params)}`),
   post: (caminho, body) => request(caminho, { method: 'POST', body }),
   put: (caminho, body) => request(caminho, { method: 'PUT', body }),
   patch: (caminho, body) => request(caminho, { method: 'PATCH', body }),
