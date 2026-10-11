@@ -46,7 +46,7 @@ function ProdutoCard({ produto, linkWhatsapp }) {
       <div className="produto-card__corpo">
         <h3 className="produto-card__nome">
           <Link to={`/produtos/${id}`} className="produto-card__link">
-            {nome}
+            <span className="nome-letreiro">{nome}</span>
           </Link>
         </h3>
         {descricao && <p className="produto-card__descricao">{descricao}</p>}

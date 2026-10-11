@@ -37,7 +37,7 @@ function ItemDoCatalogo({ produto, linkPedido, aoPedir }) {
         <div className="item-catalogo__topo">
           <h3 className="item-catalogo__nome">
             <Link to={`/produtos/${id}`} className="item-catalogo__link">
-              {nome}
+              <span className="nome-letreiro">{nome}</span>
             </Link>
           </h3>
           <p className="item-catalogo__preco">

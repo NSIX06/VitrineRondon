@@ -629,8 +629,11 @@ html .sobre__ods {
    colavam. Os riscos de brilho ficam só nos h1 grandes, onde cabem sem cortar
    as letras. Cores: --letra-luz/--letra-sombra (padrão: anil).
    ========================================================================== */
-/* Nomes nos cartões (negócios, produtos, a pilha da Home e o catálogo do perfil) usam o mesmo letreiro */
-:is(h1, h2, .empreendedor-card__nome, .produto-card__nome, .pilha-negocios__nome, .item-catalogo__nome):not(
+/* Nomes nos cartões (negócios, produtos, a pilha da Home e o catálogo do perfil) usam o mesmo letreiro.
+   Nos cartões ele vai num <span class="nome-letreiro"> DENTRO do link: o filter
+   cria um bloco de contenção, e no título em volta do link o "link estendido"
+   (::after com inset: 0) passava a cobrir só o nome, e não o cartão inteiro */
+:is(h1, h2, .nome-letreiro, .pilha-negocios__nome):not(
     .detalhe__horarios-titulo,
     .visualmente-oculto
   ) {

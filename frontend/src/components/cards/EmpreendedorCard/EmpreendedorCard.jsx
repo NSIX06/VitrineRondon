@@ -45,7 +45,7 @@ function EmpreendedorCard({ empreendedor }) {
         </div>
         <h3 className="empreendedor-card__nome">
           <Link to={`/empreendedores/${id}`} className="empreendedor-card__link">
-            {nomeNegocio}
+            <span className="nome-letreiro">{nomeNegocio}</span>
           </Link>
         </h3>
         <span className="empreendedor-card__responsavel">
