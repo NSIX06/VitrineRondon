@@ -24,10 +24,12 @@ async function main() {
 
   try {
     console.log('\n1. Tela que não consegue carregar')
-    await abrir('/')
+    // Derruba só o arquivo da tela Sobre, como uma conexão que cai no meio.
+    // O bloqueio vem antes de abrir o site: com ele aberto, as telas são
+    // baixadas em segundo plano e a Sobre já estaria pronta antes do clique.
     await cdp('Network.enable')
-    // Derruba só o arquivo da tela Sobre, como uma conexão que cai no meio
     await cdp('Network.setBlockedURLs', { urls: ['*Sobre*'] })
+    await abrir('/')
     await evaluate(`__q('.navbar__menu a[href=\"/sobre\"]').click()`)
     await esperarPor("__q('.pagina-erro')", 20000)
     const texto = await evaluate('document.body.innerText')
