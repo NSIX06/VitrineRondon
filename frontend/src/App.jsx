@@ -1,4 +1,4 @@
-import { Suspense, lazy } from 'react'
+import { Suspense, lazy, useEffect } from 'react'
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -6,6 +6,7 @@ import {
   Route,
   RouterProvider,
   ScrollRestoration,
+  useLocation,
 } from 'react-router-dom'
 import Navbar from './components/layout/Navbar/Navbar'
 import Footer from './components/layout/Footer/Footer'
@@ -15,34 +16,71 @@ import RotaProtegida from './components/auth/RotaProtegida/RotaProtegida'
 import { PERFIS } from './contexts/auth'
 import './App.css'
 
+// Cargas das telas, para baixar em segundo plano depois que o site abre
+const cargasDasTelas = []
+const tela = (carregar) => {
+  cargasDasTelas.push(carregar)
+  return carregar
+}
+
 /* Cada tela vira um arquivo à parte, baixado só quando alguém entra nela: quem
    só olha a vitrine não carrega o painel do administrador nem o mapa. A home
    fica de fora porque é a porta de entrada e precisa aparecer de imediato. */
 // A Home também carrega sob demanda: quem chega por outra página não baixa a Home
-const Home = lazy(() => import('./pages/Home/Home'))
-const Vitrine = lazy(() => import('./pages/Vitrine/Vitrine'))
-const ProdutoDetalhe = lazy(() => import('./pages/ProdutoDetalhe/ProdutoDetalhe'))
-const Empreendedores = lazy(() => import('./pages/Empreendedores/Empreendedores'))
-const EmpreendedorDetalhe = lazy(() => import('./pages/EmpreendedorDetalhe/EmpreendedorDetalhe'))
-const Contato = lazy(() => import('./pages/Contato/Contato'))
-const Sobre = lazy(() => import('./pages/Sobre/Sobre'))
-const Admin = lazy(() => import('./pages/Admin/Admin'))
-const MeuNegocio = lazy(() => import('./pages/MeuNegocio/MeuNegocio'))
-const Login = lazy(() => import('./pages/Login/Login'))
-const EsqueciSenha = lazy(() => import('./pages/RecuperarSenha/EsqueciSenha'))
-const RedefinirSenha = lazy(() => import('./pages/RecuperarSenha/RedefinirSenha'))
-const Cadastro = lazy(() => import('./pages/Cadastro/Cadastro'))
-const Termos = lazy(() => import('./pages/Termos/Termos'))
-const Planos = lazy(() => import('./pages/Planos/Planos'))
+const Home = lazy(tela(() => import('./pages/Home/Home')))
+const Vitrine = lazy(tela(() => import('./pages/Vitrine/Vitrine')))
+const ProdutoDetalhe = lazy(tela(() => import('./pages/ProdutoDetalhe/ProdutoDetalhe')))
+const Empreendedores = lazy(tela(() => import('./pages/Empreendedores/Empreendedores')))
+const EmpreendedorDetalhe = lazy(tela(() => import('./pages/EmpreendedorDetalhe/EmpreendedorDetalhe')))
+const Contato = lazy(tela(() => import('./pages/Contato/Contato')))
+const Sobre = lazy(tela(() => import('./pages/Sobre/Sobre')))
+const Admin = lazy(tela(() => import('./pages/Admin/Admin')))
+const MeuNegocio = lazy(tela(() => import('./pages/MeuNegocio/MeuNegocio')))
+const Login = lazy(tela(() => import('./pages/Login/Login')))
+const EsqueciSenha = lazy(tela(() => import('./pages/RecuperarSenha/EsqueciSenha')))
+const RedefinirSenha = lazy(tela(() => import('./pages/RecuperarSenha/RedefinirSenha')))
+const Cadastro = lazy(tela(() => import('./pages/Cadastro/Cadastro')))
+const Termos = lazy(tela(() => import('./pages/Termos/Termos')))
+const Planos = lazy(tela(() => import('./pages/Planos/Planos')))
 
 /** Layout comum: Navbar + conteúdo da rota + Footer */
 function Layout() {
+  const { pathname } = useLocation()
+
+  // Com o site aberto e o navegador ocioso, baixa as outras telas aos poucos:
+  // o clique seguinte já não para em "Carregando a tela...", que fazia a
+  // página encolher e o rodapé subir no meio da troca
+  useEffect(() => {
+    const ocioso = window.requestIdleCallback ?? ((fn) => window.setTimeout(fn, 1500))
+    const cancelar = window.cancelIdleCallback ?? window.clearTimeout
+    let fila = [...cargasDasTelas]
+    let pedido = 0
+    const proxima = () => {
+      const carregar = fila.shift()
+      if (!carregar) return
+      carregar()
+        .catch(() => {})
+        .finally(() => {
+          pedido = ocioso(proxima)
+        })
+    }
+    pedido = ocioso(proxima)
+    return () => {
+      fila = []
+      cancelar(pedido)
+    }
+  }, [])
+
   return (
     <div className="app">
       <Navbar />
       <main className="app__conteudo">
         <Suspense fallback={<div className="app__carregando"><Spinner texto="Carregando a tela..." /></div>}>
-          <Outlet />
+          {/* A tela nova entra com um esmaecimento curto (a chave é o caminho:
+              trocar de aba por ?aba= não repete a entrada) */}
+          <div key={pathname} className="app__tela">
+            <Outlet />
+          </div>
         </Suspense>
       </main>
       <Footer />

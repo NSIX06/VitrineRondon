@@ -253,3 +253,21 @@ textarea.campo__entrada {
   opacity: 0.55;
   pointer-events: none;
 }
+
+/* Entrada de cada tela: esmaece e sobe 6px, rápido o bastante para não atrasar */
+.app__tela {
+  animation: tela-entra 0.22s ease-out;
+}
+
+@keyframes tela-entra {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app__tela {
+    animation: none;
+  }
+}
