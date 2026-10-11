@@ -26,7 +26,7 @@
   width: 100%;
   min-height: 56px;
   padding: var(--esp-4) var(--esp-5);
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: background-color 0.12s ease, color 0.12s ease;
   background: none;
   border: none;
   border-left: 5px solid transparent;
@@ -77,30 +77,28 @@
   border: var(--borda-fina);
   border-radius: 50%;
   background: var(--cor-branco);
-  transition: transform 0.25s ease;
+  transition: transform 0.16s ease;
 }
 
 .acordeao__item--aberto .acordeao__seta {
   transform: rotate(180deg);
 }
 
-/* Abre e fecha deslizando: a linha da grade vai de 0 à altura do texto */
 .acordeao__painel {
-  display: grid;
-  grid-template-rows: 0fr;
   background: var(--cor-superficie-baixa);
-  border-left: 5px solid transparent;
-  transition: grid-template-rows 0.28s ease, border-color 0.28s ease;
+  border-left: 5px solid var(--cor-mostarda);
 }
 
-.acordeao__item--aberto .acordeao__painel {
-  grid-template-rows: 1fr;
-  border-left-color: var(--cor-mostarda);
+/* Só opacidade e deslocamento: o navegador anima sem refazer o layout */
+.acordeao__painel:not([hidden]) .acordeao__conteudo {
+  animation: acordeao-entra 0.16s ease-out;
 }
 
-.acordeao__painel-dentro {
-  min-height: 0;
-  overflow: hidden;
+@keyframes acordeao-entra {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
 }
 
 .acordeao__conteudo {
@@ -127,9 +125,12 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .acordeao__painel,
   .acordeao__seta,
   .acordeao__botao {
     transition: none;
+  }
+
+  .acordeao__painel:not([hidden]) .acordeao__conteudo {
+    animation: none;
   }
 }
