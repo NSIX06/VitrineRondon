@@ -22,9 +22,13 @@ export const carregarPilha = () => (pilha ??= import('../../components/home/Pilh
  * depois os dados, depois o código da pilha) e a pilha demorava a aparecer.
  * As consultas usam o mesmo caminho do useConsulta: a Home pega a resposta
  * que já está chegando, em vez de pedir de novo.
+ * Devolve uma promessa que termina quando tudo chegou (ou falhou): é por ela
+ * que a abertura da primeira visita espera.
  */
 export function adiantarHome() {
-  for (const caminho of Object.values(CONSULTAS_DA_HOME)) api.get(caminho).catch(() => {})
-  import('./Home').catch(() => {})
-  carregarPilha().catch(() => {})
+  return Promise.allSettled([
+    ...Object.values(CONSULTAS_DA_HOME).map((caminho) => api.get(caminho)),
+    import('./Home'),
+    carregarPilha(),
+  ])
 }
