@@ -52,7 +52,7 @@
   color: var(--cor-cinza);
 }
 
-/* Assuntos: pílulas que se quebram em linhas; no celular, uma fileira que rola de lado */
+/* Assuntos: pílulas que se quebram em linhas, no computador e no celular */
 .perguntas__assuntos {
   display: flex;
   flex-wrap: wrap;
@@ -96,21 +96,14 @@
     align-items: flex-start;
   }
 
+  /* Os botões quebram em linhas: rolando de lado, o último aparecia cortado
+     pela borda da tela e parecia defeito */
   .perguntas__assuntos {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    /* espaço para a sombra dura não ser cortada pela rolagem */
-    padding: 2px 4px 6px 2px;
-    margin-inline: -2px;
-    scrollbar-width: none;
-    scroll-snap-type: x proximity;
-  }
-
-  .perguntas__assuntos::-webkit-scrollbar {
-    display: none;
+    gap: 6px;
   }
 
   .perguntas__assunto {
-    scroll-snap-align: start;
+    min-height: 38px;
+    padding: 0.35rem 0.8rem;
   }
 }
