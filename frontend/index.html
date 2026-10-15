@@ -13,9 +13,7 @@
     <!-- As fontes saem do próprio site (src/fontes.css). Sem elas no Google, a
          primeira pintura não espera mais duas requisições de CSS de fora. -->
     <!-- fontes:inicio (gerado por scripts/baixar-fontes.mjs) -->
-    <link rel="preload" href="/fontes/texto-latin-a79fdb52d4.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fontes/texto-latin-3100e775e8.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fontes/icones-743e1665c9.woff2" as="font" type="font/woff2" crossorigin />
+    <!-- (sem preload: ver scripts/baixar-fontes.mjs) -->
     <!-- fontes:fim -->
     <title>VitrineRondon</title>
 
@@ -95,6 +93,11 @@
         text-transform: uppercase;
         color: rgba(255, 255, 255, 0.55);
       }
+      .casca__menu {
+        height: 87px;
+        background: #fff;
+        border-bottom: 3px solid #111827;
+      }
       @keyframes abertura-barra {
         to {
           width: 100%;
@@ -136,7 +139,40 @@
         <p class="abertura__rotulo">// vitrinerondon · carregando</p>
       </div>
     </div>
-    <div id="root"></div>
+    <!-- Casca da primeira tela: o topo da Home já vem pronto no HTML, com as
+         mesmas classes do React (pages/Home/Home.jsx). O texto do topo é o
+         maior elemento da tela (LCP) e aparecia só depois de o JavaScript
+         chegar e rodar (~1 s no celular). O React troca a casca pela página de
+         verdade ao montar; o teste "casca da primeira tela" confere que os
+         textos são os mesmos. -->
+    <div id="root">
+      <div class="app" aria-hidden="true">
+        <div class="casca__menu"></div>
+        <main class="app__conteudo">
+          <section class="hero com-pontos">
+            <div class="container hero__conteudo">
+              <div class="hero__texto-bloco">
+                <span class="hero__selo">Comércio de bairro • Rondonópolis-MT</span>
+                <h1 class="hero__titulo">Seu negócio existe.<br />Ninguém encontra.</h1>
+                <p class="hero__texto">O comércio e os serviços de Rondonópolis movimentam cerca de R$ 93 milhões em um dia útil típico. Mas muito negócio de bairro ainda depende de indicação e de grupo de WhatsApp. Sem canal digital, o alcance para na esquina.</p>
+                <span class="fonte">Dado: Folha do Estado, com a CDL</span>
+                <div class="hero__acoes">
+                  <span class="botao botao--destaque botao--md">Ver a vitrine</span>
+                  <span class="botao botao--claro botao--md">Como funciona</span>
+                </div>
+              </div>
+              <div class="hero__palco">
+                <div class="hero__espera">
+                  <span class="hero__espera-cartao"></span>
+                  <span class="hero__espera-cartao"></span>
+                  <span class="hero__espera-cartao"></span>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

@@ -127,13 +127,11 @@ async function main() {
   await writeFile(CSS_SAIDA, `${cabecalho}\n${regras.join('\n\n')}\n${classeIcones}`)
   await writeFile(LISTA_ICONES, `${JSON.stringify(icones, null, 2)}\n`)
 
-  // Pré-carga no index.html dos arquivos usados já na primeira tela (o recorte
-  // latin de cada família e os ícones): o navegador baixa junto com o CSS, em
-  // vez de esperar o CSS ser lido para descobrir que precisa deles
-  const principais = [...new Set([...textos, ...simbolos].filter((f) => f.recorte !== 'latin-ext').map((f) => f.nome))]
-  const preloads = principais
-    .map((nome) => `    <link rel="preload" href="/fontes/${nome}" as="font" type="font/woff2" crossorigin />`)
-    .join('\n')
+  // Sem preload das fontes no index.html: no 4G lento do celular, os 144 KiB
+  // de fonte disputavam a banda com o JavaScript principal e atrasavam o texto
+  // do topo (LCP) em ~0,4 s. Com font-display: swap o texto aparece na hora
+  // com a fonte do sistema e troca quando a fonte chega.
+  const preloads = '    <!-- (sem preload: ver scripts/baixar-fontes.mjs) -->'
   const indexHtml = path.join(RAIZ, 'index.html')
   const html = await readFile(indexHtml, 'utf8')
   const marcador = /( *<!-- fontes:inicio[^>]*-->)[\s\S]*?( *<!-- fontes:fim -->)/
