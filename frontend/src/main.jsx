@@ -1,5 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+// Fontes servidas pelo próprio site (geradas por scripts/baixar-fontes.mjs)
+import './fontes.css'
 import './index.css'
 import App from './App.jsx'
 import { AuthProvider } from './contexts/AuthContext.jsx'

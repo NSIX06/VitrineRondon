@@ -17,8 +17,9 @@ function politicaDeConteudo(urlDaApi) {
     'default-src': ["'self'"],
     'script-src': ["'self'"],
     // 'unsafe-inline' só para estilo: bibliotecas de animação e o mapa escrevem estilo inline
-    'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
-    'font-src': ["'self'", 'https://fonts.gstatic.com'],
+    'style-src': ["'self'", "'unsafe-inline'"],
+    // Fontes servidas pelo próprio site (public/fontes)
+    'font-src': ["'self'"],
     // Fotos vêm do Cloudinary, de links https informados pelos negócios e dos mapas
     'img-src': ["'self'", 'data:', 'blob:', 'https:'],
     'connect-src': ["'self'", api, 'https://nominatim.openstreetmap.org'],
