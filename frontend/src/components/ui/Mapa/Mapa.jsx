@@ -4,6 +4,7 @@ import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import Icone from '../Icone/Icone'
 import { coordenadasDoEndereco, montarEnderecoTexto } from '../../../services/geocodificacao'
+import { ALFINETE_SVG, ATRIBUICAO_OSM, PREFIXO_LEAFLET } from './mapaHtml'
 import './Mapa.css'
 
 const ZOOM_EXATO = 16
@@ -11,13 +12,14 @@ const ZOOM_REGIAO = 14
 // Quando o endereço é privado, o mapa mostra uma área em vez de um ponto
 const RAIO_REGIAO = 600
 
+// Crédito do Leaflet em texto puro: o padrão traz uma bandeira em SVG, e todo
+// HTML que o mapa escreve precisa estar na lista fixa de mapaHtml.js (Trusted Types)
+L.Control.Attribution.prototype.options.prefix = PREFIXO_LEAFLET
+
 // Alfinete desenhado nas cores da marca: evita depender das imagens do Leaflet
 const alfinete = L.divIcon({
   className: 'mapa__alfinete',
-  html: `<svg viewBox="0 0 24 32" width="30" height="40" aria-hidden="true">
-    <path d="M12 0C5.9 0 1 4.9 1 11c0 8 11 21 11 21s11-13 11-21c0-6.1-4.9-11-11-11z" fill="#17346E" stroke="#FFC93C" stroke-width="2"/>
-    <circle cx="12" cy="11" r="4" fill="#FFC93C"/>
-  </svg>`,
+  html: ALFINETE_SVG,
   iconSize: [30, 40],
   iconAnchor: [15, 40],
   popupAnchor: [0, -36],
@@ -149,7 +151,7 @@ function Mapa({
         className="mapa__tela"
       >
         <TileLayer
-          attribution='&copy; colaboradores do <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          attribution={ATRIBUICAO_OSM}
           url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
           maxZoom={19}
         />

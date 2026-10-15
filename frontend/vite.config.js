@@ -26,6 +26,10 @@ function politicaDeConteudo(urlDaApi) {
     'object-src': ["'none'"],
     'base-uri': ["'self'"],
     'form-action': ["'self'"],
+    // Trusted Types: HTML e script em texto só passam pela política "default"
+    // (src/services/trustedTypes.js), que só aceita os textos fixos do mapa
+    'require-trusted-types-for': ["'script'"],
+    'trusted-types': ['default'],
   }
   const conteudo = Object.entries(diretivas)
     .map(([nome, valores]) => `${nome} ${valores.join(' ')}`)

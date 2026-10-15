@@ -1,5 +1,8 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+// Primeiro de tudo: a política de Trusted Types precisa existir antes de
+// qualquer biblioteca escrever HTML (o Leaflet faz isso ao carregar)
+import './services/trustedTypes.js'
 // Fontes servidas pelo próprio site (geradas por scripts/baixar-fontes.mjs)
 import './fontes.css'
 import './index.css'
