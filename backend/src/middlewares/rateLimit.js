@@ -87,6 +87,20 @@ export const limiteCadastro = rateLimit({
 });
 
 /**
+ * Conferência da etapa 1 do cadastro: conta todas as tentativas, porque a
+ * resposta diz se o e-mail já tem conta. Folga maior que a do cadastro (a
+ * pessoa corrige e tenta de novo), mas ainda freia quem testa listas de e-mail.
+ */
+export const limiteConferencia = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 20,
+  skip: ignorarMaquinaLocal,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  handler: recusar('Muitas tentativas a partir desta rede. Aguarde 15 minutos e tente novamente.'),
+});
+
+/**
  * Pedidos de "esqueci a senha": todos contam (não só os que falham), porque cada
  * pedido pode disparar um e-mail. Cinco por IP a cada 15 minutos.
  */

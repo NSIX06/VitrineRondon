@@ -4,6 +4,7 @@ import api from '../../services/api'
 import { useAuth } from '../../contexts/auth'
 import StatusMessage from '../../components/ui/StatusMessage/StatusMessage'
 import ContaForm from '../../components/forms/ContaForm/ContaForm'
+import { errosDoServidor } from '../../services/validacoes'
 import DocumentoLegalModal from '../../components/legal/DocumentoLegalModal/DocumentoLegalModal'
 import EmpreendedorForm from '../../components/forms/EmpreendedorForm/EmpreendedorForm'
 import EscolhaDePlano from '../../components/planos/EscolhaDePlano'
@@ -31,6 +32,10 @@ function Cadastro() {
   // Etapa 1 guardada até a etapa 2 concluir
   const [contaPendente, setContaPendente] = useState(null)
   const [erroNegocio, setErroNegocio] = useState(null)
+  // Conta recusada pelo servidor no fim da etapa 2: volta à etapa 1 com o que
+  // foi digitado e o erro no campo certo (antes voltava vazia, só com
+  // "Dados inválidos")
+  const [contaParaCorrigir, setContaParaCorrigir] = useState(null)
   // Conta e negócio criados: falta só o plano
   const [cadastrado, setCadastrado] = useState(false)
   // Fotos escolhidas no cadastro que não chegaram a ser enviadas
@@ -44,7 +49,13 @@ function Cadastro() {
       .catch(() => {})
   }, [])
 
+  // A etapa 1 só avança depois de o servidor conferir a conta com as mesmas
+  // regras do cadastro (senha comum, e-mail, e-mail já cadastrado...). Se ele
+  // recusar, o ContaForm mostra o erro no campo, sem sair da etapa.
   const guardarConta = async (dados) => {
+    await api.post('/auth/conferir-conta', dados)
+    setErroNegocio(null)
+    setContaParaCorrigir(null)
     setContaPendente(dados)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
@@ -74,6 +85,12 @@ function Cadastro() {
       falhou = true
     }
     setFotosFalharam(falhou)
+  }
+
+  // Voltar da etapa 2 para a 1 sem perder o que foi digitado
+  const voltarParaConta = () => {
+    setContaParaCorrigir({ dados: contaPendente, erros: null })
+    setContaPendente(null)
   }
 
   const cadastrarEmpreendedor = async (negocio, pendentes) => {
@@ -113,7 +130,10 @@ function Cadastro() {
       // Erro na conta (ex.: e-mail duplicado) volta para a etapa 1 com a mensagem
       const errosConta = erro.data?.errors?.filter((e) => e.campo.startsWith('conta.'))
       if (errosConta?.length || erro.status === 409) {
-        setErroNegocio(erro.message)
+        setErroNegocio(
+          erro.status === 409 ? erro.message : 'Confira os dados da sua conta: algum campo não foi aceito.'
+        )
+        setContaParaCorrigir({ dados: contaPendente, erros: errosDoServidor(erro, ['conta.', 'aceites.']) })
         setContaPendente(null)
         window.scrollTo({ top: 0, behavior: 'smooth' })
         return
@@ -166,7 +186,8 @@ function Cadastro() {
                 onSubmit={guardarConta}
                 textoBotao="Continuar"
                 versaoTermos={versaoTermos}
-                valoresIniciais={contaPendente}
+                valoresIniciais={contaPendente ?? contaParaCorrigir?.dados}
+                errosIniciais={contaParaCorrigir?.erros}
               />
             )}
 
@@ -174,7 +195,7 @@ function Cadastro() {
               <>
                 <p className="cadastro__ola">
                   Conta de <strong>{contaPendente.conta.nome}</strong> ({contaPendente.conta.email}).{' '}
-                  <button type="button" className="cadastro__voltar" onClick={() => setContaPendente(null)}>
+                  <button type="button" className="cadastro__voltar" onClick={voltarParaConta}>
                     Editar dados da conta
                   </button>
                 </p>
@@ -185,7 +206,7 @@ function Cadastro() {
                   }}
                   onSubmit={cadastrarEmpreendedor}
                   adiarEnvioDeImagens
-                  onCancelar={() => setContaPendente(null)}
+                  onCancelar={voltarParaConta}
                   textoEnviar="Continuar"
                   textoCancelar="Voltar"
                 />

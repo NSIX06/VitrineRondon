@@ -26,11 +26,12 @@ const aceitesIniciais = { termosDeUso: false, politicaPrivacidade: false }
  * - `onSubmit({ conta, aceites })`: Promise; se rejeitar, os erros do servidor aparecem aqui
  * - `textoBotao`: rótulo do botão de envio
  * - `valoresIniciais`: para voltar de uma etapa seguinte sem perder o que foi digitado
+ * - `errosIniciais`: erros por campo vindos de uma etapa seguinte (ex.: senha recusada no fim)
  */
-function ContaForm({ onSubmit, textoBotao = 'Criar conta', valoresIniciais, versaoTermos }) {
+function ContaForm({ onSubmit, textoBotao = 'Criar conta', valoresIniciais, errosIniciais, versaoTermos }) {
   const [valores, setValores] = useState(() => ({ ...estadoInicial, ...valoresIniciais?.conta }))
   const [aceites, setAceites] = useState(() => ({ ...aceitesIniciais, ...valoresIniciais?.aceites }))
-  const [errosCampos, setErrosCampos] = useState({})
+  const [errosCampos, setErrosCampos] = useState(() => errosIniciais ?? {})
   const [erroGeral, setErroGeral] = useState(null)
   const [enviando, setEnviando] = useState(false)
   const [refForm, irParaErro] = useFocoNoErro()

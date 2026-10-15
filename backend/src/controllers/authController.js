@@ -61,6 +61,33 @@ export const registrarEmpreendedorSchema = z.object({
   aceites: aceitesSchema,
 });
 
+// Etapa 1 do cadastro de empreendedor, conferida antes de ir para a etapa 2:
+// mesmas regras do cadastro de verdade (senha comum, e-mail, telefone...)
+export const conferirContaSchema = z.object({
+  conta: contaSchema,
+  aceites: aceitesSchema,
+});
+
+// POST /api/auth/conferir-conta
+// Só confere, não grava nada. Sem isto, uma senha que a tela aceitava e o
+// servidor recusava só aparecia no fim da etapa 2, e o cadastro voltava à
+// etapa 1 com "Dados inválidos" (relato de um usuário).
+export async function conferirConta(req, res, next) {
+  try {
+    const existente = await prisma.usuario.findUnique({ where: { email: req.body.conta.email }, select: { id: true } });
+    if (existente) {
+      return res.status(409).json({
+        success: false,
+        message: 'Este e-mail já está cadastrado',
+        errors: [{ campo: 'conta.email', mensagem: 'Este e-mail já está cadastrado. Entre ou use "Esqueci a senha".' }],
+      });
+    }
+    res.json({ success: true, message: 'Dados da conta conferidos' });
+  } catch (erro) {
+    next(erro);
+  }
+}
+
 export const loginSchema = z.object({
   email: z.string({ error: 'E-mail é obrigatório' }).trim().toLowerCase().email('E-mail inválido'),
   senha: z.string({ error: 'Senha é obrigatória' }).min(1, 'Senha é obrigatória'),
