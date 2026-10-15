@@ -3,14 +3,26 @@ import { lazy, Suspense, useEffect, useState } from 'react'
 // Carregado à parte: o campo de pontos não pesa na primeira tela
 const DotField = lazy(() => import('./DotField'))
 
-/** Verdadeiro quando o navegador fica ocioso depois de a página aparecer */
+/**
+ * Verdadeiro quando a página terminou de carregar e o navegador ficou ocioso.
+ * Só "ocioso" não bastava: esperando a rede, o navegador fica ocioso antes
+ * mesmo da primeira pintura, e o fundo voltava para o caminho crítico.
+ */
 function useDepoisDaPrimeiraPintura() {
   const [pronto, setPronto] = useState(false)
   useEffect(() => {
     const ocioso = window.requestIdleCallback ?? ((fn) => window.setTimeout(fn, 800))
     const cancelar = window.cancelIdleCallback ?? window.clearTimeout
-    const pedido = ocioso(() => setPronto(true), { timeout: 2000 })
-    return () => cancelar(pedido)
+    let pedido = 0
+    const agendar = () => {
+      pedido = ocioso(() => setPronto(true), { timeout: 2000 })
+    }
+    if (document.readyState === 'complete') agendar()
+    else window.addEventListener('load', agendar, { once: true })
+    return () => {
+      window.removeEventListener('load', agendar)
+      cancelar(pedido)
+    }
   }, [])
   return pronto
 }
