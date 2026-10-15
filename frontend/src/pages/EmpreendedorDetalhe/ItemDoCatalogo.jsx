@@ -17,7 +17,7 @@ function ItemDoCatalogo({ produto, linkPedido, aoPedir }) {
   return (
     <article className={`item-catalogo ${!disponivel ? 'item-catalogo--indisponivel' : ''}`}>
       <div className="item-catalogo__foto">
-        <Foto valor={imagem} foco={imagemFoco} sizes="(max-width: 600px) 100vw, 200px" />
+        <Foto valor={imagem} foco={imagemFoco} sizes="(max-width: 600px) calc(100vw - 64px), 200px" />
         <span className="item-catalogo__tags">
           <TagTipo tipo={tipo} />
           {!disponivel && <Tag variante="alerta">Indisponível</Tag>}

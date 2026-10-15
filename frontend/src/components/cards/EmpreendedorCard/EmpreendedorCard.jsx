@@ -25,7 +25,7 @@ function EmpreendedorCard({ empreendedor }) {
           valor={fotoUrl}
           foco={empreendedor.fotoFoco}
           alt={`Foto de ${nomeNegocio}`}
-          sizes="(max-width: 600px) 100vw, (max-width: 1100px) 50vw, 380px"
+          sizes="(max-width: 600px) calc(100vw - 32px), (max-width: 1100px) 50vw, 380px"
         />
       </Link>
 

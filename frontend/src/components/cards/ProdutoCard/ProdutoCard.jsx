@@ -26,7 +26,7 @@ function ProdutoCard({ produto, linkWhatsapp }) {
           className="produto-card__imagem"
           valor={imagem}
           foco={imagemFoco}
-          sizes="(max-width: 600px) 100vw, (max-width: 1100px) 50vw, 380px"
+          sizes="(max-width: 600px) calc(100vw - 32px), (max-width: 1100px) 50vw, 380px"
         />
         <div className="produto-card__tags">
           <TagTipo tipo={tipo} />
