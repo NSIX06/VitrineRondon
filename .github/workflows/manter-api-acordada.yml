@@ -1,0 +1,29 @@
+# Mantém a API do Render acordada.
+# No plano gratuito, a API dorme depois de 15 minutos sem visitas, e a próxima
+# pessoa espera ela acordar (o relatório de desempenho mostrou 3,3 s só para a
+# primeira consulta). Uma chamada ao /api/health a cada 10 minutos evita isso.
+# Uma API só, ligada o mês inteiro, cabe nas 750 horas gratuitas do Render.
+name: Manter a API acordada
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  chamar-health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Chamar /api/health
+        # Até 3 tentativas: se a API estava dormindo, a primeira pode demorar
+        run: |
+          for tentativa in 1 2 3; do
+            if curl --silent --show-error --fail --max-time 60 https://vitrinerondon.onrender.com/api/health; then
+              exit 0
+            fi
+            sleep 15
+          done
+          exit 1
