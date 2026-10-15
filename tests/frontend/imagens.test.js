@@ -103,10 +103,10 @@ describe('fontesDaImagem (tamanho certo do Cloudinary)', async () => {
 
   it('pede ao Cloudinary versões menores, com formato e qualidade automáticos', () => {
     const { src, srcSet } = fontesDaImagem(NUVEM)
-    expect(src).toBe('https://res.cloudinary.com/conta/image/upload/f_auto,q_auto,c_limit,w_640/v1791661223/vitrinelocal/75684a2e.webp')
+    expect(src).toBe('https://res.cloudinary.com/conta/image/upload/f_auto,q_auto:eco,c_limit,w_640/v1791661223/vitrinelocal/75684a2e.webp')
     const versoes = srcSet.split(', ')
     expect(versoes).toHaveLength(LARGURAS_IMAGEM.length)
-    expect(versoes[0]).toMatch(/\/upload\/f_auto,q_auto,c_limit,w_320\/v1791661223\/.+ 320w$/)
+    expect(versoes[0]).toMatch(/\/upload\/f_auto,q_auto:eco,c_limit,w_320\/v1791661223\/.+ 320w$/)
   })
 
   it('aceita outras larguras', () => {

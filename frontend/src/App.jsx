@@ -16,10 +16,12 @@ import RotaProtegida from './components/auth/RotaProtegida/RotaProtegida'
 import { PERFIS } from './contexts/auth'
 import './App.css'
 
-// Cargas das telas, para baixar em segundo plano depois que o site abre
+// Cargas das telas de navegação, para baixar em segundo plano depois que a
+// pessoa começa a usar o site. As telas pesadas e raras (painéis, termos,
+// cadastro) ficam de fora: baixá-las sem ninguém pedir era JavaScript à toa.
 const cargasDasTelas = []
-const tela = (carregar) => {
-  cargasDasTelas.push(carregar)
+const tela = (carregar, { preCarregar = true } = {}) => {
+  if (preCarregar) cargasDasTelas.push(carregar)
   return carregar
 }
 
@@ -34,25 +36,27 @@ const Empreendedores = lazy(tela(() => import('./pages/Empreendedores/Empreended
 const EmpreendedorDetalhe = lazy(tela(() => import('./pages/EmpreendedorDetalhe/EmpreendedorDetalhe')))
 const Contato = lazy(tela(() => import('./pages/Contato/Contato')))
 const Sobre = lazy(tela(() => import('./pages/Sobre/Sobre')))
-const Admin = lazy(tela(() => import('./pages/Admin/Admin')))
-const MeuNegocio = lazy(tela(() => import('./pages/MeuNegocio/MeuNegocio')))
+const Admin = lazy(tela(() => import('./pages/Admin/Admin'), { preCarregar: false }))
+const MeuNegocio = lazy(tela(() => import('./pages/MeuNegocio/MeuNegocio'), { preCarregar: false }))
 const Login = lazy(tela(() => import('./pages/Login/Login')))
-const EsqueciSenha = lazy(tela(() => import('./pages/RecuperarSenha/EsqueciSenha')))
-const RedefinirSenha = lazy(tela(() => import('./pages/RecuperarSenha/RedefinirSenha')))
-const Cadastro = lazy(tela(() => import('./pages/Cadastro/Cadastro')))
-const Termos = lazy(tela(() => import('./pages/Termos/Termos')))
+const EsqueciSenha = lazy(tela(() => import('./pages/RecuperarSenha/EsqueciSenha'), { preCarregar: false }))
+const RedefinirSenha = lazy(tela(() => import('./pages/RecuperarSenha/RedefinirSenha'), { preCarregar: false }))
+const Cadastro = lazy(tela(() => import('./pages/Cadastro/Cadastro'), { preCarregar: false }))
+const Termos = lazy(tela(() => import('./pages/Termos/Termos'), { preCarregar: false }))
 const Planos = lazy(tela(() => import('./pages/Planos/Planos')))
 
 /** Layout comum: Navbar + conteúdo da rota + Footer */
 function Layout() {
   const { pathname } = useLocation()
 
-  // Com o site aberto e o navegador ocioso, baixa as outras telas aos poucos:
-  // o clique seguinte já não para em "Carregando a tela...", que fazia a
-  // página encolher e o rodapé subir no meio da troca
+  // Depois do primeiro gesto (mexer o mouse, tocar, rolar ou teclar) e com o
+  // navegador ocioso, baixa as outras telas aos poucos: o clique seguinte já
+  // não para em "Carregando a tela...". Esperar o gesto deixa a primeira
+  // pintura só com o que ela precisa.
   useEffect(() => {
     const ocioso = window.requestIdleCallback ?? ((fn) => window.setTimeout(fn, 1500))
     const cancelar = window.cancelIdleCallback ?? window.clearTimeout
+    const gestos = ['pointermove', 'pointerdown', 'scroll', 'keydown', 'touchstart']
     let fila = [...cargasDasTelas]
     let pedido = 0
     const proxima = () => {
@@ -64,8 +68,13 @@ function Layout() {
           pedido = ocioso(proxima)
         })
     }
-    pedido = ocioso(proxima)
+    const comecar = () => {
+      gestos.forEach((gesto) => window.removeEventListener(gesto, comecar))
+      pedido = ocioso(proxima)
+    }
+    gestos.forEach((gesto) => window.addEventListener(gesto, comecar, { once: true, passive: true }))
     return () => {
+      gestos.forEach((gesto) => window.removeEventListener(gesto, comecar))
       fila = []
       cancelar(pedido)
     }
