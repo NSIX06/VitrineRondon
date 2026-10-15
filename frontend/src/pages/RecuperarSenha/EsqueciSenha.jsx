@@ -7,6 +7,7 @@ import StatusMessage from '../../components/ui/StatusMessage/StatusMessage'
 import Voltar from '../../components/ui/Voltar/Voltar'
 import PainelAcesso from '../Login/PainelAcesso'
 import '../Login/Login.css'
+import { FOCAR_AO_ABRIR } from '../../services/constantes'
 
 const FOTO = 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=1200'
 
@@ -94,7 +95,7 @@ function EsqueciSenha() {
                       }}
                       autoComplete="email"
                       placeholder="voce@email.com"
-                      autoFocus
+                      autoFocus={FOCAR_AO_ABRIR}
                     />
                     {erro && <span className="campo__erro">{erro}</span>}
                   </div>

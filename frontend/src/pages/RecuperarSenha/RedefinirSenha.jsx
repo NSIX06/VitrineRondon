@@ -9,6 +9,7 @@ import CampoSenha from '../../components/forms/CampoSenha/CampoSenha'
 import PainelAcesso from '../Login/PainelAcesso'
 import { errosDoServidor } from '../../services/validacoes'
 import '../Login/Login.css'
+import { FOCAR_AO_ABRIR } from '../../services/constantes'
 
 const FOTO = 'https://images.unsplash.com/photo-1556740738-b6a63e27c4df?w=1200'
 
@@ -146,7 +147,7 @@ function RedefinirSenha() {
                     ajuda="Mínimo de 8 caracteres, com letras e números."
                     autoComplete="new-password"
                     maxLength={72}
-                    autoFocus
+                    autoFocus={FOCAR_AO_ABRIR}
                   />
                   <CampoSenha
                     id="nova-senha-confirmacao"

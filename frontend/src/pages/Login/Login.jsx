@@ -9,6 +9,7 @@ import StatusMessage from '../../components/ui/StatusMessage/StatusMessage'
 import PainelAcesso from './PainelAcesso'
 import FundoDePontos from '../../components/ui/DotField/FundoDePontos'
 import './Login.css'
+import { FOCAR_AO_ABRIR } from '../../services/constantes'
 
 /**
  * Painel ao lado do formulário: foto do comércio de bairro, campo de pontos e
@@ -140,7 +141,7 @@ function Login() {
                       onChange={atualizar}
                       autoComplete="email"
                       placeholder="voce@email.com"
-                      autoFocus
+                      autoFocus={FOCAR_AO_ABRIR}
                     />
                     {erros.email && <span className="campo__erro">{erros.email}</span>}
                   </div>
