@@ -19,10 +19,10 @@
     <!-- fontes:fim -->
     <title>VitrineRondon</title>
 
-    <!-- Abertura da primeira visita: fica no HTML (e não no React) para aparecer
-         no primeiro instante, antes de o JavaScript chegar. Na mesma sessão,
-         a próxima visita já começa sem ela. O main.jsx a retira. -->
-    <script src="/abertura.js"></script>
+    <!-- Abertura: aparece sempre que a página carrega do zero (primeiro acesso
+         ou recarregar). Fica no HTML (e não no React) para aparecer no primeiro
+         instante, antes de o JavaScript chegar. O main.jsx a retira. Trocar de
+         tela dentro do site não recarrega a página, então ela não volta. -->
     <style>
       .abertura {
         position: fixed;
@@ -33,9 +33,6 @@
         justify-content: center;
         background: radial-gradient(circle 520px at 50% 45%, #1e3a8a, transparent), #0b1b45;
         transition: transform 0.85s cubic-bezier(0.76, 0, 0.24, 1);
-      }
-      .sem-abertura .abertura {
-        display: none;
       }
       .abertura--saindo {
         transform: translateY(-100%);

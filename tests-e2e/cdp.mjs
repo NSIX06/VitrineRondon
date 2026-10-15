@@ -143,11 +143,12 @@ export async function abrirNavegador({ largura = 1280, altura = 1600, argumentos
   })
   await send('Page.enable')
   await send('Runtime.enable')
-  // A abertura da primeira visita cobre a tela por até 2,6 s: os testes começam
-  // como quem já viu (a mesma sessão), salvo quando o teste é dela mesma
+  // A abertura do site cobre a tela por até 2,6 s a cada carregamento: os
+  // testes a tiram do caminho assim que ela aparece, salvo quando o teste é dela
   if (!comAbertura) {
     await send('Page.addScriptToEvaluateOnNewDocument', {
-      source: "try { sessionStorage.setItem('vitrine-abertura', '1') } catch (e) {}",
+      source:
+        "new MutationObserver((_, obs) => { const a = document.getElementById('abertura'); if (a) { a.remove(); obs.disconnect() } }).observe(document, { childList: true, subtree: true })",
     })
   }
 
