@@ -69,15 +69,18 @@ const DotField = memo(function DotField({
       }
     }
 
-    function redimensionar() {
-      const rect = canvas.parentElement.getBoundingClientRect()
-      size = { w: rect.width, h: rect.height }
-      canvas.width = rect.width * dpr
-      canvas.height = rect.height * dpr
-      canvas.style.width = `${rect.width}px`
-      canvas.style.height = `${rect.height}px`
+    // O tamanho vem do ResizeObserver, que mede depois do layout. Ler
+    // getBoundingClientRect logo ao montar obrigava o navegador a refazer o
+    // layout na hora (o "reflow forçado" do relatório de desempenho).
+    function redimensionar([entrada]) {
+      const { width, height } = entrada.contentRect
+      size = { w: width, h: height }
+      canvas.width = width * dpr
+      canvas.height = height * dpr
+      canvas.style.width = `${width}px`
+      canvas.style.height = `${height}px`
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-      buildDots(rect.width, rect.height)
+      buildDots(width, height)
       ocioso = false
       desenhar()
     }
@@ -201,7 +204,6 @@ const DotField = memo(function DotField({
       if (visivel) iniciar()
     })
     observadorTela.observe(canvas)
-    redimensionar()
 
     let intervalo = null
     if (!parado) {

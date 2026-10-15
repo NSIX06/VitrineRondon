@@ -1,7 +1,19 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 
 // Carregado à parte: o campo de pontos não pesa na primeira tela
 const DotField = lazy(() => import('./DotField'))
+
+/** Verdadeiro quando o navegador fica ocioso depois de a página aparecer */
+function useDepoisDaPrimeiraPintura() {
+  const [pronto, setPronto] = useState(false)
+  useEffect(() => {
+    const ocioso = window.requestIdleCallback ?? ((fn) => window.setTimeout(fn, 800))
+    const cancelar = window.cancelIdleCallback ?? window.clearTimeout
+    const pedido = ocioso(() => setPronto(true), { timeout: 2000 })
+    return () => cancelar(pedido)
+  }, [])
+  return pronto
+}
 
 /**
  * Fundo de pontos interativo para as faixas de destaque (topo da Home e
@@ -24,7 +36,11 @@ const TONS = {
   },
 }
 
+// O fundo é só enfeite: ele entra quando o navegador fica ocioso, fora do
+// caminho da primeira pintura (antes estava na cadeia crítica de arquivos)
 function FundoDePontos({ tom = 'anil', ...props }) {
+  const pronto = useDepoisDaPrimeiraPintura()
+  if (!pronto) return null
   return (
     <Suspense fallback={null}>
       <DotField dotRadius={2} dotSpacing={16} bulgeStrength={60} glowRadius={180} cursorRadius={260} {...TONS[tom]} {...props} />

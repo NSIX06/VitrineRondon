@@ -17,7 +17,7 @@ let pilha
 export const carregarPilha = () => (pilha ??= import('../../components/home/PilhaDeNegocios'))
 
 /**
- * Quem abre o site pela página inicial: dispara as consultas, a Home e a pilha
+ * Quem abre o site pela página inicial: dispara as consultas e a pilha
  * antes de o React desenhar a página. Antes era tudo em fila (código da Home,
  * depois os dados, depois o código da pilha) e a pilha demorava a aparecer.
  * As consultas usam o mesmo caminho do useConsulta: a Home pega a resposta
@@ -28,7 +28,6 @@ export const carregarPilha = () => (pilha ??= import('../../components/home/Pilh
 export function adiantarHome() {
   return Promise.allSettled([
     ...Object.values(CONSULTAS_DA_HOME).map((caminho) => api.get(caminho)),
-    import('./Home'),
     carregarPilha(),
   ])
 }

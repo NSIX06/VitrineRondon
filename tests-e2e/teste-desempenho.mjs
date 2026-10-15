@@ -21,8 +21,11 @@ const totalInicial = arquivosIniciais.reduce((soma, arquivo) => soma + tamanho(a
 
 console.log('\n1. Primeira visita')
 console.log(`  ${arquivosIniciais.length} arquivos, ${kb(totalInicial)}`)
-// Antes de dividir por rota era um pacote só, de 753 kB
-checar('a primeira tela baixa menos de 400 kB', totalInicial < 400 * 1024, `-> ${kb(totalInicial)}`)
+// Antes de dividir por rota era um pacote só, de 753 kB. O teto subiu de 400
+// para 430 kB quando a Home entrou no pacote principal (ela é a porta de
+// entrada): na Home o total baixado é o mesmo, só que sem o segundo vaivém de
+// rede antes do texto do topo, o maior elemento da primeira tela
+checar('a primeira tela baixa menos de 430 kB', totalInicial < 430 * 1024, `-> ${kb(totalInicial)}`)
 checar('o mapa não entra na primeira visita', !arquivosIniciais.some((a) => a.includes('Mapa')))
 checar('o painel do administrador não entra', !arquivosIniciais.some((a) => a.includes('Admin')))
 checar('o leitor de markdown não entra', !arquivosIniciais.some((a) => a.includes('Termos') || a.includes('DocumentoLegal')))
