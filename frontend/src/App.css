@@ -7,6 +7,10 @@
 
 .app__conteudo {
   flex: 1;
+  /* Pelo menos a altura da tela: o rodapé nunca começa à vista enquanto a
+     tela carrega (antes ele subia e era empurrado para baixo, o maior
+     deslocamento de layout no computador) */
+  min-height: 100vh;
   background:
     radial-gradient(520px 420px at 4% 260px, rgba(255, 249, 145, 0.55), transparent 70%),
     radial-gradient(560px 460px at 98% 760px, rgba(120, 160, 255, 0.16), transparent 70%),
@@ -269,5 +273,16 @@ textarea.campo__entrada {
 @media (prefers-reduced-motion: reduce) {
   .app__tela {
     animation: none;
+  }
+}
+
+/* Celular e tablet: campo com letra menor que 16px faz o iPhone dar zoom na
+   página ao tocar nele (e, no login, logo ao abrir, por causa do foco
+   automático). Em telas de toque os campos ficam com pelo menos 16px. */
+@media (pointer: coarse), (max-width: 900px) {
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='file']),
+  select,
+  textarea {
+    font-size: max(16px, 1em);
   }
 }

@@ -135,19 +135,22 @@ function Home() {
         </div>
       </section>
 
-      {!carregando && !erro && (
-        <section className="numeros">
+      {/* A faixa dos números fica sempre no lugar, com um traço enquanto os
+          totais não chegam: aparecendo só depois, ela empurrava a página
+          inteira para baixo (o maior deslocamento de layout no celular) */}
+      {!erro && (
+        <section className="numeros" aria-busy={carregando}>
           <dl className="container numeros__lista">
             <div className="numeros__item">
-              <dd>{totais.empreendedores}</dd>
+              <dd>{carregando ? '–' : totais.empreendedores}</dd>
               <dt>Negócios cadastrados</dt>
             </div>
             <div className="numeros__item">
-              <dd>{totais.produtos}</dd>
+              <dd>{carregando ? '–' : totais.produtos}</dd>
               <dt>Produtos e serviços</dt>
             </div>
             <div className="numeros__item">
-              <dd>{totais.bairros}</dd>
+              <dd>{carregando ? '–' : totais.bairros}</dd>
               <dt>Bairros atendidos</dt>
             </div>
           </dl>

@@ -80,6 +80,10 @@
 .hero__palco {
   display: flex;
   justify-content: center;
+  /* Mesma altura do esqueleto: trocar o esqueleto pela pilha não empurra
+     o resto da página (a pilha fica centralizada dentro) */
+  align-items: center;
+  min-height: 560px;
   min-width: 0;
 }
 
@@ -90,7 +94,11 @@
   min-height: 560px;
 }
 
-/* Esqueleto: três cartões na mesma posição da pilha, com um brilho passando */
+/* Esqueleto: três cartões na mesma posição da pilha, pulsando de leve. A
+   pulsação é só de opacidade, no conjunto: animar o fundo repintava a cada quadro */
+.hero__espera {
+  animation: espera-pulso 1s ease-in-out infinite alternate;
+}
 .hero__espera-cartao {
   position: absolute;
   top: 50%;
@@ -99,11 +107,8 @@
   aspect-ratio: 320 / 380;
   border: 3px solid rgba(255, 255, 255, 0.28);
   border-radius: var(--raio);
-  background:
-    linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.14) 50%, transparent 70%) -150% 0 / 60% 100% no-repeat,
-    rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.09);
   transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) skewY(4deg);
-  animation: espera-brilho 1.6s ease-in-out infinite;
 }
 
 .hero__espera-cartao:nth-child(1) {
@@ -121,14 +126,14 @@
   --y: 0px;
 }
 
-@keyframes espera-brilho {
+@keyframes espera-pulso {
   to {
-    background-position: 250% 0, 0 0;
+    opacity: 0.55;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero__espera-cartao {
+  .hero__espera {
     animation: none;
   }
 }
@@ -367,7 +372,8 @@
     padding-block: var(--esp-6);
   }
 
-  .hero__espera {
+  .hero__espera,
+  .hero__palco {
     min-height: 480px;
   }
 

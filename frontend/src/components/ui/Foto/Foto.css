@@ -1,16 +1,14 @@
-/* Enquanto a foto não chega, o próprio <img> (ainda vazio) mostra um brilho
-   passando sobre o fundo da moldura; quando chega, esmaece para dentro */
+/* Enquanto a foto não chega, o próprio <img> (ainda vazio) mostra o fundo da
+   moldura pulsando de leve; quando chega, esmaece para dentro. Só opacidade:
+   animar o fundo fazia o navegador repintar a cada quadro */
 .foto--carregando {
-  background:
-    linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.55) 50%, transparent 70%) -150% 0 / 60% 100%
-      no-repeat,
-    var(--cor-superficie-media, #e8e4d8);
-  animation: foto-brilho 1.3s ease-in-out infinite;
+  background: var(--cor-superficie-media, #e8e4d8);
+  animation: foto-pulso 0.9s ease-in-out infinite alternate;
 }
 
-@keyframes foto-brilho {
+@keyframes foto-pulso {
   to {
-    background-position: 250% 0, 0 0;
+    opacity: 0.55;
   }
 }
 
