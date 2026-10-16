@@ -11,9 +11,10 @@ import CategoriaFilter from '../../components/filters/CategoriaFilter/CategoriaF
 import Voltar from '../../components/ui/Voltar/Voltar'
 import Paginacao from '../../components/ui/Paginacao/Paginacao'
 import '../listagem.css'
+import { POR_PAGINA_VITRINE } from '../../services/adiantamentos'
 
 // Quantos itens por página: três fileiras da grade em tela larga
-const POR_PAGINA = 9
+const POR_PAGINA = POR_PAGINA_VITRINE
 
 const TIPOS = [
   { valor: '', rotulo: 'Produtos e serviços' },

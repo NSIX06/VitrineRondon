@@ -13,9 +13,10 @@ import '../listagem.css'
 import './Empreendedores.css'
 import Voltar from '../../components/ui/Voltar/Voltar'
 import Paginacao from '../../components/ui/Paginacao/Paginacao'
+import { POR_PAGINA_EMPREENDEDORES } from '../../services/adiantamentos'
 
 // Cartões de negócio são mais altos que os da vitrine: duas fileiras por página
-const POR_PAGINA = 6
+const POR_PAGINA = POR_PAGINA_EMPREENDEDORES
 
 function Empreendedores() {
   // Os filtros vivem na URL: dá para compartilhar o link e usar o botão voltar
