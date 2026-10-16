@@ -1,8 +1,16 @@
 /* Cursor piscando no fim do texto que está sendo escrito */
+/* Sem largura própria: o cursor desenha por cima, sem empurrar as palavras */
 .datilografo__cursor {
-  margin-left: 2px;
+  display: inline-block;
+  width: 0;
+  overflow: visible;
   color: var(--cor-ouro);
   animation: datilografo-piscar 1s steps(1) infinite;
+}
+
+/* O que ainda não foi escrito ocupa o lugar, invisível */
+.datilografo__resto {
+  visibility: hidden;
 }
 
 @keyframes datilografo-piscar {

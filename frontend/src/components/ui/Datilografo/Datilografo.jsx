@@ -26,13 +26,18 @@ function Datilografo({ texto, velocidade = 55, className = '' }) {
     return () => clearTimeout(tempo)
   }, [parado, quantas, texto, velocidade])
 
-  const visivel = parado ? texto : texto.slice(0, quantas)
+  const escritas = parado ? texto.length : quantas
+  // A frase inteira já ocupa o lugar desde o começo; só a parte ainda não
+  // escrita fica invisível. Escrevendo só o pedaço, a palavra que não cabia
+  // mais no fim da linha pulava para a de baixo e o texto se deslocava
+  // (deslocamento de layout medido no login do celular).
   return (
     <span className={`datilografo ${className}`.trim()}>
       <span className="visualmente-oculto">{texto}</span>
       <span aria-hidden="true">
-        {visivel}
+        {texto.slice(0, escritas)}
         <span className="datilografo__cursor">|</span>
+        <span className="datilografo__resto">{texto.slice(escritas)}</span>
       </span>
     </span>
   )

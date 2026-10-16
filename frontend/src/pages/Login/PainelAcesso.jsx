@@ -86,7 +86,9 @@ function PainelAcesso({ fotos, ativa, frase, autor, reserva = frase }) {
             “{reserva}”
           </span>
           <span className="login__citacao-texto">
-            “<Datilografo key={frase} texto={frase} />”
+            {/* As aspas de fechamento entram no fim da digitação: fora dela, ficavam
+                soltas na posição final enquanto o resto da frase estava invisível */}
+            “<Datilografo key={frase} texto={`${frase}”`} />
           </span>
         </p>
         <cite>— {autor}</cite>
