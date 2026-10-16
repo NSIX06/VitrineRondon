@@ -87,13 +87,21 @@ async function baixarFamilia(urlCss, prefixo, { soRecortes = true } = {}) {
 async function main() {
   const existentes = await iconesExistentes()
   const icones = (await iconesDoCodigo()).filter((nome) => existentes.has(nome))
-  await rm(PASTA_FONTES, { recursive: true, force: true })
+  // Apaga os arquivos, não a pasta: o OneDrive às vezes trava a remoção dela (EPERM)
   await mkdir(PASTA_FONTES, { recursive: true })
+  for (const nome of await readdir(PASTA_FONTES)) await rm(path.join(PASTA_FONTES, nome), { force: true })
 
-  const textos = await baixarFamilia(
-    'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Inter:wght@400;500;600;700&display=swap',
-    'texto'
-  )
+  // Bricolage com o tamanho óptico fixo em 36 (perto dos títulos do celular): com o
+  // eixo inteiro (12..96) era um arquivo de 77 KiB; fixo, 41 KiB. Nem todo valor
+  // sai reduzido (30, 32 e 40 vinham com o eixo inteiro): confira o tamanho.
+  // Pedida sozinha: junto com a Inter, o Google devolvia a versão variável
+  const textos = [
+    ...(await baixarFamilia(
+      'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@36,700;36,800&display=swap',
+      'texto'
+    )),
+    ...(await baixarFamilia('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap', 'texto')),
+  ]
   // Os nomes precisam ir em ordem alfabética, ou o Google recusa o recorte
   const simbolos = await baixarFamilia(
     `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0&icon_names=${icones.join(',')}&display=block`,
