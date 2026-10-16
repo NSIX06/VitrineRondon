@@ -51,6 +51,22 @@ function comTransformacao(url, transformacao) {
  */
 export function fontesDaImagem(valor, larguras = LARGURAS_IMAGEM) {
   const src = urlImagem(valor)
+  // Link do Unsplash (muito usado por quem cola um link de foto): o próprio
+  // Unsplash redimensiona, comprime e entrega em AVIF/WebP pelos parâmetros
+  if (src && src.startsWith('https://images.unsplash.com/')) {
+    const versao = (largura) => {
+      const endereco = new URL(src)
+      endereco.searchParams.set('w', String(largura))
+      endereco.searchParams.set('q', '60')
+      endereco.searchParams.set('auto', 'format')
+      endereco.searchParams.set('fit', 'max')
+      return endereco.toString()
+    }
+    return {
+      src: versao(larguras[Math.min(4, larguras.length - 1)]),
+      srcSet: larguras.map((largura) => `${versao(largura)} ${largura}w`).join(', '),
+    }
+  }
   if (!src || !src.startsWith(PREFIXO_NUVEM) || !src.includes('/image/upload/')) return { src }
   const versao = (largura) => comTransformacao(src, `f_auto,q_auto:eco,c_limit,w_${largura}`)
   return {

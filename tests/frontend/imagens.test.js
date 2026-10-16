@@ -114,7 +114,7 @@ describe('fontesDaImagem (tamanho certo do Cloudinary)', async () => {
   })
 
   it('link de fora e arquivo local passam do jeito que estão, sem srcset', () => {
-    expect(fontesDaImagem('https://images.unsplash.com/foto?w=800')).toEqual({ src: 'https://images.unsplash.com/foto?w=800' })
+    expect(fontesDaImagem('https://exemplo.com.br/foto.jpg')).toEqual({ src: 'https://exemplo.com.br/foto.jpg' })
     const local = fontesDaImagem('/uploads/3f2b8c1e-9a4d-4e7f-8b2a-1c5d6e7f8a9b.webp')
     expect(local.srcSet).toBeUndefined()
     expect(local.src).toBe(`${ORIGEM_API}/uploads/3f2b8c1e-9a4d-4e7f-8b2a-1c5d6e7f8a9b.webp`)
@@ -123,5 +123,19 @@ describe('fontesDaImagem (tamanho certo do Cloudinary)', async () => {
   it('sem foto, sem endereço', () => {
     expect(fontesDaImagem('')).toEqual({ src: '' })
     expect(fontesDaImagem(null).src).toBeFalsy()
+  })
+})
+
+
+describe('fontesDaImagem com link do Unsplash', async () => {
+  const { fontesDaImagem, LARGURAS_IMAGEM } = await import('../../frontend/src/services/imagens.js')
+  it('pede ao Unsplash o tamanho, a compressão e o formato moderno', () => {
+    const { src, srcSet } = fontesDaImagem('https://images.unsplash.com/photo-123?w=800')
+    const url = new URL(src)
+    expect(url.searchParams.get('auto')).toBe('format')
+    expect(url.searchParams.get('q')).toBe('60')
+    expect(url.searchParams.get('w')).toBe('640')
+    expect(srcSet.split(', ')).toHaveLength(LARGURAS_IMAGEM.length)
+    expect(srcSet).toMatch(/w=320.* 320w/)
   })
 })
