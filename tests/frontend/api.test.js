@@ -8,6 +8,7 @@ import api, {
   limparCache,
   aoPerderSessao,
   aoMudarLentidao,
+  adiantarLeitura,
 } from '../../frontend/src/services/api.js'
 
 const BARRA = String.fromCharCode(92)
@@ -319,5 +320,40 @@ describe('aviso de servidor lento', () => {
     await api.get('/empreendedores')
     expect(estados).not.toContain(true)
     parar()
+  })
+})
+
+
+// A área do empreendedor pedia os dados só depois de confirmar a sessão e baixar a tela
+describe('leitura adiantada', () => {
+  afterEach(() => vi.useRealTimers())
+
+  it('a tela recebe a resposta adiantada, sem pedir de novo', async () => {
+    const fetch = vi.fn().mockResolvedValue(resposta({ data: { id: 7 } }))
+    vi.stubGlobal('fetch', fetch)
+    adiantarLeitura('/empreendedores/meu')
+    await new Promise((ok) => setTimeout(ok, 0))
+    const r = await api.get('/empreendedores/meu')
+    expect(r.data.id).toBe(7)
+    expect(fetch).toHaveBeenCalledTimes(1)
+  })
+
+  it('vale uma vez só: o pedido seguinte vai ao servidor', async () => {
+    const fetch = vi.fn().mockResolvedValue(resposta({ data: [] }))
+    vi.stubGlobal('fetch', fetch)
+    adiantarLeitura('/auth/me')
+    await api.get('/auth/me')
+    await api.get('/auth/me')
+    expect(fetch).toHaveBeenCalledTimes(2)
+  })
+
+  it('vence em 10 s, para nunca servir dado velho', async () => {
+    vi.useFakeTimers()
+    const fetch = vi.fn().mockResolvedValue(resposta({ data: [] }))
+    vi.stubGlobal('fetch', fetch)
+    adiantarLeitura('/assinaturas/minha')
+    await vi.advanceTimersByTimeAsync(11_000)
+    await api.get('/assinaturas/minha')
+    expect(fetch).toHaveBeenCalledTimes(2)
   })
 })

@@ -222,9 +222,28 @@ export function montarQuery(params = {}) {
 // mesma resposta, em vez de bater no servidor duas vezes
 const leiturasEmAndamento = new Map()
 
+// Leituras adiantadas na abertura do site (main.jsx): a tela que pedir o mesmo
+// endereço logo depois recebe essa resposta, mesmo que ela já tenha chegado.
+// Vale uma vez só e por pouco tempo, para nunca servir dado velho.
+const leiturasAdiantadas = new Map()
+const VALIDADE_ADIANTADA_MS = 10_000
+
+/** Começa já uma leitura que uma tela vai pedir assim que montar */
+export function adiantarLeitura(caminhoComQuery) {
+  const chave = `${obterToken() ?? ''} ${caminhoComQuery}`
+  const pedido = request(caminhoComQuery)
+  pedido.catch(() => {})
+  leiturasAdiantadas.set(chave, { pedido, ate: Date.now() + VALIDADE_ADIANTADA_MS })
+}
+
 function lerUmaVez(caminhoComQuery) {
   // O token entra na chave: troca de sessão no meio do caminho não reaproveita
   const chave = `${obterToken() ?? ''} ${caminhoComQuery}`
+  const adiantada = leiturasAdiantadas.get(chave)
+  if (adiantada) {
+    leiturasAdiantadas.delete(chave)
+    if (Date.now() < adiantada.ate) return adiantada.pedido
+  }
   if (!leiturasEmAndamento.has(chave)) {
     const pedido = request(caminhoComQuery).finally(() => leiturasEmAndamento.delete(chave))
     leiturasEmAndamento.set(chave, pedido)
