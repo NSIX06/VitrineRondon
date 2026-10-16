@@ -17,9 +17,11 @@ function PaginaErro({ naoEncontrada: rotaInexistente = false }) {
   const naoEncontrada = rotaInexistente || (respostaDeRota && erro.status === 404)
 
   // Arquivo de tela que não chegou: acontece quando a conexão cai no meio da
-  // navegação, e recarregar resolve
+  // navegação, e recarregar resolve. No build, o Vite tenta o CSS da tela
+  // primeiro, e a falha chega como "Unable to preload CSS".
   const falhaDeCarregamento =
-    !respostaDeRota && /dynamically imported module|Importing a module script/i.test(String(erro?.message || ''))
+    !respostaDeRota &&
+    /dynamically imported module|Importing a module script|Unable to preload CSS/i.test(String(erro?.message || ''))
 
   const titulo = naoEncontrada
     ? 'Página não encontrada'
