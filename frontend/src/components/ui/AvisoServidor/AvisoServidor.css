@@ -1,0 +1,58 @@
+/* Faixa no pé da tela, no anil do site, que sobe quando a API demora */
+.aviso-servidor {
+  position: fixed;
+  left: 50%;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: max-content;
+  max-width: calc(100vw - 32px);
+  padding: 0.65rem 1rem;
+  background: var(--cor-anil, #17346e);
+  color: #fff;
+  border: 3px solid var(--cor-contorno, #111827);
+  border-radius: 999px;
+  box-shadow: 4px 4px 0 0 var(--cor-ouro, #fbbf24);
+  font-size: var(--texto-sm, 13px);
+  line-height: 1.35;
+  opacity: 0;
+  transform: translate(-50%, 20px);
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.aviso-servidor--visivel {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.aviso-servidor strong {
+  color: var(--cor-ouro, #fbbf24);
+}
+
+.aviso-servidor__giro {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: var(--cor-ouro, #fbbf24);
+  border-radius: 50%;
+  animation: aviso-servidor-giro 0.8s linear infinite;
+}
+
+@keyframes aviso-servidor-giro {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aviso-servidor {
+    transition: none;
+  }
+  .aviso-servidor__giro {
+    animation-duration: 2s;
+  }
+}

@@ -7,6 +7,7 @@ import api, {
   lerDoCache,
   limparCache,
   aoPerderSessao,
+  aoMudarLentidao,
 } from '../../frontend/src/services/api.js'
 
 const BARRA = String.fromCharCode(92)
@@ -284,5 +285,39 @@ describe('aoPerderSessao', () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(resposta({ message: 'Sessão inválida' }, { status: 401 })))
     await expect(api.get('/auth/me')).rejects.toThrow()
     expect(aviso).not.toHaveBeenCalled()
+  })
+})
+
+
+// A API gratuita acordando levava até 33 s e as telas pareciam travadas
+describe('aviso de servidor lento', () => {
+  afterEach(() => vi.useRealTimers())
+
+  it('liga depois de 3 s sem resposta e desliga quando a resposta chega', async () => {
+    vi.useFakeTimers()
+    let responder
+    vi.stubGlobal('fetch', vi.fn(() => new Promise((ok) => { responder = () => ok(resposta({ data: [] })) })))
+    const estados = []
+    const parar = aoMudarLentidao((lento) => estados.push(lento))
+
+    const pedido = api.get('/produtos')
+    await vi.advanceTimersByTimeAsync(2900)
+    expect(estados.at(-1)).toBe(false)
+    await vi.advanceTimersByTimeAsync(200)
+    expect(estados.at(-1)).toBe(true)
+
+    responder()
+    await pedido
+    expect(estados.at(-1)).toBe(false)
+    parar()
+  })
+
+  it('pedido rápido nunca liga o aviso', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(resposta({ data: [] })))
+    const estados = []
+    const parar = aoMudarLentidao((lento) => estados.push(lento))
+    await api.get('/empreendedores')
+    expect(estados).not.toContain(true)
+    parar()
   })
 })

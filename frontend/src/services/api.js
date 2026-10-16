@@ -92,6 +92,21 @@ export function aoPerderSessao(ouvinte) {
   return () => ouvintesSessaoInvalida.delete(ouvinte)
 }
 
+// Pedidos que passaram de LENTO_MS sem resposta: em geral é a API gratuita
+// acordando (até 1 minuto). A tela mostra um aviso enquanto houver algum, em
+// vez de parecer travada.
+const LENTO_MS = 3000
+let pedidosLentos = 0
+const ouvintesLentidao = new Set()
+const avisarLentidao = () => ouvintesLentidao.forEach((ouvinte) => ouvinte(pedidosLentos > 0))
+
+/** Assina o aviso de lentidão: `ouvinte(true)` quando algum pedido passa de 3 s, `false` quando todos terminam */
+export function aoMudarLentidao(ouvinte) {
+  ouvintesLentidao.add(ouvinte)
+  ouvinte(pedidosLentos > 0)
+  return () => ouvintesLentidao.delete(ouvinte)
+}
+
 /**
  * Faz uma requisição à API e devolve o JSON de resposta.
  * Lança um Error com `status` e `data` quando a resposta não é 2xx
@@ -120,6 +135,12 @@ async function request(caminho, { method = 'GET', body, headers = {} } = {}) {
   const controle = new AbortController()
   const relogio = setTimeout(() => controle.abort(), TEMPO_LIMITE_MS)
   opcoes.signal = controle.signal
+  let ficouLento = false
+  const relogioLento = setTimeout(() => {
+    ficouLento = true
+    pedidosLentos++
+    avisarLentidao()
+  }, LENTO_MS)
 
   let response
   let texto
@@ -147,6 +168,11 @@ async function request(caminho, { method = 'GET', body, headers = {} } = {}) {
     throw erroRede
   } finally {
     clearTimeout(relogio)
+    clearTimeout(relogioLento)
+    if (ficouLento) {
+      pedidosLentos--
+      avisarLentidao()
+    }
   }
 
   // Respostas sem corpo (ex.: 204)

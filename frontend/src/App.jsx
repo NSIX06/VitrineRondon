@@ -11,6 +11,7 @@ import {
 import Navbar from './components/layout/Navbar/Navbar'
 import Footer from './components/layout/Footer/Footer'
 import Spinner from './components/ui/Spinner/Spinner'
+import AvisoServidor from './components/ui/AvisoServidor/AvisoServidor'
 import PaginaErro from './components/ui/PaginaErro/PaginaErro'
 import RotaProtegida from './components/auth/RotaProtegida/RotaProtegida'
 // A Home vem no pacote principal: é a porta de entrada, e como arquivo à parte
@@ -95,6 +96,8 @@ function Layout() {
         </Suspense>
       </main>
       <Footer />
+      {/* A API gratuita acordando: avisa em vez de a tela parecer travada */}
+      <AvisoServidor />
       {/* Página nova abre no topo; o botão voltar devolve a rolagem de antes */}
       <ScrollRestoration />
     </div>
