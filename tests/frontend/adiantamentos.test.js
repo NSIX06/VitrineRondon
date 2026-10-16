@@ -55,3 +55,23 @@ describe('adiantamento por página', () => {
     }
   })
 })
+
+describe('plano da abertura (o script dentro do index.html)', async () => {
+  const { planoDaAbertura } = await import('../../frontend/src/services/planoDeAbertura.js')
+  const { CONSULTAS_DA_HOME } = await import('../../frontend/src/pages/Home/consultas.js')
+
+  it('a Home adianta exatamente as consultas que ela faz', () => {
+    expect(planoDaAbertura('/', '', false).leituras.map((l) => l.caminho).sort()).toEqual(Object.values(CONSULTAS_DA_HOME).sort())
+  })
+
+  it('a função funciona sozinha, copiada pelo texto (como vai para o index.html)', () => {
+    const copia = new Function(`return ${planoDaAbertura.toString()}`)()
+    expect(copia('/empreendedores/7', '', false)).toEqual(planoDaAbertura('/empreendedores/7', '', false))
+    expect(copia('/vitrine', '?tipo=servico', false)).toEqual(planoDaAbertura('/vitrine', '?tipo=servico', false))
+  })
+
+  it('leituras de área logada só com sessão', () => {
+    expect(planoDaAbertura('/meu-negocio', '', false).leituras).toEqual([])
+    expect(planoDaAbertura('/meu-negocio', '', true).leituras.every((l) => l.comSessao)).toBe(true)
+  })
+})

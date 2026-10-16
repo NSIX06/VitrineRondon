@@ -357,3 +357,34 @@ describe('leitura adiantada', () => {
     expect(fetch).toHaveBeenCalledTimes(2)
   })
 })
+
+// O script dentro do index.html começa os pedidos antes do JavaScript principal
+describe('leitura começada pelo script da abertura', () => {
+  afterEach(() => {
+    delete globalThis.__leiturasDaAbertura
+  })
+
+  it('a tela usa a resposta já pedida, uma vez só', async () => {
+    const fetch = vi.fn().mockResolvedValue(resposta({ data: { id: 1 } }))
+    vi.stubGlobal('fetch', fetch)
+    globalThis.__leiturasDaAbertura = {
+      ' /empreendedores/1': { resposta: Promise.resolve(resposta({ data: { id: 1, pronto: true } })), ate: Date.now() + 10_000 },
+    }
+    const r = await api.get('/empreendedores/1')
+    expect(r.data.pronto).toBe(true)
+    expect(fetch).not.toHaveBeenCalled()
+    await api.get('/empreendedores/1')
+    expect(fetch).toHaveBeenCalledTimes(1)
+  })
+
+  it('resposta vencida é ignorada', async () => {
+    const fetch = vi.fn().mockResolvedValue(resposta({ data: [] }))
+    vi.stubGlobal('fetch', fetch)
+    globalThis.__leiturasDaAbertura = {
+      ' /produtos': { resposta: Promise.resolve(resposta({ data: ['velho'] })), ate: Date.now() - 1 },
+    }
+    const r = await api.get('/produtos')
+    expect(r.data).toEqual([])
+    expect(fetch).toHaveBeenCalledTimes(1)
+  })
+})

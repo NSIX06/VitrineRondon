@@ -112,7 +112,7 @@ export function aoMudarLentidao(ouvinte) {
  * Lança um Error com `status` e `data` quando a resposta não é 2xx
  * ou quando há falha de rede.
  */
-async function request(caminho, { method = 'GET', body, headers = {} } = {}) {
+async function request(caminho, { method = 'GET', body, headers = {}, respostaPronta } = {}) {
   const opcoes = {
     method,
     headers: { Accept: 'application/json', ...headers },
@@ -145,7 +145,8 @@ async function request(caminho, { method = 'GET', body, headers = {} } = {}) {
   let response
   let texto
   try {
-    response = await fetch(`${BASE_URL}${caminho}`, opcoes)
+    // respostaPronta: pedido já feito pelo script da abertura (index.html)
+    response = await (respostaPronta ?? fetch(`${BASE_URL}${caminho}`, opcoes))
     texto = await response.text()
   } catch (falha) {
     if (controle.signal.aborted) {
@@ -228,10 +229,24 @@ const leiturasEmAndamento = new Map()
 const leiturasAdiantadas = new Map()
 const VALIDADE_ADIANTADA_MS = 10_000
 
+/**
+ * Pedido que o script da abertura (dentro do index.html, gerado no build) já
+ * começou antes de este arquivo chegar: { resposta: Promise<Response>, ate }.
+ * Vale uma vez só e até `ate`. A chave é a mesma das outras leituras.
+ */
+function pedidoDaAbertura(chave, caminhoComQuery) {
+  const leituras = globalThis.__leiturasDaAbertura
+  const pronta = leituras?.[chave]
+  if (!pronta) return null
+  delete leituras[chave]
+  if (Date.now() > pronta.ate) return null
+  return request(caminhoComQuery, { respostaPronta: pronta.resposta })
+}
+
 /** Começa já uma leitura que uma tela vai pedir assim que montar */
 export function adiantarLeitura(caminhoComQuery) {
   const chave = `${obterToken() ?? ''} ${caminhoComQuery}`
-  const pedido = request(caminhoComQuery)
+  const pedido = pedidoDaAbertura(chave, caminhoComQuery) ?? request(caminhoComQuery)
   pedido.catch(() => {})
   leiturasAdiantadas.set(chave, { pedido, ate: Date.now() + VALIDADE_ADIANTADA_MS })
 }
@@ -245,7 +260,9 @@ function lerUmaVez(caminhoComQuery) {
     if (Date.now() < adiantada.ate) return adiantada.pedido
   }
   if (!leiturasEmAndamento.has(chave)) {
-    const pedido = request(caminhoComQuery).finally(() => leiturasEmAndamento.delete(chave))
+    const pedido = (pedidoDaAbertura(chave, caminhoComQuery) ?? request(caminhoComQuery)).finally(() =>
+      leiturasEmAndamento.delete(chave)
+    )
     leiturasEmAndamento.set(chave, pedido)
   }
   return leiturasEmAndamento.get(chave)
