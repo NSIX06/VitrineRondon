@@ -14,10 +14,11 @@ import SeloDestaque from '../../components/ui/SeloDestaque/SeloDestaque'
 import { CONSULTAS_DA_HOME, LIMITE_PILHA, carregarPilha } from './consultas'
 import './Home.css'
 
-// A pilha animada (e o gsap) fica fora do pacote da primeira visita, mas o
-// download começa junto com a Home, sem esperar os dados chegarem
+// A pilha animada (e o gsap) fica fora do pacote principal. Quem entra pela
+// Home já começa a baixá-la no main.jsx (adiantarHome), junto com os dados.
+// Chamar aqui, ao ler o arquivo, baixava a pilha em TODAS as páginas, porque
+// a Home vem no pacote principal.
 const PilhaDeNegocios = lazy(carregarPilha)
-carregarPilha()
 
 const LIMITE_PRODUTOS = 6
 

@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import Icone from '../../components/ui/Icone/Icone'
 import Datilografo from '../../components/ui/Datilografo/Datilografo'
 import FundoDePontos from '../../components/ui/DotField/FundoDePontos'
@@ -8,18 +9,59 @@ import FundoDePontos from '../../components/ui/DotField/FundoDePontos'
  * letra por letra. Com várias fotos, só a da `ativa` aparece (as outras
  * esmaecem), o que dá a troca suave entre as abas do login.
  */
+// Larguras pedidas ao Unsplash: no celular o painel é uma faixa de ~230 px
+// de altura na largura da tela; no computador, metade da tela
+const LARGURAS = [480, 640, 720, 960, 1200]
+
+/** Endereço do Unsplash com largura, formato moderno (WebP/AVIF) e compressão */
+function fotoNoTamanho(url, largura) {
+  try {
+    const endereco = new URL(url)
+    if (endereco.hostname !== 'images.unsplash.com') return url
+    endereco.searchParams.set('w', String(largura))
+    endereco.searchParams.set('q', '50')
+    endereco.searchParams.set('auto', 'format')
+    endereco.searchParams.set('fit', 'crop')
+    return endereco.toString()
+  } catch {
+    return url
+  }
+}
+
+/** Verdadeiro quando a página terminou de carregar */
+function usePaginaCarregada() {
+  const [carregada, setCarregada] = useState(() => document.readyState === 'complete')
+  useEffect(() => {
+    if (carregada) return undefined
+    const marcar = () => setCarregada(true)
+    window.addEventListener('load', marcar, { once: true })
+    return () => window.removeEventListener('load', marcar)
+  }, [carregada])
+  return carregada
+}
+
 function PainelAcesso({ fotos, ativa, frase, autor, reserva = frase }) {
+  // A foto escondida (a da outra aba) só é pedida depois de a página carregar:
+  // antes, as duas fotos de 1200 px (509 KiB) disputavam a rede no celular
+  const paginaCarregada = usePaginaCarregada()
   return (
     <aside className="login__painel com-pontos" aria-label="VitrineRondon">
-      {Object.entries(fotos).map(([chave, foto]) => (
-        <img
-          key={chave}
-          className={`login__painel-foto ${chave === ativa ? 'login__painel-foto--ativa' : ''}`}
-          src={foto}
-          alt=""
-          decoding="async"
-        />
-      ))}
+      {Object.entries(fotos).map(([chave, foto]) => {
+        const visivel = chave === ativa
+        if (!visivel && !paginaCarregada) return null
+        return (
+          <img
+            key={chave}
+            className={`login__painel-foto ${visivel ? 'login__painel-foto--ativa' : ''}`}
+            src={fotoNoTamanho(foto, 720)}
+            srcSet={LARGURAS.map((largura) => `${fotoNoTamanho(foto, largura)} ${largura}w`).join(', ')}
+            sizes="(max-width: 860px) 60vw, 50vw"
+            alt=""
+            decoding="async"
+            fetchPriority={visivel ? 'high' : 'low'}
+          />
+        )
+      })}
       <div className="login__painel-sombra" aria-hidden="true" />
       <FundoDePontos tom="anil" />
       <ul className="login__selos">
