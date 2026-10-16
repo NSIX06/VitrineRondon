@@ -1,29 +1,40 @@
 # Mantém a API do Render acordada.
 # No plano gratuito, a API dorme depois de 15 minutos sem visitas, e a próxima
-# pessoa espera ela acordar (o relatório de desempenho mostrou 3,3 s só para a
-# primeira consulta). Uma chamada ao /api/health a cada 10 minutos evita isso.
+# pessoa espera ela acordar (medido: 33 s na primeira consulta).
+#
+# O GitHub atrasa muito os agendamentos gratuitos: "a cada 10 minutos" virou
+# uma vez a cada 2 a 5 horas, e a API dormia no intervalo. Por isso cada
+# execução fica de plantão por ~5h50 (o limite de um job é 6 h), chamando o
+# /api/health a cada 5 minutos. A fila (concurrency) guarda o próximo
+# agendamento e ele começa assim que o anterior termina, sem buraco.
 # Uma API só, ligada o mês inteiro, cabe nas 750 horas gratuitas do Render.
 name: Manter a API acordada
 
 on:
   schedule:
-    - cron: '*/10 * * * *'
+    - cron: '0 * * * *'
   workflow_dispatch:
+
+# Um plantão por vez; o seguinte espera na fila em vez de cancelar o atual
+concurrency:
+  group: manter-api-acordada
+  cancel-in-progress: false
 
 permissions: {}
 
 jobs:
-  chamar-health:
+  plantao:
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 355
     steps:
-      - name: Chamar /api/health
-        # Até 3 tentativas: se a API estava dormindo, a primeira pode demorar
+      - name: Chamar /api/health a cada 5 minutos
         run: |
-          for tentativa in 1 2 3; do
-            if curl --silent --show-error --fail --max-time 60 https://vitrinerondon.onrender.com/api/health; then
-              exit 0
+          fim=$(( $(date +%s) + 350 * 60 ))
+          while [ "$(date +%s)" -lt "$fim" ]; do
+            if curl --silent --show-error --fail --max-time 90 --output /dev/null https://vitrinerondon.onrender.com/api/health; then
+              echo "$(date -u +%H:%M) API acordada"
+            else
+              echo "$(date -u +%H:%M) API não respondeu"
             fi
-            sleep 15
+            sleep 300
           done
-          exit 1
