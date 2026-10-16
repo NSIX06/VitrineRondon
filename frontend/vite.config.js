@@ -43,6 +43,33 @@ function politicaDeConteudo(urlDaApi) {
   }
 }
 
+/**
+ * CSS da primeira tela dentro do index.html, em <style>, no lugar dos <link>.
+ * No 4G lento do celular, a página esperava dois arquivos de CSS antes de
+ * pintar qualquer coisa (1,5 s de "solicitações que bloqueiam a
+ * renderização"). Como o site é de página única, o HTML só vem uma vez por
+ * visita, e o CSS (~13 KiB comprimido) vai junto. A CSP já aceita estilo
+ * inline. Os arquivos .css continuam no build: as telas carregadas sob
+ * demanda podem pedir o mesmo arquivo.
+ */
+function cssNaPagina() {
+  return {
+    name: 'css-na-pagina',
+    apply: 'build',
+    transformIndexHtml: {
+      order: 'post',
+      handler(html, { bundle }) {
+        if (!bundle) return html
+        return html.replace(/<link rel="stylesheet"[^>]*href="\/(assets\/[^"]+\.css)"[^>]*>/g, (tag, arquivo) => {
+          const asset = bundle[arquivo]
+          if (!asset || asset.type !== 'asset') return tag
+          return `<style>${String(asset.source)}</style>`
+        })
+      },
+    },
+  }
+}
+
 export default defineConfig(({ command, mode }) => {
   // Sem VITE_API_URL o site cairia no padrão http://localhost:3001/api e, no ar,
   // nenhuma tela carregaria. Melhor o build de produção parar com o motivo claro.
@@ -54,7 +81,7 @@ export default defineConfig(({ command, mode }) => {
   }
 
   return {
-    plugins: [react(), ...(env.VITE_API_URL ? [politicaDeConteudo(env.VITE_API_URL)] : [])],
+    plugins: [react(), cssNaPagina(), ...(env.VITE_API_URL ? [politicaDeConteudo(env.VITE_API_URL)] : [])],
     // Cache fora da pasta do OneDrive: a sincronização travava node_modules/.vite
     // e o servidor não subia (EPERM ao recriar .vite/deps)
     cacheDir: join(tmpdir(), 'vitrinelocal-vite'),
