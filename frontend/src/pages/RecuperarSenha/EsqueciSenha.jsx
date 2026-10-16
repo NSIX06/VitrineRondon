@@ -6,10 +6,11 @@ import Icone from '../../components/ui/Icone/Icone'
 import StatusMessage from '../../components/ui/StatusMessage/StatusMessage'
 import Voltar from '../../components/ui/Voltar/Voltar'
 import PainelAcesso from '../Login/PainelAcesso'
+import { FOTOS_DO_ACESSO } from '../Login/fotosDoPainel'
 import '../Login/Login.css'
 import { FOCAR_AO_ABRIR } from '../../services/constantes'
 
-const FOTO = 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=1200'
+const FOTO = FOTOS_DO_ACESSO.entrar
 
 /**
  * Primeiro passo da recuperação: pede o e-mail e manda o link. A resposta é a

@@ -4,6 +4,7 @@ import { join } from 'node:path'
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import { planoDaAbertura } from './src/services/planoDeAbertura.js'
+import { FOTOS_DO_ACESSO, TAMANHOS_DO_PAINEL, fotoNoTamanho, srcsetDaFoto } from './src/pages/Login/fotosDoPainel.js'
 
 /**
  * Política de conteúdo (CSP) no index.html do build de produção. O site é
@@ -94,6 +95,8 @@ function cssNaPagina() {
  * src/services/planoDeAbertura.js (o texto da função vem para cá); as
  * respostas ficam em window.__leiturasDaAbertura e o services/api.js as
  * aproveita, uma vez só e por até 10 s.
+ * No login, a foto do painel (o maior elemento da tela no celular) também
+ * começa na abertura, com o mesmo srcset da tela, em vez de esperar o React.
  */
 function aberturaAdiantada(urlDaApi) {
   return {
@@ -115,6 +118,8 @@ function aberturaAdiantada(urlDaApi) {
           const visitar = (c) => {
             if (!c || arquivos.has(c.fileName) || jaNaPagina.has(c.fileName)) return
             arquivos.add(c.fileName)
+            // O CSS da tela também (o Vite só o pedia depois de o JavaScript principal rodar)
+            c.viteMetadata?.importedCss?.forEach((css) => arquivos.add(css))
             c.imports.forEach((importado) => visitar(porArquivo[importado]))
           }
           visitar(chunk)
@@ -122,10 +127,16 @@ function aberturaAdiantada(urlDaApi) {
         }
         const nomes = ['Vitrine', 'Empreendedores', 'EmpreendedorDetalhe', 'ProdutoDetalhe', 'Login', 'MeuNegocio', 'Admin']
         const telas = Object.fromEntries(nomes.map((nome) => [nome, arquivosDaTela(nome)]))
+        const fotoDoLogin = {
+          src: fotoNoTamanho(FOTOS_DO_ACESSO.entrar, 720),
+          srcset: srcsetDaFoto(FOTOS_DO_ACESSO.entrar),
+          sizes: TAMANHOS_DO_PAINEL,
+        }
 
         const codigo = `(function () {
 var API = ${JSON.stringify(urlDaApi)};
 var TELAS = ${JSON.stringify(telas)};
+var FOTO_DO_LOGIN = ${JSON.stringify(fotoDoLogin)};
 var planoDaAbertura = ${planoDaAbertura.toString()};
 var token = null;
 try { token = localStorage.getItem('vitrinelocal.token'); } catch (e) {}
@@ -133,12 +144,29 @@ var plano = planoDaAbertura(location.pathname, location.search, Boolean(token));
 plano.telas.forEach(function (nome) {
   (TELAS[nome] || []).forEach(function (arquivo) {
     var link = document.createElement('link');
-    link.rel = 'modulepreload';
+    if (/\\.css$/.test(arquivo)) {
+      link.rel = 'preload';
+      link.as = 'style';
+    } else {
+      link.rel = 'modulepreload';
+    }
+    // crossorigin igual ao do <link> que o carregador do Vite cria depois
+    // (inclusive no CSS); com diferença, o navegador baixaria o arquivo de novo
     link.crossOrigin = '';
     link.href = '/' + arquivo;
     document.head.appendChild(link);
   });
 });
+if (plano.telas.indexOf('Login') >= 0) {
+  var foto = document.createElement('link');
+  foto.rel = 'preload';
+  foto.as = 'image';
+  foto.href = FOTO_DO_LOGIN.src;
+  foto.setAttribute('imagesrcset', FOTO_DO_LOGIN.srcset);
+  foto.setAttribute('imagesizes', FOTO_DO_LOGIN.sizes);
+  foto.setAttribute('fetchpriority', 'high');
+  document.head.appendChild(foto);
+}
 var leituras = {};
 plano.leituras.forEach(function (leitura) {
   var cabecalhos = { Accept: 'application/json' };

@@ -7,11 +7,12 @@ import Spinner from '../../components/ui/Spinner/Spinner'
 import StatusMessage from '../../components/ui/StatusMessage/StatusMessage'
 import CampoSenha from '../../components/forms/CampoSenha/CampoSenha'
 import PainelAcesso from '../Login/PainelAcesso'
+import { FOTOS_DO_ACESSO } from '../Login/fotosDoPainel'
 import { errosDoServidor } from '../../services/validacoes'
 import '../Login/Login.css'
 import { FOCAR_AO_ABRIR } from '../../services/constantes'
 
-const FOTO = 'https://images.unsplash.com/photo-1556740738-b6a63e27c4df?w=1200'
+const FOTO = FOTOS_DO_ACESSO.criar
 
 /** Mesmas regras do servidor e do cadastro */
 function errosDaSenha({ senha, confirmacaoSenha }) {

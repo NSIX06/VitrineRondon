@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import Icone from '../../components/ui/Icone/Icone'
 import Datilografo from '../../components/ui/Datilografo/Datilografo'
 import FundoDePontos from '../../components/ui/DotField/FundoDePontos'
+import { TAMANHOS_DO_PAINEL, fotoNoTamanho, srcsetDaFoto } from './fotosDoPainel'
 
 /**
  * Painel ao lado dos formulários de acesso (entrar, esqueci a senha, nova
@@ -9,25 +10,6 @@ import FundoDePontos from '../../components/ui/DotField/FundoDePontos'
  * letra por letra. Com várias fotos, só a da `ativa` aparece (as outras
  * esmaecem), o que dá a troca suave entre as abas do login.
  */
-// Larguras pedidas ao Unsplash: no celular o painel é uma faixa de ~230 px
-// de altura na largura da tela; no computador, metade da tela
-const LARGURAS = [480, 640, 720, 960, 1200]
-
-/** Endereço do Unsplash com largura, formato moderno (WebP/AVIF) e compressão */
-function fotoNoTamanho(url, largura) {
-  try {
-    const endereco = new URL(url)
-    if (endereco.hostname !== 'images.unsplash.com') return url
-    endereco.searchParams.set('w', String(largura))
-    endereco.searchParams.set('q', '50')
-    endereco.searchParams.set('auto', 'format')
-    endereco.searchParams.set('fit', 'crop')
-    return endereco.toString()
-  } catch {
-    return url
-  }
-}
-
 /** Verdadeiro quando a página terminou de carregar */
 function usePaginaCarregada() {
   const [carregada, setCarregada] = useState(() => document.readyState === 'complete')
@@ -54,8 +36,8 @@ function PainelAcesso({ fotos, ativa, frase, autor, reserva = frase }) {
             key={chave}
             className={`login__painel-foto ${visivel ? 'login__painel-foto--ativa' : ''}`}
             src={fotoNoTamanho(foto, 720)}
-            srcSet={LARGURAS.map((largura) => `${fotoNoTamanho(foto, largura)} ${largura}w`).join(', ')}
-            sizes="(max-width: 860px) 60vw, 50vw"
+            srcSet={srcsetDaFoto(foto)}
+            sizes={TAMANHOS_DO_PAINEL}
             alt=""
             decoding="async"
             fetchPriority={visivel ? 'high' : 'low'}

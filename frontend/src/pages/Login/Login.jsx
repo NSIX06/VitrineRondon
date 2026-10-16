@@ -7,6 +7,7 @@ import Icone from '../../components/ui/Icone/Icone'
 import CampoSenha from '../../components/forms/CampoSenha/CampoSenha'
 import StatusMessage from '../../components/ui/StatusMessage/StatusMessage'
 import PainelAcesso from './PainelAcesso'
+import { FOTOS_DO_ACESSO } from './fotosDoPainel'
 import FundoDePontos from '../../components/ui/DotField/FundoDePontos'
 import './Login.css'
 import { FOCAR_AO_ABRIR } from '../../services/constantes'
@@ -17,12 +18,12 @@ import { FOCAR_AO_ABRIR } from '../../services/constantes'
  */
 const PAINEIS = {
   entrar: {
-    foto: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=1200',
+    foto: FOTOS_DO_ACESSO.entrar,
     frase: 'Que bom te ver de novo. Seu negócio continua do jeito que você deixou.',
     autor: 'Equipe VitrineRondon',
   },
   criar: {
-    foto: 'https://images.unsplash.com/photo-1556740738-b6a63e27c4df?w=1200',
+    foto: FOTOS_DO_ACESSO.criar,
     frase: 'Quem faz no bairro merece ser encontrado por quem mora perto.',
     autor: 'Comércio de Rondonópolis',
   },
