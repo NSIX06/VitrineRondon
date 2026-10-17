@@ -76,11 +76,13 @@
   pointer-events: none;
 }
 
+/* A foto do perfil sobe metade sobre a capa; selos, nome e botão ficam
+   abaixo da borda da capa, com respiro (antes encostavam nela) */
 .detalhe__identidade {
   display: flex;
-  align-items: flex-end;
-  gap: var(--esp-4);
-  margin-top: calc(-1 * var(--esp-7));
+  align-items: flex-start;
+  gap: var(--esp-5);
+  padding-top: var(--esp-4);
 }
 
 /* Monograma do negócio: iniciais em placa de cartaz */
@@ -97,6 +99,7 @@
   border-radius: var(--raio);
   box-shadow: var(--sombra-dura), var(--cel);
   transform: rotate(-2deg);
+  margin-top: calc(-52px - var(--esp-4));
   font-family: var(--fonte-titulo);
   font-size: 42px;
   font-weight: 800;
@@ -137,8 +140,7 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--esp-1);
-  padding-top: var(--esp-7);
+  gap: var(--esp-2);
 }
 
 .detalhe__selos {
@@ -195,7 +197,7 @@
 
 .detalhe__whatsapp-topo {
   flex-shrink: 0;
-  align-self: flex-end;
+  align-self: center;
 }
 
 .detalhe__descricao {
@@ -1116,18 +1118,14 @@
   .detalhe__identidade {
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--esp-2);
-    margin-top: -44px;
+    gap: var(--esp-3);
   }
 
   .detalhe__monograma {
     width: 80px;
     height: 80px;
+    margin-top: calc(-40px - var(--esp-4));
     font-size: 32px;
-  }
-
-  .detalhe__titulos {
-    padding-top: 0;
   }
 
   .detalhe__fita {
