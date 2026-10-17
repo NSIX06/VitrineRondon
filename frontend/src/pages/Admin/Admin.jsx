@@ -17,6 +17,7 @@ import PainelUsuarios from '../../components/admin/PainelUsuarios/PainelUsuarios
 import PainelFaq from '../../components/admin/PainelFaq/PainelFaq'
 import PainelAssinaturas from '../../components/admin/PainelAssinaturas/PainelAssinaturas'
 import PainelDivulgacoes from '../../components/admin/PainelDivulgacoes/PainelDivulgacoes'
+import PainelAvaliacoes from '../../components/admin/PainelAvaliacoes/PainelAvaliacoes'
 import { formatarPreco } from '../../services/formatos'
 import { formatarTelefone } from '../../services/telefone'
 import TagTipo from '../../components/ui/Tag/TagTipo'
@@ -30,6 +31,7 @@ const ABAS = [
   { id: 'assinaturas', rotulo: 'Assinaturas', icone: 'workspace_premium' },
   { id: 'divulgacoes', rotulo: 'Divulgações', icone: 'campaign' },
   { id: 'mensagens', rotulo: 'Mensagens', icone: 'chat_bubble' },
+  { id: 'avaliacoes', rotulo: 'Avaliações', icone: 'reviews' },
   { id: 'usuarios', rotulo: 'Contas', icone: 'group' },
   { id: 'faq', rotulo: 'FAQ', icone: 'help' },
   { id: 'auditoria', rotulo: 'Auditoria', icone: 'history' },
@@ -564,6 +566,7 @@ function Admin() {
             {/* Divulgações e FAQ montam o próprio cabeçalho: o botão deles abre um formulário interno */}
             {abaAtiva === 'divulgacoes' && <PainelDivulgacoes empreendedores={empreendedores} />}
             {abaAtiva === 'faq' && <PainelFaq />}
+            {abaAtiva === 'avaliacoes' && <PainelAvaliacoes />}
             {abaAtiva === 'auditoria' && (
               <>
                 <CabecalhoSecao titulo="Auditoria" texto="Trilha de tudo o que foi feito no sistema: quem, quando e o que mudou." />

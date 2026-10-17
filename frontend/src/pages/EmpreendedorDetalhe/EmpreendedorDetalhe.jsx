@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useConsulta } from '../../hooks/useConsulta'
 import { linkWhatsapp } from '../../services/whatsapp'
@@ -26,6 +26,8 @@ import '../detalhe-migalhas.css'
 import './EmpreendedorDetalhe.css'
 import Voltar from '../../components/ui/Voltar/Voltar'
 import Foto from '../../components/ui/Foto/Foto'
+import SeloReputacao from '../../components/avaliacoes/SeloReputacao/SeloReputacao'
+import SecaoAvaliacoes from '../../components/avaliacoes/SecaoAvaliacoes/SecaoAvaliacoes'
 
 /** A busca no catálogo só aparece quando há itens para procurar */
 const MINIMO_PARA_BUSCA = 4
@@ -75,6 +77,9 @@ function EmpreendedorDetalhe() {
   const [busca, setBusca] = useState('')
   // Foto do perfil que não abre (link quebrado): volta para as iniciais
   const [logoFalhou, setLogoFalhou] = useState(false)
+  // Reputação mais nova que a do perfil (depois de avaliar, editar ou apagar)
+  const [reputacao, setReputacao] = useState({ negocioId: null, resumo: null })
+  const atualizarReputacao = useCallback((resumo) => setReputacao({ negocioId: Number(id), resumo }), [id])
 
   // Uma visualização por perfil aberto (o servidor ignora repetição e o dono)
   useEffect(() => {
@@ -257,6 +262,10 @@ function EmpreendedorDetalhe() {
                     {!ativo && <Tag variante="alerta">Inativo no momento</Tag>}
                   </div>
                   <h1 className="detalhe__nome">{nomeNegocio}</h1>
+                  <SeloReputacao
+                    resumo={reputacao.negocioId === empreendedor.id ? reputacao.resumo : empreendedor.avaliacoes}
+                    destaque={emDestaque}
+                  />
                   <p className="detalhe__meta">
                     <span>
                       <Icone nome="person" tamanho={18} />
@@ -480,6 +489,14 @@ function EmpreendedorDetalhe() {
               <p className="detalhe__horarios-fuso">Horário de Rondonópolis (MT).</p>
             </section>
           </div>
+
+          <SecaoAvaliacoes
+            key={empreendedor.id}
+            negocioId={empreendedor.id}
+            nomeNegocio={nomeNegocio}
+            destaque={emDestaque}
+            aoMudarResumo={atualizarReputacao}
+          />
         </div>
       </div>
 

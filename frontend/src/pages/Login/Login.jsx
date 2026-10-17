@@ -210,6 +210,13 @@ function Login() {
                 <p className="login__rodape login__rodape--nota">
                   Só quer olhar? Navegar é gratuito: <Link to="/vitrine">ver a vitrine</Link>.
                 </p>
+                <p className="login__rodape login__rodape--nota">
+                  Quer avaliar um negócio?{' '}
+                  <Link to="/cadastro/cliente" state={location.state}>
+                    Criar conta de cliente
+                  </Link>
+                  .
+                </p>
               </div>
             </div>
           </div>

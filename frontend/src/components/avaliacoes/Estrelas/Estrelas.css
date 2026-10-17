@@ -1,0 +1,107 @@
+/* Estrelas da reputação: a cor de cada faixa vem da média real; o acabamento
+   premium (plano Destaque) só acrescenta contorno dourado e brilho */
+.estrelas {
+  --estrela-clara: #d1d5db;
+  --estrela-escura: #9ca3af;
+  --estrela-contorno: var(--cor-contorno);
+  --estrela-vazia: rgba(255, 255, 255, 0.85);
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--estrela) * 0.08);
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.estrelas__definicoes {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.estrelas__parada-clara {
+  stop-color: var(--estrela-clara);
+}
+
+.estrelas__parada-escura {
+  stop-color: var(--estrela-escura);
+}
+
+.estrela {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+  width: var(--estrela);
+  height: var(--estrela);
+}
+
+.estrela svg {
+  display: block;
+  width: var(--estrela);
+  height: var(--estrela);
+  overflow: visible;
+}
+
+.estrela__vazia path {
+  fill: var(--estrela-vazia);
+  stroke: var(--estrela-contorno);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
+.estrela__cheia {
+  position: absolute;
+  inset: 0 auto 0 0;
+  overflow: hidden;
+}
+
+.estrela__cheia path {
+  stroke: var(--estrela-contorno);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
+/* Faixas pela média */
+.estrelas--neutra {
+  --estrela-vazia: #e5e7eb;
+}
+
+.estrelas--vermelha {
+  --estrela-clara: #f87171;
+  --estrela-escura: #b91c1c;
+}
+
+.estrelas--laranja {
+  --estrela-clara: #fdba74;
+  --estrela-escura: #ea580c;
+}
+
+.estrelas--dourada {
+  --estrela-clara: #fde68a;
+  --estrela-escura: #f59e0b;
+}
+
+.estrelas--verde {
+  --estrela-clara: #86efac;
+  --estrela-escura: #16a34a;
+}
+
+/* 4,5 a 5: verde que termina em dourado */
+.estrelas--excelente {
+  --estrela-clara: #6ee7b7;
+  --estrela-escura: #fbbf24;
+}
+
+/* Plano Destaque: mesma nota e mesmo número de estrelas; muda só o
+   acabamento (contorno dourado escuro e brilho), em qualquer faixa */
+.estrelas--destaque {
+  --estrela-contorno: #78350f;
+}
+
+.estrelas--destaque:not(.estrelas--neutra) .estrela__cheia svg {
+  filter: drop-shadow(0 0 calc(var(--estrela) * 0.12) rgba(251, 191, 36, 0.75));
+}
+
+.estrelas--destaque .estrela__vazia path {
+  fill: rgba(253, 230, 138, 0.35);
+}

@@ -1,0 +1,51 @@
+/* Reputação ao lado do nome no perfil (fundo anil do cabeçalho) */
+.selo-reputacao {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+  align-self: flex-start;
+  padding: 4px 10px;
+  border: var(--borda-fina);
+  border-radius: 999px;
+  background: var(--cor-branco);
+  box-shadow: var(--sombra-dura-sm);
+  color: var(--cor-tinta);
+  font-size: var(--texto-sm);
+  font-weight: 700;
+  text-decoration: none;
+  line-height: 1.2;
+  transition: var(--transicao-tecla);
+}
+
+.selo-reputacao:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 0 var(--cor-contorno);
+}
+
+.selo-reputacao:focus-visible {
+  outline: 3px solid var(--cor-ouro);
+  outline-offset: 2px;
+}
+
+.selo-reputacao__media {
+  font-family: var(--fonte-titulo);
+  font-size: var(--texto-md);
+  font-weight: 800;
+}
+
+.selo-reputacao__total {
+  color: var(--cor-cinza);
+  font-weight: 600;
+}
+
+.selo-reputacao--vazio {
+  color: var(--cor-cinza);
+  font-weight: 600;
+}
+
+/* Plano Destaque: moldura dourada (benefício do plano, não da nota) */
+.selo-reputacao--destaque {
+  background: linear-gradient(135deg, #fffbeb, #fde68a);
+  border-color: #78350f;
+}

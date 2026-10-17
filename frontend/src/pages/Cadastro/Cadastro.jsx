@@ -20,7 +20,8 @@ import Voltar from '../../components/ui/Voltar/Voltar'
  * 3. escolha do plano e pagamento. Só com o pagamento confirmado o negócio é
  *    publicado. Quem para aqui encontra o rascunho salvo no "Meu negócio".
  *
- * Navegar pela vitrine não exige conta, então não há cadastro de visitante.
+ * Navegar pela vitrine não exige conta. Quem só quer avaliar negócios cria a
+ * conta de cliente (CadastroCliente.jsx), sem as etapas do negócio.
  */
 function Cadastro() {
   const { entrar } = useAuth()

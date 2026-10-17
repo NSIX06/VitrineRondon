@@ -1,0 +1,87 @@
+.painel-avaliacoes__filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}
+
+.painel-avaliacoes__filtro {
+  padding: 6px 14px;
+  border: var(--borda-fina);
+  border-radius: 999px;
+  background: var(--cor-branco);
+  font: inherit;
+  font-size: var(--texto-sm);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.painel-avaliacoes__filtro--ativo {
+  background: var(--cor-anil);
+  color: var(--cor-branco);
+}
+
+.painel-avaliacoes__lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}
+
+.painel-avaliacoes__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  padding: var(--esp-4);
+  border: var(--borda-fina);
+  border-radius: var(--raio-md);
+  background: var(--cor-branco);
+}
+
+.painel-avaliacoes__cabeca {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--esp-2) var(--esp-3);
+}
+
+.painel-avaliacoes__negocio {
+  font-weight: 800;
+  color: var(--cor-anil);
+}
+
+.painel-avaliacoes__denuncias {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--texto-sm);
+  font-weight: 800;
+  color: var(--cor-lacre);
+}
+
+.painel-avaliacoes__texto {
+  margin: 0;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.painel-avaliacoes__meta,
+.painel-avaliacoes__motivo {
+  margin: 0;
+  font-size: var(--texto-xs);
+  color: var(--cor-cinza);
+  overflow-wrap: anywhere;
+}
+
+.painel-avaliacoes__motivo {
+  color: var(--cor-lacre-escuro);
+  font-weight: 700;
+}
+
+.painel-avaliacoes__acoes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--esp-2);
+}
