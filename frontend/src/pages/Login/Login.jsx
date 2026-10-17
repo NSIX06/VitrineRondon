@@ -7,6 +7,7 @@ import Icone from '../../components/ui/Icone/Icone'
 import CampoSenha from '../../components/forms/CampoSenha/CampoSenha'
 import StatusMessage from '../../components/ui/StatusMessage/StatusMessage'
 import PainelAcesso from './PainelAcesso'
+import BotaoGoogle from '../../components/auth/BotaoGoogle/BotaoGoogle'
 import { FOTOS_DO_ACESSO } from './fotosDoPainel'
 import FundoDePontos from '../../components/ui/DotField/FundoDePontos'
 import './Login.css'
@@ -164,6 +165,13 @@ function Login() {
                   </Button>
                 </form>
 
+                {/* Clientes que avaliam entram pelo Google, sem cadastro; quem
+                    anuncia continua com e-mail e senha */}
+                <div className="login__ou" aria-hidden="true">
+                  <span>ou, para avaliar negócios</span>
+                </div>
+                <BotaoGoogle destino={destinoOriginal || '/empreendedores'} aviso={false} />
+
                 <p className="login__rodape">
                   Ainda não tem conta?{' '}
                   <button type="button" className="login__trocar" onClick={() => setAba('criar')}>
@@ -210,13 +218,7 @@ function Login() {
                 <p className="login__rodape login__rodape--nota">
                   Só quer olhar? Navegar é gratuito: <Link to="/vitrine">ver a vitrine</Link>.
                 </p>
-                <p className="login__rodape login__rodape--nota">
-                  Quer avaliar um negócio?{' '}
-                  <Link to="/cadastro/cliente" state={location.state}>
-                    Criar conta de cliente
-                  </Link>
-                  .
-                </p>
+
               </div>
             </div>
           </div>

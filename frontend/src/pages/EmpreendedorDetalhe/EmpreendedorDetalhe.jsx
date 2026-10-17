@@ -262,10 +262,16 @@ function EmpreendedorDetalhe() {
                     {!ativo && <Tag variante="alerta">Inativo no momento</Tag>}
                   </div>
                   <h1 className="detalhe__nome">{nomeNegocio}</h1>
-                  <SeloReputacao
-                    resumo={reputacao.negocioId === empreendedor.id ? reputacao.resumo : empreendedor.avaliacoes}
-                    destaque={emDestaque}
-                  />
+                  <div className="detalhe__reputacao">
+                    <SeloReputacao
+                      resumo={reputacao.negocioId === empreendedor.id ? reputacao.resumo : empreendedor.avaliacoes}
+                      destaque={emDestaque}
+                    />
+                    <a href="#avaliacoes" className="detalhe__avaliar">
+                      <Icone nome="rate_review" tamanho={16} />
+                      Avaliar negócio
+                    </a>
+                  </div>
                   <p className="detalhe__meta">
                     <span>
                       <Icone nome="person" tamanho={18} />

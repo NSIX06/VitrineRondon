@@ -95,7 +95,7 @@ export const loginSchema = z.object({
 
 const usuarioPublico = { id: true, nome: true, email: true, telefone: true, perfil: true, ativo: true, createdAt: true };
 
-function respostaSessao(usuario, empreendedor = null) {
+export function respostaSessao(usuario, empreendedor = null) {
   return {
     token: gerarToken(usuario),
     usuario: { ...usuario, empreendedorId: empreendedor?.id ?? usuario.empreendedor?.id ?? null },
@@ -245,7 +245,8 @@ export async function login(req, res, next) {
       where: { email },
       include: { empreendedor: { select: { id: true } } },
     });
-    const senhaConfere = usuario ? await bcrypt.compare(senha, usuario.senhaHash) : false;
+    // Conta criada pelo Google não tem senha: cai na mesma recusa genérica
+    const senhaConfere = usuario?.senhaHash ? await bcrypt.compare(senha, usuario.senhaHash) : false;
 
     if (!usuario || !senhaConfere) {
       await registrarLog(req, {

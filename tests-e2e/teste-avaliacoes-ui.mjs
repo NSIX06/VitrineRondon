@@ -59,6 +59,7 @@ async function main() {
     })`)
     checar('visitante vê o convite para entrar, sem formulário', visitante.convite && !visitante.formulario, JSON.stringify(visitante))
     checar('selo de reputação no topo do perfil', Boolean(visitante.selo))
+    checar('o convite oferece "Continuar com Google"', await evaluate("Boolean(__q('.avaliacoes__convite .botao-google'))"))
 
     console.log('\n2. Entrar pelo convite volta para o perfil')
     await clicarEm('.avaliacoes__convite a[href="/login"]')
@@ -211,10 +212,11 @@ async function main() {
     checar('apagar devolve a contagem ao que era', depois.resumo.total === totalAntes)
     idDaAvaliacao = null
 
-    console.log('\n8. Cadastro de cliente')
+    console.log('\n8. Clientes entram com o Google')
     await sair()
-    await abrir('/cadastro/cliente', '#conta-nome')
-    checar('tela de conta de cliente abre com o formulário', true)
+    await abrir('/cadastro/cliente')
+    await esperarPor("location.pathname === '/login'", 10000)
+    checar('o antigo /cadastro/cliente leva ao login (o cadastro com senha para avaliar saiu)', true)
   } catch (erro) {
     // Para entender a falha: o que a seção mostrava naquele momento
     const estado = await evaluate(

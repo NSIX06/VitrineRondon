@@ -119,12 +119,14 @@ model Contato {
 }
 
 // Conta de acesso. Perfis: COMUM | EMPREENDEDOR | ADMIN
+// Quem entra só pelo Google (cliente que avalia) não tem senha nem telefone:
+// a conta é criada no primeiro login, com o nome e o e-mail verificado.
 model Usuario {
   id              Int       @id @default(autoincrement())
   nome            String    @db.VarChar(150)
   email           String    @unique @db.VarChar(150)
-  telefone        String    @db.VarChar(30)
-  senhaHash       String    @map("senha_hash") @db.VarChar(100)
+  telefone        String?   @db.VarChar(30)
+  senhaHash       String?   @map("senha_hash") @db.VarChar(100)
   perfil          String    @default("COMUM") @db.VarChar(20)
   ativo           Boolean   @default(true)
   // Última troca de senha: sessões (JWT) emitidas antes dela deixam de valer
@@ -138,6 +140,7 @@ model Usuario {
   redefinicoes RedefinicaoSenha[]
   avaliacoes   Avaliacao[]
   denuncias    DenunciaAvaliacao[]
+  identidades  IdentidadeExterna[]
 
   @@map("usuarios")
 }
@@ -231,6 +234,30 @@ model HorarioAtendimento {
 
   @@index([empreendedorId, diaSemana])
   @@map("horarios_atendimento")
+}
+
+// Login por provedor externo (Google; preparado para Microsoft, Apple...).
+// A conta é sempre a mesma tabela usuarios: aqui fica só o vínculo entre ela e
+// a conta no provedor. "sujeito" é o identificador estável que o provedor dá
+// (o "sub" do OpenID Connect), validado no servidor, nunca vindo da tela.
+// Um vínculo nunca é criado só porque o e-mail coincide: com e-mail de conta
+// existente, a pessoa entra com a senha dela para ligar o provedor.
+model IdentidadeExterna {
+  id             Int       @id @default(autoincrement())
+  usuarioId      Int       @map("usuario_id")
+  provedor       String    @db.VarChar(20) // GOOGLE | ...
+  sujeito        String    @db.VarChar(255)
+  // E-mail informado pelo provedor no último login (só para conferência)
+  email          String?   @db.VarChar(150)
+  createdAt      DateTime  @default(now()) @map("created_at")
+  ultimoAcessoEm DateTime? @map("ultimo_acesso_em")
+  usuario        Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  // A mesma conta do provedor nunca vira duas contas aqui, nem em logins simultâneos
+  @@unique([provedor, sujeito])
+  // Uma conta de cada provedor por usuário
+  @@unique([usuarioId, provedor])
+  @@map("identidades_externas")
 }
 
 // Avaliação de um negócio por um cliente (nota de 1 a 5 e comentário).

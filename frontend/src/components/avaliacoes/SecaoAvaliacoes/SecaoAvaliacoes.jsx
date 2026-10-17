@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import api from '../../../services/api'
 import { useAuth } from '../../../contexts/auth'
 import Button from '../../ui/Button/Button'
@@ -9,6 +9,7 @@ import StatusMessage from '../../ui/StatusMessage/StatusMessage'
 import Estrelas from '../Estrelas/Estrelas'
 import CartaoAvaliacao from './CartaoAvaliacao'
 import FormAvaliacao from './FormAvaliacao'
+import BotaoGoogle from '../../auth/BotaoGoogle/BotaoGoogle'
 import {
   ORDENS_DAS_AVALIACOES,
   descricaoDaReputacao,
@@ -299,19 +300,18 @@ function SecaoAvaliacoes({ negocioId, nomeNegocio, destaque = false, aoMudarResu
               </div>
             ) : permissao?.motivo === 'LOGIN' ? (
               <div className="avaliacoes__caixa avaliacoes__convite">
-                <h3 className="avaliacoes__subtitulo">Já foi atendido por {nomeNegocio}?</h3>
+                <h3 className="avaliacoes__subtitulo">Avaliar {nomeNegocio}</h3>
                 <p className="avaliacoes__dica">
-                  Entre na sua conta para deixar uma nota e um comentário. Não tem conta? Criar uma leva um minuto.
+                  Já foi atendido? Entre com o Google para deixar uma nota e um comentário. Sem cadastro e sem
+                  criar senha: você volta direto para cá.
                 </p>
-                <div className="avaliacoes__convite-botoes">
-                  <Button to="/login" state={voltarPara} variante="destaque">
-                    <Icone nome="login" tamanho={18} />
-                    Entrar para avaliar
-                  </Button>
-                  <Button to="/cadastro/cliente" state={voltarPara} variante="secundario">
-                    Criar conta de cliente
-                  </Button>
-                </div>
+                <BotaoGoogle destino={voltarPara.de} />
+                <p className="avaliacoes__dica avaliacoes__dica--rodape">
+                  Tem conta com e-mail e senha?{' '}
+                  <Link to="/login" state={voltarPara}>
+                    Entrar com ela
+                  </Link>
+                </p>
               </div>
             ) : permissao?.mensagem ? (
               <StatusMessage tipo="info">{permissao.mensagem}</StatusMessage>

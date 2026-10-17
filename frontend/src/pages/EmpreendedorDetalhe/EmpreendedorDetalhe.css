@@ -143,6 +143,36 @@
   gap: var(--esp-2);
 }
 
+/* Reputação dos clientes e o atalho para avaliar, logo abaixo do nome */
+.detalhe__reputacao {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--esp-2) var(--esp-3);
+}
+
+.detalhe__avaliar {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--texto-sm);
+  font-weight: 700;
+  color: var(--cor-anil);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* No Destaque o cabeçalho é anil: o link fica dourado */
+.detalhe--destaque .detalhe__avaliar {
+  color: var(--cor-ouro);
+}
+
+.detalhe__avaliar:focus-visible {
+  outline: 3px solid var(--cor-ouro);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
 .detalhe__selos {
   display: flex;
   gap: var(--esp-2);
