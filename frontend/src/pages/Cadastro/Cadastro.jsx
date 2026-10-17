@@ -20,11 +20,13 @@ import Voltar from '../../components/ui/Voltar/Voltar'
  * 3. escolha do plano e pagamento. Só com o pagamento confirmado o negócio é
  *    publicado. Quem para aqui encontra o rascunho salvo no "Meu negócio".
  *
- * Navegar pela vitrine não exige conta. Quem só quer avaliar negócios cria a
- * conta de cliente (CadastroCliente.jsx), sem as etapas do negócio.
+ * Navegar pela vitrine não exige conta, e quem só quer avaliar entra com o
+ * Google, sem cadastro. Quem já está logado (por exemplo, um cliente que
+ * avaliou e agora quer anunciar) não cria outra conta aqui: cadastra o negócio
+ * na conta atual, em "Meu negócio".
  */
 function Cadastro() {
-  const { entrar } = useAuth()
+  const { entrar, usuario, sair, atualizarUsuario } = useAuth()
   // Plano escolhido na página de planos antes de criar a conta
   const [parametros] = useSearchParams()
   const planoPedido = parametros.get('plano') || ''
@@ -124,6 +126,18 @@ function Cadastro() {
             window.scrollTo({ top: 0, behavior: 'smooth' })
             return
           }
+          // A senha confere e a conta ainda não tem negócio (conta de cliente
+          // criada antes): o negócio entra nessa mesma conta, que vira de
+          // empreendedor. Antes, o cadastro travava em "e-mail já cadastrado".
+          if (sessao.data?.usuario) {
+            entrar(sessao.data)
+            const criado = await api.post('/empreendedores/meu', negocio)
+            atualizarUsuario({ perfil: 'EMPREENDEDOR', empreendedorId: criado.data.id })
+            await enviarFotosPendentes(criado.data.id, pendentes)
+            setCadastrado(true)
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+            return
+          }
         } catch {
           // Senha não confere: é mesmo de outra pessoa; segue o caminho normal
         }
@@ -132,7 +146,9 @@ function Cadastro() {
       const errosConta = erro.data?.errors?.filter((e) => e.campo.startsWith('conta.'))
       if (errosConta?.length || erro.status === 409) {
         setErroNegocio(
-          erro.status === 409 ? erro.message : 'Confira os dados da sua conta: algum campo não foi aceito.'
+          erro.status === 409
+            ? `${erro.message}. Se a conta é sua, entre com ela e cadastre o negócio em "Meu negócio".`
+            : 'Confira os dados da sua conta: algum campo não foi aceito.'
         )
         setContaParaCorrigir({ dados: contaPendente, erros: errosDoServidor(erro, ['conta.', 'aceites.']) })
         setContaPendente(null)
@@ -144,7 +160,9 @@ function Cadastro() {
   }
 
   const etapaNegocio = Boolean(contaPendente) && !cadastrado
-  const etapaConta = !contaPendente && !cadastrado
+  // Já logado ao abrir: não cria outra conta por cima da sessão atual
+  const jaConectado = Boolean(usuario) && !contaPendente && !cadastrado
+  const etapaConta = !contaPendente && !cadastrado && !jaConectado
   const classeEtapa = (ativa, feita) => (ativa ? 'cadastro__etapa--ativa' : feita ? 'cadastro__etapa--feita' : '')
 
   return (
@@ -182,6 +200,24 @@ function Cadastro() {
           )}
 
           <div className="cadastro__formulario">
+            {jaConectado && (
+              <StatusMessage tipo="info" titulo={`Você já entrou como ${usuario.nome}`}>
+                <p>
+                  {usuario.empreendedorId
+                    ? 'Esta conta já tem um negócio. Gerencie-o em "Meu negócio".'
+                    : 'Cadastre o negócio nesta mesma conta: ela passa a ser de empreendedor e suas avaliações continuam com você.'}
+                </p>
+                <div className="cadastro__conectado-acoes">
+                  <Link to="/meu-negocio" className="botao botao--destaque botao--md">
+                    {usuario.empreendedorId ? 'Ir para Meu negócio' : 'Cadastrar o negócio nesta conta'}
+                  </Link>
+                  <button type="button" className="botao botao--secundario botao--md" onClick={() => sair()}>
+                    Sair e criar outra conta
+                  </button>
+                </div>
+              </StatusMessage>
+            )}
+
             {etapaConta && (
               <ContaForm
                 onSubmit={guardarConta}
@@ -243,8 +279,8 @@ function Cadastro() {
           </div>
           <div className="cadastro__caixa">
             <h2>Já tem conta?</h2>
-            <p>Entre para gerenciar seu negócio e seus produtos.</p>
-            <Link to="/login" className="botao botao--secundario botao--md">
+            <p>Entre com ela para cadastrar o negócio na mesma conta ou gerenciar o que já tem.</p>
+            <Link to="/login" state={{ de: '/meu-negocio' }} className="botao botao--secundario botao--md">
               Entrar
             </Link>
           </div>

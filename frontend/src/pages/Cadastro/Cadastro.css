@@ -151,3 +151,10 @@
     padding: var(--esp-4);
   }
 }
+
+.cadastro__conectado-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-3);
+  margin-top: var(--esp-3);
+}

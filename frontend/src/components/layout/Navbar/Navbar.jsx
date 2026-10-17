@@ -20,7 +20,8 @@ function acaoDoPerfil(usuario) {
   if (usuario.perfil === PERFIS.EMPREENDEDOR) {
     return { para: '/meu-negocio', rotulo: 'Meu negócio', icone: 'storefront' }
   }
-  return { para: '/meu-negocio', rotulo: 'Cadastrar meu negócio', icone: 'add_business' }
+  // Cliente (entrou para avaliar): anunciar é opcional e acontece na mesma conta
+  return { para: '/meu-negocio', rotulo: 'Anunciar meu negócio', icone: 'add_business' }
 }
 
 function Navbar() {
