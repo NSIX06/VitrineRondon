@@ -72,6 +72,35 @@ export async function resumoDoNegocio(empreendedorId) {
 }
 
 /**
+ * Média e total de vários negócios numa consulta só (cartões das listagens).
+ * Devolve { [empreendedorId]: { media, total } }; quem não tem avaliação
+ * publicada fica com { media: null, total: 0 }. Mesma conta do resumoDoNegocio.
+ */
+export async function resumosDosNegocios(ids = []) {
+  const unicos = [...new Set(ids)];
+  const resumos = Object.fromEntries(unicos.map((id) => [id, { media: null, total: 0 }]));
+  if (!unicos.length) return resumos;
+  const grupos = await prisma.avaliacao.groupBy({
+    by: ['empreendedorId', 'nota'],
+    where: { empreendedorId: { in: unicos }, status: STATUS_AVALIACAO.PUBLICADA },
+    _count: { _all: true },
+  });
+  const porNegocio = {};
+  for (const grupo of grupos) (porNegocio[grupo.empreendedorId] ??= []).push(grupo);
+  for (const [id, lista] of Object.entries(porNegocio)) {
+    const { media, total } = montarResumo(lista);
+    resumos[id] = { media, total };
+  }
+  return resumos;
+}
+
+/** Junta a reputação ({ media, total }) em cada negócio de uma lista */
+export async function comReputacao(negocios) {
+  const resumos = await resumosDosNegocios(negocios.map((n) => n.id));
+  return negocios.map((n) => ({ ...n, avaliacoes: resumos[n.id] ?? { media: null, total: 0 } }));
+}
+
+/**
  * Quem pode avaliar este negócio (RN-AVAL-02). Devolve null quando pode, ou o
  * motivo: 'LOGIN' (sem sessão), 'DONO' (o próprio negócio), 'ADMIN' (quem
  * modera não avalia) ou 'INDISPONIVEL' (negócio fora da vitrine).

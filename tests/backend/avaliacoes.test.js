@@ -102,6 +102,46 @@ describe('montarResumo (média e distribuição)', () => {
   })
 })
 
+describe('resumosDosNegocios (reputação nos cartões das listagens)', () => {
+  it('uma consulta só, por negócio e nota, contando só as publicadas', async () => {
+    prisma.avaliacao.groupBy.mockResolvedValue([])
+    await servico.resumosDosNegocios([3, 7, 3])
+    expect(prisma.avaliacao.groupBy).toHaveBeenCalledTimes(1)
+    const consulta = prisma.avaliacao.groupBy.mock.calls[0][0]
+    expect(consulta.by).toEqual(['empreendedorId', 'nota'])
+    expect(consulta.where).toEqual({ empreendedorId: { in: [3, 7] }, status: 'PUBLICADA' })
+  })
+
+  it('mesma média do perfil para cada negócio; sem avaliação, média nula e total zero', async () => {
+    prisma.avaliacao.groupBy.mockResolvedValue([
+      { empreendedorId: 3, nota: 5, _count: { _all: 2 } },
+      { empreendedorId: 3, nota: 4, _count: { _all: 1 } },
+      { empreendedorId: 3, nota: 3, _count: { _all: 1 } },
+    ])
+    const resumos = await servico.resumosDosNegocios([3, 7])
+    expect(resumos[3]).toEqual({ media: 4.25, total: 4 })
+    expect(resumos[7]).toEqual({ media: null, total: 0 })
+  })
+
+  it('lista vazia não consulta o banco', async () => {
+    expect(await servico.resumosDosNegocios([])).toEqual({})
+    expect(prisma.avaliacao.groupBy).not.toHaveBeenCalled()
+  })
+
+  it('comReputacao junta { media, total } sem olhar o plano', async () => {
+    prisma.avaliacao.groupBy.mockResolvedValue([
+      { empreendedorId: 1, nota: 4, _count: { _all: 1 } },
+      { empreendedorId: 2, nota: 4, _count: { _all: 1 } },
+    ])
+    const lista = await servico.comReputacao([
+      { id: 1, emDestaque: true },
+      { id: 2, emDestaque: false },
+    ])
+    expect(lista[0].avaliacoes).toEqual(lista[1].avaliacoes)
+    expect(lista[0]).toMatchObject({ id: 1, emDestaque: true, avaliacoes: { media: 4, total: 1 } })
+  })
+})
+
 describe('nomePublico (privacidade do avaliador)', () => {
   it('primeiro nome e inicial do último sobrenome', () => {
     expect(servico.nomePublico('Maria Aparecida Souza')).toBe('Maria S.')

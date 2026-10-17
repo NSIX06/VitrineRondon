@@ -9,7 +9,7 @@ import { lerPaginacao, resumoPaginacao } from '../utils/paginacao.js';
 import { campoFoco } from '../utils/enquadramento.js';
 import { apagarSeOrfa, apagarSeTrocou, campoImagem } from '../services/imagens.js';
 import { registrarImpressoes } from '../services/metricas.js';
-import { resumoDoNegocio } from '../services/avaliacoes.js';
+import { comReputacao, resumoDoNegocio } from '../services/avaliacoes.js';
 import {
   ASSINATURAS_PARA_SITUACAO,
   estaPublicado,
@@ -182,10 +182,11 @@ export async function listarEmpreendedores(req, res, next) {
       },
       ...(admin ? {} : { omit: CAMPOS_PRIVADOS }),
     };
-    const formatar = (lista) => (admin ? lista.map(comSituacao) : lista);
+    // Cada cartão leva a reputação real (média e total das avaliações publicadas)
+    const formatar = async (lista) => comReputacao(admin ? lista.map(comSituacao) : lista);
 
     if (!paginacao.ativa) {
-      const empreendedores = formatar(await prisma.empreendedor.findMany(consulta));
+      const empreendedores = await formatar(await prisma.empreendedor.findMany(consulta));
       return res.json({ success: true, total: empreendedores.length, data: empreendedores });
     }
 
@@ -196,7 +197,7 @@ export async function listarEmpreendedores(req, res, next) {
     res.json({
       success: true,
       total,
-      data: formatar(empreendedores),
+      data: await formatar(empreendedores),
       paginacao: resumoPaginacao(paginacao, total),
     });
   } catch (erro) {
@@ -220,7 +221,7 @@ export async function listarDestaques(req, res, next) {
     });
     const escolhidos = embaralhar(todos).slice(0, limite);
     await registrarImpressoes(req, escolhidos.map((e) => e.id));
-    res.json({ success: true, total: escolhidos.length, data: escolhidos });
+    res.json({ success: true, total: escolhidos.length, data: await comReputacao(escolhidos) });
   } catch (erro) {
     next(erro);
   }

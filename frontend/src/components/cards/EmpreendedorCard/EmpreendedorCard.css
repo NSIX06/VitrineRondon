@@ -85,9 +85,17 @@
 .empreendedor-card__nome {
   margin: 0;
   font-size: 28px;
+  line-height: 1.15;
   font-weight: 800;
   letter-spacing: -0.02em;
   color: var(--cor-tinta);
+  /* Nome longo: quebra onde precisar e para em duas linhas (o nome inteiro
+     fica no title e no perfil). Assim os títulos da grade ficam alinhados */
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .empreendedor-card__link {
@@ -99,9 +107,18 @@
 }
 
 .empreendedor-card__responsavel {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 4px;
   font-size: 12px;
   font-weight: 700;
   color: var(--cor-cinza);
+  overflow-wrap: anywhere;
+}
+
+.empreendedor-card__responsavel .icone {
+  flex-shrink: 0;
+  color: var(--cor-anil);
 }
 
 .empreendedor-card__descricao {
@@ -113,6 +130,66 @@
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  overflow-wrap: anywhere;
+  /* Três linhas reservadas: descrição curta não sobe a reputação e o rodapé */
+  min-height: calc(3 * 1.6em);
+}
+
+/* Reputação dos clientes: linha própria, longe das etiquetas do plano */
+.empreendedor-card__reputacao {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: var(--esp-1) 0 0;
+  min-height: 22px;
+  font-size: var(--texto-sm);
+  line-height: 1.3;
+}
+
+.empreendedor-card__media {
+  font-family: var(--fonte-titulo);
+  font-size: var(--texto-md);
+  font-weight: 800;
+  color: var(--cor-tinta);
+}
+
+.empreendedor-card__avaliacoes {
+  font-weight: 600;
+  color: var(--cor-cinza);
+}
+
+/* Sem foto (ou foto quebrada): vitrine desenhada, na proporção da foto */
+.empreendedor-card__sem-foto {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--esp-2);
+  background: var(--linhas-escuras), var(--cor-ceu);
+  color: var(--cor-anil);
+}
+
+.empreendedor-card__sem-foto-icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-radius: var(--raio-md);
+  box-shadow: 3px 3px 0 0 var(--cor-contorno);
+  transform: rotate(-3deg);
+}
+
+.empreendedor-card__sem-foto-texto {
+  font-size: var(--texto-xs);
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 .empreendedor-card__rodape {
@@ -138,8 +215,11 @@
 .empreendedor-card__botao {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 0.4rem 0.8rem;
+  /* Área de toque de 44 px */
+  min-height: 44px;
+  padding: 0.4rem 0.9rem;
   background: var(--cor-anil);
   color: var(--cor-branco);
   font-size: 13px;
@@ -154,6 +234,23 @@
   background: var(--cor-anil-escuro);
   transform: translate(1px, 1px);
   box-shadow: var(--sombra-dura-sm);
+}
+.empreendedor-card__botao:focus-visible {
+  outline: 3px solid var(--cor-ouro);
+  outline-offset: 2px;
+}
+
+/* Celular estreito: botão na largura toda, abaixo da contagem de itens */
+@media (max-width: 420px) {
+  .empreendedor-card__corpo {
+    padding: var(--esp-4);
+  }
+  .empreendedor-card__nome {
+    font-size: 25px;
+  }
+  .empreendedor-card__botao {
+    flex: 1 1 100%;
+  }
 }
 
 /* --------------------------------------------------------------------------
@@ -209,6 +306,28 @@ html .empreendedor-card.empreendedor-card--destaque {
 
 .empreendedor-card--destaque .empreendedor-card__itens {
   color: var(--cor-ouro);
+}
+
+.empreendedor-card--destaque .empreendedor-card__responsavel .icone {
+  color: var(--cor-ouro);
+}
+
+.empreendedor-card--destaque .empreendedor-card__media {
+  color: var(--cor-branco);
+}
+
+.empreendedor-card--destaque .empreendedor-card__avaliacoes {
+  color: var(--cor-ouro-claro);
+}
+
+.empreendedor-card--destaque .empreendedor-card__sem-foto {
+  background: var(--linhas-claras), var(--cor-anil);
+  color: var(--cor-ouro-claro);
+}
+
+.empreendedor-card--destaque .empreendedor-card__sem-foto-icone {
+  background: var(--cor-ouro);
+  color: var(--cor-tinta);
 }
 
 .empreendedor-card--destaque .empreendedor-card__botao {
