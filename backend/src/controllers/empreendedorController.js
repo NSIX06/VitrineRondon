@@ -9,7 +9,7 @@ import { lerPaginacao, resumoPaginacao } from '../utils/paginacao.js';
 import { campoFoco } from '../utils/enquadramento.js';
 import { apagarSeOrfa, apagarSeTrocou, campoImagem } from '../services/imagens.js';
 import { registrarImpressoes } from '../services/metricas.js';
-import { resumoDoNegocio } from '../services/avaliacoes.js';
+import { resumoDoNegocio, resumosDosNegocios } from '../services/avaliacoes.js';
 import {
   ASSINATURAS_PARA_SITUACAO,
   estaPublicado,
@@ -182,10 +182,15 @@ export async function listarEmpreendedores(req, res, next) {
       },
       ...(admin ? {} : { omit: CAMPOS_PRIVADOS }),
     };
-    const formatar = (lista) => (admin ? lista.map(comSituacao) : lista);
+    // Cada card leva a reputação real (média e total das avaliações publicadas),
+    // calculada para a página inteira numa consulta só. O plano não entra na conta.
+    const formatar = async (lista) => {
+      const resumos = await resumosDosNegocios(lista.map((negocio) => negocio.id));
+      return (admin ? lista.map(comSituacao) : lista).map((negocio) => ({ ...negocio, avaliacoes: resumos[negocio.id] }));
+    };
 
     if (!paginacao.ativa) {
-      const empreendedores = formatar(await prisma.empreendedor.findMany(consulta));
+      const empreendedores = await formatar(await prisma.empreendedor.findMany(consulta));
       return res.json({ success: true, total: empreendedores.length, data: empreendedores });
     }
 
@@ -196,7 +201,7 @@ export async function listarEmpreendedores(req, res, next) {
     res.json({
       success: true,
       total,
-      data: formatar(empreendedores),
+      data: await formatar(empreendedores),
       paginacao: resumoPaginacao(paginacao, total),
     });
   } catch (erro) {

@@ -82,12 +82,20 @@
   gap: var(--esp-2);
 }
 
+/* Nome em até duas linhas (o nome inteiro fica no title e no perfil): um nome
+   longo não empurra o resto do card nem desalinha a grade */
 .empreendedor-card__nome {
   margin: 0;
   font-size: 28px;
   font-weight: 800;
+  line-height: 1.15;
   letter-spacing: -0.02em;
   color: var(--cor-tinta);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
 }
 
 .empreendedor-card__link {
@@ -98,10 +106,68 @@
   text-decoration: underline;
 }
 
-.empreendedor-card__responsavel {
+/* Responsável e local, com ícone (o local inclui o bairro, quando houver) */
+.empreendedor-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px var(--esp-3);
+  margin: 0;
   font-size: 12px;
   font-weight: 700;
   color: var(--cor-cinza);
+}
+
+.empreendedor-card__meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.empreendedor-card__meta .icone {
+  color: var(--cor-mostarda);
+}
+
+/* Reputação dos clientes: estrelas, média e total (dados reais; sem
+   avaliações, diz isso). Não é o selo do plano, que é a etiqueta "Destaque". */
+.empreendedor-card__reputacao {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cor-cinza);
+}
+
+.empreendedor-card__reputacao strong {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--cor-tinta);
+}
+
+/* Sem foto (ou com link quebrado): placeholder nas cores do plano, na mesma
+   proporção da foto */
+.empreendedor-card__sem-foto {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--esp-2);
+  background: var(--linhas-escuras), var(--cor-ceu);
+  color: var(--cor-anil);
+  font-size: var(--texto-xs);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.empreendedor-card__sem-foto .icone {
+  color: var(--cor-anil);
 }
 
 .empreendedor-card__descricao {
@@ -123,10 +189,12 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--esp-3);
-  flex-wrap: wrap;
 }
 
+/* O texto dos itens pode quebrar; o botão fica sempre no mesmo lugar, à direita */
 .empreendedor-card__itens {
+  flex: 1;
+  min-width: 0;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -136,6 +204,8 @@
 }
 
 .empreendedor-card__botao {
+  flex-shrink: 0;
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -195,8 +265,31 @@ html .empreendedor-card.empreendedor-card--destaque {
   --letra-sombra: #e09a0e;
 }
 
-.empreendedor-card--destaque .empreendedor-card__responsavel {
+.empreendedor-card--destaque .empreendedor-card__meta {
   color: var(--cor-ouro-claro);
+}
+
+.empreendedor-card--destaque .empreendedor-card__meta .icone {
+  color: var(--cor-ouro);
+}
+
+.empreendedor-card--destaque .empreendedor-card__reputacao {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.empreendedor-card--destaque .empreendedor-card__reputacao strong {
+  color: var(--cor-branco);
+}
+
+.empreendedor-card--destaque .empreendedor-card__sem-foto {
+  background:
+    var(--linhas-claras),
+    linear-gradient(160deg, #1e3a8a 0%, var(--cor-anil-escuro) 80%);
+  color: var(--cor-ouro-claro);
+}
+
+.empreendedor-card--destaque .empreendedor-card__sem-foto .icone {
+  color: var(--cor-ouro);
 }
 
 .empreendedor-card--destaque .empreendedor-card__descricao {

@@ -102,6 +102,25 @@ describe('montarResumo (média e distribuição)', () => {
   })
 })
 
+describe('resumosDosNegocios (cards da listagem)', () => {
+  it('uma consulta para a página inteira, só publicadas, com média e total por negócio', async () => {
+    prisma.avaliacao.groupBy.mockResolvedValue([
+      { empreendedorId: 7, nota: 5, _count: { _all: 1 } },
+      { empreendedorId: 7, nota: 4, _count: { _all: 1 } },
+      { empreendedorId: 8, nota: 2, _count: { _all: 3 } },
+    ])
+    const resumos = await servico.resumosDosNegocios([7, 8, 9])
+    expect(prisma.avaliacao.groupBy).toHaveBeenCalledTimes(1)
+    expect(prisma.avaliacao.groupBy.mock.calls[0][0].where).toEqual({ empreendedorId: { in: [7, 8, 9] }, status: 'PUBLICADA' })
+    expect(resumos).toEqual({ 7: { media: 4.5, total: 2 }, 8: { media: 2, total: 3 }, 9: { media: null, total: 0 } })
+  })
+
+  it('lista vazia não consulta o banco', async () => {
+    expect(await servico.resumosDosNegocios([])).toEqual({})
+    expect(prisma.avaliacao.groupBy).not.toHaveBeenCalled()
+  })
+})
+
 describe('nomePublico (privacidade do avaliador)', () => {
   it('primeiro nome e inicial do último sobrenome', () => {
     expect(servico.nomePublico('Maria Aparecida Souza')).toBe('Maria S.')

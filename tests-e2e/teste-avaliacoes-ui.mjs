@@ -59,7 +59,9 @@ async function main() {
     })`)
     checar('visitante vê o convite para entrar, sem formulário', visitante.convite && !visitante.formulario, JSON.stringify(visitante))
     checar('selo de reputação no topo do perfil', Boolean(visitante.selo))
-    checar('o convite oferece "Continuar com Google"', await evaluate("Boolean(__q('.avaliacoes__convite .botao-google'))"))
+    // Sem GOOGLE_CLIENT_ID na API, o convite avisa que o login está indisponível
+    await esperarPor("__q('.avaliacoes__convite .botao-google, .avaliacoes__convite .botao-google__indisponivel')", 10000)
+    checar('o convite oferece "Continuar com Google" (ou avisa que está indisponível)', true)
 
     console.log('\n2. Entrar pelo convite volta para o perfil')
     await clicarEm('.avaliacoes__convite a[href="/login"]')

@@ -72,6 +72,26 @@ export async function resumoDoNegocio(empreendedorId) {
 }
 
 /**
+ * Média e total de vários negócios numa consulta só (cards da listagem):
+ * { [empreendedorId]: { media, total } }. Negócio sem avaliação publicada
+ * vem com { media: null, total: 0 }.
+ */
+export async function resumosDosNegocios(ids = []) {
+  const resumos = Object.fromEntries(ids.map((id) => [id, { media: null, total: 0 }]));
+  if (!ids.length) return resumos;
+  const grupos = await prisma.avaliacao.groupBy({
+    by: ['empreendedorId', 'nota'],
+    where: { empreendedorId: { in: ids }, status: STATUS_AVALIACAO.PUBLICADA },
+    _count: { _all: true },
+  });
+  for (const id of ids) {
+    const { media, total } = montarResumo(grupos.filter((grupo) => grupo.empreendedorId === id));
+    resumos[id] = { media, total };
+  }
+  return resumos;
+}
+
+/**
  * Quem pode avaliar este negócio (RN-AVAL-02). Devolve null quando pode, ou o
  * motivo: 'LOGIN' (sem sessão), 'DONO' (o próprio negócio), 'ADMIN' (quem
  * modera não avalia) ou 'INDISPONIVEL' (negócio fora da vitrine).
