@@ -66,6 +66,7 @@ model Empreendedor {
   assinaturas          Assinatura[]
   divulgacoes          Divulgacao[]
   metricas             MetricaDiaria[]
+  avaliacoes           Avaliacao[]
 
   // A vitrine filtra sempre por negócio ativo, e daí por categoria ou bairro.
   // "cidade" fica de fora de propósito: a consulta usa LIKE com % na frente,
@@ -119,22 +120,24 @@ model Contato {
 
 // Conta de acesso. Perfis: COMUM | EMPREENDEDOR | ADMIN
 model Usuario {
-  id        Int      @id @default(autoincrement())
-  nome      String   @db.VarChar(150)
-  email     String   @unique @db.VarChar(150)
-  telefone  String   @db.VarChar(30)
-  senhaHash String   @map("senha_hash") @db.VarChar(100)
-  perfil    String   @default("COMUM") @db.VarChar(20)
-  ativo     Boolean  @default(true)
+  id              Int       @id @default(autoincrement())
+  nome            String    @db.VarChar(150)
+  email           String    @unique @db.VarChar(150)
+  telefone        String    @db.VarChar(30)
+  senhaHash       String    @map("senha_hash") @db.VarChar(100)
+  perfil          String    @default("COMUM") @db.VarChar(20)
+  ativo           Boolean   @default(true)
   // Última troca de senha: sessões (JWT) emitidas antes dela deixam de valer
   senhaAlteradaEm DateTime? @map("senha_alterada_em")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
 
   empreendedor Empreendedor?
   aceites      AceiteTermos[]
   logs         LogAuditoria[]
   redefinicoes RedefinicaoSenha[]
+  avaliacoes   Avaliacao[]
+  denuncias    DenunciaAvaliacao[]
 
   @@map("usuarios")
 }
@@ -228,6 +231,55 @@ model HorarioAtendimento {
 
   @@index([empreendedorId, diaSemana])
   @@map("horarios_atendimento")
+}
+
+// Avaliação de um negócio por um cliente (nota de 1 a 5 e comentário).
+// Uma por pessoa por negócio: o autor edita ou apaga a dele; a administração
+// remove (status REMOVIDA, com motivo) sem apagar o registro. A média e a
+// contagem nunca ficam guardadas: são calculadas das publicadas a cada leitura,
+// então ninguém (nem o dono do negócio) consegue mexer nelas diretamente.
+model Avaliacao {
+  id                Int                 @id @default(autoincrement())
+  empreendedorId    Int                 @map("empreendedor_id")
+  usuarioId         Int                 @map("usuario_id")
+  nota              Int                 @db.TinyInt // 1 a 5
+  comentario        String              @db.VarChar(1000)
+  status            String              @default("PUBLICADA") @db.VarChar(20) // PUBLICADA | REMOVIDA
+  motivoRemocao     String?             @map("motivo_remocao") @db.VarChar(300)
+  removidaEm        DateTime?           @map("removida_em")
+  // Quantas denúncias recebeu (cada conta denuncia uma vez): a moderação ordena por aqui
+  denuncias         Int                 @default(0)
+  // Última edição feita pelo autor (contar denúncia ou moderar não conta como edição)
+  editadaEm         DateTime?           @map("editada_em")
+  createdAt         DateTime            @default(now()) @map("created_at")
+  updatedAt         DateTime            @updatedAt @map("updated_at")
+  empreendedor      Empreendedor        @relation(fields: [empreendedorId], references: [id], onDelete: Cascade)
+  usuario           Usuario             @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  registrosDenuncia DenunciaAvaliacao[]
+
+  // Uma avaliação por pessoa por negócio (RN-AVAL-03), garantida pelo banco
+  @@unique([empreendedorId, usuarioId])
+  // Lista pública: publicadas do negócio, por data ou por nota
+  @@index([empreendedorId, status, createdAt])
+  @@index([empreendedorId, status, nota])
+  @@index([status, denuncias])
+  @@index([usuarioId])
+  @@map("avaliacoes")
+}
+
+// Denúncia de uma avaliação: uma por conta, para a contagem não ser inflada
+model DenunciaAvaliacao {
+  id          Int       @id @default(autoincrement())
+  avaliacaoId Int       @map("avaliacao_id")
+  usuarioId   Int       @map("usuario_id")
+  motivo      String?   @db.VarChar(300)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  avaliacao   Avaliacao @relation(fields: [avaliacaoId], references: [id], onDelete: Cascade)
+  usuario     Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@unique([avaliacaoId, usuarioId])
+  @@index([usuarioId])
+  @@map("denuncias_avaliacao")
 }
 
 // Pergunta frequente da central de ajuda. A área pública mostra só as ativas;

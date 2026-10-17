@@ -126,3 +126,26 @@ export const limiteLogin = rateLimit({
   legacyHeaders: false,
   handler: recusar('Muitas tentativas de autenticação. Aguarde 15 minutos e tente novamente.'),
 });
+
+/**
+ * Publicar e editar avaliações: quem conta uma experiência de verdade faz isso
+ * poucas vezes; o teto barra robô despejando avaliações em vários negócios.
+ */
+export const limiteAvaliacao = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  limit: 10,
+  skip: ignorarMaquinaLocal,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  handler: recusar('Muitas avaliações enviadas em pouco tempo. Aguarde uma hora e tente novamente.'),
+});
+
+/** Denúncias de avaliações: folga para quem modera pela comunidade, sem abrir espaço a abuso */
+export const limiteDenuncia = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  limit: 20,
+  skip: ignorarMaquinaLocal,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  handler: recusar('Muitas denúncias enviadas em pouco tempo. Aguarde uma hora e tente novamente.'),
+});

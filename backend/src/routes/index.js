@@ -12,6 +12,7 @@ import uploadRoutes from './uploadRoutes.js';
 import assinaturaRoutes, { planoRoutes } from './assinaturaRoutes.js';
 import metricaRoutes from './metricaRoutes.js';
 import divulgacaoRoutes from './divulgacaoRoutes.js';
+import avaliacaoRoutes from './avaliacaoRoutes.js';
 import { verificarSaude } from '../controllers/saudeController.js';
 
 const router = Router();
@@ -32,5 +33,6 @@ router.use('/planos', planoRoutes);
 router.use('/assinaturas', assinaturaRoutes);
 router.use('/metricas', metricaRoutes);
 router.use('/divulgacoes', divulgacaoRoutes);
+router.use('/avaliacoes', avaliacaoRoutes);
 
 export default router;

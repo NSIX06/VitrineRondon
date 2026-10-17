@@ -15,6 +15,7 @@ import {
   criarEmpreendedorSchema,
   atualizarEmpreendedorSchema,
 } from '../controllers/empreendedorController.js';
+import { avaliacoesDoNegocio } from './avaliacaoRoutes.js';
 
 const router = Router();
 
@@ -26,6 +27,7 @@ router.post('/meu', autenticar, validateBody(criarEmpreendedorSchema), criarMeuN
 router.get('/destaques', listarDestaques);
 router.get('/', listarEmpreendedores);
 router.get('/:id', buscarEmpreendedor);
+router.use('/:id/avaliacoes', avaliacoesDoNegocio);
 
 // Cadastro avulso e exclusão são da administração
 router.post('/', autenticar, exigirPerfil(PERFIS.ADMIN), validateBody(criarEmpreendedorSchema), criarEmpreendedor);

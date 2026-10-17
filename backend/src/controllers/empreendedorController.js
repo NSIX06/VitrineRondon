@@ -9,6 +9,7 @@ import { lerPaginacao, resumoPaginacao } from '../utils/paginacao.js';
 import { campoFoco } from '../utils/enquadramento.js';
 import { apagarSeOrfa, apagarSeTrocou, campoImagem } from '../services/imagens.js';
 import { registrarImpressoes } from '../services/metricas.js';
+import { resumoDoNegocio } from '../services/avaliacoes.js';
 import {
   ASSINATURAS_PARA_SITUACAO,
   estaPublicado,
@@ -330,13 +331,16 @@ export async function buscarEmpreendedor(req, res, next) {
     if (!estaPublicado(empreendedor) && !privilegiado) {
       return res.status(404).json({ success: false, message: 'Empreendedor não encontrado' });
     }
-    if (privilegiado) return res.json({ success: true, data: comSituacao(empreendedor) });
+    // Reputação (média, total e distribuição das avaliações publicadas): vai
+    // junto para o topo do perfil não esperar a lista de comentários
+    const avaliacoes = await resumoDoNegocio(empreendedor.id);
+    if (privilegiado) return res.json({ success: true, data: { ...comSituacao(empreendedor), avaliacoes } });
 
     // Visitante não vê itens indisponíveis, o plano nem as assinaturas do negócio
     const { assinaturas: _assinaturas, ...publico } = empreendedor;
     publico.produtos = publico.produtos.filter((produto) => produto.disponivel);
     for (const campo of Object.keys(CAMPOS_PRIVADOS)) delete publico[campo];
-    res.json({ success: true, data: publico });
+    res.json({ success: true, data: { ...publico, avaliacoes } });
   } catch (erro) {
     next(erro);
   }

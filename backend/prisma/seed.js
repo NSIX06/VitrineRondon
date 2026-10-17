@@ -458,6 +458,8 @@ async function main() {
   await prisma.perguntaFrequente.deleteMany();
   await prisma.aceiteTermos.deleteMany();
   await prisma.contato.deleteMany();
+  await prisma.denunciaAvaliacao.deleteMany();
+  await prisma.avaliacao.deleteMany();
   await prisma.metricaDiaria.deleteMany();
   await prisma.divulgacao.deleteMany();
   await prisma.assinatura.deleteMany();
