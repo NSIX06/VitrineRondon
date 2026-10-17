@@ -36,6 +36,7 @@ registrada numa trilha de auditoria consultável só pela administração.
 - [Termos de uso e privacidade](#termos-de-uso-e-privacidade)
 - [Auditoria](#auditoria)
 - [Central de ajuda (FAQ)](#central-de-ajuda-faq)
+- [Avaliações dos negócios](#avaliações-dos-negócios)
 - [Planos e assinaturas](#planos-e-assinaturas)
 - [Imagens: envio, enquadramento e zoom](#imagens-envio-enquadramento-e-zoom)
 - [API](#api)
@@ -195,7 +196,7 @@ JWT_SECRET="troque-por-um-segredo-longo-e-aleatorio"
 JWT_EXPIRES_IN="8h"
 
 # Versão vigente dos documentos legais, gravada em cada aceite
-TERMOS_VERSAO="1.1"
+TERMOS_VERSAO="1.2"
 
 # Imagens enviadas do computador: pasta local, ou Cloudinary se preenchido
 UPLOADS_DIR="uploads"
@@ -219,7 +220,7 @@ DEMO_EMPREENDEDOR_SENHA="defina-uma-senha-forte"
 | `DATABASE_URL_MIGRACAO` | para migrations | Conta de administrador. Usada por `prisma:migrate`, `prisma:deploy`, `prisma:status` e `banco:criar-usuario`; a API nunca se conecta com ela |
 | `JWT_SECRET` | sim | Sem ela a vitrine abre, mas ninguém entra nem se cadastra: o log avisa na subida e o `/api/health` mostra `"login": "indisponivel"` |
 | `JWT_EXPIRES_IN` | não | Padrão `8h` |
-| `TERMOS_VERSAO` | não | Padrão `1.1`. Mudar a versão faz novos aceites gravarem o novo número |
+| `TERMOS_VERSAO` | não | Padrão `1.2`. Mudar a versão faz novos aceites gravarem o novo número |
 | `UPLOADS_DIR` | não | Padrão `uploads` (relativo à pasta `backend`). Onde ficam as fotos enviadas quando não há Cloudinary |
 | `CLOUDINARY_URL` | **em produção** | `cloudinary://CHAVE:SEGREDO@CONTA`. Com ela, as fotos vão para o Cloudinary. Sem ela, em produção, o envio de fotos é recusado com `503` (o disco do Render gratuito é apagado a cada deploy, e as fotos sumiriam) e o `/api/health` mostra `"imagens": "indisponivel"` |
 | `CLOUDINARY_PASTA` | não | Padrão `vitrinelocal`. Pasta das fotos dentro da conta do Cloudinary |
@@ -286,7 +287,7 @@ VitrineLocal/
 ├── tests-e2e/                driver do Chrome DevTools Protocol e suítes de ponta a ponta
 ├── backend/
 │   ├── prisma/
-│   │   ├── schema.prisma     modelo de dados (15 tabelas)
+│   │   ├── schema.prisma     modelo de dados (17 tabelas)
 │   │   ├── migrations/       17 migrations, da criação inicial ao enquadramento das fotos
 │   │   ├── reversoes/        SQL para desfazer uma migration (o Prisma só anda para frente)
 │   │   ├── planos.js         os planos à venda (preço, ciclo, benefícios, recursos)
@@ -350,8 +351,9 @@ Cada componente e página mora na própria pasta, com o `.jsx` e o `.css` ao lad
 
 ## Modelo de dados
 
-Quinze tabelas. Uma conta pode ter um negócio; um negócio tem muitos produtos, intervalos de
-atendimento, assinaturas, divulgações e métricas (tudo em cascata) e pode receber mensagens. Os
+Dezessete tabelas. Uma conta pode ter um negócio; um negócio tem muitos produtos, intervalos de
+atendimento, assinaturas, divulgações, métricas e avaliações (tudo em cascata) e pode receber mensagens.
+Cada avaliação tem um autor (a conta, em cascata), e cada denúncia liga uma conta a uma avaliação. Os
 aceites de termos e os pedidos de nova senha seguem a conta em cascata, mas os logs de auditoria
 sobrevivem à exclusão da conta: apagar um usuário não pode apagar o histórico. Um plano não pode ser
 apagado enquanto houver assinatura dele. Três tabelas ficam soltas: as perguntas da central de ajuda,
@@ -370,6 +372,10 @@ erDiagram
     PLANOS ||--o{ ASSINATURAS : "é assinado em"
     EMPREENDEDORES ||--o{ DIVULGACOES : "é divulgado em"
     EMPREENDEDORES ||--o{ METRICAS_DIARIAS : "tem"
+    EMPREENDEDORES ||--o{ AVALIACOES : "recebe"
+    USUARIOS ||--o{ AVALIACOES : "escreveu"
+    AVALIACOES ||--o{ DENUNCIAS_AVALIACAO : "recebe"
+    USUARIOS ||--o{ DENUNCIAS_AVALIACAO : "fez"
 
     USUARIOS {
         int id PK
@@ -575,9 +581,9 @@ negócio e enquadramento das fotos dos itens. As mais recentes têm o SQL de rev
 | Perfil | Vê | Faz |
 |---|---|---|
 | Visitante (sem conta) | Vitrine, empreendedores, detalhes, planos, perguntas frequentes ativas | Envia mensagem à equipe pelo formulário de contato |
-| COMUM | Tudo do visitante | Cadastra o próprio negócio, o que promove a conta a EMPREENDEDOR. A interface não cria contas desse tipo: o cadastro público já nasce com negócio |
+| COMUM | Tudo do visitante | Avalia negócios (conta de cliente, criada em `/cadastro/cliente`) e denuncia avaliações. Pode cadastrar o próprio negócio, o que promove a conta a EMPREENDEDOR |
 | EMPREENDEDOR | Tudo do comum, mais o próprio negócio em prévia (mesmo sem plano) e os itens indisponíveis do próprio catálogo | Edita o próprio negócio, assina e troca de plano, gerencia o catálogo (com plano em vigor), vê o desempenho e as divulgações |
-| ADMIN | Tudo, incluindo negócios fora da vitrine, mensagens, contas, assinaturas, auditoria e perguntas ocultas | Cria, edita e exclui qualquer registro; suspende negócios; ativa e desativa contas; registra divulgações; mantém a central de ajuda |
+| ADMIN | Tudo, incluindo negócios fora da vitrine, mensagens, contas, assinaturas, auditoria, perguntas ocultas e avaliações removidas | Cria, edita e exclui qualquer registro; suspende negócios; ativa e desativa contas; registra divulgações; mantém a central de ajuda; remove e restaura avaliações (não avalia) |
 
 Regras que valem no servidor, independentemente do que a interface mostrar:
 
@@ -634,6 +640,43 @@ a ação do usuário segue normalmente.
 Consultar a auditoria é exclusivo do administrador, na aba Auditoria do painel, com filtros por
 ação, registro, pessoa, situação, período e busca livre, além de paginação. Consultas **não** geram
 logs: registrar cada leitura encheria a tabela e esconderia os eventos que importam.
+
+## Avaliações dos negócios
+
+> Como cliente, quero dar uma nota e comentar um negócio que me atendeu, e ver a reputação dos outros antes de chamar no WhatsApp.
+
+No perfil de cada negócio, a reputação aparece ao lado do nome (estrelas, média e quantidade) e a
+seção **Avaliações dos clientes** mostra o resumo com a distribuição das notas, o formulário e os
+comentários, ordenáveis (mais recentes, maior e menor nota) e carregados aos poucos ("ver mais").
+
+| Regra | Como funciona |
+|---|---|
+| RN-AVAL-01 | Cada avaliação pertence a um negócio (`avaliacoes.empreendedor_id`, com chave estrangeira) |
+| RN-AVAL-02 | Só quem tem conta avalia: cliente (`COMUM`) ou empreendedor de outro negócio. O dono não avalia o próprio; a administração modera e não avalia. Negócio fora da vitrine não recebe avaliação |
+| RN-AVAL-03 | Uma avaliação por pessoa por negócio, garantida pelo índice único (`empreendedor_id`, `usuario_id`); a segunda tentativa recebe `409` |
+| RN-AVAL-04 | Nota inteira de 1 a 5. `0`, `6`, `4.5` e `"5"` são recusados |
+| RN-AVAL-05 e 06 | Média, total e distribuição não ficam gravados: saem das avaliações `PUBLICADA` a cada leitura (`groupBy` por nota), então publicar, editar, apagar ou remover já muda a reputação |
+| RN-AVAL-07 | Validação no servidor com Zod (nota, comentário de 3 a 1000 caracteres); campos extras como `media` ou `usuarioId` são descartados |
+| RN-AVAL-08 | Nenhuma rota escreve média ou contagem; o dono do negócio não edita nem apaga avaliações de clientes |
+| RN-AVAL-09 | O autor edita (marca "editada") e apaga a própria. A administração remove com motivo (o autor vê o motivo) e pode restaurar; o registro removido fica guardado, fora da média. Tudo vai para a auditoria |
+| RN-AVAL-10 | O seed não cria avaliações; o perfil sem avaliações diz "Este negócio ainda não possui avaliações." |
+
+**Estrelas:** o preenchimento usa a média exata (4,3 pinta 30% da quinta estrela), e a cor vem da
+faixa da média: cinza sem avaliações, vermelha (1 a 1,9), laranja (2 a 2,9), dourada (3 a 3,9), verde
+(4 a 4,4) e verde com dourado (4,5 a 5). A média e a quantidade também aparecem em texto, e as estrelas
+têm rótulo para leitores de tela, então a cor nunca é a única informação. No **plano Destaque** muda só o
+acabamento (contorno dourado, brilho, moldura e o selo "Reputação em destaque"): a nota, a média e o
+número de estrelas são os mesmos de qualquer plano, e o selo "Negócio Destaque" continua separado da
+reputação.
+
+**Privacidade e segurança:** o avaliador aparece como primeiro nome e inicial do sobrenome; e-mail e
+telefone só aparecem para a administração, na moderação. O comentário é guardado e exibido como texto
+puro (o React escapa qualquer HTML). Publicar e editar têm limite de 10 por hora; denúncias, 20 por
+hora, uma por conta por avaliação.
+
+**Seletor de estrelas:** é um grupo de botões de rádio de verdade, então as setas do teclado trocam a
+nota e o leitor de tela anuncia "4 estrelas, Bom". A seção só busca os dados quando chega perto da tela,
+para não disputar a rede com o topo do perfil.
 
 ## Central de ajuda (FAQ)
 
@@ -897,6 +940,11 @@ pertence; o administrador também passa em todas as rotas de dono.
 | DELETE | `/contatos/:id` | admin | Exclui |
 | GET | `/faq` | público | Perguntas ativas, por `ordem` e depois pela pergunta |
 | POST | `/metricas` | público | Registra um evento de desempenho `{ empreendedorId, tipo, produtoId? }`. Sempre `204` |
+| GET | `/empreendedores/:id/avaliacoes` | público | Resumo (`media`, `total`, `distribuicao`), comentários publicados, `minha` (a de quem está logado) e `permissao`. Aceita `ordem` (`recentes`, `maior`, `menor`), `pagina` e `porPagina` (até 20) |
+| POST | `/empreendedores/:id/avaliacoes` | autenticado, menos o dono e o admin | Publica `{ "nota", "comentario" }`. `409` se a conta já avaliou |
+| PUT | `/avaliacoes/:id` | autor | Edita a nota e o comentário |
+| DELETE | `/avaliacoes/:id` | autor | Apaga a própria avaliação |
+| POST | `/avaliacoes/:id/denuncias` | autenticado, menos o autor | Denuncia `{ "motivo"? }`. Repetir não soma |
 
 ### Planos, assinaturas e desempenho
 
@@ -931,6 +979,8 @@ pertence; o administrador também passa em todas as rotas de dono.
 | POST | `/faq` | admin | Cria. Corpo `{ "pergunta", "resposta", "categoria"?, "ordem"?, "ativo"? }` |
 | PUT | `/faq/:id` | admin | Atualiza só os campos enviados |
 | DELETE | `/faq/:id` | admin | Exclui definitivamente |
+| GET | `/avaliacoes` | admin | Fila de moderação: denunciadas primeiro. Filtros `status` e `denunciadas=1` |
+| PUT | `/avaliacoes/:id/moderacao` | admin | `{ "acao": "remover", "motivo" }` ou `{ "acao": "restaurar" }` |
 
 ### Limites de requisições
 
@@ -943,6 +993,8 @@ pertence; o administrador também passa em todas as rotas de dono.
 | Formulário de contato | 5 por hora |
 | Envio de imagens | 60 a cada 15 minutos |
 | Métricas | 120 a cada 15 minutos |
+| Publicar e editar avaliações | 10 por hora |
+| Denúncias de avaliações | 20 por hora |
 
 Em desenvolvimento, a própria máquina fica fora da conta, para as suítes de teste não esbarrarem nos
 limites.
@@ -1014,7 +1066,7 @@ Registro inexistente retorna `404`; JSON malformado ou chave estrangeira inváli
 ## Funcionalidades e requisitos atendidos
 
 **CRUD completo pela interface** em dois lugares:
-- `/admin`, para a administração: abas em forma de teclas (Produtos, Empreendedores, Assinaturas, Divulgações, Mensagens, Contas, FAQ e Auditoria), cada uma com cabeçalho próprio e espaçamento uniforme. Produtos e Empreendedores têm tabela, Novo (modal com formulário vazio, `POST`), Editar (modal preenchido, `PUT`) e Excluir (confirmação, `DELETE`); Mensagens tem marcar como lida ou não lida (`PATCH`) e excluir.
+- `/admin`, para a administração: abas em forma de teclas (Produtos, Empreendedores, Assinaturas, Divulgações, Mensagens, Avaliações, Contas, FAQ e Auditoria), cada uma com cabeçalho próprio e espaçamento uniforme. Produtos e Empreendedores têm tabela, Novo (modal com formulário vazio, `POST`), Editar (modal preenchido, `PUT`) e Excluir (confirmação, `DELETE`); Mensagens tem marcar como lida ou não lida (`PATCH`) e excluir.
 - `/meu-negocio`, para o empreendedor: abas Catálogo, Plano, Desempenho e Divulgação, sobre o próprio negócio, sem enxergar o de ninguém. A edição dos dados do negócio abre num modal grande.
 - Após cada operação a lista é recarregada e um aviso no canto da tela informa o resultado.
 
@@ -1213,10 +1265,11 @@ node teste-desempenho.mjs        # o que a primeira tela baixa e a compressão d
 node teste-faq-ui.mjs            # central de ajuda, paginação, contato estável e permissões na tela
 node teste-celular-ui.mjs        # telas a 390px, termos em modal no cadastro e o painel sem repetições
 node teste-cadastro-celular.mjs  # cadastro completo no celular: máscara, foco no erro, etapas
+node teste-avaliacoes-ui.mjs     # avaliar pelo teclado, editar, duplicada, dono, denúncia, moderação e celular
 node teste-planos-ui.mjs --resetar-banco  # APAGA o banco: publicação, cadastro em 3 etapas, troca e cancelamento
 ```
 
-Da raiz, `npm run test:e2e` roda as seis primeiras, em sequência. Se o frontend estiver em outra
+Da raiz, `npm run test:e2e` roda as sete primeiras, em sequência. Se o frontend estiver em outra
 porta, informe: `APP_URL=http://localhost:5174 npm run test:e2e`.
 
 O `teste-planos-ui.mjs` **apaga o banco local**: roda o seed no começo e no fim, para partir sempre

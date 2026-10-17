@@ -28,6 +28,7 @@ npx vitest run tests/backend/horarios.test.js   # um arquivo só
 | `schemas-conta.test.js` | `controllers/authController.js` | força da senha, confirmação, telefone com DDD e os dois aceites obrigatórios |
 | `schemas-admin.test.js` | contato e usuário | mensagem da comunidade e moderação de conta |
 | `faq.test.js` | `controllers/faqController.js` | público só com ativas e em ordem, id gerado no cadastro, edição que não reativa sozinha, limites de 300 caracteres e auditoria |
+| `avaliacoes.test.js` | `controllers/avaliacaoController.js` e `services/avaliacoes.js` | média exata e distribuição que soma o total, só publicadas contam, nome público sem dados de contato, quem pode avaliar (dono e admin não), nota inteira de 1 a 5, comentário de 3 a 1000, duplicada é 409, só o autor edita e apaga, denúncia única e moderação que guarda o motivo sem mexer na nota |
 | `paginacao.test.js` | `utils/paginacao.js` | sem página a lista vem inteira; página e tamanho inválidos são recusados com 400 |
 | `planos.test.js` | `prisma/planos.js` | preços em centavos, só o Destaque liga selo, métricas ampliadas e divulgação, nenhum texto promete resultado, e o seed atualiza sem apagar nem desligar o plano do gateway |
 | `assinaturas.test.js` | `services/assinaturas.js` | pagamento ativa e publica até o vencimento, cobrança recusada tira da vitrine na hora, cancelamento respeita o período pago, vencimento sem renovação tira pela data, evento repetido não muda nada, troca de plano nos dois sentidos, conciliação no localhost, simulação bloqueada em produção e assinaturas do seed que nunca chamam o gateway |
@@ -51,6 +52,7 @@ npx vitest run tests/backend/horarios.test.js   # um arquivo só
 | `sessao.test.js` | `contexts/auth.js`, `services/validacoes.js`, `services/constantes.js` | destino de cada perfil depois do login e aceites obrigatórios |
 | `fontes.test.js` | `services/fontes.js` | toda afirmação do site aponta para uma fonte com endereço e data |
 | `faq.test.js` | `services/faq.js` | busca sem acento e com várias palavras, filtro por assunto e os mesmos limites do servidor |
+| `avaliacoes.test.js` | `services/avaliacoes.js` | faixas de cor nos limites pedidos, preenchimento fracionado das estrelas (4,3 = 30% da quinta), média com vírgula sem arredondar para cima, distribuição sem dividir por zero e o mesmo limite de comentário do servidor |
 
 Quatro testes comparam os dois lados de propósito: as categorias, os perfis, a
 validação de horários e os limites do FAQ precisam combinar, ou a tela deixa salvar o que a API

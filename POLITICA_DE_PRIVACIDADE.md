@@ -1,6 +1,6 @@
 # Política de Privacidade — VitrineRondon
 
-**Versão 1.1 — Outubro de 2026**
+**Versão 1.2 — Outubro de 2026**
 
 Esta Política descreve como o VitrineRondon coleta, utiliza, armazena e protege os dados pessoais dos seus usuários, em conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018 — LGPD). Ao utilizar a plataforma e aceitar esta Política, você concorda com o tratamento dos seus dados nos termos aqui descritos.
 
@@ -40,6 +40,11 @@ Esta Política descreve como o VitrineRondon coleta, utiliza, armazena e protege
 
 - Registro da autorização, e da data em que foi dada, para uso das informações e imagens do negócio nas redes oficiais
 
+**Avaliações (quem avalia um negócio):**
+
+- Nota, comentário e data da avaliação e das edições
+- Denúncias de avaliações feitas pela sua conta
+
 **Dados técnicos e de segurança:**
 
 - Registros de auditoria das ações realizadas na plataforma
@@ -56,6 +61,7 @@ Utilizamos os dados para:
 - Exibir a localização dos estabelecimentos, quando informada.
 - Processar a contratação, a cobrança e o cancelamento dos planos de assinatura.
 - Mostrar ao empreendedor as estatísticas de desempenho do seu negócio.
+- Exibir as avaliações dos negócios e calcular a média de cada um, e moderar as avaliações denunciadas.
 - Divulgar o negócio nas redes oficiais, somente com a autorização do empreendedor.
 - Garantir a segurança, prevenir fraudes e manter registros de auditoria.
 - Cumprir obrigações legais e regulatórias.
@@ -68,7 +74,7 @@ O tratamento dos seus dados se fundamenta em: execução de contrato (prestaçã
 
 4.1. **Dados públicos:** as informações do negócio e das publicações do empreendedor (incluindo contato comercial e localização) são exibidas publicamente na plataforma — é essa a finalidade do serviço.
 
-4.2. Dados de conta (como senha) nunca são exibidos publicamente nem compartilhados com terceiros.
+4.2. Dados de conta (como senha) nunca são exibidos publicamente nem compartilhados com terceiros. Nas avaliações, aparecem publicamente apenas o seu primeiro nome, a inicial do sobrenome, a nota, o comentário e a data; seu e-mail e telefone não são exibidos.
 
 4.3. **Pagamentos e imagens:** os dados necessários à cobrança dos planos são tratados pelo AbacatePay, intermediador de pagamentos, as imagens enviadas pelos empreendedores são armazenadas no Cloudinary, serviço de hospedagem de imagens, e o e-mail de recuperação de senha é entregue por um serviço de envio de e-mails, que recebe apenas o seu nome, o seu e-mail e a mensagem. Cada um recebe apenas o necessário para a sua função.
 
@@ -91,6 +97,8 @@ Para segurança e rastreabilidade, registramos ações relevantes (acessos, cada
 Mantemos seus dados enquanto sua conta estiver ativa e pelo período necessário para cumprir finalidades legais, de segurança e de auditoria. Após esse período, os dados são eliminados ou anonimizados, salvo obrigação legal de retenção.
 
 O fim de uma assinatura não apaga a conta nem o negócio: os dados do negócio, os produtos, as fotos e as estatísticas continuam guardados enquanto a conta existir, fora da vitrine pública, para que o empreendedor possa voltar a publicar. Para apagá-los, basta pedir o encerramento da conta.
+
+As avaliações ficam publicadas enquanto a conta do autor existir. O autor pode apagar a sua a qualquer momento, e o encerramento da conta apaga também as avaliações e denúncias feitas por ela. Avaliações removidas pela moderação ficam guardadas, fora do público, para fins de segurança e auditoria.
 
 ## 9. Seus direitos (art. 18 da LGPD)
 

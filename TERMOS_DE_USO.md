@@ -1,16 +1,17 @@
 # Termos de Uso — VitrineRondon
 
-**Versão 1.1 — Outubro de 2026**
+**Versão 1.2 — Outubro de 2026**
 
 Bem-vindo(a) ao VitrineRondon. Estes Termos de Uso regulam o acesso e a utilização da plataforma. Ao criar uma conta ou utilizar nossos serviços, você declara que leu, compreendeu e concorda com as condições abaixo. Caso não concorde, não utilize a plataforma.
 
 ## 1. Definições
 
 - **Plataforma:** o sistema web VitrineRondon, que conecta empreendedores locais a consumidores.
-- **Usuário comum:** pessoa que acessa a plataforma para consultar produtos e serviços. Navegar pela plataforma é gratuito e não exige conta.
+- **Usuário comum:** pessoa que acessa a plataforma para consultar produtos e serviços. Navegar pela plataforma é gratuito e não exige conta; a conta de cliente, também gratuita, só é necessária para avaliar negócios.
 - **Empreendedor:** usuário que se cadastra e assina um plano para divulgar e gerenciar um negócio, seus produtos e serviços.
 - **Administrador:** responsável pela gestão, moderação e controle geral da plataforma.
 - **Publicação:** qualquer produto, serviço ou informação de negócio divulgado por um empreendedor.
+- **Avaliação:** nota de 1 a 5 estrelas e comentário que um usuário com conta publica sobre um negócio.
 
 ## 2. Aceitação e cadastro
 
@@ -22,9 +23,17 @@ Bem-vindo(a) ao VitrineRondon. Estes Termos de Uso regulam o acesso e a utiliza�
 
 2.4. A plataforma não se destina a menores de 18 anos. Ao se cadastrar, você declara ser maior de idade.
 
-## 3. Responsabilidades do usuário comum
+## 3. Responsabilidades do usuário comum e avaliações
 
 O usuário comum pode consultar, pesquisar e visualizar publicações, além de entrar em contato com empreendedores. Compromete-se a utilizar a plataforma de boa-fé, sem praticar fraudes, abusos ou uso indevido das informações de contato divulgadas.
+
+3.1. Quem tem conta pode avaliar um negócio com uma nota de 1 a 5 estrelas e um comentário. Cada conta tem uma avaliação por negócio, que o próprio autor pode editar ou apagar.
+
+3.2. A avaliação deve relatar uma experiência real com o negócio, de forma honesta. É proibido avaliar o próprio negócio, combinar avaliações, oferecer ou receber vantagem em troca de avaliação e publicar avaliações falsas ou feitas em nome de outra pessoa.
+
+3.3. A avaliação é pública e aparece com o primeiro nome e a inicial do sobrenome do autor. A média e a quantidade de avaliações são calculadas automaticamente a partir das avaliações publicadas; nem o empreendedor nem a plataforma alteram a nota dada por um cliente, e o plano contratado pelo negócio não muda a média nem as avaliações.
+
+3.4. Qualquer usuário com conta pode denunciar uma avaliação que viole estes Termos. A administração analisa as denúncias e pode remover a avaliação, informando o motivo ao autor.
 
 ## 4. Responsabilidades do empreendedor
 
@@ -71,8 +80,9 @@ O usuário comum pode consultar, pesquisar e visualizar publicações, além de 
 - Contenha material ofensivo, discriminatório ou que incite violência.
 - Se relacione a produtos ou serviços proibidos por lei.
 - Contenha dados falsos de contato ou localização.
+- Exponha dados pessoais de terceiros (como telefone, endereço ou documentos).
 
-Publicações que violem estas regras podem ser removidas e a conta suspensa.
+Publicações e avaliações que violem estas regras podem ser removidas e a conta suspensa.
 
 ## 7. Papel e responsabilidade da plataforma
 
@@ -86,7 +96,9 @@ Publicações que violem estas regras podem ser removidas e a conta suspensa.
 
 8.1. O administrador pode moderar, editar, ocultar ou remover publicações e suspender ou encerrar contas que violem estes Termos, a legislação ou os direitos de terceiros. Um negócio suspenso por moderação deixa de aparecer publicamente, ainda que possua assinatura em vigor.
 
-8.2. O usuário pode solicitar o encerramento de sua conta a qualquer momento, observadas as regras de retenção previstas na Política de Privacidade.
+8.2. Avaliações que violem estes Termos podem ser removidas pela administração, que registra o motivo; a avaliação removida deixa de aparecer e de contar na média. A administração não edita a nota nem o texto de uma avaliação.
+
+8.3. O usuário pode solicitar o encerramento de sua conta a qualquer momento, observadas as regras de retenção previstas na Política de Privacidade.
 
 ## 9. Propriedade intelectual
 
