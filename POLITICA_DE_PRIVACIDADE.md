@@ -1,6 +1,6 @@
 # Política de Privacidade — VitrineRondon
 
-**Versão 1.2 — Outubro de 2026**
+**Versão 1.3 — Outubro de 2026**
 
 Esta Política descreve como o VitrineRondon coleta, utiliza, armazena e protege os dados pessoais dos seus usuários, em conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018 — LGPD). Ao utilizar a plataforma e aceitar esta Política, você concorda com o tratamento dos seus dados nos termos aqui descritos.
 
@@ -40,6 +40,14 @@ Esta Política descreve como o VitrineRondon coleta, utiliza, armazena e protege
 
 - Registro da autorização, e da data em que foi dada, para uso das informações e imagens do negócio nas redes oficiais
 
+**Login com Google (quem entra para avaliar):**
+
+- Nome e e-mail verificado informados pelo Google
+- Identificador da conta Google (para reconhecer o mesmo usuário nos próximos acessos)
+- Data do último acesso pelo Google
+
+Não recebemos nem guardamos a senha do Google. Telefone e endereço não são pedidos a quem só avalia.
+
 **Avaliações (quem avalia um negócio):**
 
 - Nota, comentário e data da avaliação e das edições
@@ -76,7 +84,7 @@ O tratamento dos seus dados se fundamenta em: execução de contrato (prestaçã
 
 4.2. Dados de conta (como senha) nunca são exibidos publicamente nem compartilhados com terceiros. Nas avaliações, aparecem publicamente apenas o seu primeiro nome, a inicial do sobrenome, a nota, o comentário e a data; seu e-mail e telefone não são exibidos.
 
-4.3. **Pagamentos e imagens:** os dados necessários à cobrança dos planos são tratados pelo AbacatePay, intermediador de pagamentos, as imagens enviadas pelos empreendedores são armazenadas no Cloudinary, serviço de hospedagem de imagens, e o e-mail de recuperação de senha é entregue por um serviço de envio de e-mails, que recebe apenas o seu nome, o seu e-mail e a mensagem. Cada um recebe apenas o necessário para a sua função.
+4.3. **Pagamentos e imagens:** os dados necessários à cobrança dos planos são tratados pelo AbacatePay, intermediador de pagamentos, as imagens enviadas pelos empreendedores são armazenadas no Cloudinary, serviço de hospedagem de imagens, e o e-mail de recuperação de senha é entregue por um serviço de envio de e-mails, que recebe apenas o seu nome, o seu e-mail e a mensagem. No login com Google, o próprio Google confirma a sua identidade e nos envia apenas o nome, o e-mail e o identificador da conta. Cada um recebe apenas o necessário para a sua função.
 
 4.4. Não vendemos seus dados pessoais. O compartilhamento com terceiros ocorre apenas quando necessário para o funcionamento da plataforma (por exemplo, serviços de mapa) ou por exigência legal.
 
@@ -98,7 +106,7 @@ Mantemos seus dados enquanto sua conta estiver ativa e pelo período necessário
 
 O fim de uma assinatura não apaga a conta nem o negócio: os dados do negócio, os produtos, as fotos e as estatísticas continuam guardados enquanto a conta existir, fora da vitrine pública, para que o empreendedor possa voltar a publicar. Para apagá-los, basta pedir o encerramento da conta.
 
-As avaliações ficam publicadas enquanto a conta do autor existir. O autor pode apagar a sua a qualquer momento, e o encerramento da conta apaga também as avaliações e denúncias feitas por ela. Avaliações removidas pela moderação ficam guardadas, fora do público, para fins de segurança e auditoria.
+As avaliações ficam publicadas enquanto a conta do autor existir. O autor pode apagar a sua a qualquer momento, e o encerramento da conta apaga também as avaliações, as denúncias e o vínculo com o Google. Avaliações removidas pela moderação ficam guardadas, fora do público, para fins de segurança e auditoria.
 
 ## 9. Seus direitos (art. 18 da LGPD)
 

@@ -37,6 +37,7 @@ registrada numa trilha de auditoria consultável só pela administração.
 - [Auditoria](#auditoria)
 - [Central de ajuda (FAQ)](#central-de-ajuda-faq)
 - [Avaliações dos negócios](#avaliações-dos-negócios)
+- [Login com Google](#login-com-google)
 - [Planos e assinaturas](#planos-e-assinaturas)
 - [Imagens: envio, enquadramento e zoom](#imagens-envio-enquadramento-e-zoom)
 - [API](#api)
@@ -196,7 +197,7 @@ JWT_SECRET="troque-por-um-segredo-longo-e-aleatorio"
 JWT_EXPIRES_IN="8h"
 
 # Versão vigente dos documentos legais, gravada em cada aceite
-TERMOS_VERSAO="1.2"
+TERMOS_VERSAO="1.3"
 
 # Imagens enviadas do computador: pasta local, ou Cloudinary se preenchido
 UPLOADS_DIR="uploads"
@@ -220,7 +221,9 @@ DEMO_EMPREENDEDOR_SENHA="defina-uma-senha-forte"
 | `DATABASE_URL_MIGRACAO` | para migrations | Conta de administrador. Usada por `prisma:migrate`, `prisma:deploy`, `prisma:status` e `banco:criar-usuario`; a API nunca se conecta com ela |
 | `JWT_SECRET` | sim | Sem ela a vitrine abre, mas ninguém entra nem se cadastra: o log avisa na subida e o `/api/health` mostra `"login": "indisponivel"` |
 | `JWT_EXPIRES_IN` | não | Padrão `8h` |
-| `TERMOS_VERSAO` | não | Padrão `1.2`. Mudar a versão faz novos aceites gravarem o novo número |
+| `TERMOS_VERSAO` | não | Padrão `1.3`. Mudar a versão faz novos aceites gravarem o novo número |
+| `GOOGLE_CLIENT_ID` e `GOOGLE_CLIENT_SECRET` | para o login com Google | Cliente OAuth "Aplicativo da Web" do Google Cloud. Sem eles, o botão "Continuar com Google" aparece como indisponível. Veja [Login com Google](#login-com-google) |
+| `GOOGLE_URL_RETORNO` | não | Endereço de retorno fixo. Padrão: `<endereço da API>/api/auth/google/retorno` |
 | `UPLOADS_DIR` | não | Padrão `uploads` (relativo à pasta `backend`). Onde ficam as fotos enviadas quando não há Cloudinary |
 | `CLOUDINARY_URL` | **em produção** | `cloudinary://CHAVE:SEGREDO@CONTA`. Com ela, as fotos vão para o Cloudinary. Sem ela, em produção, o envio de fotos é recusado com `503` (o disco do Render gratuito é apagado a cada deploy, e as fotos sumiriam) e o `/api/health` mostra `"imagens": "indisponivel"` |
 | `CLOUDINARY_PASTA` | não | Padrão `vitrinelocal`. Pasta das fotos dentro da conta do Cloudinary |
@@ -287,7 +290,7 @@ VitrineLocal/
 ├── tests-e2e/                driver do Chrome DevTools Protocol e suítes de ponta a ponta
 ├── backend/
 │   ├── prisma/
-│   │   ├── schema.prisma     modelo de dados (17 tabelas)
+│   │   ├── schema.prisma     modelo de dados (18 tabelas)
 │   │   ├── migrations/       17 migrations, da criação inicial ao enquadramento das fotos
 │   │   ├── reversoes/        SQL para desfazer uma migration (o Prisma só anda para frente)
 │   │   ├── planos.js         os planos à venda (preço, ciclo, benefícios, recursos)
@@ -351,9 +354,10 @@ Cada componente e página mora na própria pasta, com o `.jsx` e o `.css` ao lad
 
 ## Modelo de dados
 
-Dezessete tabelas. Uma conta pode ter um negócio; um negócio tem muitos produtos, intervalos de
+Dezoito tabelas. Uma conta pode ter um negócio; um negócio tem muitos produtos, intervalos de
 atendimento, assinaturas, divulgações, métricas e avaliações (tudo em cascata) e pode receber mensagens.
-Cada avaliação tem um autor (a conta, em cascata), e cada denúncia liga uma conta a uma avaliação. Os
+Cada avaliação tem um autor (a conta, em cascata), cada denúncia liga uma conta a uma avaliação, e cada
+identidade externa (login com Google) liga uma conta a um provedor. Os
 aceites de termos e os pedidos de nova senha seguem a conta em cascata, mas os logs de auditoria
 sobrevivem à exclusão da conta: apagar um usuário não pode apagar o histórico. Um plano não pode ser
 apagado enquanto houver assinatura dele. Três tabelas ficam soltas: as perguntas da central de ajuda,
@@ -376,6 +380,7 @@ erDiagram
     USUARIOS ||--o{ AVALIACOES : "escreveu"
     AVALIACOES ||--o{ DENUNCIAS_AVALIACAO : "recebe"
     USUARIOS ||--o{ DENUNCIAS_AVALIACAO : "fez"
+    USUARIOS ||--o{ IDENTIDADES_EXTERNAS : "entra por"
 
     USUARIOS {
         int id PK
@@ -581,7 +586,7 @@ negócio e enquadramento das fotos dos itens. As mais recentes têm o SQL de rev
 | Perfil | Vê | Faz |
 |---|---|---|
 | Visitante (sem conta) | Vitrine, empreendedores, detalhes, planos, perguntas frequentes ativas | Envia mensagem à equipe pelo formulário de contato |
-| COMUM | Tudo do visitante | Avalia negócios (conta de cliente, criada em `/cadastro/cliente`) e denuncia avaliações. Pode cadastrar o próprio negócio, o que promove a conta a EMPREENDEDOR |
+| COMUM | Tudo do visitante | Avalia negócios e denuncia avaliações. A conta é criada sozinha no primeiro login com Google (sem senha nem telefone). Pode cadastrar o próprio negócio, o que promove a conta a EMPREENDEDOR |
 | EMPREENDEDOR | Tudo do comum, mais o próprio negócio em prévia (mesmo sem plano) e os itens indisponíveis do próprio catálogo | Edita o próprio negócio, assina e troca de plano, gerencia o catálogo (com plano em vigor), vê o desempenho e as divulgações |
 | ADMIN | Tudo, incluindo negócios fora da vitrine, mensagens, contas, assinaturas, auditoria, perguntas ocultas e avaliações removidas | Cria, edita e exclui qualquer registro; suspende negócios; ativa e desativa contas; registra divulgações; mantém a central de ajuda; remove e restaura avaliações (não avalia) |
 
@@ -677,6 +682,48 @@ hora, uma por conta por avaliação.
 **Seletor de estrelas:** é um grupo de botões de rádio de verdade, então as setas do teclado trocam a
 nota e o leitor de tela anuncia "4 estrelas, Bom". A seção só busca os dados quando chega perto da tela,
 para não disputar a rede com o topo do perfil.
+
+## Login com Google
+
+> Como cliente, quero avaliar um negócio sem preencher cadastro nem criar senha.
+
+Quem avalia entra com **"Continuar com Google"** (no convite da seção de avaliações e no login). Quem
+anuncia continua com e-mail e senha, sem mudança. Não existe um segundo sistema de sessão: o login com
+Google termina na mesma sessão JWT do login por senha.
+
+**Fluxo** (OAuth 2.0 / OpenID Connect, *authorization code* com PKCE, todo no servidor):
+
+1. O botão é um link para `/api/auth/google/iniciar?destino=<página>&origem=<site>`. A API guarda
+   `state`, `nonce`, o verificador PKCE e o destino num cookie assinado, `httpOnly`, de 10 minutos,
+   restrito ao caminho do retorno, e leva ao Google.
+2. O Google volta para `/api/auth/google/retorno`. A API confere o `state` com o cookie (CSRF), troca o
+   código pelo `id_token` com o segredo e o verificador e valida o `id_token`: assinatura RS256 pelas chaves
+   públicas do Google (com cache e nova busca quando a chave muda), emissor, audiência, validade, `nonce`
+   e e-mail verificado.
+3. A identidade é procurada em `identidades_externas` pelo par único (`provedor`, `sujeito`):
+   - achou: entra na conta de sempre (o perfil dela não muda);
+   - o e-mail já é de uma conta, sem vínculo: **nada é ligado sozinho**; a tela pede a senha dessa conta
+     e só então liga o Google a ela (`/auth/google/vincular`, com o limite de tentativas do login);
+   - ninguém: cria uma conta `COMUM` (nome e e-mail do Google, sem senha nem telefone), o vínculo e o
+     aceite dos termos, numa transação. Dois primeiros logins simultâneos esbarram no índice único e o
+     segundo recupera a conta do primeiro.
+4. A API volta ao site em `/entrar/google#codigo=...`: um código de **uso único que vale 60 s** (no
+   fragmento, que não vai para servidores nem para o `Referer`), trocado pela sessão em
+   `/auth/google/sessao`. O site apaga o fragmento e volta à página de onde a pessoa saiu (só caminhos do
+   próprio site são aceitos como destino; a origem precisa estar em `CORS_ORIGINS`).
+
+Os tokens temporários do fluxo são assinados com uma chave derivada do `JWT_SECRET`, diferente da das
+sessões, então nenhum deles vale como sessão. Login social nunca dá perfil de empreendedor ou de admin.
+Login cancelado, demorado, de conta desativada ou com falha mostra o motivo e o botão para tentar de novo.
+
+**Configurar (uma vez):** no [Google Cloud Console](https://console.cloud.google.com/apis/credentials),
+crie um "ID do cliente OAuth" do tipo **Aplicativo da Web**, com as URIs de redirecionamento autorizadas
+`https://<sua-api>/api/auth/google/retorno` e `http://localhost:3001/api/auth/google/retorno`, e coloque
+`GOOGLE_CLIENT_ID` e `GOOGLE_CLIENT_SECRET` no `backend/.env` e nas variáveis do Render.
+
+**Outros provedores:** o modelo (`identidades_externas.provedor`) e o serviço
+([services/loginSocial.js](backend/src/services/loginSocial.js)) já recebem Microsoft ou Apple como uma
+entrada a mais em `configuracaoDoProvedor`.
 
 ## Central de ajuda (FAQ)
 
@@ -913,6 +960,11 @@ pertence; o administrador também passa em todas as rotas de dono.
 | POST | `/auth/redefinir-senha/verificar` | público | Diz se o link (`codigo`) ainda vale: `410` com `motivo` `invalido`, `usado` ou `expirado` |
 | POST | `/auth/redefinir-senha` | público | Troca a senha pelo link. Marca o link como usado e derruba as sessões abertas antes |
 | POST | `/auth/logout` | autenticado | Encerra a sessão (o token deixa de valer) e registra na auditoria |
+| GET | `/auth/provedores` | público | Logins externos configurados: `{ "google": true }` |
+| GET | `/auth/google/iniciar` | público | Começa o login com Google. Query `destino` (caminho do site) e `origem` (site, conferido com `CORS_ORIGINS`) |
+| GET | `/auth/google/retorno` | Google | Valida o retorno e volta ao site com `#codigo`, `#vincular` ou `#erro` |
+| POST | `/auth/google/sessao` | público | Troca o `codigo` (uso único, 60 s) pela sessão, no mesmo formato do login |
+| POST | `/auth/google/vincular` | público | `{ "vinculo", "senha" }`: liga o Google a uma conta existente com o mesmo e-mail |
 | GET | `/auth/me` | autenticado | Dados da conta atual, sem o hash da senha |
 | GET | `/termos/:tipo` | público | `TERMOS_DE_USO` ou `POLITICA_PRIVACIDADE`, com a versão vigente |
 
@@ -1266,10 +1318,12 @@ node teste-faq-ui.mjs            # central de ajuda, paginação, contato estáv
 node teste-celular-ui.mjs        # telas a 390px, termos em modal no cadastro e o painel sem repetições
 node teste-cadastro-celular.mjs  # cadastro completo no celular: máscara, foco no erro, etapas
 node teste-avaliacoes-ui.mjs     # avaliar pelo teclado, editar, duplicada, dono, denúncia, moderação e celular
+node teste-contas-ui.mjs         # cliente que anuncia depois, cadastro com sessão aberta e login de empreendedor
+node teste-google-ui.mjs         # login com Google (provedor simulado): conta automática, recorrente, simultâneo, vínculo
 node teste-planos-ui.mjs --resetar-banco  # APAGA o banco: publicação, cadastro em 3 etapas, troca e cancelamento
 ```
 
-Da raiz, `npm run test:e2e` roda as sete primeiras, em sequência. Se o frontend estiver em outra
+Da raiz, `npm run test:e2e` roda as oito primeiras, em sequência. O `teste-google-ui.mjs` (`npm run test:e2e:google`) precisa da API apontando para o provedor simulado; o comando para subir está no topo de `tests-e2e/provedor-google-simulado.mjs`. Se o frontend estiver em outra
 porta, informe: `APP_URL=http://localhost:5174 npm run test:e2e`.
 
 O `teste-planos-ui.mjs` **apaga o banco local**: roda o seed no começo e no fim, para partir sempre

@@ -1,13 +1,13 @@
 # Termos de Uso — VitrineRondon
 
-**Versão 1.2 — Outubro de 2026**
+**Versão 1.3 — Outubro de 2026**
 
 Bem-vindo(a) ao VitrineRondon. Estes Termos de Uso regulam o acesso e a utilização da plataforma. Ao criar uma conta ou utilizar nossos serviços, você declara que leu, compreendeu e concorda com as condições abaixo. Caso não concorde, não utilize a plataforma.
 
 ## 1. Definições
 
 - **Plataforma:** o sistema web VitrineRondon, que conecta empreendedores locais a consumidores.
-- **Usuário comum:** pessoa que acessa a plataforma para consultar produtos e serviços. Navegar pela plataforma é gratuito e não exige conta; a conta de cliente, também gratuita, só é necessária para avaliar negócios.
+- **Usuário comum:** pessoa que acessa a plataforma para consultar produtos e serviços. Navegar pela plataforma é gratuito e não exige conta; a conta de cliente, também gratuita, só é necessária para avaliar negócios e é criada automaticamente no primeiro login com o Google.
 - **Empreendedor:** usuário que se cadastra e assina um plano para divulgar e gerenciar um negócio, seus produtos e serviços.
 - **Administrador:** responsável pela gestão, moderação e controle geral da plataforma.
 - **Publicação:** qualquer produto, serviço ou informação de negócio divulgado por um empreendedor.
@@ -23,11 +23,13 @@ Bem-vindo(a) ao VitrineRondon. Estes Termos de Uso regulam o acesso e a utiliza�
 
 2.4. A plataforma não se destina a menores de 18 anos. Ao se cadastrar, você declara ser maior de idade.
 
+2.5. **Login com Google.** Para avaliar negócios, o usuário pode entrar com a sua conta Google. No primeiro acesso, a plataforma cria uma conta de cliente com o nome e o e-mail verificado informados pelo Google; ao continuar, o usuário aceita estes Termos e a Política de Privacidade. A senha do Google nunca é solicitada nem armazenada pelo VitrineRondon. Se o e-mail já pertencer a uma conta da plataforma, o Google só é ligado a ela depois de o usuário confirmar a senha dessa conta. O login com Google não dá permissões de empreendedor nem de administração.
+
 ## 3. Responsabilidades do usuário comum e avaliações
 
 O usuário comum pode consultar, pesquisar e visualizar publicações, além de entrar em contato com empreendedores. Compromete-se a utilizar a plataforma de boa-fé, sem praticar fraudes, abusos ou uso indevido das informações de contato divulgadas.
 
-3.1. Quem tem conta pode avaliar um negócio com uma nota de 1 a 5 estrelas e um comentário. Cada conta tem uma avaliação por negócio, que o próprio autor pode editar ou apagar.
+3.1. Quem tem conta (inclusive a criada pelo login com Google) pode avaliar um negócio com uma nota de 1 a 5 estrelas e um comentário. Cada conta tem uma avaliação por negócio, que o próprio autor pode editar ou apagar.
 
 3.2. A avaliação deve relatar uma experiência real com o negócio, de forma honesta. É proibido avaliar o próprio negócio, combinar avaliações, oferecer ou receber vantagem em troca de avaliação e publicar avaliações falsas ou feitas em nome de outra pessoa.
 

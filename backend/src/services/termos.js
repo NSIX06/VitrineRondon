@@ -12,7 +12,7 @@ export const TIPOS_TERMO = {
 
 /** Versão vigente. Deve bater com o cabeçalho dos arquivos .md */
 export function versaoVigente() {
-  return process.env.TERMOS_VERSAO || '1.2';
+  return process.env.TERMOS_VERSAO || '1.3';
 }
 
 /** Conteúdo markdown de um documento */
