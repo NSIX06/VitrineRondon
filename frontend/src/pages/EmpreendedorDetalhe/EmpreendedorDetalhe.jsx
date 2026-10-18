@@ -146,6 +146,16 @@ function EmpreendedorDetalhe() {
   const instagramUsuario = instagram ? instagram.replace(/^@/, '') : null
   const primeiroNome = responsavel.split(' ')[0]
   const ehServico = produtos.some((p) => p.tipo === 'servico')
+  // "2 produtos e 1 serviço": contar só por "serviço" errava catálogos mistos
+  const totalServicos = produtos.filter((p) => p.tipo === 'servico').length
+  const totalProdutos = produtos.length - totalServicos
+  const resumoDoCatalogo =
+    [
+      totalProdutos && `${totalProdutos} ${totalProdutos === 1 ? 'produto' : 'produtos'}`,
+      totalServicos && `${totalServicos} ${totalServicos === 1 ? 'serviço' : 'serviços'}`,
+    ]
+      .filter(Boolean)
+      .join(' e ') || 'Nenhum item'
   const linkWhatsapp = montarLinkWhatsapp(whatsapp, nomeNegocio)
   const pedirItem = (item) =>
     montarLinkWhatsapp(
@@ -258,9 +268,11 @@ function EmpreendedorDetalhe() {
                   <div className="detalhe__selos">
                     <Tag variante={emDestaque ? 'ouro' : 'servico'}>{categoria}</Tag>
                     {novo && <SeloNovo compacto claro={emDestaque} />}
+                    {/* Afirmação verdadeira: na vitrine só fica negócio com plano em
+                        vigor. Não há etapa de verificação, então não dizemos "verificado" */}
                     <span className="detalhe__verificado">
-                      <Icone nome="verified" tamanho={16} />
-                      Perfil verificado
+                      <Icone nome="event_available" tamanho={16} />
+                      Na vitrine com plano em vigor
                     </span>
                     {!ativo && <Tag variante="alerta">Inativo no momento</Tag>}
                   </div>
@@ -311,14 +323,7 @@ function EmpreendedorDetalhe() {
                 </li>
                 <li>
                   <Icone nome="inventory_2" tamanho={18} />
-                  {produtos.length}{' '}
-                  {ehServico
-                    ? produtos.length === 1
-                      ? 'serviço no catálogo'
-                      : 'serviços no catálogo'
-                    : produtos.length === 1
-                      ? 'item no catálogo'
-                      : 'itens no catálogo'}
+                  {resumoDoCatalogo} no catálogo
                 </li>
                 <li>
                   <Icone nome="handshake" tamanho={18} />
@@ -453,10 +458,6 @@ function EmpreendedorDetalhe() {
                 </a>
               )}
               <ul className="detalhe__confianca">
-                <li>
-                  <Icone nome="verified" tamanho={16} />
-                  Cadastro conferido pela equipe VitrineRondon
-                </li>
                 <li>
                   <Icone nome="payments" tamanho={16} />
                   Pagamento combinado direto com {primeiroNome}

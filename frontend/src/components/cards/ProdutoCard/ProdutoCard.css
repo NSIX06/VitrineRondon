@@ -133,6 +133,9 @@
 .produto-card__empreendedor {
   display: inline-flex;
   align-items: center;
+  /* Área de toque de 44 px sem aumentar o cartão */
+  padding-block: 12px;
+  margin-block: -12px;
   font-size: var(--texto-sm);
   color: var(--cor-cinza);
   text-decoration: none;

@@ -41,7 +41,8 @@ export function planoDaAbertura(caminho, busca, comSessao) {
     ler('/empreendedores/destaques?limite=' + LIMITE_PILHA)
   } else if (caminho === '/vitrine') {
     telas.push('Vitrine')
-    ler('/produtos' + query([['categoria', filtro('categoria')], ['busca', filtro('busca')], ['tipo', filtro('tipo')], ['pagina', pagina], ['porPagina', POR_PAGINA_VITRINE]]))
+    ler('/produtos' + query([['categoria', filtro('categoria')], ['busca', filtro('busca')], ['tipo', filtro('tipo')], ['bairro', filtro('bairro')], ['pagina', pagina], ['porPagina', POR_PAGINA_VITRINE]]))
+    ler('/empreendedores')
   } else if (caminho === '/empreendedores') {
     telas.push('Empreendedores')
     ler('/empreendedores' + query([['categoria', filtro('categoria')], ['busca', filtro('busca')], ['bairro', filtro('bairro')], ['pagina', pagina], ['porPagina', POR_PAGINA_EMPREENDEDORES]]))

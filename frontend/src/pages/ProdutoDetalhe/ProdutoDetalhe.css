@@ -340,6 +340,8 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  padding-block: 12px;
+  margin-block: -12px;
   font-weight: 800;
   color: var(--cor-anil);
   text-decoration: none;
@@ -492,6 +494,15 @@
 
   .item__garantias {
     order: 3;
+  }
+
+  /* O botão do WhatsApp caía logo abaixo da primeira tela: no celular ele
+     gruda no rodapé da tela até chegar ao lugar dele na ficha */
+  /* .botao.item__pedir: a regra do botão (position: relative) vinha depois */
+  .botao.item__pedir {
+    position: sticky;
+    bottom: var(--esp-3);
+    z-index: 3;
   }
 }
 

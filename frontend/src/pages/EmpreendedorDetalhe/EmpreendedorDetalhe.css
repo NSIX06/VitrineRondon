@@ -155,6 +155,9 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  /* Área de toque de 44 px sem mudar o desenho da linha */
+  padding-block: 12px;
+  margin-block: -12px;
   font-size: var(--texto-sm);
   font-weight: 700;
   color: var(--cor-anil);
@@ -585,6 +588,7 @@
   z-index: 2;
   display: inline-flex;
   align-items: center;
+  min-height: 44px;
   gap: 6px;
   padding: 0.5rem 1rem;
   background: var(--cor-anil);
@@ -731,6 +735,7 @@
 
 .detalhe__telefone {
   display: block;
+  padding-block: 4px;
   font-family: var(--fonte-titulo);
   font-size: clamp(24px, 2.6vw, 30px);
   font-weight: 800;
@@ -756,6 +761,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  min-height: 44px;
   gap: var(--esp-2);
   font-size: var(--texto-sm);
   font-weight: 700;
@@ -1131,9 +1137,8 @@
     grid-template-columns: 1fr;
   }
 
-  .detalhe__whatsapp-topo {
-    display: none;
-  }
+  /* O WhatsApp do topo continua no celular: sem ele, o primeiro botão de
+     contato ficava a mais de uma tela de rolagem */
 }
 
 @media (max-width: 600px) {
@@ -1149,6 +1154,10 @@
     flex-direction: column;
     align-items: flex-start;
     gap: var(--esp-3);
+  }
+
+  .detalhe__whatsapp-topo {
+    align-self: stretch;
   }
 
   .detalhe__monograma {

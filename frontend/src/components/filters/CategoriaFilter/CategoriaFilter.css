@@ -5,6 +5,7 @@
 }
 
 .categoria-filter__opcao {
+  min-height: 44px;
   padding: 0.5rem 1rem;
   border: var(--borda);
   border-radius: var(--raio-md);
@@ -29,4 +30,25 @@
   color: var(--cor-tinta);
   transform: rotate(-1.5deg);
   box-shadow: 3px 3px 0 0 var(--cor-contorno), var(--cel-sm);
+}
+
+/* Celular: as categorias numa linha só, que desliza para o lado. Em três
+   fileiras elas ocupavam a primeira tela inteira e nenhum item aparecia */
+@media (max-width: 600px) {
+  .categoria-filter {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    /* Espaço para a sombra dura e o adesivo inclinado não serem cortados */
+    padding: 4px 6px 8px 2px;
+    margin-inline: -2px;
+  }
+
+  .categoria-filter::-webkit-scrollbar {
+    display: none;
+  }
+
+  .categoria-filter > * {
+    flex-shrink: 0;
+  }
 }

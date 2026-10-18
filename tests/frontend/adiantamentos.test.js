@@ -9,21 +9,24 @@ import {
 // A leitura adiantada só é aproveitada se o endereço for idêntico ao que a
 // tela pede (caminho + query, na mesma ordem do useConsulta). Estes testes
 // montam o endereço do jeito de cada tela e comparam.
-const daVitrine = ({ categoria = '', busca = '', tipo = '', pagina = 1 } = {}) =>
-  `/produtos${montarQuery({ categoria, busca, tipo, pagina, porPagina: POR_PAGINA_VITRINE })}`
+const daVitrine = ({ categoria = '', busca = '', tipo = '', bairro = '', pagina = 1 } = {}) =>
+  `/produtos${montarQuery({ categoria, busca, tipo, bairro, pagina, porPagina: POR_PAGINA_VITRINE })}`
 const dosEmpreendedores = ({ categoria = '', busca = '', bairro = '', pagina = 1 } = {}) =>
   `/empreendedores${montarQuery({ categoria, busca, bairro, pagina, porPagina: POR_PAGINA_EMPREENDEDORES })}`
 
 describe('adiantamento por página', () => {
-  it('vitrine sem filtro', () => {
+  it('vitrine sem filtro: a página da lista e a lista de negócios (bairros)', () => {
     const { telas, leituras } = planoDeAdiantamento('/vitrine', '')
     expect(telas).toHaveLength(1)
-    expect(leituras).toEqual([daVitrine()])
+    expect(leituras).toEqual([daVitrine(), '/empreendedores'])
   })
 
   it('vitrine com filtros e página na URL', () => {
-    const { leituras } = planoDeAdiantamento('/vitrine', '?categoria=Moda&tipo=servico&pagina=2&busca=bolo')
-    expect(leituras).toEqual([daVitrine({ categoria: 'Moda', busca: 'bolo', tipo: 'servico', pagina: 2 })])
+    const { leituras } = planoDeAdiantamento('/vitrine', '?categoria=Moda&tipo=servico&bairro=Centro&pagina=2&busca=bolo')
+    expect(leituras).toEqual([
+      daVitrine({ categoria: 'Moda', busca: 'bolo', tipo: 'servico', bairro: 'Centro', pagina: 2 }),
+      '/empreendedores',
+    ])
   })
 
   it('empreendedores: a página da lista e a lista completa (bairros)', () => {
