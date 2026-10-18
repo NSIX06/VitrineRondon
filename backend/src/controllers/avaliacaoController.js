@@ -285,6 +285,32 @@ export async function denunciarAvaliacao(req, res, next) {
   }
 }
 
+// GET /api/avaliacoes/minhas  (as avaliações de quem está logado, em qualquer negócio)
+export async function listarMinhas(req, res, next) {
+  try {
+    const lista = await prisma.avaliacao.findMany({
+      where: { usuarioId: req.usuario.id },
+      orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+      include: {
+        usuario: AUTOR,
+        empreendedor: { select: { id: true, nomeNegocio: true, categoria: true, emDestaque: true } },
+      },
+    });
+    res.json({
+      success: true,
+      total: lista.length,
+      data: lista.map((avaliacao) => ({
+        ...avaliacaoPublica(avaliacao, req.usuario),
+        status: avaliacao.status,
+        motivoRemocao: avaliacao.status === STATUS_AVALIACAO.REMOVIDA ? avaliacao.motivoRemocao : null,
+        negocio: avaliacao.empreendedor,
+      })),
+    });
+  } catch (erro) {
+    next(erro);
+  }
+}
+
 // GET /api/avaliacoes?status=PUBLICADA|REMOVIDA&denunciadas=1&pagina=1&porPagina=20  (administração)
 export async function listarParaModeracao(req, res, next) {
   try {

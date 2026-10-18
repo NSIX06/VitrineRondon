@@ -37,8 +37,8 @@ function BotaoGoogle({ destino = '/', aviso = true }) {
       {aviso && disponivel !== false && (
         <p className="botao-google__aviso">
           Ao continuar, você aceita os <Link to="/termos">Termos de Uso</Link> e a{' '}
-          <Link to="/privacidade">Política de Privacidade</Link>. Usamos só o seu nome e e-mail do Google; não
-          pedimos nem guardamos a sua senha.
+          <Link to="/privacidade">Política de Privacidade</Link>. Confirmamos só o seu nome e e-mail; você não
+          precisa criar senha.
         </p>
       )}
     </div>

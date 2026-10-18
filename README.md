@@ -224,6 +224,7 @@ DEMO_EMPREENDEDOR_SENHA="defina-uma-senha-forte"
 | `TERMOS_VERSAO` | não | Padrão `1.3`. Mudar a versão faz novos aceites gravarem o novo número |
 | `GOOGLE_CLIENT_ID` e `GOOGLE_CLIENT_SECRET` | para o login com Google | Cliente OAuth "Aplicativo da Web" do Google Cloud. Sem eles, o botão "Continuar com Google" aparece como indisponível. Veja [Login com Google](#login-com-google) |
 | `GOOGLE_URL_RETORNO` | não | Endereço de retorno fixo. Padrão: `<endereço da API>/api/auth/google/retorno` |
+| `JWT_EXPIRES_IN_CLIENTE` | não | Duração da sessão de cliente (login com Google). Padrão `30d` |
 | `UPLOADS_DIR` | não | Padrão `uploads` (relativo à pasta `backend`). Onde ficam as fotos enviadas quando não há Cloudinary |
 | `CLOUDINARY_URL` | **em produção** | `cloudinary://CHAVE:SEGREDO@CONTA`. Com ela, as fotos vão para o Cloudinary. Sem ela, em produção, o envio de fotos é recusado com `503` (o disco do Render gratuito é apagado a cada deploy, e as fotos sumiriam) e o `/api/health` mostra `"imagens": "indisponivel"` |
 | `CLOUDINARY_PASTA` | não | Padrão `vitrinelocal`. Pasta das fotos dentro da conta do Cloudinary |
@@ -687,9 +688,19 @@ para não disputar a rede com o topo do perfil.
 
 > Como cliente, quero avaliar um negócio sem preencher cadastro nem criar senha.
 
-Quem avalia entra com **"Continuar com Google"** (no convite da seção de avaliações e no login). Quem
-anuncia continua com e-mail e senha, sem mudança. Não existe um segundo sistema de sessão: o login com
-Google termina na mesma sessão JWT do login por senha.
+Quem avalia não faz cadastro nem "login": **escreve a avaliação primeiro** (estrelas e comentário
+aparecem para qualquer visitante) e clica em **"Publicar com Google"**. O rascunho fica guardado no
+navegador, o Google confirma quem é a pessoa e, na volta, **a avaliação é publicada sozinha**. Se ela
+cancelar no Google, o texto continua no formulário. Quem anuncia continua com e-mail e senha, e a tela de
+login é só dos empreendedores. Não existe um segundo sistema de sessão: o login com Google termina na
+mesma sessão JWT do login por senha.
+
+**Depois da confirmação:** o menu mostra só "Minhas avaliações" e "Sair" (o tipo da conta aparece como
+"Cliente"). Em `/minhas-avaliacoes` a pessoa vê, edita e apaga as avaliações que deixou; sem sessão, a
+página pede a confirmação com o Google ali mesmo. A sessão de cliente dura **30 dias**
+(`JWT_EXPIRES_IN_CLIENTE`) e leva a marca `escopo: cliente`: se a conta deixar de ser COMUM (ao anunciar
+um negócio), essa sessão deixa de valer e a resposta do cadastro do negócio já traz uma sessão normal
+de empreendedor (8 horas).
 
 **Fluxo** (OAuth 2.0 / OpenID Connect, *authorization code* com PKCE, todo no servidor):
 
@@ -996,6 +1007,7 @@ pertence; o administrador também passa em todas as rotas de dono.
 | POST | `/empreendedores/:id/avaliacoes` | autenticado, menos o dono e o admin | Publica `{ "nota", "comentario" }`. `409` se a conta já avaliou |
 | PUT | `/avaliacoes/:id` | autor | Edita a nota e o comentário |
 | DELETE | `/avaliacoes/:id` | autor | Apaga a própria avaliação |
+| GET | `/avaliacoes/minhas` | autenticado | As avaliações da conta, com o negócio e a situação (inclusive removidas, com o motivo) |
 | POST | `/avaliacoes/:id/denuncias` | autenticado, menos o autor | Denuncia `{ "motivo"? }`. Repetir não soma |
 
 ### Planos, assinaturas e desempenho
@@ -1319,7 +1331,7 @@ node teste-celular-ui.mjs        # telas a 390px, termos em modal no cadastro e 
 node teste-cadastro-celular.mjs  # cadastro completo no celular: máscara, foco no erro, etapas
 node teste-avaliacoes-ui.mjs     # avaliar pelo teclado, editar, duplicada, dono, denúncia, moderação e celular
 node teste-contas-ui.mjs         # cliente que anuncia depois, cadastro com sessão aberta e login de empreendedor
-node teste-google-ui.mjs         # login com Google (provedor simulado): conta automática, recorrente, simultâneo, vínculo
+node teste-google-ui.mjs         # avaliar sem cadastro (provedor simulado): rascunho publicado na volta, cancelar sem perder, Minhas avaliações, sessão de 30 dias, vínculo
 node teste-planos-ui.mjs --resetar-banco  # APAGA o banco: publicação, cadastro em 3 etapas, troca e cancelamento
 ```
 

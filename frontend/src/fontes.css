@@ -1,6 +1,6 @@
 /* Gerado por scripts/baixar-fontes.mjs: não edite à mão.
    Bricolage Grotesque e Inter (latin e latin-ext) e Material Symbols Outlined
-   só com os 109 nomes encontrados no código. */
+   só com os 108 nomes encontrados no código. */
 
 /* latin-ext */
 @font-face {
@@ -131,7 +131,7 @@
   font-style: normal;
   font-weight: 400;
   font-display: block;
-  src: url(/fontes/icones-f08c1910df.woff2) format('woff2');
+  src: url(/fontes/icones-45b76ca4b8.woff2) format('woff2');
 }
 
 .material-symbols-outlined {

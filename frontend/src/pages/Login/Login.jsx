@@ -7,7 +7,6 @@ import Icone from '../../components/ui/Icone/Icone'
 import CampoSenha from '../../components/forms/CampoSenha/CampoSenha'
 import StatusMessage from '../../components/ui/StatusMessage/StatusMessage'
 import PainelAcesso from './PainelAcesso'
-import BotaoGoogle from '../../components/auth/BotaoGoogle/BotaoGoogle'
 import { FOTOS_DO_ACESSO } from './fotosDoPainel'
 import FundoDePontos from '../../components/ui/DotField/FundoDePontos'
 import './Login.css'
@@ -164,13 +163,6 @@ function Login() {
                     {enviando ? 'Entrando...' : 'Entrar'}
                   </Button>
                 </form>
-
-                {/* Clientes que avaliam entram pelo Google, sem cadastro; quem
-                    anuncia continua com e-mail e senha */}
-                <div className="login__ou" aria-hidden="true">
-                  <span>ou, para avaliar negócios</span>
-                </div>
-                <BotaoGoogle destino={destinoOriginal || '/empreendedores'} aviso={false} />
 
                 <p className="login__rodape">
                   Ainda não tem conta?{' '}

@@ -34,13 +34,20 @@ export function problemaNaSessao() {
  * Gera o token de sessão com o mínimo necessário (id e perfil). O jti é o
  * identificador desta sessão: é ele que o logout marca como encerrado.
  */
-export function gerarToken(usuario) {
-  return jwt.sign({ sub: usuario.id, perfil: usuario.perfil }, segredo(), {
+export function gerarToken(usuario, { cliente = false } = {}) {
+  // Sessão de cliente (conta COMUM que entrou pelo Google só para avaliar):
+  // dura mais (30 dias), e leva a marca "cliente" para não valer se a conta
+  // deixar de ser COMUM (ao anunciar um negócio, por exemplo)
+  const dados = { sub: usuario.id, perfil: usuario.perfil, ...(cliente ? { escopo: 'cliente' } : {}) };
+  return jwt.sign(dados, segredo(), {
     algorithm: 'HS256',
-    expiresIn: process.env.JWT_EXPIRES_IN || '8h',
+    expiresIn: cliente ? DURACAO_SESSAO_CLIENTE() : process.env.JWT_EXPIRES_IN || '8h',
     jwtid: randomUUID(),
   });
 }
+
+/** Duração da sessão de cliente (padrão 30 dias) */
+export const DURACAO_SESSAO_CLIENTE = () => process.env.JWT_EXPIRES_IN_CLIENTE || '30d';
 
 /** Lê o token do cabeçalho Authorization: Bearer <token> */
 function extrairToken(req) {
@@ -69,6 +76,8 @@ async function usuarioDoToken(token) {
   // (iat é em segundos; o token criado no mesmo segundo da troca continua válido)
   const { senhaAlteradaEm, ...dados } = usuario;
   if (senhaAlteradaEm && payload.iat < Math.floor(senhaAlteradaEm.getTime() / 1000)) return null;
+  // Sessão longa de cliente não serve para quem virou empreendedor ou admin
+  if (payload.escopo === 'cliente' && usuario.perfil !== PERFIS.COMUM) return null;
   // Identificador e validade desta sessão ficam fora do objeto público do usuário
   Object.defineProperty(dados, 'sessao', { value: { jti: payload.jti ?? null, exp: payload.exp }, enumerable: false });
   return dados;

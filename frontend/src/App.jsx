@@ -46,6 +46,7 @@ const Login = lazy(tela(() => import('./pages/Login/Login')))
 const EsqueciSenha = lazy(tela(() => import('./pages/RecuperarSenha/EsqueciSenha'), { preCarregar: false }))
 const RedefinirSenha = lazy(tela(() => import('./pages/RecuperarSenha/RedefinirSenha'), { preCarregar: false }))
 const Cadastro = lazy(tela(() => import('./pages/Cadastro/Cadastro'), { preCarregar: false }))
+const MinhasAvaliacoes = lazy(tela(() => import('./pages/MinhasAvaliacoes/MinhasAvaliacoes'), { preCarregar: false }))
 const EntrarGoogle = lazy(tela(() => import('./pages/EntrarGoogle/EntrarGoogle'), { preCarregar: false }))
 const Termos = lazy(tela(() => import('./pages/Termos/Termos'), { preCarregar: false }))
 const Planos = lazy(tela(() => import('./pages/Planos/Planos')))
@@ -132,6 +133,7 @@ const router = createBrowserRouter(
           {/* Clientes entram com o Google: o cadastro com senha para avaliar saiu */}
           <Route path="/cadastro/cliente" element={<Navigate to="/login" replace />} />
           <Route path="/entrar/google" element={<EntrarGoogle />} />
+          <Route path="/minhas-avaliacoes" element={<MinhasAvaliacoes />} />
           <Route path="/termos" element={<Termos key="termos" tipo="TERMOS_DE_USO" />} />
           <Route path="/privacidade" element={<Termos key="privacidade" tipo="POLITICA_PRIVACIDADE" />} />
           {/* Área do empreendedor: qualquer usuário logado entra; quem ainda

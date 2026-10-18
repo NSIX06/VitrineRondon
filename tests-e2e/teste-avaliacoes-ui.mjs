@@ -57,14 +57,14 @@ async function main() {
       formulario: Boolean(__q('.form-avaliacao')),
       selo: __texto('.selo-reputacao'),
     })`)
-    checar('visitante vê o convite para entrar, sem formulário', visitante.convite && !visitante.formulario, JSON.stringify(visitante))
+    // O visitante já escreve a avaliação; o login (Google) vem só ao publicar
+    checar('visitante já vê o formulário, dentro do convite', visitante.convite && visitante.formulario, JSON.stringify(visitante))
+    checar('o botão do visitante é "Publicar com Google"', /Publicar com Google/.test(await evaluate("__texto('.avaliacoes__convite button[type=submit]')") || ''))
     checar('selo de reputação no topo do perfil', Boolean(visitante.selo))
-    // Sem GOOGLE_CLIENT_ID na API, o convite avisa que o login está indisponível
-    await esperarPor("__q('.avaliacoes__convite .botao-google, .avaliacoes__convite .botao-google__indisponivel')", 10000)
-    checar('o convite oferece "Continuar com Google" (ou avisa que está indisponível)', true)
 
     console.log('\n2. Entrar pelo convite volta para o perfil')
-    await clicarEm('.avaliacoes__convite a[href="/login"]')
+    // O link quebra em duas linhas: o clique vai no próprio elemento, não no centro do retângulo
+    await evaluate(`__q('.avaliacoes__convite a[href="/login"]').click(); true`)
     await esperarPor("__q('#login-email')", 15000)
     await evaluate(helpers)
     await evaluate(`__set('#login-email', ${JSON.stringify(MARIA.email)})`)

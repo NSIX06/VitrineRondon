@@ -13,6 +13,7 @@ import {
   excluirAvaliacao,
   denunciarAvaliacao,
   listarParaModeracao,
+  listarMinhas,
   moderarAvaliacao,
   avaliacaoSchema,
   denunciaSchema,
@@ -23,6 +24,7 @@ const router = Router();
 const somenteAdmin = [autenticar, exigirPerfil(PERFIS.ADMIN)];
 
 router.get('/', ...somenteAdmin, listarParaModeracao);
+router.get('/minhas', autenticar, listarMinhas);
 router.put('/:id', autenticar, limiteAvaliacao, validateBody(avaliacaoSchema), atualizarAvaliacao);
 router.delete('/:id', autenticar, excluirAvaliacao);
 router.post('/:id/denuncias', autenticar, limiteDenuncia, validateBody(denunciaSchema), denunciarAvaliacao);

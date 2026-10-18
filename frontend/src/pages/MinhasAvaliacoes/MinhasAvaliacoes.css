@@ -1,0 +1,44 @@
+.minhas-avaliacoes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  max-width: 760px;
+}
+
+.minhas-avaliacoes__confirmar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  max-width: 460px;
+  padding: var(--esp-5);
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura);
+}
+
+.minhas-avaliacoes__lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+}
+
+.minhas-avaliacoes__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+}
+
+.minhas-avaliacoes__negocio {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  font-family: var(--fonte-titulo);
+  font-size: var(--texto-lg);
+  font-weight: 800;
+  color: var(--cor-anil);
+}

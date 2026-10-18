@@ -234,7 +234,7 @@ describe('controller do fluxo', () => {
     const cookie = social.assinarTemporario({ tipo: 'estado', estado: 'A', nonce: 'n', verificador: 'v', destino: '/', origem: 'https://site.exemplo' }, 600)
     const res = resposta()
     await controller.retornoGoogle(req({ state: 'B', code: 'x' }, `vl_login_social=${cookie}`), res, () => {})
-    expect(res.saida.url).toBe('https://site.exemplo/entrar/google#erro=expirado')
+    expect(res.saida.url).toBe('https://site.exemplo/entrar/google#erro=expirado&destino=%2F')
     expect(fetch).not.toHaveBeenCalled()
   })
 
@@ -242,7 +242,7 @@ describe('controller do fluxo', () => {
     const cookie = social.assinarTemporario({ tipo: 'estado', estado: 'A', nonce: 'n', verificador: 'v', destino: '/', origem: 'https://site.exemplo' }, 600)
     const res = resposta()
     await controller.retornoGoogle(req({ error: 'access_denied', state: 'A' }, `vl_login_social=${cookie}`), res, () => {})
-    expect(res.saida.url).toBe('https://site.exemplo/entrar/google#erro=cancelado')
+    expect(res.saida.url).toBe('https://site.exemplo/entrar/google#erro=cancelado&destino=%2F')
   })
 
   it('sessão: o código vale uma vez só', async () => {
@@ -254,6 +254,8 @@ describe('controller do fluxo', () => {
     await controller.sessaoGoogle({ body: { codigo } }, primeira, () => {})
     expect(primeira.saida.corpo.data.token).toBeTruthy()
     expect(primeira.saida.corpo.data.usuario).toMatchObject({ id: 9, perfil: 'COMUM' })
+    // Cliente: sessão longa (30 dias), marcada para não valer se a conta mudar de perfil
+    expect(jwt.decode(primeira.saida.corpo.data.token)).toMatchObject({ escopo: 'cliente' })
 
     const segunda = resposta()
     await controller.sessaoGoogle({ body: { codigo } }, segunda, () => {})

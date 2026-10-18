@@ -116,8 +116,8 @@ async function main() {
     await clicarEm('.cadastro__conectado-acoes a')
     await esperarPor("location.pathname === '/meu-negocio' && __q('#emp-nome')", 15000)
     checar('"Cadastrar o negócio nesta conta" leva ao formulário do negócio', true)
-    const menu = await evaluate("[...document.querySelectorAll('.navbar a')].some(a => /Anunciar meu negócio/.test(a.textContent))")
-    checar('menu do cliente oferece "Anunciar meu negócio"', menu)
+    const menu = await evaluate("[...document.querySelectorAll('.navbar a')].some(a => /Minhas avaliações/.test(a.textContent))")
+    checar('menu do cliente oferece "Minhas avaliações"', menu)
 
     console.log('\n3. Login de empreendedor')
     await sair()

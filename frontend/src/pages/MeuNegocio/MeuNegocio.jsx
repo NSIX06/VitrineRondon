@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import api from '../../services/api'
+import api, { definirToken } from '../../services/api'
 import { useAuth } from '../../contexts/auth'
 import Button from '../../components/ui/Button/Button'
 import Modal from '../../components/ui/Modal/Modal'
@@ -136,7 +136,9 @@ function MeuNegocio() {
     // Cadastrado não é publicado: nasce como rascunho até o plano ser pago
     setNegocio({ ...resposta.data, produtos: [], situacao: 'RASCUNHO' })
     // Cadastrar o primeiro negócio promove a conta a EMPREENDEDOR
-    if (resposta.perfilAtualizado) atualizarUsuario({ perfil: resposta.perfilAtualizado })
+    if (resposta.perfilAtualizado) atualizarUsuario({ perfil: resposta.perfilAtualizado, empreendedorId: resposta.data.id })
+    // A sessão longa de cliente não vale para empreendedor: troca pela nova
+    if (resposta.token) definirToken(resposta.token)
     mostrarStatus('sucesso', resposta.message)
   }
 

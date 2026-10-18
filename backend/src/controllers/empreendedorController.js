@@ -1,7 +1,7 @@
 // Controller de Empreendedores
 import { z } from 'zod';
 import prisma from '../config/prisma.js';
-import { PERFIS, ehAdmin } from '../middlewares/auth.js';
+import { PERFIS, ehAdmin, gerarToken } from '../middlewares/auth.js';
 import { registrarLog, diferencas } from '../services/auditoria.js';
 import { horariosSchema, incluirHorarios, comHorariosParaPrisma } from '../services/horarios.js';
 import { erroHttp, parseId } from '../utils/erros.js';
@@ -305,6 +305,8 @@ export async function criarMeuNegocio(req, res, next) {
       message: 'Negócio cadastrado. Escolha um plano para publicá-lo na vitrine',
       data: empreendedor,
       perfilAtualizado: perfilAnterior === PERFIS.COMUM ? PERFIS.EMPREENDEDOR : perfilAnterior,
+      // Cliente que virou empreendedor: sessão nova, normal (a de cliente deixa de valer)
+      ...(perfilAnterior === PERFIS.COMUM ? { token: gerarToken({ id: req.usuario.id, perfil: PERFIS.EMPREENDEDOR }) } : {}),
     });
   } catch (erro) {
     next(erro);

@@ -22,6 +22,7 @@ import {
 } from '../services/loginSocial.js';
 import { lerOrigens, origemPermitida } from '../utils/origens.js';
 import { respostaSessao } from './authController.js';
+import { PERFIS } from '../middlewares/auth.js';
 
 const COOKIE = 'vl_login_social';
 const VALIDADE_ESTADO_S = 10 * 60;
@@ -108,15 +109,17 @@ export async function retornoGoogle(req, res, next) {
   const fluxo = lerTemporario(lerCookie(req, COOKIE), 'estado');
   res.clearCookie(COOKIE, opcoesDoCookie());
   const origem = fluxo?.origem || origemDoSite(null);
+  // Com erro, volta também para a página de onde a pessoa saiu (o rascunho dela está lá)
+  const comDestino = (parametros) => (fluxo?.destino ? { ...parametros, destino: fluxo.destino } : parametros);
   if (!origem) return res.status(400).json({ success: false, message: 'Login expirado. Tente de novo.' });
 
   try {
     if (req.query.error) {
-      return voltarAoSite(res, origem, { erro: req.query.error === 'access_denied' ? 'cancelado' : 'falhou' });
+      return voltarAoSite(res, origem, comDestino({ erro: req.query.error === 'access_denied' ? 'cancelado' : 'falhou' }));
     }
     // Sem o cookie, ou com outro state: o login não começou neste navegador
     if (!fluxo || !req.query.state || req.query.state !== fluxo.estado || !req.query.code) {
-      return voltarAoSite(res, origem, { erro: 'expirado' });
+      return voltarAoSite(res, origem, comDestino({ erro: 'expirado' }));
     }
 
     const config = configuracaoDoProvedor('GOOGLE');
@@ -140,7 +143,7 @@ export async function retornoGoogle(req, res, next) {
     }
 
     const { usuario, novo } = resultado;
-    if (!usuario.ativo) return voltarAoSite(res, origem, { erro: 'desativada' });
+    if (!usuario.ativo) return voltarAoSite(res, origem, comDestino({ erro: 'desativada' }));
 
     await registrarLog(req, {
       usuario: { id: usuario.id, nome: usuario.nome },
@@ -154,7 +157,7 @@ export async function retornoGoogle(req, res, next) {
   } catch (erro) {
     if (erro.motivo) {
       console.warn(`Login com Google recusado: ${erro.message}`);
-      return voltarAoSite(res, origem, { erro: 'falhou' });
+      return voltarAoSite(res, origem, comDestino({ erro: 'falhou' }));
     }
     next(erro);
   }
@@ -178,7 +181,8 @@ async function sessaoDe(usuarioId) {
   });
   if (!usuario || !usuario.ativo) return null;
   const { empreendedor, ...dados } = usuario;
-  return respostaSessao(dados, empreendedor);
+  // Cliente (COMUM) fica conectado por 30 dias: a conta só serve para avaliar
+  return respostaSessao(dados, empreendedor, { cliente: dados.perfil === PERFIS.COMUM });
 }
 
 export const codigoSchema = z.object({ codigo: z.string({ error: 'Código inválido' }).min(10).max(2000) });

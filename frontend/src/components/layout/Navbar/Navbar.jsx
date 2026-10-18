@@ -20,9 +20,13 @@ function acaoDoPerfil(usuario) {
   if (usuario.perfil === PERFIS.EMPREENDEDOR) {
     return { para: '/meu-negocio', rotulo: 'Meu negócio', icone: 'storefront' }
   }
-  // Cliente (entrou para avaliar): anunciar é opcional e acontece na mesma conta
-  return { para: '/meu-negocio', rotulo: 'Anunciar meu negócio', icone: 'add_business' }
+  // Cliente (confirmou com o Google para avaliar): só as avaliações dele.
+  // Anunciar continua possível pelo rodapé e pela página de planos.
+  return { para: '/minhas-avaliacoes', rotulo: 'Minhas avaliações', icone: 'reviews' }
 }
+
+/** Tipo da conta em português, no menu */
+const NOME_DO_PERFIL = { COMUM: 'Cliente', EMPREENDEDOR: 'Empreendedor', ADMIN: 'Administração' }
 
 function Navbar() {
   const { usuario, autenticado, sair } = useAuth()
@@ -214,7 +218,7 @@ function Navbar() {
                       <div className="navbar__conta-info">
                         <strong>{usuario.nome}</strong>
                         <span>{usuario.email}</span>
-                        <span className="navbar__conta-perfil">{usuario.perfil}</span>
+                        <span className="navbar__conta-perfil">{NOME_DO_PERFIL[usuario.perfil] ?? usuario.perfil}</span>
                       </div>
                       <button type="button" className="navbar__conta-item navbar__sair" role="menuitem" onClick={aoSair}>
                         <Icone nome="logout" tamanho={18} />

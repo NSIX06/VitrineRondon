@@ -57,6 +57,36 @@ describe('gerarToken', () => {
   })
 })
 
+describe('sessão de cliente (login com Google)', () => {
+  const CLIENTE = { id: 9, nome: 'Bia', email: 'bia@exemplo.com', perfil: PERFIS.COMUM, ativo: true }
+
+  it('dura 30 dias e leva a marca de cliente', () => {
+    const conteudo = jwt.verify(gerarToken(CLIENTE, { cliente: true }), process.env.JWT_SECRET)
+    expect(conteudo.escopo).toBe('cliente')
+    expect(conteudo.exp - conteudo.iat).toBe(30 * 24 * 60 * 60)
+  })
+
+  it('vale enquanto a conta for de cliente', async () => {
+    prisma.usuario.findUnique.mockResolvedValue(CLIENTE)
+    const req = comToken(gerarToken(CLIENTE, { cliente: true }))
+    const next = vi.fn()
+    await autenticar(req, resposta(), next)
+    expect(next).toHaveBeenCalled()
+  })
+
+  it('deixa de valer se a conta virou empreendedor ou admin', async () => {
+    const token = gerarToken(CLIENTE, { cliente: true })
+    for (const perfil of [PERFIS.EMPREENDEDOR, PERFIS.ADMIN]) {
+      prisma.usuario.findUnique.mockResolvedValue({ ...CLIENTE, perfil })
+      const res = resposta()
+      const next = vi.fn()
+      await autenticar(comToken(token), res, next)
+      expect(next).not.toHaveBeenCalled()
+      expect(res.saida.codigo).toBe(401)
+    }
+  })
+})
+
 describe('autenticar', () => {
   it('deixa passar com token válido e carrega o usuário do banco', async () => {
     const req = comToken(gerarToken(ANA))

@@ -95,9 +95,9 @@ export const loginSchema = z.object({
 
 const usuarioPublico = { id: true, nome: true, email: true, telefone: true, perfil: true, ativo: true, createdAt: true };
 
-export function respostaSessao(usuario, empreendedor = null) {
+export function respostaSessao(usuario, empreendedor = null, opcoes = {}) {
   return {
-    token: gerarToken(usuario),
+    token: gerarToken(usuario, opcoes),
     usuario: { ...usuario, empreendedorId: empreendedor?.id ?? usuario.empreendedor?.id ?? null },
   };
 }

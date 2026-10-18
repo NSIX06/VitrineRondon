@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import api from '../../services/api'
+import api, { definirToken } from '../../services/api'
 import { useAuth } from '../../contexts/auth'
 import StatusMessage from '../../components/ui/StatusMessage/StatusMessage'
 import ContaForm from '../../components/forms/ContaForm/ContaForm'
@@ -133,6 +133,7 @@ function Cadastro() {
             entrar(sessao.data)
             const criado = await api.post('/empreendedores/meu', negocio)
             atualizarUsuario({ perfil: 'EMPREENDEDOR', empreendedorId: criado.data.id })
+            if (criado.token) definirToken(criado.token)
             await enviarFotosPendentes(criado.data.id, pendentes)
             setCadastrado(true)
             window.scrollTo({ top: 0, behavior: 'smooth' })

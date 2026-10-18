@@ -420,26 +420,3 @@
   }
 }
 
-/* Divisória "ou" antes do login com Google */
-.login__ou {
-  display: flex;
-  align-items: center;
-  gap: var(--esp-3);
-  margin: var(--esp-4) 0 var(--esp-3);
-  font-size: var(--texto-xs);
-  font-weight: 700;
-  color: var(--cor-cinza);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-.login__ou::before,
-.login__ou::after {
-  content: '';
-  flex: 1;
-  border-top: 2px dashed var(--cor-linha);
-}
-
-.login__conteudo .botao-google {
-  width: 100%;
-}
