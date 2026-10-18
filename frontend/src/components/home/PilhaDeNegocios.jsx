@@ -73,15 +73,16 @@ function Pilha({ negocios, disponivel }) {
       aria-hidden="true"
     >
       <CardSwap largura={largura} altura={altura} distanciaX={distanciaX} distanciaY={distanciaY} intervalo={4500}>
-        {negocios.map((negocio) => (
+        {negocios.map((negocio, posicao) => (
           <Card
             key={negocio.id}
             className={`pilha-negocios__cartao ${negocio.emDestaque ? 'pilha-negocios__cartao--destaque' : ''}`}
           >
             <Link to={`/empreendedores/${negocio.id}`} className="pilha-negocios__link" tabIndex={-1}>
               <span className="pilha-negocios__foto">
-                {/* No topo da Home: carrega já, sem esperar a rolagem */}
-                <Foto valor={negocio.fotoUrl} foco={negocio.fotoFoco} sizes="320px" prioridade />
+                {/* Só a foto da frente carrega já; as de trás, escondidas atrás
+                    dela, esperam a vez e não disputam a internet com a página */}
+                <Foto valor={negocio.fotoUrl} foco={negocio.fotoFoco} sizes="320px" prioridade={posicao === 0} />
               </span>
               <span className="pilha-negocios__corpo">
                 <span className="pilha-negocios__etiquetas">

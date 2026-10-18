@@ -1211,9 +1211,11 @@ conteúdo. Login e cadastro não têm as teclas.
 adaptada do CardSwap do React Bits (licença MIT) em
 [components/ui/CardSwap](frontend/src/components/ui/CardSwap/CardSwap.jsx). Os negócios do Destaque
 vêm na frente, com o selo, e os demais publicados em seguida; cada cartão abre a página do negócio. A
-pilha pausa com o mouse em cima. Os dados, a Home e o código da pilha (com o gsap) começam a baixar
-juntos assim que o site abre, e um esqueleto dos cartões ocupa o lugar enquanto isso. Para quem pede
-menos movimento ao sistema, os cartões trocam de lugar com um esmaecimento. Teclado e leitor de tela
+pilha pausa com o mouse em cima, quando sai da tela e quando a aba fica escondida. Os dados, a Home e
+o código da pilha (com o gsap) começam a baixar juntos assim que o site abre, e um esqueleto dos
+cartões ocupa o lugar enquanto isso; se a vitrine vier vazia ou a leitura falhar, o esqueleto para de
+pulsar. Só a foto do cartão da frente carrega na hora; as de trás esperam a vez. Para quem pede menos
+movimento ao sistema, a pilha fica parada, com o primeiro cartão na frente. Teclado e leitor de tela
 usam a lista de nomes ao lado da pilha.
 
 **Fundo conforme o plano:** a página do negócio e as páginas dos itens dele mudam de fundo pelo

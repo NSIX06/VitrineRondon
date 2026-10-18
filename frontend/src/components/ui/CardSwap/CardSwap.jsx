@@ -1,9 +1,8 @@
 // Pilha de cartões que se revezam, adaptada do CardSwap do React Bits
 // (https://reactbits.dev, licença MIT) para o projeto: JavaScript, gsap só
 // quando a pilha aparece (a página importa este arquivo sob demanda) e pausa
-// com o mouse ou o foco do teclado em cima. Para quem pede menos movimento ao
-// sistema, os cartões continuam se revezando, mas só trocam de lugar com um
-// esmaecimento rápido, sem cair nem deslizar.
+// com o mouse ou o foco do teclado em cima, fora da tela e com a aba escondida.
+// Para quem pede menos movimento ao sistema, a pilha fica parada.
 import { Children, cloneElement, createRef, forwardRef, isValidElement, useEffect, useMemo, useRef } from 'react'
 import gsap from 'gsap'
 import './CardSwap.css'
@@ -65,28 +64,16 @@ function CardSwap({
     let ordem = Array.from({ length: total }, (_, i) => i)
     refs.forEach((r, i) => colocar(r.current, posicao(i, distanciaX, distanciaY, total), inclinacao))
 
-    if (total < 2) return undefined
-    const reduzMovimento = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    // Menos movimento: a pilha fica parada, com o primeiro cartão na frente
+    // (trocar sozinha a cada poucos segundos é movimento que a pessoa não pediu)
+    if (total < 2 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
 
     let linhaDoTempo = null
     let relogio = 0
     let pausado = false
+    let foraDaTela = false
 
-    // Menos movimento: a pilha se reorganiza no lugar, escondida por um instante
-    const trocarSemMovimento = () => {
-      const [frente, ...resto] = ordem
-      const todos = refs.map((r) => r.current)
-      const tl = gsap.timeline()
-      linhaDoTempo = tl
-      tl.to(todos, { opacity: 0, duration: 0.25, ease: 'none' })
-      tl.call(() => {
-        ordem = [...resto, frente]
-        ordem.forEach((idx, i) => colocar(refs[idx].current, posicao(i, distanciaX, distanciaY, total), inclinacao))
-      })
-      tl.to(todos, { opacity: 1, duration: 0.25, ease: 'none' })
-    }
-
-    const trocarComMovimento = () => {
+    const trocar = () => {
       const [frente, ...resto] = ordem
       const elFrente = refs[frente].current
       const tl = gsap.timeline()
@@ -113,7 +100,6 @@ function CardSwap({
       })
     }
 
-    const trocar = reduzMovimento ? trocarSemMovimento : trocarComMovimento
     const iniciar = () => {
       relogio = window.setInterval(trocar, intervalo)
     }
@@ -131,18 +117,32 @@ function CardSwap({
     }
     // O foco só sai de verdade quando vai para fora da pilha
     const aoSairOFoco = (evento) => {
-      if (!palco.current?.contains(evento.relatedTarget)) retomar()
+      if (!palco.current?.contains(evento.relatedTarget) && !foraDaTela) retomar()
     }
 
     const no = palco.current
-    // Com movimento, a primeira troca já acontece ao abrir; sem, espera o intervalo
-    if (!reduzMovimento) trocar()
+    // Fora da tela (ou com a aba escondida) a pilha descansa: não gasta
+    // bateria nem processador de celular simples animando o que ninguém vê
+    const aoMudarVisibilidade = () => {
+      if (foraDaTela || document.hidden) pausar()
+      else if (!no.matches(':hover') && !no.contains(document.activeElement)) retomar()
+    }
+    const observador = new IntersectionObserver(([entrada]) => {
+      foraDaTela = !entrada.isIntersecting
+      aoMudarVisibilidade()
+    })
+    observador.observe(no)
+    document.addEventListener('visibilitychange', aoMudarVisibilidade)
+
+    trocar()
     iniciar()
     no.addEventListener('mouseenter', pausar)
     no.addEventListener('mouseleave', retomar)
     no.addEventListener('focusin', pausar)
     no.addEventListener('focusout', aoSairOFoco)
     return () => {
+      observador.disconnect()
+      document.removeEventListener('visibilitychange', aoMudarVisibilidade)
       window.clearInterval(relogio)
       linhaDoTempo?.kill()
       gsap.killTweensOf(refs.map((r) => r.current))

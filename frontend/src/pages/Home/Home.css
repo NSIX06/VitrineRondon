@@ -76,6 +76,66 @@
   gap: var(--esp-4);
 }
 
+/* Busca do topo: a primeira ação de quem procura alguém */
+.hero__busca {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  width: 100%;
+  max-width: 34rem;
+}
+
+.hero__busca-rotulo {
+  font-family: var(--fonte-titulo);
+  font-size: var(--texto-lg);
+  font-weight: 700;
+  color: var(--cor-branco);
+}
+
+.hero__busca-linha {
+  display: flex;
+  gap: var(--esp-3);
+}
+
+.hero__busca-campo {
+  /* width 0 + flex 1: o campo ocupa o que sobra sem impor a própria largura
+     à coluna (sem isso, no celular a linha passava da borda da tela) */
+  flex: 1;
+  width: 0;
+  min-width: 0;
+  min-height: 48px;
+  padding: 0.7rem 0.9rem;
+  border: var(--borda);
+  border-radius: var(--raio-md);
+  box-shadow: var(--sombra-botao);
+  background: var(--cor-branco);
+  color: var(--cor-tinta);
+  /* 16px: abaixo disso o celular dá zoom ao tocar no campo */
+  font: 500 16px/1.2 var(--fonte-texto);
+}
+
+/* Na casca do index.html o campo é um <span> com o texto de exemplo */
+span.hero__busca-campo {
+  display: flex;
+  align-items: center;
+}
+
+.hero__busca-campo::placeholder,
+span.hero__busca-campo {
+  color: var(--cor-cinza-claro);
+}
+
+.hero__busca-campo:focus {
+  outline: none;
+  background: #fffdf5;
+  box-shadow: 4px 4px 0 0 var(--cor-ouro);
+}
+
+.hero__busca-botao {
+  flex-shrink: 0;
+  min-height: 48px;
+}
+
 /* Pilha de negócios no lugar do cartaz */
 .hero__palco {
   display: flex;
@@ -98,6 +158,11 @@
    pulsação é só de opacidade, no conjunto: animar o fundo repintava a cada quadro */
 .hero__espera {
   animation: espera-pulso 1s ease-in-out infinite alternate;
+}
+/* Erro ou vitrine vazia: nada mais vai chegar, então o esqueleto para de pulsar */
+.hero__espera--parada {
+  animation: none;
+  opacity: 0.6;
 }
 .hero__espera-cartao {
   position: absolute;
@@ -166,7 +231,8 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 0.35rem 0.75rem;
+  min-height: 44px;
+  padding: 0.35rem 0.85rem;
   background: rgba(255, 255, 255, 0.1);
   border: 2px solid rgba(255, 255, 255, 0.55);
   border-radius: 999px;
@@ -238,13 +304,14 @@
   display: inline-block;
   font-family: inherit;
   cursor: pointer;
+  min-height: 44px;
   padding: 0.5rem 1rem;
   border: var(--borda);
   border-radius: var(--raio-md);
   box-shadow: 3px 3px 0 0 var(--cor-contorno);
   color: var(--cor-tinta);
   font-weight: 700;
-  font-size: 12px;
+  font-size: var(--texto-sm);
   text-decoration: none;
   background: var(--cor-branco);
   transition: var(--transicao-tecla);
@@ -275,11 +342,13 @@
 
 /* Link "Ver todos" no cabeçalho de seção */
 .secao__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   font-weight: 700;
   font-size: 14px;
   color: var(--cor-anil);
   text-decoration: none;
-  padding-block: var(--esp-1);
 }
 
 .secao__link:hover {
@@ -318,56 +387,9 @@
   margin-bottom: var(--esp-1);
 }
 
-.como-funciona__passos {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--esp-5);
-}
-
-.como-funciona__passo {
-  background: var(--cor-branco);
-  border: var(--borda);
-  border-radius: var(--raio);
-  box-shadow: var(--sombra-botao);
-  padding: var(--esp-4);
-  display: flex;
-  flex-direction: column;
-  gap: var(--esp-2);
-}
-
-.como-funciona__passo h3 {
-  margin: 0;
-}
-
-.como-funciona__passo p {
-  margin: 0;
-  font-size: var(--texto-sm);
-  color: var(--cor-cinza);
-}
-
-.como-funciona__numero {
-  width: 32px;
-  height: 32px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--cor-ouro);
-  color: var(--cor-tinta);
-  border: var(--borda-fina);
-  border-radius: var(--raio-sm);
-  box-shadow: var(--sombra-dura-sm), var(--cel-sm);
-  transform: rotate(-3deg);
-  font-family: var(--fonte-titulo);
-  font-weight: 800;
-  font-size: 18px;
-}
-
 @media (max-width: 900px) {
   .hero__conteudo {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--esp-6);
     padding-block: var(--esp-6);
   }
@@ -377,8 +399,7 @@
     min-height: 480px;
   }
 
-  .numeros__lista,
-  .como-funciona__passos {
+  .numeros__lista {
     grid-template-columns: 1fr;
     gap: var(--esp-4);
   }
@@ -506,9 +527,6 @@
   color: var(--cor-sucesso);
   margin-top: 2px;
 }
-
-
-
 
 @media (max-width: 900px) {
   .como-funciona__colunas {

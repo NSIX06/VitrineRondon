@@ -1,6 +1,6 @@
 import { Suspense, lazy, useState } from 'react'
 import FundoDePontos from '../../components/ui/DotField/FundoDePontos'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useConsulta } from '../../hooks/useConsulta'
 import { CATEGORIAS } from '../../services/constantes'
 import { FONTES } from '../../services/fontes'
@@ -33,10 +33,13 @@ const funcionalidades = [
   { icone: 'campaign', texto: 'Divulgação de produtos e serviços locais' },
 ]
 
-/** Esqueleto da pilha enquanto os dados ou o código dela chegam: o lugar já tem forma */
-function EsperaDaPilha() {
+/**
+ * Esqueleto da pilha enquanto os dados ou o código dela chegam: o lugar já tem forma.
+ * `parada`: nada mais vai chegar (erro ou vitrine vazia), então não pulsa para sempre.
+ */
+function EsperaDaPilha({ parada = false }) {
   return (
-    <div className="hero__espera" aria-hidden="true">
+    <div className={`hero__espera ${parada ? 'hero__espera--parada' : ''}`} aria-hidden="true">
       <span className="hero__espera-cartao" />
       <span className="hero__espera-cartao" />
       <span className="hero__espera-cartao" />
@@ -45,6 +48,7 @@ function EsperaDaPilha() {
 }
 
 function Home() {
+  const navegar = useNavigate()
   // Leituras guardadas em cache: ao voltar para a página inicial, tudo aparece na hora
   const consultaProdutos = useConsulta(CONSULTAS_DA_HOME.produtos)
   const consultaEmpreendedores = useConsulta(CONSULTAS_DA_HOME.empreendedores)
@@ -58,6 +62,19 @@ function Home() {
 
   const carregando = consultaProdutos.carregando || consultaEmpreendedores.carregando
   const erro = consultaProdutos.erro || consultaEmpreendedores.erro
+  const pilhaCarregando = consultaEmpreendedores.carregando || consultaDestaques.carregando
+  const tentarDeNovo = () => {
+    consultaProdutos.recarregar()
+    consultaEmpreendedores.recarregar()
+    consultaDestaques.recarregar()
+  }
+  // Busca do topo: leva para a Vitrine já filtrada. Sem JavaScript, o próprio
+  // formulário faz o mesmo caminho (action + name="busca")
+  const aoBuscar = (evento) => {
+    evento.preventDefault()
+    const termo = new FormData(evento.currentTarget).get('busca')?.toString().trim()
+    navegar(termo ? `/vitrine?busca=${encodeURIComponent(termo)}` : '/vitrine')
+  }
   const todosEmpreendedores = consultaEmpreendedores.dados?.data ?? []
   const produtos = (consultaNovidades.dados?.data ?? []).slice(0, LIMITE_PRODUTOS)
   const linkVerTodos = categoria ? `/vitrine?categoria=${encodeURIComponent(categoria)}` : '/vitrine'
@@ -87,8 +104,29 @@ function Home() {
               WhatsApp. Sem canal digital, o alcance para na esquina.
             </p>
             <Fonte fonte={FONTES.movimento} rotulo="Dado: Folha do Estado, com a CDL" />
+            {/* Quem procura vem primeiro: a busca é a primeira ação do topo */}
+            <form className="hero__busca" role="search" action="/vitrine" onSubmit={aoBuscar}>
+              <label className="hero__busca-rotulo" htmlFor="busca-home">
+                Procurando alguém perto de você?
+              </label>
+              <div className="hero__busca-linha">
+                <input
+                  id="busca-home"
+                  className="hero__busca-campo"
+                  type="search"
+                  name="busca"
+                  placeholder="Ex.: bolo, conserto"
+                  enterKeyHint="search"
+                  autoComplete="off"
+                />
+                <button type="submit" className="botao botao--destaque botao--md hero__busca-botao">
+                  <Icone nome="search" tamanho={20} />
+                  Buscar
+                </button>
+              </div>
+            </form>
             <div className="hero__acoes">
-              <Button to="/vitrine" variante="destaque">
+              <Button to="/vitrine" variante="claro">
                 Ver a vitrine
               </Button>
               <a
@@ -130,7 +168,7 @@ function Home() {
                 <PilhaDeNegocios negocios={feira} />
               </Suspense>
             ) : (
-              <EsperaDaPilha />
+              <EsperaDaPilha parada={!pilhaCarregando} />
             )}
           </div>
         </div>
@@ -152,7 +190,7 @@ function Home() {
             </div>
             <div className="numeros__item">
               <dd>{carregando ? '–' : totais.bairros}</dd>
-              <dt>Bairros atendidos</dt>
+              <dt>Bairros com negócios</dt>
             </div>
           </dl>
         </section>
@@ -195,11 +233,11 @@ function Home() {
         </ul>
       </section>
 
-      {carregando && <Spinner texto="Buscando destaques..." />}
+      {carregando && <Spinner texto="Carregando a vitrine..." />}
 
       {erro && (
         <div className="container">
-          <StatusMessage tipo="erro" titulo="Não foi possível carregar os destaques">
+          <StatusMessage tipo="erro" titulo="Não foi possível carregar a vitrine" aoTentarDeNovo={tentarDeNovo}>
             <p>{erro.message}</p>
           </StatusMessage>
         </div>

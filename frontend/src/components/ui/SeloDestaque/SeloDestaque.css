@@ -30,7 +30,7 @@
 
 .selo-destaque--compacto {
   padding: 0.12rem 0.5rem 0.12rem 0.35rem;
-  font-size: 10px;
+  font-size: var(--texto-xs);
 }
 
 .selo-destaque--compacto .selo-destaque__estrela {

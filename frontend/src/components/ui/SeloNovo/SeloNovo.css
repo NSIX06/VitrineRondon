@@ -31,7 +31,7 @@
 
 .selo-novo--compacto {
   padding: 0.12rem 0.5rem 0.12rem 0.35rem;
-  font-size: 10px;
+  font-size: var(--texto-xs);
 }
 
 .selo-novo--compacto .selo-novo__brilho {
