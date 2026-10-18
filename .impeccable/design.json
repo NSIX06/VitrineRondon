@@ -1,0 +1,589 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-18T15:53:28.361848+00:00",
+  "title": "Design System: VitrineRondon",
+  "extensions": {
+    "colorMeta": {
+      "anil": {
+        "role": "primary",
+        "displayName": "Anil",
+        "tonalRamp": [
+          "oklch(15% 0.12 264)",
+          "oklch(25% 0.12 264)",
+          "oklch(38% 0.12 264)",
+          "oklch(50% 0.12 264)",
+          "oklch(62% 0.12 264)",
+          "oklch(74% 0.12 264)",
+          "oklch(85% 0.12 264)",
+          "oklch(95% 0.12 264)"
+        ]
+      },
+      "anil-escuro": {
+        "role": "primary",
+        "displayName": "Anil escuro",
+        "tonalRamp": [
+          "oklch(15% 0.11 264)",
+          "oklch(25% 0.11 264)",
+          "oklch(38% 0.11 264)",
+          "oklch(50% 0.11 264)",
+          "oklch(62% 0.11 264)",
+          "oklch(74% 0.11 264)",
+          "oklch(85% 0.11 264)",
+          "oklch(95% 0.11 264)"
+        ]
+      },
+      "anil-medio": {
+        "role": "primary",
+        "displayName": "Anil médio",
+        "tonalRamp": [
+          "oklch(15% 0.15 265)",
+          "oklch(25% 0.15 265)",
+          "oklch(38% 0.15 265)",
+          "oklch(50% 0.15 265)",
+          "oklch(62% 0.15 265)",
+          "oklch(74% 0.15 265)",
+          "oklch(85% 0.15 265)",
+          "oklch(95% 0.15 265)"
+        ]
+      },
+      "anil-claro": {
+        "role": "primary",
+        "displayName": "Anil claro",
+        "tonalRamp": [
+          "oklch(15% 0.05 270)",
+          "oklch(25% 0.05 270)",
+          "oklch(38% 0.05 270)",
+          "oklch(50% 0.05 270)",
+          "oklch(62% 0.05 270)",
+          "oklch(74% 0.05 270)",
+          "oklch(85% 0.05 270)",
+          "oklch(95% 0.05 270)"
+        ]
+      },
+      "ceu": {
+        "role": "primary",
+        "displayName": "Céu",
+        "tonalRamp": [
+          "oklch(15% 0.03 268)",
+          "oklch(25% 0.03 268)",
+          "oklch(38% 0.03 268)",
+          "oklch(50% 0.03 268)",
+          "oklch(62% 0.03 268)",
+          "oklch(74% 0.03 268)",
+          "oklch(85% 0.03 268)",
+          "oklch(95% 0.03 268)"
+        ]
+      },
+      "ouro": {
+        "role": "secondary",
+        "displayName": "Ouro",
+        "tonalRamp": [
+          "oklch(15% 0.16 84)",
+          "oklch(25% 0.16 84)",
+          "oklch(38% 0.16 84)",
+          "oklch(50% 0.16 84)",
+          "oklch(62% 0.16 84)",
+          "oklch(74% 0.16 84)",
+          "oklch(85% 0.16 84)",
+          "oklch(95% 0.16 84)"
+        ]
+      },
+      "mostarda": {
+        "role": "secondary",
+        "displayName": "Mostarda",
+        "tonalRamp": [
+          "oklch(15% 0.16 70)",
+          "oklch(25% 0.16 70)",
+          "oklch(38% 0.16 70)",
+          "oklch(50% 0.16 70)",
+          "oklch(62% 0.16 70)",
+          "oklch(74% 0.16 70)",
+          "oklch(85% 0.16 70)",
+          "oklch(95% 0.16 70)"
+        ]
+      },
+      "ouro-claro": {
+        "role": "secondary",
+        "displayName": "Ouro claro",
+        "tonalRamp": [
+          "oklch(15% 0.11 92)",
+          "oklch(25% 0.11 92)",
+          "oklch(38% 0.11 92)",
+          "oklch(50% 0.11 92)",
+          "oklch(62% 0.11 92)",
+          "oklch(74% 0.11 92)",
+          "oklch(85% 0.11 92)",
+          "oklch(95% 0.11 92)"
+        ]
+      },
+      "ouro-escuro": {
+        "role": "secondary",
+        "displayName": "Ouro escuro",
+        "tonalRamp": [
+          "oklch(15% 0.1 60)",
+          "oklch(25% 0.1 60)",
+          "oklch(38% 0.1 60)",
+          "oklch(50% 0.1 60)",
+          "oklch(62% 0.1 60)",
+          "oklch(74% 0.1 60)",
+          "oklch(85% 0.1 60)",
+          "oklch(95% 0.1 60)"
+        ]
+      },
+      "whatsapp": {
+        "role": "tertiary",
+        "displayName": "Verde WhatsApp",
+        "tonalRamp": [
+          "oklch(15% 0.14 163)",
+          "oklch(25% 0.14 163)",
+          "oklch(38% 0.14 163)",
+          "oklch(50% 0.14 163)",
+          "oklch(62% 0.14 163)",
+          "oklch(74% 0.14 163)",
+          "oklch(85% 0.14 163)",
+          "oklch(95% 0.14 163)"
+        ]
+      },
+      "whatsapp-hover": {
+        "role": "tertiary",
+        "displayName": "Verde WhatsApp (hover)",
+        "tonalRamp": [
+          "oklch(15% 0.14 163)",
+          "oklch(25% 0.14 163)",
+          "oklch(38% 0.14 163)",
+          "oklch(50% 0.14 163)",
+          "oklch(62% 0.14 163)",
+          "oklch(74% 0.14 163)",
+          "oklch(85% 0.14 163)",
+          "oklch(95% 0.14 163)"
+        ]
+      },
+      "whatsapp-tinta": {
+        "role": "tertiary",
+        "displayName": "Tinta do WhatsApp",
+        "tonalRamp": [
+          "oklch(15% 0.06 165)",
+          "oklch(25% 0.06 165)",
+          "oklch(38% 0.06 165)",
+          "oklch(50% 0.06 165)",
+          "oklch(62% 0.06 165)",
+          "oklch(74% 0.06 165)",
+          "oklch(85% 0.06 165)",
+          "oklch(95% 0.06 165)"
+        ]
+      },
+      "sucesso": {
+        "role": "neutral",
+        "displayName": "Sucesso",
+        "tonalRamp": [
+          "oklch(15% 0.14 150)",
+          "oklch(25% 0.14 150)",
+          "oklch(38% 0.14 150)",
+          "oklch(50% 0.14 150)",
+          "oklch(62% 0.14 150)",
+          "oklch(74% 0.14 150)",
+          "oklch(85% 0.14 150)",
+          "oklch(95% 0.14 150)"
+        ]
+      },
+      "sucesso-fundo": {
+        "role": "neutral",
+        "displayName": "Fundo de sucesso",
+        "tonalRamp": [
+          "oklch(15% 0.04 150)",
+          "oklch(25% 0.04 150)",
+          "oklch(38% 0.04 150)",
+          "oklch(50% 0.04 150)",
+          "oklch(62% 0.04 150)",
+          "oklch(74% 0.04 150)",
+          "oklch(85% 0.04 150)",
+          "oklch(95% 0.04 150)"
+        ]
+      },
+      "lacre": {
+        "role": "neutral",
+        "displayName": "Lacre",
+        "tonalRamp": [
+          "oklch(15% 0.17 27)",
+          "oklch(25% 0.17 27)",
+          "oklch(38% 0.17 27)",
+          "oklch(50% 0.17 27)",
+          "oklch(62% 0.17 27)",
+          "oklch(74% 0.17 27)",
+          "oklch(85% 0.17 27)",
+          "oklch(95% 0.17 27)"
+        ]
+      },
+      "lacre-escuro": {
+        "role": "neutral",
+        "displayName": "Lacre escuro",
+        "tonalRamp": [
+          "oklch(15% 0.15 25)",
+          "oklch(25% 0.15 25)",
+          "oklch(38% 0.15 25)",
+          "oklch(50% 0.15 25)",
+          "oklch(62% 0.15 25)",
+          "oklch(74% 0.15 25)",
+          "oklch(85% 0.15 25)",
+          "oklch(95% 0.15 25)"
+        ]
+      },
+      "lacre-fundo": {
+        "role": "neutral",
+        "displayName": "Fundo de lacre",
+        "tonalRamp": [
+          "oklch(15% 0.02 25)",
+          "oklch(25% 0.02 25)",
+          "oklch(38% 0.02 25)",
+          "oklch(50% 0.02 25)",
+          "oklch(62% 0.02 25)",
+          "oklch(74% 0.02 25)",
+          "oklch(85% 0.02 25)",
+          "oklch(95% 0.02 25)"
+        ]
+      },
+      "contorno": {
+        "role": "neutral",
+        "displayName": "Nanquim",
+        "tonalRamp": [
+          "oklch(15% 0.03 265)",
+          "oklch(25% 0.03 265)",
+          "oklch(38% 0.03 265)",
+          "oklch(50% 0.03 265)",
+          "oklch(62% 0.03 265)",
+          "oklch(74% 0.03 265)",
+          "oklch(85% 0.03 265)",
+          "oklch(95% 0.03 265)"
+        ]
+      },
+      "cinza": {
+        "role": "neutral",
+        "displayName": "Cinza",
+        "tonalRamp": [
+          "oklch(15% 0.03 260)",
+          "oklch(25% 0.03 260)",
+          "oklch(38% 0.03 260)",
+          "oklch(50% 0.03 260)",
+          "oklch(62% 0.03 260)",
+          "oklch(74% 0.03 260)",
+          "oklch(85% 0.03 260)",
+          "oklch(95% 0.03 260)"
+        ]
+      },
+      "cinza-claro": {
+        "role": "neutral",
+        "displayName": "Cinza claro",
+        "tonalRamp": [
+          "oklch(15% 0.02 260)",
+          "oklch(25% 0.02 260)",
+          "oklch(38% 0.02 260)",
+          "oklch(50% 0.02 260)",
+          "oklch(62% 0.02 260)",
+          "oklch(74% 0.02 260)",
+          "oklch(85% 0.02 260)",
+          "oklch(95% 0.02 260)"
+        ]
+      },
+      "branco": {
+        "role": "neutral",
+        "displayName": "Branco",
+        "tonalRamp": [
+          "oklch(15% 0 0)",
+          "oklch(25% 0 0)",
+          "oklch(38% 0 0)",
+          "oklch(50% 0 0)",
+          "oklch(62% 0 0)",
+          "oklch(74% 0 0)",
+          "oklch(85% 0 0)",
+          "oklch(95% 0 0)"
+        ]
+      },
+      "papel": {
+        "role": "neutral",
+        "displayName": "Papel",
+        "tonalRamp": [
+          "oklch(15% 0.01 90)",
+          "oklch(25% 0.01 90)",
+          "oklch(38% 0.01 90)",
+          "oklch(50% 0.01 90)",
+          "oklch(62% 0.01 90)",
+          "oklch(74% 0.01 90)",
+          "oklch(85% 0.01 90)",
+          "oklch(95% 0.01 90)"
+        ]
+      },
+      "superficie": {
+        "role": "neutral",
+        "displayName": "Superfície",
+        "tonalRamp": [
+          "oklch(15% 0.01 90)",
+          "oklch(25% 0.01 90)",
+          "oklch(38% 0.01 90)",
+          "oklch(50% 0.01 90)",
+          "oklch(62% 0.01 90)",
+          "oklch(74% 0.01 90)",
+          "oklch(85% 0.01 90)",
+          "oklch(95% 0.01 90)"
+        ]
+      },
+      "superficie-baixa": {
+        "role": "neutral",
+        "displayName": "Superfície baixa",
+        "tonalRamp": [
+          "oklch(15% 0.015 90)",
+          "oklch(25% 0.015 90)",
+          "oklch(38% 0.015 90)",
+          "oklch(50% 0.015 90)",
+          "oklch(62% 0.015 90)",
+          "oklch(74% 0.015 90)",
+          "oklch(85% 0.015 90)",
+          "oklch(95% 0.015 90)"
+        ]
+      },
+      "superficie-media": {
+        "role": "neutral",
+        "displayName": "Superfície média",
+        "tonalRamp": [
+          "oklch(15% 0.02 88)",
+          "oklch(25% 0.02 88)",
+          "oklch(38% 0.02 88)",
+          "oklch(50% 0.02 88)",
+          "oklch(62% 0.02 88)",
+          "oklch(74% 0.02 88)",
+          "oklch(85% 0.02 88)",
+          "oklch(95% 0.02 88)"
+        ]
+      },
+      "superficie-alta": {
+        "role": "neutral",
+        "displayName": "Superfície alta",
+        "tonalRamp": [
+          "oklch(15% 0.025 88)",
+          "oklch(25% 0.025 88)",
+          "oklch(38% 0.025 88)",
+          "oklch(50% 0.025 88)",
+          "oklch(62% 0.025 88)",
+          "oklch(74% 0.025 88)",
+          "oklch(85% 0.025 88)",
+          "oklch(95% 0.025 88)"
+        ]
+      },
+      "linha": {
+        "role": "neutral",
+        "displayName": "Linha",
+        "tonalRamp": [
+          "oklch(15% 0.03 88)",
+          "oklch(25% 0.03 88)",
+          "oklch(38% 0.03 88)",
+          "oklch(50% 0.03 88)",
+          "oklch(62% 0.03 88)",
+          "oklch(74% 0.03 88)",
+          "oklch(85% 0.03 88)",
+          "oklch(95% 0.03 88)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "h1 de cada página, em letreiro de duas tonalidades."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Títulos de seção."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Nomes nos cartões e títulos de bloco."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Texto corrido e interface."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Etiquetas e selos; menor tamanho permitido."
+      }
+    },
+    "shadows": [
+      {
+        "name": "sombra-dura",
+        "value": "5px 5px 0 0 #111827",
+        "purpose": "Cartões, caixas de destaque e chamada principal."
+      },
+      {
+        "name": "sombra-botao",
+        "value": "4px 4px 0 0 #111827",
+        "purpose": "Botões, campos e seletores em repouso."
+      },
+      {
+        "name": "sombra-dura-sm",
+        "value": "2px 2px 0 0 #111827",
+        "purpose": "Etiquetas e o estado afundado no hover."
+      },
+      {
+        "name": "cel",
+        "value": "inset 0 -4px 0 0 rgba(17,24,39,.2), inset 3px 3px 0 0 rgba(255,255,255,.35)",
+        "purpose": "Volume chapado de cel-shading nos botões."
+      },
+      {
+        "name": "cel-sm",
+        "value": "inset 0 -3px 0 0 rgba(17,24,39,.18), inset 2px 2px 0 0 rgba(255,255,255,.35)",
+        "purpose": "Cel-shading das etiquetas e do chip ativo."
+      }
+    ],
+    "motion": [
+      {
+        "name": "transicao-tecla",
+        "value": "transform 0.12s ease, box-shadow 0.12s ease, background-color 0.15s ease, color 0.15s ease",
+        "purpose": "Tecla que afunda no hover e no clique."
+      },
+      {
+        "name": "troca-de-tela",
+        "value": "opacity 0.22s",
+        "purpose": "Esmaecimento ao entrar numa tela nova."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "celular",
+        "value": "600px"
+      },
+      {
+        "name": "tablet",
+        "value": "900px"
+      },
+      {
+        "name": "largura-max",
+        "value": "1200px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botão destaque",
+      "kind": "button",
+      "refersTo": "botao-destaque",
+      "description": "A chamada principal da tela: tecla ouro que afunda na sombra.",
+      "html": "<button class=\"ds-botao-destaque\">Ver a vitrine</button>",
+      "css": ".ds-botao-destaque{display:inline-flex;align-items:center;gap:.5rem;padding:.8rem 1.5rem;border:3px solid #111827;border-radius:8px;background:#fbbf24;color:#111827;font:700 14px/1.2 'Inter',system-ui,sans-serif;box-shadow:4px 4px 0 0 #111827,inset 0 -4px 0 0 rgba(17,24,39,.2), inset 3px 3px 0 0 rgba(255,255,255,.35);cursor:pointer;transition:transform .12s ease,box-shadow .12s ease,background-color .15s ease}.ds-botao-destaque:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 0 #111827,inset 0 -4px 0 0 rgba(17,24,39,.2), inset 3px 3px 0 0 rgba(255,255,255,.35);background:#f59e0b;}.ds-botao-destaque:active{transform:translate(4px,4px);box-shadow:inset 0 -4px 0 0 rgba(17,24,39,.2), inset 3px 3px 0 0 rgba(255,255,255,.35)}.ds-botao-destaque:focus-visible{outline:3px solid #fbbf24;outline-offset:2px}"
+    },
+    {
+      "name": "Botão primário",
+      "kind": "button",
+      "refersTo": "botao-primario",
+      "description": "Ação de interface em anil.",
+      "html": "<button class=\"ds-botao-primario\">Salvar</button>",
+      "css": ".ds-botao-primario{display:inline-flex;align-items:center;gap:.5rem;padding:.8rem 1.5rem;border:3px solid #111827;border-radius:8px;background:#17346e;color:#ffffff;font:700 14px/1.2 'Inter',system-ui,sans-serif;box-shadow:4px 4px 0 0 #111827,inset 0 -4px 0 0 rgba(17,24,39,.2), inset 3px 3px 0 0 rgba(255,255,255,.35);cursor:pointer;transition:transform .12s ease,box-shadow .12s ease,background-color .15s ease}.ds-botao-primario:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 0 #111827,inset 0 -4px 0 0 rgba(17,24,39,.2), inset 3px 3px 0 0 rgba(255,255,255,.35);background:#0f2557;}.ds-botao-primario:active{transform:translate(4px,4px);box-shadow:inset 0 -4px 0 0 rgba(17,24,39,.2), inset 3px 3px 0 0 rgba(255,255,255,.35)}.ds-botao-primario:focus-visible{outline:3px solid #fbbf24;outline-offset:2px}"
+    },
+    {
+      "name": "Botão secundário",
+      "kind": "button",
+      "refersTo": "botao-secundario",
+      "description": "Ação de apoio: tecla branca com texto anil.",
+      "html": "<button class=\"ds-botao-secundario\">Como funciona</button>",
+      "css": ".ds-botao-secundario{display:inline-flex;align-items:center;gap:.5rem;padding:.8rem 1.5rem;border:3px solid #111827;border-radius:8px;background:#ffffff;color:#17346e;font:700 14px/1.2 'Inter',system-ui,sans-serif;box-shadow:4px 4px 0 0 #111827,inset 0 -4px 0 0 rgba(17,24,39,.2), inset 3px 3px 0 0 rgba(255,255,255,.35);cursor:pointer;transition:transform .12s ease,box-shadow .12s ease,background-color .15s ease}.ds-botao-secundario:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 0 #111827,inset 0 -4px 0 0 rgba(17,24,39,.2), inset 3px 3px 0 0 rgba(255,255,255,.35);background:#fde68a;color:#111827;}.ds-botao-secundario:active{transform:translate(4px,4px);box-shadow:inset 0 -4px 0 0 rgba(17,24,39,.2), inset 3px 3px 0 0 rgba(255,255,255,.35)}.ds-botao-secundario:focus-visible{outline:3px solid #fbbf24;outline-offset:2px}"
+    },
+    {
+      "name": "Botão do WhatsApp",
+      "kind": "button",
+      "refersTo": "botao-whatsapp",
+      "description": "Única peça no verde do WhatsApp: abre a conversa com quem faz.",
+      "html": "<a class=\"ds-botao-whatsapp\" href=\"#\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path fill=\"currentColor\" d=\"M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8l-4 4V5a1 1 0 0 1 1-1z\"/></svg>Chamar no WhatsApp</a>",
+      "css": ".ds-botao-whatsapp{display:inline-flex;align-items:center;gap:.5rem;padding:.8rem 1.5rem;border:3px solid #111827;border-radius:8px;background:#10b981;color:#062b1e;font:700 14px/1.2 'Inter',system-ui,sans-serif;box-shadow:4px 4px 0 0 #111827,inset 0 -4px 0 0 rgba(17,24,39,.2), inset 3px 3px 0 0 rgba(255,255,255,.35);cursor:pointer;transition:transform .12s ease,box-shadow .12s ease,background-color .15s ease}.ds-botao-whatsapp:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 0 #111827,inset 0 -4px 0 0 rgba(17,24,39,.2), inset 3px 3px 0 0 rgba(255,255,255,.35);background:#0ea371;}.ds-botao-whatsapp:active{transform:translate(4px,4px);box-shadow:inset 0 -4px 0 0 rgba(17,24,39,.2), inset 3px 3px 0 0 rgba(255,255,255,.35)}.ds-botao-whatsapp:focus-visible{outline:3px solid #fbbf24;outline-offset:2px}.ds-botao-whatsapp{text-decoration:none;padding-block:.9rem}"
+    },
+    {
+      "name": "Campo de busca",
+      "kind": "input",
+      "refersTo": "campo",
+      "description": "Campo contornado com sombra em bloco; no foco, a sombra vira ouro.",
+      "html": "<label class=\"ds-busca\"><svg class=\"ds-busca__icone\" width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"7\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><path d=\"M16.5 16.5L21 21\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"/></svg><input class=\"ds-busca__campo\" type=\"search\" placeholder=\"Ex.: bolo, conserto\"></label>",
+      "css": ".ds-busca{position:relative;display:flex;align-items:center;width:320px;color:#111827}.ds-busca__icone{position:absolute;left:.85rem;pointer-events:none}.ds-busca__campo{width:100%;min-height:48px;padding:.7rem 1rem .7rem 2.8rem;border:3px solid #111827;border-radius:8px;background:#fff;box-shadow:4px 4px 0 0 #111827;font:500 16px/1.2 'Inter',system-ui,sans-serif;transition:background-color .15s ease,box-shadow .12s ease}.ds-busca__campo::placeholder{color:#6b7280}.ds-busca__campo:focus{outline:none;background:#fffdf5;box-shadow:4px 4px 0 0 #fbbf24}"
+    },
+    {
+      "name": "Chips de categoria",
+      "kind": "chip",
+      "refersTo": "chip-categoria",
+      "description": "Filtro em plaquinhas; o escolhido vira adesivo ouro inclinado.",
+      "html": "<div class=\"ds-chips\"><button class=\"ds-chip\">Todas</button><button class=\"ds-chip ds-chip--ativo\" aria-pressed=\"true\">Artesanato</button><button class=\"ds-chip\">Alimentação</button></div>",
+      "css": ".ds-chips{display:flex;gap:.5rem;flex-wrap:wrap}.ds-chip{min-height:44px;padding:.5rem 1rem;border:3px solid #111827;border-radius:8px;background:#fff;color:#111827;box-shadow:3px 3px 0 0 #111827;font:700 14px 'Inter',system-ui,sans-serif;cursor:pointer;transition:transform .12s ease,box-shadow .12s ease,background-color .15s ease}.ds-chip:hover{background:#fde68a;transform:translate(1px,1px);box-shadow:2px 2px 0 0 #111827}.ds-chip:focus-visible{outline:3px solid #fbbf24;outline-offset:2px}.ds-chip--ativo,.ds-chip--ativo:hover{background:#fbbf24;transform:rotate(-1.5deg);box-shadow:3px 3px 0 0 #111827,inset 0 -3px 0 0 rgba(17,24,39,.18), inset 2px 2px 0 0 rgba(255,255,255,.35)}"
+    },
+    {
+      "name": "Etiqueta",
+      "kind": "chip",
+      "refersTo": "etiqueta",
+      "description": "Adesivo de 11px em maiúsculas, inclinado, para tipo e selos.",
+      "html": "<span class=\"ds-etiqueta\">Produto</span> <span class=\"ds-etiqueta ds-etiqueta--ouro\">Negócio Destaque</span>",
+      "css": ".ds-etiqueta{display:inline-block;padding:.2rem .6rem;border:2px solid #111827;border-radius:4px;background:#fff;color:#111827;box-shadow:2px 2px 0 0 #111827,inset 0 -3px 0 0 rgba(17,24,39,.18), inset 2px 2px 0 0 rgba(255,255,255,.35);transform:rotate(-1.5deg);font:700 11px/1.4 'Inter',system-ui,sans-serif;letter-spacing:.04em;text-transform:uppercase}.ds-etiqueta--ouro{background:#fbbf24;transform:rotate(1deg)}"
+    },
+    {
+      "name": "Cartão de produto",
+      "kind": "card",
+      "refersTo": "cartao",
+      "description": "Cartão de gibi: contorno de 3px, sombra dura, nome em letreiro, preço em Bricolage. O cartão inteiro é o link.",
+      "html": "<a class=\"ds-cartao\" href=\"#\"><span class=\"ds-cartao__foto\"></span><span class=\"ds-cartao__corpo\"><strong class=\"ds-cartao__nome\">Tapete de crochê redondo</strong><span class=\"ds-cartao__desc\">Tapete de barbante 100% algodão, 1 metro de diâmetro.</span><span class=\"ds-cartao__preco\">R$ 120,00</span></span></a>",
+      "css": ".ds-cartao{display:flex;flex-direction:column;width:280px;background:#fff;border:3px solid #111827;border-radius:12px;box-shadow:5px 5px 0 0 #111827;color:#111827;text-decoration:none;overflow:hidden;transition:transform .12s ease,box-shadow .12s ease}.ds-cartao:hover,.ds-cartao:focus-visible{transform:translate(3px,3px);box-shadow:2px 2px 0 0 #111827}.ds-cartao:focus-visible{outline:3px solid #fbbf24;outline-offset:2px}.ds-cartao__foto{aspect-ratio:4/3;background:repeating-linear-gradient(-55deg,#dbe4ff 0 14px,#c9d6fb 14px 16px);border-bottom:3px solid #111827}.ds-cartao__corpo{display:flex;flex-direction:column;gap:.5rem;padding:1rem}.ds-cartao__nome{font:700 20px/1.05 'Bricolage Grotesque','Arial Black',sans-serif;color:#2b4aa6}.ds-cartao__desc{font:500 13px/1.5 'Inter',system-ui,sans-serif;color:#374151}.ds-cartao__preco{font:800 28px/1 'Bricolage Grotesque','Arial Black',sans-serif;color:#17346e}"
+    }
+  ],
+  "narrative": {
+    "northStar": "O Gibi do Bairro",
+    "overview": "O VitrineRondon conta o comércio de bairro como uma história em quadrinhos de banca. Cada superfície é desenhada a nanquim: contorno preto grosso (3px), cores chapadas, sombra em bloco sem desfoque e cel-shading com uma faixa de sombra embaixo e um brilho no canto de cima, nunca com degradê suave. O azul anil é o céu e a noite dos quadros; o ouro é o toldo da logo, o adesivo e a chamada para agir. Tudo fica sobre papel creme, como página de revistinha.\n\nO traço é expressivo, mas a interface trabalha para um morador com celular simples e internet fraca. Por isso a densidade é moderada, o texto é grande e contrastado, e os efeitos são feitos de CSS (sombras, máscaras e SVG inline), sem imagens decorativas pesadas. O gibi aparece nos detalhes: o letreiro de duas tonalidades nos títulos, o adesivo inclinado no filtro escolhido, a hachura de nanquim num canto e o reflexo diagonal da vitrine da logo.",
+    "keyCharacteristics": [
+      "Contorno de nanquim de 3px (`--borda`) em cartões, botões, campos e faixas; 2px (`--borda-fina`) em etiquetas.",
+      "Sombra dura deslocada, sem desfoque; elementos clicáveis afundam em direção a ela.",
+      "Cel-shading chapado (`--cel`, `--cel-sm`) em botões e etiquetas.",
+      "Títulos em letreiro de duas tonalidades, com uma linha de contorno embaixo.",
+      "Faixas de cor (anil, ouro, céu, branco) alternando com o papel, para dar ritmo à página.",
+      "Texturas de linhas diagonais, hachuras e pontos só como fundo, sempre discretas."
+    ],
+    "rules": [
+      {
+        "name": "A Regra do Verde Só no WhatsApp",
+        "body": "O verde `whatsapp` aparece só no botão que abre a conversa. Assim, em qualquer tela, o caminho para falar com quem faz é a coisa mais fácil de achar. Os outros verdes são de estado e têm tom próprio: `sucesso` no \"Aberto agora\" e um verde-claro (#4ade80) no selo \"Novo\".",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra do Ouro que Chama",
+        "body": "Ouro em fundo grande é faixa; ouro em botão é a ação principal da tela. Não use dois botões ouro competindo no mesmo bloco.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra do Letreiro",
+        "body": "h1, h2 e os nomes dos cartões usam o letreiro: a parte de cima da letra mais clara (`--letra-luz`), a de baixo mais escura (`--letra-sombra`) e uma linha de contorno embaixo. Sobre anil, o letreiro fica branco e gelo, com contorno de nanquim. O efeito é da marca; não copie esse degradê em texto de interface nem em parágrafo.",
+        "section": "typography"
+      },
+      {
+        "name": "A Regra do Piso de 11px",
+        "body": "Nada abaixo de 11px, nem selo compacto. Campos de texto usam 16px, para o celular não dar zoom ao tocar.",
+        "section": "typography"
+      },
+      {
+        "name": "A Regra da Tecla",
+        "body": "Elemento clicável afunda em direção à própria sombra: no hover, desloca 2px a 3px e a sombra encolhe; no clique, desloca 4px e a sombra some (0,12s). Nada sobe nem brilha no hover.",
+        "section": "elevation"
+      },
+      {
+        "name": "A Regra do Zero Desfoque",
+        "body": "Nenhuma sombra tem desfoque. Se precisar de mais profundidade, aumente o deslocamento.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** contornar toda superfície interativa e todo cartão com nanquim de 3px (`--borda`) e dar a ela sombra em bloco sem desfoque.",
+      "**Do** usar `--transicao-tecla` (0,12s) e fazer o elemento afundar em direção à sombra no hover e no clique.",
+      "**Do** reservar o verde `whatsapp` para o botão de abrir a conversa e mantê-lo visível sem rolagem no celular.",
+      "**Do** manter alvos de toque de pelo menos 44px. Em links de texto, aumente a área com padding e margem negativa, sem mudar o desenho.",
+      "**Do** usar contorno ouro de 3px como foco do teclado em tudo.",
+      "**Do** respeitar `prefers-reduced-motion`: pilhas, esqueletos e animações contínuas param.",
+      "**Do** usar os tokens de `frontend/src/index.css` (`--cor-*`, `--esp-*`, `--raio*`, `--sombra-*`); nunca valores soltos."
+    ],
+    "donts": [
+      "**Don't** usar sombra desfocada, brilho difuso ou vidro com desfoque em componentes. A profundidade é só a sombra em bloco.",
+      "**Don't** usar texto abaixo de 11px, nem campo de texto abaixo de 16px.",
+      "**Don't** aplicar o letreiro em degradê em parágrafos, rótulos ou botões. Ele é dos títulos e dos nomes.",
+      "**Don't** pôr dois botões ouro competindo no mesmo bloco.",
+      "**Don't** usar o verde `whatsapp` em nada que não abra a conversa no WhatsApp.",
+      "**Don't** colocar as categorias em várias fileiras no celular."
+    ]
+  }
+}
