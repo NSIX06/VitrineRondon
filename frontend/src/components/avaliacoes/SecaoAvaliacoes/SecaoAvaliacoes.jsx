@@ -380,6 +380,8 @@ function SecaoAvaliacoes({ negocioId, nomeNegocio, destaque = false, aoMudarResu
         <div className="avaliacoes__lista-bloco">
           <div className="avaliacoes__lista-topo">
             <h3 className="avaliacoes__subtitulo">Comentários</h3>
+            {/* Ordenar só faz sentido com mais de um comentário */}
+            {resumo.total > 1 && (
             <label className="avaliacoes__ordem">
               <span>Ordenar por</span>
               <select className="campo__entrada" value={ordem} onChange={(evento) => setOrdem(evento.target.value)}>
@@ -390,6 +392,7 @@ function SecaoAvaliacoes({ negocioId, nomeNegocio, destaque = false, aoMudarResu
                 ))}
               </select>
             </label>
+            )}
           </div>
           <ul className="avaliacoes__lista" aria-busy={carregando}>
             {estado.itens.map((avaliacao) => (

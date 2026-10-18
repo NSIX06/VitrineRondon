@@ -57,6 +57,12 @@
   color: var(--cor-anil);
 }
 
+/* Textos abaixo do botão de publicar (aceite e atalhos) */
+.avaliacoes__dica--rodape {
+  margin: var(--esp-3) 0 0;
+  font-size: var(--texto-xs);
+}
+
 .avaliacoes__dica {
   margin: 0 0 var(--esp-3);
   color: var(--cor-cinza);
@@ -321,13 +327,15 @@
   padding-block: 6px;
 }
 
+/* Uma coluna, na largura toda: leitura confortável e sem meia linha vazia
+   quando há poucos comentários */
 .avaliacoes__lista {
   margin: 0;
   padding: 0;
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--esp-4);
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--esp-3);
 }
 
 .avaliacoes__lista[aria-busy='true'] {
@@ -468,9 +476,17 @@
   color: var(--cor-lacre);
 }
 
+/* No computador o resumo acompanha a rolagem ao lado do formulário, em vez
+   de deixar um vão embaixo dele */
+@media (min-width: 901px) {
+  .avaliacoes__resumo {
+    position: sticky;
+    top: 110px;
+  }
+}
+
 @media (max-width: 900px) {
-  .avaliacoes__grade,
-  .avaliacoes__lista {
+  .avaliacoes__grade {
     grid-template-columns: minmax(0, 1fr);
   }
 }
@@ -489,7 +505,8 @@
     padding: var(--esp-4);
   }
 
-  .avaliacoes__convite-botoes .botao {
+  .avaliacoes__convite-botoes .botao,
+  .form-avaliacao__acoes .botao {
     flex: 1 1 100%;
     justify-content: center;
   }
