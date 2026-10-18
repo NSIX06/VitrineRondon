@@ -57,10 +57,18 @@
   color: var(--cor-anil);
 }
 
-/* Textos abaixo do botão de publicar (aceite e atalhos) */
-.avaliacoes__dica--rodape {
-  margin: var(--esp-3) 0 0;
+/* Textos abaixo do botão de publicar (aceite e atalhos). Seletor duplo para
+   vencer a margem de .avaliacoes__dica; o primeiro se afasta do botão (e da
+   sombra dele), o segundo fica perto do primeiro */
+.avaliacoes__dica.avaliacoes__dica--rodape {
+  margin: var(--esp-2) 0 0;
   font-size: var(--texto-xs);
+}
+
+.form-avaliacao + .avaliacoes__dica.avaliacoes__dica--rodape {
+  margin-top: var(--esp-5);
+  padding-top: var(--esp-4);
+  border-top: 2px dashed var(--cor-linha);
 }
 
 .avaliacoes__dica {
