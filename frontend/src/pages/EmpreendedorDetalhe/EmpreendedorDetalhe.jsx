@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { Suspense, lazy, useCallback, useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useConsulta } from '../../hooks/useConsulta'
 import { linkWhatsapp } from '../../services/whatsapp'
@@ -27,7 +27,10 @@ import './EmpreendedorDetalhe.css'
 import Voltar from '../../components/ui/Voltar/Voltar'
 import Foto from '../../components/ui/Foto/Foto'
 import SeloReputacao from '../../components/avaliacoes/SeloReputacao/SeloReputacao'
-import SecaoAvaliacoes from '../../components/avaliacoes/SecaoAvaliacoes/SecaoAvaliacoes'
+
+// A seção de avaliações fica no fim da página: vem num arquivo à parte, baixado
+// depois do topo do perfil (no celular, disputava a rede com o JavaScript principal)
+const SecaoAvaliacoes = lazy(() => import('../../components/avaliacoes/SecaoAvaliacoes/SecaoAvaliacoes'))
 
 /** A busca no catálogo só aparece quando há itens para procurar */
 const MINIMO_PARA_BUSCA = 4
@@ -496,13 +499,22 @@ function EmpreendedorDetalhe() {
             </section>
           </div>
 
-          <SecaoAvaliacoes
-            key={empreendedor.id}
-            negocioId={empreendedor.id}
-            nomeNegocio={nomeNegocio}
-            destaque={emDestaque}
-            aoMudarResumo={atualizarReputacao}
-          />
+          <Suspense
+            fallback={
+              // Mesmo lugar e altura parecida: o link "#avaliacoes" já funciona e nada pula
+              <section id="avaliacoes" className="avaliacoes avaliacoes--carregando" aria-busy="true">
+                <h2 className="avaliacoes__titulo">Avaliações dos clientes</h2>
+              </section>
+            }
+          >
+            <SecaoAvaliacoes
+              key={empreendedor.id}
+              negocioId={empreendedor.id}
+              nomeNegocio={nomeNegocio}
+              destaque={emDestaque}
+              aoMudarResumo={atualizarReputacao}
+            />
+          </Suspense>
         </div>
       </div>
 

@@ -1197,3 +1197,21 @@
     height: 220px;
   }
 }
+
+/* Lugar da seção de avaliações enquanto o arquivo dela chega (o CSS da seção
+   vem junto com ela, então o essencial do cartão fica aqui) */
+.avaliacoes--carregando {
+  min-height: 420px;
+  margin-top: var(--esp-6);
+  padding: var(--esp-6);
+  background: var(--cor-branco);
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-dura);
+}
+
+.avaliacoes--carregando .avaliacoes__titulo {
+  margin: 0;
+  font-size: var(--texto-3xl);
+  color: var(--cor-anil);
+}
