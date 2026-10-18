@@ -24,7 +24,7 @@ export const ROTULOS_DAS_NOTAS = {
 
 /**
  * Faixa de cor pela média: neutra (sem avaliações), vermelha (1 a 1,9),
- * laranja (2 a 2,9), dourada (3 a 3,9), verde (4 a 4,4) e excelente (4,5 a 5, verde que termina em dourado).
+ * laranja (2 a 2,9), dourada (3 a 3,9), verde (4 a 4,4) e excelente (4,5 a 5, dourado premium).
  */
 export function faixaDaMedia(media, total = 1) {
   if (!total || media == null || Number.isNaN(Number(media))) return 'neutra'

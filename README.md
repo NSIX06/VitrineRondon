@@ -669,7 +669,7 @@ comentários, ordenáveis (mais recentes, maior e menor nota) e carregados aos p
 
 **Estrelas:** o preenchimento usa a média exata (4,3 pinta 30% da quinta estrela), e a cor vem da
 faixa da média: cinza sem avaliações, vermelha (1 a 1,9), laranja (2 a 2,9), dourada (3 a 3,9), verde
-(4 a 4,4) e verde com dourado (4,5 a 5). A média e a quantidade também aparecem em texto, e as estrelas
+(4 a 4,4) e dourado premium, com brilho (4,5 a 5). A média e a quantidade também aparecem em texto, e as estrelas
 têm rótulo para leitores de tela, então a cor nunca é a única informação. No **plano Destaque** muda só o
 acabamento (contorno dourado, brilho, moldura e o selo "Reputação em destaque"): a nota, a média e o
 número de estrelas são os mesmos de qualquer plano, e o selo "Negócio Destaque" continua separado da

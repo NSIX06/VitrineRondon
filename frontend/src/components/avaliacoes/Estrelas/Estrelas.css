@@ -86,10 +86,16 @@
   --estrela-escura: #16a34a;
 }
 
-/* 4,5 a 5: verde que termina em dourado */
+/* 4,5 a 5: dourado premium, mais intenso que a faixa de 3 a 3,9, com
+   contorno âmbar e um brilho leve em volta */
 .estrelas--excelente {
-  --estrela-clara: #6ee7b7;
-  --estrela-escura: #fbbf24;
+  --estrela-clara: #ffe36e;
+  --estrela-escura: #e09a00;
+  --estrela-contorno: #7a4300;
+}
+
+.estrelas--excelente .estrela__cheia svg {
+  filter: drop-shadow(0 0 calc(var(--estrela) * 0.1) rgba(255, 196, 0, 0.55));
 }
 
 /* Plano Destaque: mesma nota e mesmo número de estrelas; muda só o
