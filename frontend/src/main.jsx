@@ -10,6 +10,7 @@ import App from './App.jsx'
 import { AuthProvider } from './contexts/AuthContext.jsx'
 import { adiantarHome } from './pages/Home/consultas.js'
 import { encerrarAbertura } from './services/abertura.js'
+import { marcarSossego } from './services/sossego.js'
 import { adiantarPagina } from './services/adiantamentos.js'
 
 // Entrou pela página inicial: dados e código dela já começam a vir agora, e a
@@ -20,6 +21,8 @@ const homeAdiantada = window.location.pathname === '/' ? adiantarHome() : undefi
 // (login, Meu negócio, Admin, Vitrine, Empreendedores, perfil e item)
 if (window.location.pathname !== '/') adiantarPagina()
 encerrarAbertura(homeAdiantada)
+// Enfeites animados só depois que a página sossega (services/sossego.js)
+marcarSossego()
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

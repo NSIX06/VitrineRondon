@@ -537,6 +537,14 @@
   }
 }
 
+/* Parada (na primeira palavra) até a página sossegar: a janela tem máscara,
+   e animar dentro dela repinta a área a cada quadro, o que travava o
+   carregamento (services/sossego.js põe a classe no <html>) */
+html:not(.sossegou) .navbar__cadastrar-palavras,
+html:not(.sossegou) .navbar__cadastrar-palavras > span {
+  animation-play-state: paused;
+}
+
 /* Pausa enquanto a pessoa aponta ou foca o botão: dá para ler com calma */
 .navbar__cadastrar:hover .navbar__cadastrar-palavras,
 .navbar__cadastrar:focus-visible .navbar__cadastrar-palavras,

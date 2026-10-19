@@ -29,6 +29,11 @@
   pointer-events: none;
 }
 
+/* Parado até a página sossegar (services/sossego.js): não pinta no carregamento */
+html:not(.sossegou) .detalhe__migalhas::before {
+  animation-play-state: paused;
+}
+
 .detalhe__migalhas > * {
   position: relative;
 }

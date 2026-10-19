@@ -1,11 +1,19 @@
 // Pilha de cartões que se revezam, adaptada do CardSwap do React Bits
-// (https://reactbits.dev, licença MIT) para o projeto: JavaScript, gsap só
-// quando a pilha aparece (a página importa este arquivo sob demanda) e pausa
-// com o mouse ou o foco do teclado em cima, fora da tela e com a aba escondida.
+// (https://reactbits.dev, licença MIT) para o projeto: JavaScript, pausa com
+// o mouse ou o foco do teclado em cima, fora da tela e com a aba escondida.
 // Para quem pede menos movimento ao sistema, a pilha fica parada.
+//
+// A posição inicial dos cartões vem do CSS, já na primeira pintura, e o gsap
+// só é baixado quando o revezamento começa: antes, ele era baixado e rodava no
+// carregamento só para posicionar cartões parados, e medir os cartões
+// (xPercent) obrigava o navegador a recalcular o layout no meio da tarefa.
 import { Children, cloneElement, createRef, forwardRef, isValidElement, useEffect, useMemo, useRef } from 'react'
-import gsap from 'gsap'
+import { quandoSossegar } from '../../../services/sossego'
 import './CardSwap.css'
+
+/** O gsap (cerca de 27 KiB comprimidos), baixado uma vez, quando a pilha começa a se mexer */
+let carregandoGsap = null
+const carregarGsap = () => (carregandoGsap ??= import('gsap').then((modulo) => modulo.default))
 
 export const Card = forwardRef(function Card({ className = '', ...resto }, ref) {
   return <div ref={ref} {...resto} className={`card-swap__cartao ${className}`.trim()} />
@@ -19,7 +27,11 @@ const posicao = (i, distX, distY, total) => ({
   zIndex: total - i,
 })
 
-const colocar = (el, slot, inclinacao) =>
+/** A mesma posição em CSS puro, para a primeira pintura (sem gsap e sem medir nada) */
+const transformDe = (slot, inclinacao) =>
+  `translate(-50%, -50%) translate3d(${slot.x}px, ${slot.y}px, ${slot.z}px) skewY(${inclinacao}deg)`
+
+const colocar = (gsap, el, slot, inclinacao) =>
   gsap.set(el, {
     x: slot.x,
     y: slot.y,
@@ -62,7 +74,8 @@ function CardSwap({
   useEffect(() => {
     const config = MOVIMENTO[movimento] ?? MOVIMENTO.elastico
     let ordem = Array.from({ length: total }, (_, i) => i)
-    refs.forEach((r, i) => colocar(r.current, posicao(i, distanciaX, distanciaY, total), inclinacao))
+    let gsap = null
+    let ativo = true
 
     // Menos movimento: a pilha fica parada, com o primeiro cartão na frente
     // (trocar sozinha a cada poucos segundos é movimento que a pessoa não pediu)
@@ -113,8 +126,8 @@ function CardSwap({
     const retomar = () => {
       if (!pausado) return
       pausado = false
-      // Antes de começar, retomar não inicia nada: quem começa é comecar()
-      if (!comecou) return
+      // Antes de começar (ou do gsap chegar), retomar não inicia nada
+      if (!comecou || !gsap) return
       linhaDoTempo?.play()
       iniciar()
     }
@@ -137,44 +150,39 @@ function CardSwap({
     observador.observe(no)
     document.addEventListener('visibilitychange', aoMudarVisibilidade)
 
-    // O revezamento só começa depois que a página sossega: na primeira
-    // interação da pessoa ou 8 s depois do carregamento. Cada quadro da
-    // animação custa pintura; rodando durante o carregamento, travava a página
-    // (no computador, o PageSpeed media 760 ms de bloqueio). Até lá, o cartão
+    // O revezamento só começa depois que a página sossega (services/sossego.js):
+    // rodando no carregamento, a animação travava a página. Até lá, o cartão
     // da frente fica parado no lugar, com o mesmo visual.
-    let espera = 0
-    const INTERACOES = ['pointerdown', 'pointermove', 'keydown', 'scroll', 'touchstart']
-    const pararDeEsperar = () => {
-      window.clearTimeout(espera)
-      window.removeEventListener('load', esperarCarregar)
-      INTERACOES.forEach((tipo) => window.removeEventListener(tipo, comecar))
-    }
-    function comecar() {
-      if (comecou) return
+    const comecar = () => {
+      if (!ativo || comecou) return
       comecou = true
-      pararDeEsperar()
-      if (pausado) return
-      trocar()
-      iniciar()
+      carregarGsap()
+        .then((biblioteca) => {
+          if (!ativo) return
+          gsap = biblioteca
+          // O gsap assume a posição que o CSS já mostrava (mesmos valores)
+          refs.forEach((r, i) => colocar(gsap, r.current, posicao(i, distanciaX, distanciaY, total), inclinacao))
+          if (pausado) return
+          trocar()
+          iniciar()
+        })
+        .catch(() => {
+          // Sem o gsap (rede caiu), a pilha só fica parada
+        })
     }
-    function esperarCarregar() {
-      espera = window.setTimeout(comecar, 8000)
-    }
-    INTERACOES.forEach((tipo) => window.addEventListener(tipo, comecar, { once: true, passive: true }))
-    if (document.readyState === 'complete') esperarCarregar()
-    else window.addEventListener('load', esperarCarregar, { once: true })
+    quandoSossegar().then(comecar)
 
     no.addEventListener('mouseenter', pausar)
     no.addEventListener('mouseleave', retomar)
     no.addEventListener('focusin', pausar)
     no.addEventListener('focusout', aoSairOFoco)
     return () => {
-      pararDeEsperar()
+      ativo = false
       observador.disconnect()
       document.removeEventListener('visibilitychange', aoMudarVisibilidade)
       window.clearInterval(relogio)
       linhaDoTempo?.kill()
-      gsap.killTweensOf(refs.map((r) => r.current))
+      gsap?.killTweensOf(refs.map((r) => r.current))
       no.removeEventListener('mouseenter', pausar)
       no.removeEventListener('mouseleave', retomar)
       no.removeEventListener('focusin', pausar)
@@ -188,7 +196,14 @@ function CardSwap({
         isValidElement(cartao)
           ? cloneElement(cartao, {
               ref: refs[i],
-              style: { width: largura, height: altura, ...(cartao.props.style ?? {}) },
+              style: {
+                width: largura,
+                height: altura,
+                // Posição inicial na pilha, já na primeira pintura
+                transform: transformDe(posicao(i, distanciaX, distanciaY, total), inclinacao),
+                zIndex: total - i,
+                ...(cartao.props.style ?? {}),
+              },
             })
           : cartao
       )}
