@@ -1,12 +1,14 @@
 // Abertura do site (a marca, a barra amarela e "// carregando"), a cada
 // carregamento da página do zero: primeiro acesso ou recarregar. Segue
-// o ritmo do portfólio do autor: fica no mínimo 1,1 s, para a barra
-// terminar de encher, e no máximo 2,6 s, para nunca segurar o site. Ao sair,
-// sobe como uma cortina. O HTML e o estilo dela moram no index.html.
+// o ritmo do portfólio do autor, mais curto: fica no mínimo 0,7 s, para a
+// barra terminar de encher, e no máximo 1,5 s, para nunca segurar o site. Ao
+// sair, sobe como uma cortina. O HTML e o estilo dela moram no index.html.
+// (Com 1,1 s a 2,6 s e mais 0,9 s de saída, o conteúdo só aparecia inteiro
+// por volta de 3,5 s no celular lento, o que pesava no Speed Index.)
 
-const MINIMO_MS = 1100
-const MAXIMO_MS = 2600
-const SAIDA_MS = 900
+const MINIMO_MS = 700
+const MAXIMO_MS = 1500
+const SAIDA_MS = 600
 
 const paginaCarregada = () =>
   document.readyState === 'complete'
