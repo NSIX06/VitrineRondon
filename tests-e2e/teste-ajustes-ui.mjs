@@ -14,6 +14,18 @@ async function main() {
   const abrir = async (rota, espera = '.navbar__menu') => {
     await navegar(APP + rota)
     await evaluate(helpers)
+    // O mapa só baixa o Leaflet quando chega perto da tela: rola até o lugar dele
+    // (rola a cada verificação: o perfil ainda monta e empurra o mapa para baixo).
+    // Depois de muitas navegações, o navegador de teste às vezes para de gerar
+    // quadros, e sem quadro nem o observador nem a rolagem avisam a página:
+    // a captura de tela obriga um quadro.
+    if (espera === '.mapa') {
+      for (let tentativa = 0; tentativa < 20; tentativa++) {
+        if (await evaluate("(__q('.mapa-espera')?.scrollIntoView({ block: 'center' }), Boolean(__q('.mapa')))")) break
+        await nav.cdp('Page.captureScreenshot', { format: 'png' }).catch(() => {})
+        await esperar(1000)
+      }
+    }
     await esperarPor(`__q(${JSON.stringify(espera)})`, 15000)
   }
 

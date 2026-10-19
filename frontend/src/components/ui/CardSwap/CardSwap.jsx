@@ -71,6 +71,7 @@ function CardSwap({
     let linhaDoTempo = null
     let relogio = 0
     let pausado = false
+    let comecou = false
     let foraDaTela = false
 
     const trocar = () => {
@@ -112,6 +113,8 @@ function CardSwap({
     const retomar = () => {
       if (!pausado) return
       pausado = false
+      // Antes de começar, retomar não inicia nada: quem começa é comecar()
+      if (!comecou) return
       linhaDoTempo?.play()
       iniciar()
     }
@@ -134,13 +137,39 @@ function CardSwap({
     observador.observe(no)
     document.addEventListener('visibilitychange', aoMudarVisibilidade)
 
-    trocar()
-    iniciar()
+    // O revezamento só começa depois que a página sossega: na primeira
+    // interação da pessoa ou 8 s depois do carregamento. Cada quadro da
+    // animação custa pintura; rodando durante o carregamento, travava a página
+    // (no computador, o PageSpeed media 760 ms de bloqueio). Até lá, o cartão
+    // da frente fica parado no lugar, com o mesmo visual.
+    let espera = 0
+    const INTERACOES = ['pointerdown', 'pointermove', 'keydown', 'scroll', 'touchstart']
+    const pararDeEsperar = () => {
+      window.clearTimeout(espera)
+      window.removeEventListener('load', esperarCarregar)
+      INTERACOES.forEach((tipo) => window.removeEventListener(tipo, comecar))
+    }
+    function comecar() {
+      if (comecou) return
+      comecou = true
+      pararDeEsperar()
+      if (pausado) return
+      trocar()
+      iniciar()
+    }
+    function esperarCarregar() {
+      espera = window.setTimeout(comecar, 8000)
+    }
+    INTERACOES.forEach((tipo) => window.addEventListener(tipo, comecar, { once: true, passive: true }))
+    if (document.readyState === 'complete') esperarCarregar()
+    else window.addEventListener('load', esperarCarregar, { once: true })
+
     no.addEventListener('mouseenter', pausar)
     no.addEventListener('mouseleave', retomar)
     no.addEventListener('focusin', pausar)
     no.addEventListener('focusout', aoSairOFoco)
     return () => {
+      pararDeEsperar()
       observador.disconnect()
       document.removeEventListener('visibilitychange', aoMudarVisibilidade)
       window.clearInterval(relogio)
