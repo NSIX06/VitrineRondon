@@ -53,8 +53,18 @@ describe('adiantamento por página', () => {
   })
 
   it('páginas sem dados para adiantar não pedem nada', () => {
-    for (const caminho of ['/sobre', '/contato', '/planos', '/termos', '/cadastro']) {
+    for (const caminho of ['/sobre', '/termos', '/privacidade']) {
       expect(planoDeAdiantamento(caminho).leituras).toEqual([])
+    }
+  })
+
+  it('Planos, Contato e Cadastro adiantam o código e os dados que pedem', () => {
+    // Os mesmos caminhos de useConsulta('/planos'), useConsulta('/faq') e api.get('/termos')
+    expect(planoDeAdiantamento('/planos').leituras).toEqual(['/planos'])
+    expect(planoDeAdiantamento('/contato').leituras).toEqual(['/faq'])
+    expect(planoDeAdiantamento('/cadastro').leituras).toEqual(['/termos'])
+    for (const caminho of ['/planos', '/contato', '/sobre', '/cadastro']) {
+      expect(planoDeAdiantamento(caminho).telas).toHaveLength(1)
     }
   })
 })

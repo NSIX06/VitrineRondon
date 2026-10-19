@@ -125,7 +125,7 @@ function aberturaAdiantada(urlDaApi) {
           visitar(chunk)
           return [...arquivos]
         }
-        const nomes = ['Vitrine', 'Empreendedores', 'EmpreendedorDetalhe', 'ProdutoDetalhe', 'Login', 'MeuNegocio', 'Admin']
+        const nomes = ['Vitrine', 'Empreendedores', 'EmpreendedorDetalhe', 'ProdutoDetalhe', 'Login', 'MeuNegocio', 'Admin', 'Planos', 'Contato', 'Sobre', 'Cadastro']
         const telas = Object.fromEntries(nomes.map((nome) => [nome, arquivosDaTela(nome)]))
         const fotoDoLogin = {
           src: fotoNoTamanho(FOTOS_DO_ACESSO.entrar, 720),

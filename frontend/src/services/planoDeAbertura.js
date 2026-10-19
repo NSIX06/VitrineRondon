@@ -65,6 +65,17 @@ export function planoDaAbertura(caminho, busca, comSessao) {
   } else if (/^\/admin(\/|$)/.test(caminho)) {
     telas.push('Admin')
     ler('/auth/me', true)
+  } else if (caminho === '/planos') {
+    telas.push('Planos')
+    ler('/planos')
+  } else if (caminho === '/contato') {
+    telas.push('Contato')
+    ler('/faq')
+  } else if (caminho === '/sobre') {
+    telas.push('Sobre')
+  } else if (caminho === '/cadastro') {
+    telas.push('Cadastro')
+    ler('/termos')
   }
   return { telas: telas, leituras: leituras }
 }

@@ -20,6 +20,10 @@ const TELAS = {
   Login: () => import('../pages/Login/Login.jsx'),
   MeuNegocio: () => import('../pages/MeuNegocio/MeuNegocio.jsx'),
   Admin: () => import('../pages/Admin/Admin.jsx'),
+  Planos: () => import('../pages/Planos/Planos.jsx'),
+  Contato: () => import('../pages/Contato/Contato.jsx'),
+  Sobre: () => import('../pages/Sobre/Sobre.jsx'),
+  Cadastro: () => import('../pages/Cadastro/Cadastro.jsx'),
 }
 
 /** O plano no formato antigo (usado pelos testes): { telas: [funções], leituras: [caminhos] } */
