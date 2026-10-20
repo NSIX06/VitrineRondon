@@ -75,12 +75,16 @@ const POR_PAGINA_MAXIMO = 20;
 export function lerConsultaDaLista(query = {}) {
   const pagina = query.pagina === undefined ? 1 : Number(query.pagina);
   const porPagina = query.porPagina === undefined ? POR_PAGINA_PADRAO : Number(query.porPagina);
-  if (!Number.isInteger(pagina) || pagina < 1) throw erroHttp(400, 'Página inválida');
+  // Parâmetro fora do que a lista aceita é dado inválido (422), com o campo apontado
+  const invalido = (campo, mensagem) => erroHttp(422, 'Dados inválidos', { [campo]: [mensagem] });
+  if (!Number.isInteger(pagina) || pagina < 1) throw invalido('pagina', 'A página deve ser um número inteiro a partir de 1');
   if (!Number.isInteger(porPagina) || porPagina < 1 || porPagina > POR_PAGINA_MAXIMO) {
-    throw erroHttp(400, `Informe de 1 a ${POR_PAGINA_MAXIMO} avaliações por página`);
+    throw invalido('porPagina', `Informe de 1 a ${POR_PAGINA_MAXIMO} avaliações por página`);
   }
   const ordem = query.ordem === undefined ? 'recentes' : String(query.ordem);
-  if (!Object.hasOwn(ORDENS, ordem)) throw erroHttp(400, 'Ordenação inválida');
+  if (!Object.hasOwn(ORDENS, ordem)) {
+    throw invalido('ordem', `Use uma destas ordenações: ${Object.keys(ORDENS).join(', ')}`);
+  }
   return { pagina, porPagina, ordem };
 }
 

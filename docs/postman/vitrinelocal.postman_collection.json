@@ -1086,14 +1086,14 @@
           "response": []
         },
         {
-          "name": "27. 400: categoria fora da lista",
+          "name": "27. 422: categoria fora da lista",
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test('Responde 400', () => pm.response.to.have.status(400));"
+                  "pm.test('Responde 422', () => pm.response.to.have.status(422));"
                 ]
               }
             }
@@ -1134,19 +1134,19 @@
                 "empreendedores"
               ]
             },
-            "description": "**Esperado:** 400\n\n`errors` aponta o campo `categoria` e lista as opções válidas. Nada é gravado."
+            "description": "**Esperado:** 422\n\n`errors` aponta o campo `categoria` e lista as opções válidas. Nada é gravado."
           },
           "response": []
         },
         {
-          "name": "28. 400: horário com fim antes do início",
+          "name": "28. 422: horário com fim antes do início",
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test('Responde 400', () => pm.response.to.have.status(400));"
+                  "pm.test('Responde 422', () => pm.response.to.have.status(422));"
                 ]
               }
             }
@@ -1188,7 +1188,7 @@
                 "{{empreendedorId}}"
               ]
             },
-            "description": "**Esperado:** 400\n\n`errors` traz \"O fim precisa ser depois do início\". O horário salvo não muda."
+            "description": "**Esperado:** 422\n\n`errors` traz \"O fim precisa ser depois do início\". O horário salvo não muda."
           },
           "response": []
         },
@@ -1750,15 +1750,15 @@
           "response": []
         },
         {
-          "name": "41. 400: pergunta vazia",
+          "name": "41. 422: pergunta vazia",
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test('Responde 400', () => pm.response.to.have.status(400));",
-                  "pm.test('Aponta o campo pergunta', () => pm.expect(pm.response.json().errors.map((e) => e.campo)).to.include('pergunta'));"
+                  "pm.test('Responde 422', () => pm.response.to.have.status(422));",
+                  "pm.test('Aponta o campo pergunta', () => pm.expect(pm.response.json().errors).to.have.property('pergunta'));"
                 ]
               }
             }
@@ -1799,20 +1799,20 @@
                 "faq"
               ]
             },
-            "description": "**Esperado:** 400\n\nAponta o campo `pergunta`."
+            "description": "**Esperado:** 422\n\nAponta o campo `pergunta`."
           },
           "response": []
         },
         {
-          "name": "42. 400: pergunta com 301 caracteres",
+          "name": "42. 422: pergunta com 301 caracteres",
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test('Responde 400', () => pm.response.to.have.status(400));",
-                  "pm.test('Explica o limite', () => pm.expect(pm.response.json().errors[0].mensagem).to.include('300'));"
+                  "pm.test('Responde 422', () => pm.response.to.have.status(422));",
+                  "pm.test('Explica o limite', () => pm.expect(pm.response.json().errors.pergunta[0]).to.include('300'));"
                 ]
               }
             }
@@ -1853,7 +1853,7 @@
                 "faq"
               ]
             },
-            "description": "**Esperado:** 400\n\nO limite é de 300 caracteres."
+            "description": "**Esperado:** 422\n\nO limite é de 300 caracteres."
           },
           "response": []
         }

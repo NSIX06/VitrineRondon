@@ -5,6 +5,20 @@ import { ZodError } from 'zod';
 import { Prisma } from '@prisma/client';
 import { mensagemPadrao, MENSAGEM_GENERICA } from '../utils/erros.js';
 
+/**
+ * { campo: [mensagens] } a partir de um ZodError. O campo é o caminho com
+ * pontos ("conta.email"); erro que não é de um campo (ex.: corpo vazio) fica
+ * em "body".
+ */
+export function errosPorCampo(erro) {
+  const mapa = {};
+  for (const issue of erro.issues) {
+    const campo = issue.path.join('.') || 'body';
+    (mapa[campo] ??= []).push(issue.message);
+  }
+  return mapa;
+}
+
 /** Identifica o erro no log sem despejar o objeto inteiro na resposta */
 function registrarNoServidor(req, erro) {
   const onde = `${req.method} ${req.originalUrl}`;
@@ -12,16 +26,15 @@ function registrarNoServidor(req, erro) {
 }
 
 export function errorHandler(erro, req, res, next) {
-  // Erros de validação (Zod)
+  // Erros de validação (Zod): o JSON chegou bem formado, mas os dados não
+  // passam nas regras. 422 diz isso; 400 fica para o que nem dá para ler
+  // (JSON malformado, ID que não é número). Os erros vêm agrupados por campo,
+  // cada um com a lista do que falta corrigir: { "preco": ["..."] }.
   if (erro instanceof ZodError) {
-    const camposInvalidos = erro.issues.map((issue) => ({
-      campo: issue.path.join('.') || 'body',
-      mensagem: issue.message,
-    }));
-    return res.status(400).json({
+    return res.status(422).json({
       success: false,
       message: 'Dados inválidos',
-      errors: camposInvalidos,
+      errors: errosPorCampo(erro),
     });
   }
 
@@ -64,8 +77,8 @@ export function errorHandler(erro, req, res, next) {
           success: false,
           message: 'Já existe um registro com esses dados',
         });
-      case 'P2003': // violação de chave estrangeira
-        return res.status(400).json({
+      case 'P2003': // violação de chave estrangeira: dado legível que aponta para o nada
+        return res.status(422).json({
           success: false,
           message: 'Referência inválida: o registro relacionado não existe',
         });
@@ -100,6 +113,7 @@ export function errorHandler(erro, req, res, next) {
     return res.status(erro.status).json({
       success: false,
       message: erro.publico ? erro.message : mensagemPadrao(erro.status),
+      ...(erro.publico && erro.campos ? { errors: erro.campos } : {}),
     });
   }
 

@@ -144,8 +144,8 @@ function Cadastro() {
         }
       }
       // Erro na conta (ex.: e-mail duplicado) volta para a etapa 1 com a mensagem
-      const errosConta = erro.data?.errors?.filter((e) => e.campo.startsWith('conta.'))
-      if (errosConta?.length || erro.status === 409) {
+      const errosConta = Object.keys(erro.data?.errors ?? {}).filter((campo) => campo.startsWith('conta.'))
+      if (errosConta.length || erro.status === 409) {
         setErroNegocio(
           erro.status === 409
             ? `${erro.message}. Se a conta é sua, entre com ela e cadastre o negócio em "Meu negócio".`

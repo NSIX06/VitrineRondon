@@ -897,7 +897,7 @@
       "_id": "ba125d73-dac7-45b6-8619-e06c85b206d4",
       "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
       "containerId": "cc279a57-6a24-4c74-b03b-9926d5a66ce9",
-      "name": "27. 400: categoria fora da lista",
+      "name": "27. 422: categoria fora da lista",
       "url": "{{baseUrl}}/empreendedores",
       "method": "POST",
       "sortNum": 30000,
@@ -926,11 +926,11 @@
           "type": "res-code",
           "custom": "",
           "action": "equal",
-          "value": "400"
+          "value": "422"
         }
       ],
       "docs": [
-        "Esperado: 400",
+        "Esperado: 422",
         "",
         "`errors` aponta o campo `categoria` e lista as opções válidas. Nada é gravado."
       ]
@@ -939,7 +939,7 @@
       "_id": "9b3fb40a-ced8-42f8-ad1b-68b665fde4ed",
       "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
       "containerId": "cc279a57-6a24-4c74-b03b-9926d5a66ce9",
-      "name": "28. 400: horário com fim antes do início",
+      "name": "28. 422: horário com fim antes do início",
       "url": "{{baseUrl}}/empreendedores/{{empreendedorId}}",
       "method": "PUT",
       "sortNum": 40000,
@@ -970,11 +970,11 @@
           "type": "res-code",
           "custom": "",
           "action": "equal",
-          "value": "400"
+          "value": "422"
         }
       ],
       "docs": [
-        "Esperado: 400",
+        "Esperado: 422",
         "",
         "`errors` traz \"O fim precisa ser depois do início\". O horário salvo não muda."
       ]
@@ -1381,7 +1381,7 @@
       "_id": "e9a25df8-ff30-4902-b5ea-3172f07b4a3d",
       "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
       "containerId": "009b87cd-ca24-4f71-a811-bd551b5cb5a6",
-      "name": "41. 400: pergunta vazia",
+      "name": "41. 422: pergunta vazia",
       "url": "{{baseUrl}}/faq",
       "method": "POST",
       "sortNum": 120000,
@@ -1407,11 +1407,11 @@
           "type": "res-code",
           "custom": "",
           "action": "equal",
-          "value": "400"
+          "value": "422"
         }
       ],
       "docs": [
-        "Esperado: 400",
+        "Esperado: 422",
         "",
         "A resposta aponta o campo `pergunta`."
       ]
@@ -1420,7 +1420,7 @@
       "_id": "4749adf5-8ae3-46ed-a45c-2b2bc5c71e67",
       "colId": "e3cc1313-7fc5-42b5-96f8-bf20fe056d2c",
       "containerId": "009b87cd-ca24-4f71-a811-bd551b5cb5a6",
-      "name": "42. 400: pergunta com 301 caracteres",
+      "name": "42. 422: pergunta com 301 caracteres",
       "url": "{{baseUrl}}/faq",
       "method": "POST",
       "sortNum": 130000,
@@ -1446,11 +1446,11 @@
           "type": "res-code",
           "custom": "",
           "action": "equal",
-          "value": "400"
+          "value": "422"
         }
       ],
       "docs": [
-        "Esperado: 400",
+        "Esperado: 422",
         "",
         "O limite é de 300 caracteres."
       ]

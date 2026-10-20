@@ -179,10 +179,11 @@ export async function criarProduto(req, res, next) {
       select: { id: true, usuarioId: true, nomeNegocio: true, ativo: true, publicadoAte: true },
     });
     if (!negocio) {
-      return res.status(400).json({
+      // O pedido é legível, mas aponta para um negócio que não existe
+      return res.status(422).json({
         success: false,
-        message: 'Referência inválida: o registro relacionado não existe',
-        errors: [{ campo: 'empreendedorId', mensagem: 'Empreendedor não encontrado' }],
+        message: 'Dados inválidos',
+        errors: { empreendedorId: ['Empreendedor não encontrado'] },
       });
     }
     // Empreendedor só publica no próprio negócio

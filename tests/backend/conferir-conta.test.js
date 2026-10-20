@@ -75,6 +75,6 @@ describe('conferência da etapa 1 do cadastro', () => {
     prisma.usuario.findUnique.mockResolvedValue({ id: 7 })
     const { codigo, corpo } = await chamar(conferir().data)
     expect(codigo).toBe(409)
-    expect(corpo.errors).toEqual([expect.objectContaining({ campo: 'conta.email' })])
+    expect(corpo.errors).toEqual({ 'conta.email': [expect.any(String)] })
   })
 })

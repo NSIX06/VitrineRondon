@@ -34,22 +34,34 @@ beforeEach(() => {
 })
 
 describe('validação (Zod)', () => {
-  it('responde 400 apontando o campo que falhou', () => {
+  it('responde 422 com os erros agrupados por campo', () => {
     const erro = new ZodError([{ code: 'custom', path: ['email'], message: 'E-mail inválido' }])
     const { codigo, corpo } = responder(erro)
-    expect(codigo).toBe(400)
+    expect(codigo).toBe(422)
     expect(corpo.message).toBe('Dados inválidos')
-    expect(corpo.errors).toEqual([{ campo: 'email', mensagem: 'E-mail inválido' }])
+    expect(corpo.errors).toEqual({ email: ['E-mail inválido'] })
+  })
+
+  it('junta na mesma lista as mensagens do mesmo campo', () => {
+    const erro = new ZodError([
+      { code: 'custom', path: ['preco'], message: 'Informe o preço' },
+      { code: 'custom', path: ['preco'], message: 'O preço deve ser maior que zero' },
+      { code: 'custom', path: ['nome'], message: 'Informe o nome' },
+    ])
+    expect(responder(erro).corpo.errors).toEqual({
+      preco: ['Informe o preço', 'O preço deve ser maior que zero'],
+      nome: ['Informe o nome'],
+    })
   })
 
   it('usa "body" quando o erro não aponta um campo', () => {
     const erro = new ZodError([{ code: 'custom', path: [], message: 'Corpo inválido' }])
-    expect(responder(erro).corpo.errors[0].campo).toBe('body')
+    expect(responder(erro).corpo.errors).toEqual({ body: ['Corpo inválido'] })
   })
 
   it('descreve caminhos aninhados como conta.email', () => {
     const erro = new ZodError([{ code: 'custom', path: ['conta', 'email'], message: 'E-mail inválido' }])
-    expect(responder(erro).corpo.errors[0].campo).toBe('conta.email')
+    expect(Object.keys(responder(erro).corpo.errors)).toEqual(['conta.email'])
   })
 })
 
@@ -68,7 +80,7 @@ describe('erros conhecidos do banco', () => {
   it.each([
     ['P2025', 404, /não encontrado/i],
     ['P2002', 409, /já existe/i],
-    ['P2003', 400, /referência inválida/i],
+    ['P2003', 422, /referência inválida/i],
   ])('traduz %s em %i', (codigo, esperado, texto) => {
     const { codigo: status, corpo } = responder(prismaErro(codigo))
     expect(status).toBe(esperado)

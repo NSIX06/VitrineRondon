@@ -16,7 +16,9 @@ npx vitest run tests/backend/horarios.test.js   # um arquivo só
 | Arquivo | Módulo | O que garante |
 |---|---|---|
 | `erros.test.js` | `utils/erros.js` | `erroHttp` marca a mensagem como exibível, `parseId` recusa id forjado, nenhuma mensagem padrão descreve o sistema |
-| `errorHandler.test.js` | `middlewares/errorHandler.js` | cada tipo de falha vira a resposta certa e o detalhe técnico fica só no log |
+| `errorHandler.test.js` | `middlewares/errorHandler.js` | cada tipo de falha vira a resposta certa (dados inválidos: 422 com `errors` por campo) e o detalhe técnico fica só no log |
+| `openapi.test.js` | `docs/openapi.js` e as rotas | toda rota do Express está no contrato OpenAPI e vice-versa; URIs sem verbo; 201 nas criações; 400, 401, 403, 422 e 500 documentados onde cabem |
+| `cenarios-api.test.js` | a API inteira (`app.js`) | os cenários da aula pela API de verdade: item existente (200), inexistente (404), ID ilegível (400), dados inválidos (422), sem token (401), sem permissão (403) e os cabeçalhos de segurança |
 | `auth.test.js` | `middlewares/auth.js` | token leva só id e perfil, o perfil vem do banco a cada requisição, conta desativada é 403 |
 | `validate.test.js` | `middlewares/validate.js` | corpo inválido não chega ao controller e campo desconhecido é descartado |
 | `rateLimit.test.js` | `middlewares/rateLimit.js` | o login corta na décima tentativa, cada IP conta separado e, fora de produção, a própria máquina não entra na conta |
@@ -30,7 +32,7 @@ npx vitest run tests/backend/horarios.test.js   # um arquivo só
 | `faq.test.js` | `controllers/faqController.js` | público só com ativas e em ordem, id gerado no cadastro, edição que não reativa sozinha, limites de 300 caracteres e auditoria |
 | `login-social.test.js` | `services/loginSocial.js` e `controllers/loginSocialController.js` | id_token só com assinatura, audiência, emissor, validade, nonce e e-mail verificados (e sem confusão de algoritmo), código de troca que não serve de sessão e vale uma vez, destino só do próprio site, PKCE e state no cookie, CSRF no retorno, conta COMUM criada sem senha, login recorrente, logins simultâneos sem duplicar e vínculo só com a senha da conta existente |
 | `avaliacoes.test.js` | `controllers/avaliacaoController.js` e `services/avaliacoes.js` | média exata e distribuição que soma o total, só publicadas contam, nome público sem dados de contato, quem pode avaliar (dono e admin não), nota inteira de 1 a 5, comentário de 3 a 1000, duplicada é 409, só o autor edita e apaga, denúncia única e moderação que guarda o motivo sem mexer na nota |
-| `paginacao.test.js` | `utils/paginacao.js` | sem página a lista vem inteira; página e tamanho inválidos são recusados com 400 |
+| `paginacao.test.js` | `utils/paginacao.js` | sem página a lista vem inteira; página e tamanho inválidos são recusados com 422, apontando o campo |
 | `planos.test.js` | `prisma/planos.js` | preços em centavos, só o Destaque liga selo, métricas ampliadas e divulgação, nenhum texto promete resultado, e o seed atualiza sem apagar nem desligar o plano do gateway |
 | `assinaturas.test.js` | `services/assinaturas.js` | pagamento ativa e publica até o vencimento, cobrança recusada tira da vitrine na hora, cancelamento respeita o período pago, vencimento sem renovação tira pela data, evento repetido não muda nada, troca de plano nos dois sentidos, conciliação no localhost, simulação bloqueada em produção e assinaturas do seed que nunca chamam o gateway |
 | `publicacao.test.js` | `services/publicacao.js` | navegar é gratuito e divulgar exige plano em vigor: filtro público, situação do negócio (rascunho, aguardando pagamento, ativo, expirado, suspenso), benefícios só no período pago e as mesmas situações na tela |

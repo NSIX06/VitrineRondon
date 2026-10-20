@@ -81,7 +81,7 @@ registrada numa trilha de auditoria consultável só pela administração.
 | Pagamentos | AbacatePay (API v2, em Dev mode), atrás de uma camada própria em `services/pagamento/` |
 | Imagens | sharp (conversão para WebP) e Cloudinary em produção |
 | E-mail | Resend ou Brevo (recuperação de senha) |
-| Qualidade | Vitest (787 testes), suítes de ponta a ponta pelo Chrome DevTools Protocol, oxlint, GitHub Actions |
+| Qualidade | Vitest (927 testes), suítes de ponta a ponta pelo Chrome DevTools Protocol, oxlint, GitHub Actions |
 | Hospedagem | Render (API e site estático), pelo Blueprint `render.yaml` |
 | Portas | Backend `3001`, frontend `5173` |
 
@@ -956,6 +956,43 @@ régua **Aproximar**, de 100% a 300%, e o botão **Restaurar**. O valor é grava
 Base: `http://localhost:3001/api` (produção: `https://vitrinerondon.onrender.com/api`). Todas as
 respostas seguem o formato `{ success, message?, total?, data? }`.
 
+**Documentação interativa:** `http://localhost:3001/api/docs` (Swagger UI), com o contrato em OpenAPI
+3.0 em `/api/docs/openapi.json` para importar no Postman ou no Insomnia. Os corpos das requisições
+saem das próprias regras de validação (Zod), então a documentação não fica para trás quando uma
+regra muda.
+
+### Contrato da API
+
+A API é a porta de entrada controlada do sistema: o site (e qualquer outro cliente) pede, a API
+decide e o banco fica protegido atrás dela.
+
+| Princípio | Como a API segue |
+|---|---|
+| Recurso na URI, intenção no método | `GET /produtos` lista, `GET /produtos/105` consulta, `POST /produtos` cria, `PUT /produtos/105` atualiza, `DELETE /produtos/105` remove. Nenhuma URI de recurso tem verbo (`/getProdutos`, `/deletarProduto`); as exceções são operações que não são recursos (entrar, sair, recuperar senha, simular pagamento), e estão documentadas como tal |
+| Coleção e item | `/empreendedores` é a coleção, `/empreendedores/3` o item e `/empreendedores/3/avaliacoes` a sub-coleção do item |
+| Ordem do processamento | Requisição → rota → limite de requisições → autenticação (token) → autorização (perfil lido do banco a cada chamada) → validação (Zod, que descarta campos extras) → regra de negócio → acesso a dados (Prisma) → resposta |
+| Controles transversais | HTTPS obrigatório em produção (com HSTS), CORS restrito ao site, cabeçalhos do helmet (CSP fechada, `nosniff`), limite de requisições por IP, trilha de auditoria e tratamento central de erros que nunca devolve detalhe técnico |
+| Validar antes de processar | Presença, tipo, formato e faixa de valores conferidos no servidor antes de gravar, mesmo que a tela já tenha conferido |
+| Código HTTP certo | Ver a tabela abaixo; a API não responde `200` para tudo |
+| Erros que orientam | `{ "message": "Dados inválidos", "errors": { "preco": ["O preço deve ser maior que zero"] } }` |
+| Contrato testado | `tests/backend/openapi.test.js` confere que toda rota do Express está documentada e vice-versa; `tests/backend/cenarios-api.test.js` passa pela API inteira nos cenários de item existente, inexistente, dados inválidos e sem autorização |
+
+| Status | Quando |
+|---|---|
+| `200 OK` | Consulta, atualização ou exclusão bem-sucedida |
+| `201 Created` | Recurso criado (`POST`), com o recurso na resposta |
+| `204 No Content` | Evento de métrica registrado (nada a devolver) |
+| `400 Bad Request` | Requisição ilegível: JSON malformado ou ID que não é número |
+| `401 Unauthorized` | Sem token, token inválido, expirado ou de sessão encerrada |
+| `403 Forbidden` | Logado, mas sem permissão (perfil ou dono errado) |
+| `404 Not Found` | Recurso inexistente ou fora da vitrine para quem não é dono nem administração |
+| `409 Conflict` | Conflito com registro existente (e-mail já cadastrado, uma avaliação por pessoa) |
+| `410 Gone` | Link de recuperação de senha usado ou expirado |
+| `422 Unprocessable Content` | Dados inválidos: o JSON chegou, mas não passa nas regras. `errors` traz cada campo |
+| `429 Too Many Requests` | Limite de requisições atingido |
+| `500 Internal Server Error` | Erro inesperado (o detalhe fica só no log do servidor) |
+| `503 Service Unavailable` | Banco ou gateway de pagamento fora do ar: dá para tentar de novo |
+
 As rotas abaixo indicam quem pode chamá-las. "Dono" significa o empreendedor ao qual o registro
 pertence; o administrador também passa em todas as rotas de dono.
 
@@ -1115,17 +1152,19 @@ curl -X POST http://localhost:3001/api/produtos \
   -d '{"nome":"Pão de mel","preco":8.5,"tipo":"produto","empreendedorId":2,"imagemFoco":"50% 40% 1.2"}'
 ```
 
-Erros de validação retornam `400` com a lista de campos:
+Dados inválidos retornam `422` com os erros agrupados por campo, cada um com a lista do que corrigir:
 
 ```json
 {
   "success": false,
   "message": "Dados inválidos",
-  "errors": [{ "campo": "preco", "mensagem": "Preço deve ser um valor positivo" }]
+  "errors": { "preco": ["Preço deve ser um valor positivo"] }
 }
 ```
 
-Registro inexistente retorna `404`; JSON malformado ou chave estrangeira inválida retornam `400`.
+Registro inexistente retorna `404`; referência a um registro que não existe (chave estrangeira) retorna
+`422`; JSON malformado ou ID que não é número retornam `400`. O contrato completo está em
+[Contrato da API](#contrato-da-api).
 
 ## Funcionalidades e requisitos atendidos
 
@@ -1296,7 +1335,7 @@ Prefeitura de Rondonópolis em domínio público. O crédito aparece ao lado da 
 ### Unidade (sem banco, sem rede, sem servidor)
 
 Cada função do sistema tem o seu arquivo `.test.js` em [`tests/`](tests/), separado por lado:
-`tests/backend/` e `tests/frontend/`. São **787 verificações em 43 arquivos**, rodando com Vitest.
+`tests/backend/` e `tests/frontend/`. São **927 verificações em 53 arquivos**, rodando com Vitest.
 
 ```bash
 npm test            # roda tudo uma vez

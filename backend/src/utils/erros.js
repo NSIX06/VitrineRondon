@@ -14,6 +14,7 @@ const MENSAGENS = {
   409: 'Já existe um registro com esses dados',
   413: 'Corpo da requisição muito grande',
   415: 'Formato de conteúdo não suportado',
+  422: 'Dados inválidos',
   429: 'Muitas requisições. Tente novamente em instantes',
 };
 
@@ -22,11 +23,14 @@ export const MENSAGEM_GENERICA = 'Não foi possível concluir a operação. Tent
 /**
  * Cria um erro com status HTTP e mensagem própria para o usuário.
  * A marca `publico` é o que autoriza o errorHandler a repassar o texto.
+ * `campos` ({ campo: [mensagens] }) vai na resposta como `errors`, no mesmo
+ * formato dos erros de validação.
  */
-export function erroHttp(status, mensagem) {
+export function erroHttp(status, mensagem, campos) {
   const erro = new Error(mensagem);
   erro.status = status;
   erro.publico = true;
+  if (campos) erro.campos = campos;
   return erro;
 }
 

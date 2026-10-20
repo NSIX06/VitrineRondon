@@ -167,7 +167,7 @@ async function main() {
       headers: admin,
       body: JSON.stringify({ acao: 'remover' }),
     })
-    checar('remover sem motivo é recusado (400)', semMotivo.status === 400)
+    checar('remover sem motivo é recusado (422)', semMotivo.status === 422)
     await fetch(`${API}/avaliacoes/${idDaAvaliacao}/moderacao`, {
       method: 'PUT',
       headers: admin,

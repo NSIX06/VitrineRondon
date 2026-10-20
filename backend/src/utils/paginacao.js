@@ -15,9 +15,13 @@ export function lerPaginacao(query = {}) {
 
   const pagina = Number(query.pagina ?? 1);
   const porPagina = Number(query.porPagina ?? POR_PAGINA_PADRAO);
-  if (!Number.isInteger(pagina) || pagina < 1) throw erroHttp(400, 'Página inválida');
+  // Valor fora da faixa é dado inválido (422), com o campo apontado
+  if (!Number.isInteger(pagina) || pagina < 1) {
+    throw erroHttp(422, 'Dados inválidos', { pagina: ['A página deve ser um número inteiro a partir de 1'] });
+  }
   if (!Number.isInteger(porPagina) || porPagina < 1 || porPagina > POR_PAGINA_MAXIMO) {
-    throw erroHttp(400, `Informe de 1 a ${POR_PAGINA_MAXIMO} itens por página`);
+    const mensagem = `Informe de 1 a ${POR_PAGINA_MAXIMO} itens por página`;
+    throw erroHttp(422, 'Dados inválidos', { porPagina: [mensagem] });
   }
 
   return { ativa: true, pagina, porPagina, skip: (pagina - 1) * porPagina, take: porPagina };

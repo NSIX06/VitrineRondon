@@ -22,19 +22,21 @@ describe('formatos', () => {
 })
 
 describe('errosDoServidor', () => {
-  it('a lista { campo, mensagem } do servidor vira um mapa por campo', () => {
-    const erro = { data: { errors: [{ campo: 'preco', mensagem: 'Preço inválido' }, { campo: 'nome', mensagem: 'Informe o nome' }] } }
+  it('o mapa { campo: [mensagens] } do servidor vira { campo: mensagem }, com a primeira mensagem', () => {
+    const erro = {
+      data: { errors: { preco: ['Preço inválido', 'O preço deve ser maior que zero'], nome: ['Informe o nome'] } },
+    }
     expect(errosDoServidor(erro)).toEqual({ preco: 'Preço inválido', nome: 'Informe o nome' })
   })
 
   it('tira o grupo do nome do campo quando pedido', () => {
     const erro = {
       data: {
-        errors: [
-          { campo: 'conta.email', mensagem: 'E-mail já cadastrado' },
-          { campo: 'aceites.termosDeUso', mensagem: 'Aceite obrigatório' },
-          { campo: 'negocio.nome', mensagem: 'Outro grupo fica como veio' },
-        ],
+        errors: {
+          'conta.email': ['E-mail já cadastrado'],
+          'aceites.termosDeUso': ['Aceite obrigatório'],
+          'negocio.nome': ['Outro grupo fica como veio'],
+        },
       },
     }
     expect(errosDoServidor(erro, ['conta.', 'aceites.'])).toEqual({
@@ -46,7 +48,7 @@ describe('errosDoServidor', () => {
 
   it('erro sem campos (rede, 500) devolve null, e o formulário mostra só a mensagem geral', () => {
     expect(errosDoServidor(new Error('sem rede'))).toBeNull()
-    expect(errosDoServidor({ data: { errors: [] } })).toBeNull()
+    expect(errosDoServidor({ data: { errors: {} } })).toBeNull()
     expect(errosDoServidor(undefined)).toBeNull()
   })
 })

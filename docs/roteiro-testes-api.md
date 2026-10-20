@@ -416,14 +416,14 @@ GET {{baseUrl}}/usuarios
 - **Resposta esperada:** 403
 - **Confira:** O token é válido, mas o perfil não tem permissão para essa rota.
 
-### 27. 400: categoria fora da lista
+### 27. 422: categoria fora da lista
 
 ```
 POST {{baseUrl}}/empreendedores
 ```
 
 - **Autenticação:** Bearer, token do administrador (`{{tokenAdmin}}`)
-- **Resposta esperada:** 400
+- **Resposta esperada:** 422
 - **Confira:** `errors` aponta o campo `categoria` e lista as opções válidas. Nada é gravado.
 
 Corpo (JSON):
@@ -438,14 +438,14 @@ Corpo (JSON):
 }
 ```
 
-### 28. 400: horário com fim antes do início
+### 28. 422: horário com fim antes do início
 
 ```
 PUT {{baseUrl}}/empreendedores/{{empreendedorId}}
 ```
 
 - **Autenticação:** Bearer, token do empreendedor (`{{tokenEmpreendedor}}`)
-- **Resposta esperada:** 400
+- **Resposta esperada:** 422
 - **Confira:** `errors` traz "O fim precisa ser depois do início". O horário salvo não muda.
 
 Corpo (JSON):
@@ -643,14 +643,14 @@ GET {{baseUrl}}/faq/todas
 - **Resposta esperada:** 403
 - **Confira:** A lista completa é só da administração.
 
-### 41. 400: pergunta vazia
+### 41. 422: pergunta vazia
 
 ```
 POST {{baseUrl}}/faq
 ```
 
 - **Autenticação:** Bearer, token do administrador (`{{tokenAdmin}}`)
-- **Resposta esperada:** 400
+- **Resposta esperada:** 422
 - **Confira:** `errors` aponta o campo `pergunta` com "A pergunta é obrigatória".
 
 Corpo (JSON):
@@ -662,14 +662,14 @@ Corpo (JSON):
 }
 ```
 
-### 42. 400: pergunta com 301 caracteres
+### 42. 422: pergunta com 301 caracteres
 
 ```
 POST {{baseUrl}}/faq
 ```
 
 - **Autenticação:** Bearer, token do administrador (`{{tokenAdmin}}`)
-- **Resposta esperada:** 400
+- **Resposta esperada:** 422
 - **Confira:** "A pergunta pode ter até 300 caracteres". O corpo da coleção já traz os 301 caracteres.
 
 Corpo (JSON):

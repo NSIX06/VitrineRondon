@@ -11,17 +11,18 @@ export function validarAceites(valores) {
 }
 
 /**
- * Erros de validação do servidor ({ campo, mensagem }[]) no formato dos
- * formulários: { campo: mensagem }. Devolve null quando o erro não traz campos.
+ * Erros de validação do servidor ({ campo: [mensagens] }) no formato dos
+ * formulários: { campo: mensagem }, com a primeira mensagem de cada campo.
+ * Devolve null quando o erro não traz campos.
  * `prefixos` tira o grupo do nome, como "conta." em "conta.email".
  */
 export function errosDoServidor(erro, prefixos = []) {
-  const lista = erro?.data?.errors
-  if (!lista?.length) return null
+  const porCampo = erro?.data?.errors
+  if (!porCampo || typeof porCampo !== 'object' || !Object.keys(porCampo).length) return null
   const mapa = {}
-  for (const { campo, mensagem } of lista) {
+  for (const [campo, mensagens] of Object.entries(porCampo)) {
     const prefixo = prefixos.find((p) => campo.startsWith(p))
-    mapa[prefixo ? campo.slice(prefixo.length) : campo] = mensagem
+    mapa[prefixo ? campo.slice(prefixo.length) : campo] = [].concat(mensagens)[0]
   }
   return mapa
 }

@@ -79,7 +79,7 @@ export async function conferirConta(req, res, next) {
       return res.status(409).json({
         success: false,
         message: 'Este e-mail já está cadastrado',
-        errors: [{ campo: 'conta.email', mensagem: 'Este e-mail já tem conta. Entre com ela para cadastrar o seu negócio (ou use "Esqueci a senha").' }],
+        errors: { 'conta.email': ['Este e-mail já tem conta. Entre com ela para cadastrar o seu negócio (ou use "Esqueci a senha").'] },
       });
     }
     res.json({ success: true, message: 'Dados da conta conferidos' });
@@ -158,7 +158,7 @@ export async function registrarComum(req, res, next) {
       return res.status(409).json({
         success: false,
         message: 'Este e-mail já está cadastrado',
-        errors: [{ campo: 'email', mensagem: 'Este e-mail já está cadastrado' }],
+        errors: { email: ['Este e-mail já está cadastrado'] },
       });
     }
     next(erro);
@@ -230,7 +230,7 @@ export async function registrarEmpreendedor(req, res, next) {
       return res.status(409).json({
         success: false,
         message: 'Este e-mail já está cadastrado',
-        errors: [{ campo: 'conta.email', mensagem: 'Este e-mail já está cadastrado' }],
+        errors: { 'conta.email': ['Este e-mail já está cadastrado'] },
       });
     }
     next(erro);

@@ -25,22 +25,29 @@ describe('lerPaginacao', () => {
     expect(lerPaginacao({ porPagina: '6' })).toMatchObject({ pagina: 1, skip: 0, take: 6 })
   })
 
-  it.each([['0'], ['-1'], ['abc'], ['1.5']])('recusa a página %s', (pagina) => {
-    expect(() => lerPaginacao({ pagina })).toThrowError('Página inválida')
+  /** Erro lançado por lerPaginacao (ou null se não lançou) */
+  const erroDe = (query) => {
+    try {
+      lerPaginacao(query)
+      return null
+    } catch (erro) {
+      return erro
+    }
+  }
+
+  it.each([['0'], ['-1'], ['abc'], ['1.5']])('recusa a página %s apontando o campo', (pagina) => {
+    expect(erroDe({ pagina }).campos).toEqual({ pagina: [expect.stringMatching(/a partir de 1/)] })
   })
 
   it.each([['0'], ['61'], ['abc']])('recusa %s itens por página', (porPagina) => {
-    expect(() => lerPaginacao({ porPagina })).toThrowError(/de 1 a 60 itens por página/)
+    expect(erroDe({ porPagina }).campos).toEqual({ porPagina: ['Informe de 1 a 60 itens por página'] })
   })
 
-  it('recusa com status 400 e mensagem exibível', () => {
-    expect.assertions(2)
-    try {
-      lerPaginacao({ pagina: '0' })
-    } catch (erro) {
-      expect(erro.status).toBe(400)
-      expect(erro.publico).toBe(true)
-    }
+  it('valor fora da faixa é dado inválido: 422 com mensagem exibível', () => {
+    const erro = erroDe({ pagina: '0' })
+    expect(erro.status).toBe(422)
+    expect(erro.publico).toBe(true)
+    expect(erro.message).toBe('Dados inválidos')
   })
 })
 

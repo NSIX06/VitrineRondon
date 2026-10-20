@@ -10,6 +10,7 @@ import StatusMessage from '../../ui/StatusMessage/StatusMessage'
 import Tag from '../../ui/Tag/Tag'
 import DataTable from '../../tables/DataTable/DataTable'
 import { STATUS_DIVULGACAO, TIPOS_DIVULGACAO } from '../../../services/divulgacoes'
+import { errosDoServidor } from '../../../services/validacoes'
 import CabecalhoSecao from '../CabecalhoSecao/CabecalhoSecao'
 import '../../painel/Painel.css'
 
@@ -45,9 +46,7 @@ function FormDivulgacao({ inicial, negocios, aoSalvar, aoCancelar }) {
     try {
       await aoSalvar(dados)
     } catch (falha) {
-      const mapa = {}
-      for (const { campo, mensagem } of falha.data?.errors ?? []) mapa[campo] = mensagem
-      setErros(mapa)
+      setErros(errosDoServidor(falha) ?? {})
       setErroGeral(falha.message)
     } finally {
       setSalvando(false)

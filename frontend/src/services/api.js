@@ -16,6 +16,7 @@ const MENSAGENS_POR_STATUS = {
   404: 'Não encontramos o que você procurava.',
   409: 'Já existe um registro com esses dados.',
   413: 'O conteúdo enviado é grande demais.',
+  422: 'Confira os campos destacados e tente de novo.',
   429: 'Muitas tentativas seguidas. Espere um instante e tente de novo.',
   503: 'O serviço está fora do ar por um instante. Tente de novo em alguns segundos.',
 }

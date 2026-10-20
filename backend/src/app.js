@@ -5,6 +5,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import routes from './routes/index.js';
 import webhookRoutes from './routes/webhookRoutes.js';
+import docsRoutes from './routes/docsRoutes.js';
 import { autenticarOpcional } from './middlewares/auth.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { limitePadrao } from './middlewares/rateLimit.js';
@@ -105,6 +106,9 @@ app.use((req, res, next) => {
   next();
 });
 
+// Documentação da API (OpenAPI + Swagger UI), antes das rotas: tem CSP própria
+app.use('/api/docs', docsRoutes);
+
 // Rotas da API
 app.use('/api', autenticarOpcional, routes);
 
@@ -136,6 +140,7 @@ app.get(['/', '/api'], (req, res) => {
       ? 'API do VitrineRondon. As rotas começam em /api.'
       : 'API do VitrineRondon. Esta é a porta do servidor; o site fica em http://localhost:5173',
     saude: '/api/health',
+    documentacao: '/api/docs',
   });
 });
 
