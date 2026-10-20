@@ -61,6 +61,12 @@ function EsqueciSenha() {
                   <strong>Pronto.</strong> {enviado}
                 </p>
                 <p>O link vale por 30 minutos e funciona uma vez só.</p>
+                {/* Enquanto o remetente não for de um domínio próprio autenticado, o
+                    e-mail costuma cair no Spam, e o Gmail desativa os links de lá */}
+                <p className="login__dica-spam">
+                  <strong>Caiu no Spam?</strong> Antes de tocar no botão, marque a mensagem como
+                  “Não é spam”: o Gmail desativa os links dos e-mails que estão no Spam.
+                </p>
                 <Button to="/login" variante="secundario">
                   <Icone nome="login" tamanho={18} />
                   Voltar ao login

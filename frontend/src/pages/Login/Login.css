@@ -157,6 +157,17 @@
   color: var(--cor-cinza);
 }
 
+/* Dica do Spam na confirmação de "Esqueci a senha": mesma caixa tracejada do e-mail */
+.login__aviso .login__dica-spam {
+  padding: var(--esp-3);
+  background: var(--cor-ouro-claro);
+  border: 2px dashed var(--cor-contorno);
+  border-radius: var(--raio-md);
+  font-size: var(--texto-sm);
+  line-height: 1.5;
+  color: var(--cor-tinta);
+}
+
 .login__aviso-icone {
   display: inline-flex;
   align-items: center;

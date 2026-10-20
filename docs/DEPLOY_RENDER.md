@@ -176,6 +176,7 @@ A API confere o segredo na URL e a assinatura HMAC de cada aviso; qualquer outro
 | Primeira visita demora cerca de 1 minuto | A API estava dormindo (plano gratuito) |
 | Assinar um plano dá erro | `ABACATEPAY_API_KEY` ausente ou de produção; o motivo exato está nos **Logs** da API |
 | Depois de pagar, o checkout volta para `localhost` | `APP_URL` não foi preenchida com o endereço do site |
+| O e-mail de "esqueci a senha" chega, mas o botão e o link não abrem nada | O e-mail caiu no Spam, e o Gmail desativa os links de lá. Acontece quando o `EMAIL_REMETENTE` é um endereço `@gmail.com` (ou de outro serviço gratuito): o provedor envia em nome de um domínio que não é dele e o Gmail não consegue confirmar. A correção é usar um remetente de um domínio próprio, autenticado no provedor (registros SPF, DKIM e DMARC no DNS). Enquanto isso, marcar a mensagem como "Não é spam" libera os links |
 | O log da API mostra "Webhook recusado" | O webhook foi cadastrado com um segredo diferente do `ABACATEPAY_WEBHOOK_SECRET` do Render. Apague o webhook no painel do AbacatePay, copie o segredo do Render para o `.env` e rode o script de novo |
 
 ## Atualizações depois do primeiro deploy

@@ -236,7 +236,7 @@ DEMO_EMPREENDEDOR_SENHA="defina-uma-senha-forte"
 | `APP_URL` | sim, com assinaturas | Endereço do site. O checkout volta para `APP_URL/meu-negocio` depois do pagamento |
 | `EMAIL_PROVEDOR` | para recuperar senha | `resend` ou `brevo`. Sem ele, fora de produção o e-mail (com o link) só aparece no log do servidor |
 | `RESEND_API_KEY` / `BREVO_API_KEY` | conforme o provedor | Chave do serviço escolhido. Só a do provedor em `EMAIL_PROVEDOR` é usada e nunca vai para o log |
-| `EMAIL_REMETENTE` | com provedor | `Nome <endereco@dominio>`, de um domínio verificado no serviço |
+| `EMAIL_REMETENTE` | com provedor | `Nome <endereco@dominio>`, de um domínio verificado no serviço. Com um endereço `@gmail.com`, `@hotmail.com` ou parecido, o e-mail sai, mas cai no Spam, e no Spam o Gmail desativa os links (o botão "Criar nova senha" não abre) |
 | `CORS_ORIGINS` | em produção | Endereços do site que podem chamar a API, separados por vírgula |
 | `BANCO_HOST_CONTA` | não | Padrão `localhost`. De onde a conta da aplicação pode entrar no MySQL; num banco na nuvem use `%` |
 | `ADMIN_SENHA`, `DEMO_EMPREENDEDOR_SENHA` | só para o seed | O seed aborta se faltarem |
