@@ -20,6 +20,8 @@ registrada numa trilha de auditoria consultável só pela administração.
 | **Para quem** | Microempreendedores individuais ou informais de Rondonópolis e quem procura produtos e serviços perto de casa |
 | **ODS** | ODS 8 (Trabalho Decente e Crescimento Econômico), com relação aos ODS 1 e 10 |
 | **Site publicado** | https://vitrinerondon-1.onrender.com (API em https://vitrinerondon.onrender.com/api) |
+| **Documentação da API** | Swagger em https://vitrinerondon.onrender.com/api/docs (contrato OpenAPI em `/api/docs/openapi.json`); coleções do Postman em [docs/postman](docs/postman) e do Thunder Client em [docs/thunder-client](docs/thunder-client) |
+| **Código-fonte** | https://github.com/NSIX06/VitrineRondon |
 | **Pagamentos** | AbacatePay em **modo de testes**: nenhum cartão é cobrado |
 
 ## Sumário
