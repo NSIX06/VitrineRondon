@@ -20,7 +20,7 @@ registrada numa trilha de auditoria consultável só pela administração.
 | **Para quem** | Microempreendedores individuais ou informais de Rondonópolis e quem procura produtos e serviços perto de casa |
 | **ODS** | ODS 8 (Trabalho Decente e Crescimento Econômico), com relação aos ODS 1 e 10 |
 | **Site publicado** | https://vitrinerondon-1.onrender.com (API em https://vitrinerondon.onrender.com/api) |
-| **Documentação da API** | Swagger em https://vitrinerondon.onrender.com/api/docs (contrato OpenAPI em `/api/docs/openapi.json`); coleções do Postman em [docs/postman](docs/postman) e do Thunder Client em [docs/thunder-client](docs/thunder-client) |
+| **Documentação da API** | Página inicial em https://vitrinerondon.onrender.com, Swagger em https://vitrinerondon.onrender.com/api/docs (contrato OpenAPI em `/api/docs/openapi.yaml` e `/api/docs/openapi.json`); coleções do Postman em [docs/postman](docs/postman) e do Thunder Client em [docs/thunder-client](docs/thunder-client) |
 | **Código-fonte** | https://github.com/NSIX06/VitrineRondon |
 | **Pagamentos** | AbacatePay em **modo de testes**: nenhum cartão é cobrado |
 
@@ -958,8 +958,11 @@ régua **Aproximar**, de 100% a 300%, e o botão **Restaurar**. O valor é grava
 Base: `http://localhost:3001/api` (produção: `https://vitrinerondon.onrender.com/api`). Todas as
 respostas seguem o formato `{ success, message?, total?, data? }`.
 
-**Documentação interativa:** `http://localhost:3001/api/docs` (Swagger UI), com o contrato em OpenAPI
-3.0 em `/api/docs/openapi.json` para importar no Postman ou no Insomnia. Os corpos das requisições
+**Documentação:** aberta no navegador, a raiz da API (`http://localhost:3001`) mostra a página inicial
+da documentação: o que a API disponibiliza, primeiros passos no Postman ou no Bruno, alguns endpoints,
+exemplos de requisição e os códigos HTTP. A versão interativa fica em `http://localhost:3001/api/docs`
+(Swagger UI), e o contrato em OpenAPI 3.0 em `/api/docs/openapi.yaml` e `/api/docs/openapi.json`, para
+importar no Postman, no Bruno ou no Insomnia. Um cliente HTTP que chama a raiz continua recebendo JSON. Os corpos das requisições
 saem das próprias regras de validação (Zod), então a documentação não fica para trás quando uma
 regra muda.
 

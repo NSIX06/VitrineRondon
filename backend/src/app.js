@@ -6,6 +6,7 @@ import helmet from 'helmet';
 import routes from './routes/index.js';
 import webhookRoutes from './routes/webhookRoutes.js';
 import docsRoutes from './routes/docsRoutes.js';
+import { paginaInicial } from './docs/paginaInicial.js';
 import { autenticarOpcional } from './middlewares/auth.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { limitePadrao } from './middlewares/rateLimit.js';
@@ -130,10 +131,18 @@ app.use(
   })
 );
 
-// Quem abre o endereço do servidor no navegador cai aqui, e não num 404 seco.
-// Em desenvolvimento a mensagem aponta o site; em produção não cita endereço
-// nenhum, porque o site pode estar em outro domínio.
+// Quem abre o endereço do servidor no navegador recebe a página inicial da
+// documentação; um cliente HTTP (Accept sem text/html) continua recebendo
+// JSON. Em desenvolvimento a mensagem aponta o site; em produção não cita
+// endereço nenhum, porque o site pode estar em outro domínio.
+const CSP_PAGINA_INICIAL =
+  "default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'";
+
 app.get(['/', '/api'], (req, res) => {
+  if (req.accepts(['json', 'html']) === 'html') {
+    res.setHeader('Content-Security-Policy', CSP_PAGINA_INICIAL);
+    return res.type('html').send(paginaInicial());
+  }
   res.json({
     success: true,
     message: producao

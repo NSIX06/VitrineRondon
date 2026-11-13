@@ -1,6 +1,8 @@
 // Documentação da API: o contrato em OpenAPI e a tela do Swagger UI.
 //   GET /api/docs               tela interativa (Swagger UI)
 //   GET /api/docs/openapi.json  o contrato em JSON, para Postman, Insomnia etc.
+//   GET /api/docs/openapi.yaml  o mesmo contrato em YAML (Bruno, Swagger Editor)
+// A página inicial (raiz da API no navegador) usa inicio.css e inicio.js daqui.
 //
 // O resto da API só devolve JSON e tem a CSP fechada (default-src 'none').
 // Aqui a tela precisa de script, estilo e imagem, então a política é aberta só
@@ -9,6 +11,8 @@
 import express, { Router } from 'express';
 import { getAbsoluteFSPath } from 'swagger-ui-dist';
 import { especificacaoOpenApi } from '../docs/openapi.js';
+import { paraYaml } from '../docs/yaml.js';
+import { ESTILO_INICIO, SCRIPT_INICIO } from '../docs/paginaInicial.js';
 
 const router = Router();
 
@@ -59,6 +63,20 @@ router.get('/', (req, res) => {
 
 router.get('/openapi.json', (req, res) => {
   res.json(especificacaoOpenApi());
+});
+
+let yaml;
+router.get('/openapi.yaml', (req, res) => {
+  yaml ??= paraYaml(especificacaoOpenApi());
+  res.type('application/yaml').send(yaml);
+});
+
+router.get('/inicio.css', (req, res) => {
+  res.type('text/css').send(ESTILO_INICIO);
+});
+
+router.get('/inicio.js', (req, res) => {
+  res.type('application/javascript').send(SCRIPT_INICIO);
 });
 
 router.get('/iniciar.js', (req, res) => {

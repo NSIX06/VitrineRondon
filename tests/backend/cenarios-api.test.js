@@ -182,6 +182,33 @@ describe('cabeçalhos de segurança', () => {
     expect(csp).toContain("frame-ancestors 'none'")
   })
 
+  it('a raiz aberta no navegador mostra a página inicial da documentação, com CSP sem inline', async () => {
+    const resposta = await fetch(base.replace(/\/api$/, '/'), { headers: { Accept: 'text/html,*/*;q=0.8' } })
+    expect(resposta.headers.get('content-type')).toMatch(/text\/html/)
+    const csp = resposta.headers.get('content-security-policy')
+    expect(csp).toContain("script-src 'self'")
+    expect(csp).not.toContain('unsafe-inline')
+    const html = await resposta.text()
+    for (const secao of ['O que esta API disponibiliza?', 'Primeiros passos', 'Alguns endpoints', 'Exemplos de requisição', 'Entenda os códigos HTTP']) {
+      expect(html).toContain(secao)
+    }
+    expect(html).not.toMatch(/<script>|<style>|\son\w+="/)
+  })
+
+  it('a raiz pedida por um cliente HTTP continua respondendo JSON', async () => {
+    const resposta = await fetch(base)
+    expect(resposta.headers.get('content-type')).toMatch(/application\/json/)
+    expect((await resposta.json()).documentacao).toBe('/api/docs')
+  })
+
+  it('o contrato também sai em YAML, e o estilo e o script da página são servidos', async () => {
+    const yaml = await fetch(`${base}/docs/openapi.yaml`)
+    expect(yaml.headers.get('content-type')).toMatch(/yaml/)
+    expect((await yaml.text()).startsWith('openapi: "3.0.3"')).toBe(true)
+    expect((await fetch(`${base}/docs/inicio.css`)).status).toBe(200)
+    expect((await fetch(`${base}/docs/inicio.js`)).status).toBe(200)
+  })
+
   it('o contrato em JSON está publicado em /docs/openapi.json', async () => {
     const resposta = await fetch(`${base}/docs/openapi.json`)
     expect(resposta.status).toBe(200)

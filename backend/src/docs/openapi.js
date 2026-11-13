@@ -266,6 +266,72 @@ export const ENDPOINTS = [
 ];
 
 // ---------------------------------------------------------------------------
+// Grupos e exemplos (usados também pela página inicial da documentação)
+// ---------------------------------------------------------------------------
+
+/** O que cada grupo de endpoints disponibiliza */
+export const GRUPOS = {
+  'Saúde': 'Diz se a API, o banco e as integrações estão funcionando.',
+  Produtos: 'Os produtos e serviços da vitrine: listar, buscar, filtrar, cadastrar, editar e remover.',
+  Empreendedores: 'Os negócios publicados, com localização, horário de atendimento e catálogo.',
+  'Avaliações': 'Nota de 1 a 5 e comentário dos clientes, uma avaliação por conta, com moderação.',
+  Contatos: 'Mensagens enviadas à equipe pelo formulário do site.',
+  'Autenticação': 'Cadastro, login (e-mail e senha ou Google), sessão e recuperação de senha.',
+  Termos: 'Termos de Uso e Política de Privacidade vigentes.',
+  Auditoria: 'Trilha de auditoria das ações relevantes, só para a administração.',
+  Contas: 'Contas do sistema, com ativação e desativação pela administração.',
+  FAQ: 'Perguntas frequentes da central de ajuda.',
+  Imagens: 'Envio de fotos, convertidas para WebP no servidor.',
+  'Planos e assinaturas': 'Planos Essencial e Destaque e a assinatura do negócio, pelo AbacatePay em modo de testes.',
+  'Métricas': 'Visitas e cliques no WhatsApp, e o desempenho do negócio para o dono.',
+  'Divulgações': 'Divulgações nas redes oficiais registradas pela administração.',
+  Webhooks: 'Avisos do gateway de pagamento, com assinatura HMAC.',
+};
+
+/** Exemplos de requisição: "método caminho" -> { titulo, corpo, observacao? } */
+export const EXEMPLOS = {
+  'post /auth/login': {
+    titulo: 'Entrar',
+    corpo: { email: 'maria@ateliefioearte.com.br', senha: 'SuaSenha2026' },
+    observacao: 'O token devolvido vai no cabeçalho Authorization: Bearer <token> das rotas protegidas.',
+  },
+  'post /contatos': {
+    titulo: 'Enviar mensagem à equipe',
+    corpo: {
+      nome: 'Joana Souza',
+      email: 'joana@exemplo.com.br',
+      telefone: '(66) 99123-4567',
+      mensagem: 'Quero anunciar a minha banca de pastel.',
+    },
+  },
+  'post /produtos': {
+    titulo: 'Cadastrar produto',
+    corpo: { nome: 'Pão de mel', descricao: 'Recheado com doce de leite.', preco: 8.5, tipo: 'produto', empreendedorId: 2 },
+    observacao: 'Exige login de dono com plano em vigor. Troque o empreendedorId pelo do seu negócio (GET /empreendedores/meu).',
+  },
+  'put /produtos/{id}': {
+    titulo: 'Atualizar preço',
+    corpo: { preco: 9.9 },
+    observacao: 'Só os campos enviados mudam; os outros ficam como estavam.',
+  },
+  'post /empreendedores/{id}/avaliacoes': {
+    titulo: 'Avaliar um negócio',
+    corpo: { nota: 5, comentario: 'Atendimento rápido e o bolo chegou no horário.' },
+    observacao: 'Uma avaliação por conta. O dono não avalia o próprio negócio.',
+  },
+  'put /avaliacoes/{id}/moderacao': {
+    titulo: 'Remover avaliação (moderação)',
+    corpo: { acao: 'remover', motivo: 'Comentário com ofensa pessoal.' },
+    observacao: 'Para remover, o motivo é obrigatório; para restaurar, envie { "acao": "restaurar" }.',
+  },
+  'post /assinaturas': {
+    titulo: 'Assinar um plano',
+    corpo: { plano: 'ESSENCIAL' },
+    observacao: 'Planos: ESSENCIAL, DESTAQUE, ESSENCIAL_ANUAL e DESTAQUE_ANUAL (GET /planos). A resposta traz o link do checkout.',
+  },
+};
+
+// ---------------------------------------------------------------------------
 // Montagem do documento
 // ---------------------------------------------------------------------------
 
@@ -295,7 +361,14 @@ function operacao(metodo, caminho, opcoes) {
     responses: respostas,
   };
   if (opcoes.corpo) {
-    operacaoOpenApi.requestBody = { required: true, content: { 'application/json': { schema: corpoDe(opcoes.corpo) } } };
+    const exemplo = EXEMPLOS[`${metodo} ${caminho}`];
+    operacaoOpenApi.requestBody = {
+      required: true,
+      content: { 'application/json': { schema: corpoDe(opcoes.corpo), ...(exemplo ? { example: exemplo.corpo } : {}) } },
+    };
+    if (exemplo?.observacao) {
+      operacaoOpenApi.description = [operacaoOpenApi.description, exemplo.observacao].filter(Boolean).join('\n\n');
+    }
   } else if (opcoes.corpoBinario) {
     operacaoOpenApi.requestBody = {
       required: true,
@@ -333,8 +406,11 @@ export function especificacaoOpenApi() {
         'token JWT no cabeçalho `Authorization: Bearer <token>` e perfil conferido no banco a cada requisição.',
       ].join('\n'),
     },
-    servers: [{ url: '/api', description: 'Este servidor' }],
-    tags: [...new Set(ENDPOINTS.map(([, , o]) => o.tag))].map((name) => ({ name })),
+    servers: [
+      { url: '/api', description: 'Mesmo endereço desta documentação' },
+      { url: 'http://localhost:3001/api', description: 'Servidor local (npm run dev:backend)' },
+    ],
+    tags: [...new Set(ENDPOINTS.map(([, , o]) => o.tag))].map((name) => ({ name, description: GRUPOS[name] })),
     paths,
     components: {
       securitySchemes: {
