@@ -8,11 +8,15 @@
 // Aqui a tela precisa de script, estilo e imagem, então a política é aberta só
 // o necessário e só nestas rotas: tudo vem do próprio servidor, sem script
 // inline (a configuração do Swagger fica num arquivo próprio).
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import express, { Router } from 'express';
 import { getAbsoluteFSPath } from 'swagger-ui-dist';
 import { especificacaoOpenApi } from '../docs/openapi.js';
 import { paraYaml } from '../docs/yaml.js';
-import { ESTILO_INICIO, SCRIPT_INICIO } from '../docs/paginaInicial.js';
+import { SCRIPT_INICIO, cabecalhoDaMarca, rodapeDaMarca } from '../docs/paginaInicial.js';
+
+const PASTA_DOCS = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'docs');
 
 const router = Router();
 
@@ -39,11 +43,14 @@ const PAGINA = `<!doctype html>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>API do VitrineRondon</title>
+    <title>Swagger · API VitrineRondon</title>
     <link rel="stylesheet" href="/api/docs/swagger-ui.css">
+    <link rel="stylesheet" href="/api/docs/inicio.css">
   </head>
-  <body>
-    <div id="swagger-ui"></div>
+  <body class="swagger-pagina">
+    ${cabecalhoDaMarca({ status: false })}
+    <div id="swagger-ui" class="conteudo"></div>
+    ${rodapeDaMarca()}
     <script src="/api/docs/swagger-ui-bundle.js"></script>
     <script src="/api/docs/iniciar.js"></script>
   </body>
@@ -72,8 +79,11 @@ router.get('/openapi.yaml', (req, res) => {
 });
 
 router.get('/inicio.css', (req, res) => {
-  res.type('text/css').send(ESTILO_INICIO);
+  res.sendFile(path.join(PASTA_DOCS, 'inicio.css'), { maxAge: '1h' });
 });
+
+// Logo e fontes do site (cópias idênticas; os nomes das fontes trazem o hash)
+router.use('/arquivos', express.static(path.join(PASTA_DOCS, 'arquivos'), { index: false, maxAge: '30d' }));
 
 router.get('/inicio.js', (req, res) => {
   res.type('application/javascript').send(SCRIPT_INICIO);

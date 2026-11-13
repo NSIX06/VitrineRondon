@@ -6,6 +6,53 @@
 import { ENDPOINTS, EXEMPLOS, GRUPOS } from './openapi.js';
 
 const REPOSITORIO = 'https://github.com/NSIX06/VitrineRondon';
+const SITE = 'https://vitrinerondon-1.onrender.com';
+
+/**
+ * Topo igual ao do site (Navbar): serrilha, o desenho da vitrine, o traço
+ * inclinado e o nome em letreiro, "Rondon" em ouro com a estrelinha de brilho.
+ * Usado também na página do Swagger.
+ */
+export function cabecalhoDaMarca({ status = true } = {}) {
+  return `<header class="navbar">
+      <div class="serrilha" aria-hidden="true"></div>
+      <div class="conteudo navbar__conteudo">
+        <a class="navbar__marca" href="/" aria-label="VitrineRondon: documentação da API">
+          <img class="navbar__logo" src="/api/docs/arquivos/logo.svg" alt="" width="64" height="49">
+          <span class="navbar__divisor" aria-hidden="true"></span>
+          <span class="navbar__nome"><span class="letreiro">Vitrine</span><span class="letreiro letreiro--ouro letreiro--brilho">Rondon</span></span>
+          <span class="navbar__api">API</span>
+        </a>
+        ${status ? '<span class="status" id="status" role="status">Verificando API...</span>' : `<a class="navbar__voltar" href="/">Início da documentação</a>`}
+      </div>
+    </header>`;
+}
+
+/** Rodapé igual ao do site: serrilha, listras, hachuras e o nome em letreiro claro */
+export function rodapeDaMarca() {
+  return `<footer class="footer">
+      <div class="serrilha" aria-hidden="true"></div>
+      <div class="conteudo footer__colunas">
+        <div class="footer__coluna">
+          <span class="footer__marca"><span class="letreiro letreiro--claro">Vitrine</span><span class="letreiro letreiro--ouro">Rondon</span></span>
+          <p class="footer__texto">Uma vitrine digital para quem produz e trabalha perto de você. Projeto acadêmico, Rondonópolis-MT.</p>
+        </div>
+        <nav class="footer__coluna" aria-label="Links da documentação">
+          <span class="footer__titulo">Documentação</span>
+          <a href="/">Início</a>
+          <a href="/api/docs">Swagger</a>
+          <a href="/api/docs/openapi.yaml">OpenAPI (YAML)</a>
+          <a href="/api/docs/openapi.json">OpenAPI (JSON)</a>
+        </nav>
+        <nav class="footer__coluna" aria-label="Links do projeto">
+          <span class="footer__titulo">Projeto</span>
+          <a href="${SITE}">Site do VitrineRondon</a>
+          <a href="${REPOSITORIO}">Código-fonte no GitHub</a>
+          <a href="${REPOSITORIO}/tree/main/docs/postman">Coleção do Postman</a>
+        </nav>
+      </div>
+    </footer>`;
+}
 
 const escapar = (texto) =>
   String(texto).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -107,15 +154,10 @@ export function paginaInicial() {
     <link rel="stylesheet" href="/api/docs/inicio.css">
   </head>
   <body>
-    <header class="topo">
-      <div class="conteudo topo__linha">
-        <strong class="marca">API <span>VitrineRondon</span></strong>
-        <span class="status" id="status" role="status">Verificando API...</span>
-      </div>
-    </header>
+    ${cabecalhoDaMarca()}
 
-    <main class="conteudo">
-      <section class="heroi">
+    <section class="faixa faixa--anil heroi">
+      <div class="conteudo">
         <span class="rotulo">Desenvolvimento de Sistemas Distribuídos</span>
         <h1>API REST do VitrineRondon</h1>
         <p>
@@ -124,16 +166,19 @@ export function paginaInicial() {
           cliente HTTP: Postman, Bruno, Insomnia ou o próprio navegador.
         </p>
         <div class="acoes">
-          <a class="botao botao--ouro" href="/api/docs">Abrir documentação Swagger</a>
-          <a class="botao" href="/api/produtos">Testar GET /api/produtos</a>
-          <a class="botao" href="/api/docs/openapi.yaml">Ver arquivo OpenAPI</a>
+          <a class="botao botao--destaque" href="/api/docs">Abrir documentação Swagger</a>
+          <a class="botao botao--claro" href="/api/produtos">Testar GET /api/produtos</a>
+          <a class="botao botao--claro" href="/api/docs/openapi.yaml">Ver arquivo OpenAPI</a>
         </div>
         <p class="base">
           <strong>Base URL:</strong> <code>/api</code>
           · produção <code>https://vitrinerondon.onrender.com/api</code>
           · local <code>http://localhost:3001/api</code>
         </p>
-      </section>
+      </div>
+    </section>
+
+    <main class="conteudo">
 
       <section>
         <h2>O que esta API disponibiliza?</h2>
@@ -195,13 +240,7 @@ export function paginaInicial() {
       </aside>
     </main>
 
-    <footer class="rodape">
-      <div class="conteudo">
-        VitrineRondon • Projeto acadêmico • Rondonópolis-MT •
-        <a href="${REPOSITORIO}">Código-fonte no GitHub</a> •
-        <a href="/api/docs/openapi.json">OpenAPI (JSON)</a>
-      </div>
-    </footer>
+    ${rodapeDaMarca()}
     <script src="/api/docs/inicio.js"></script>
   </body>
 </html>`;
@@ -223,68 +262,4 @@ export const SCRIPT_INICIO = `(function () {
     });
 })();`;
 
-/** Estilo da página inicial, com as cores e o traço do VitrineRondon (DESIGN.md) */
-export const ESTILO_INICIO = `
-:root { --anil: #17346e; --anil-escuro: #0f2557; --ouro: #fbbf24; --ouro-claro: #fde68a; --tinta: #111827;
-  --cinza: #374151; --papel: #f8f6f0; --branco: #fff; --verde: #15803d; --lacre: #9b1c1c;
-  --titulo: 'Arial Black', 'Arial Bold', Arial, sans-serif; --texto: system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
-* { box-sizing: border-box; }
-body { margin: 0; background: var(--papel); color: var(--tinta); font: 500 16px/1.6 var(--texto); }
-a { color: var(--anil); font-weight: 700; text-underline-offset: 3px; }
-a:focus-visible, .botao:focus-visible { outline: 3px solid var(--ouro); outline-offset: 2px; }
-code { font-family: ui-monospace, Consolas, monospace; font-size: .9em; background: var(--branco); border: 1px solid #cfc8b4; border-radius: 4px; padding: 0 .3em; }
-.conteudo { max-width: 1040px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px); }
-.topo { background: var(--anil); border-bottom: 3px solid var(--tinta); }
-.topo__linha { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-block: 14px; }
-.marca { color: var(--branco); font: 900 18px var(--titulo); }
-.marca span { color: var(--ouro); }
-.status { font-size: 14px; font-weight: 700; padding: 4px 12px; border: 2px solid var(--tinta); border-radius: 999px; background: var(--ouro-claro); }
-.status--ok { background: #dcfce7; color: var(--verde); }
-.status--erro { background: #fff1ef; color: var(--lacre); }
-.heroi { padding: 40px 0 8px; }
-.rotulo { display: inline-block; background: var(--ouro); border: 2px solid var(--tinta); border-radius: 4px; box-shadow: 3px 3px 0 var(--tinta);
-  padding: 2px 10px; font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; transform: rotate(-1.5deg); }
-h1, h2, h3 { font-family: var(--titulo); color: var(--anil); line-height: 1.1; }
-h1 { font-size: clamp(30px, 5vw, 48px); margin: 18px 0 12px; }
-h2 { font-size: clamp(22px, 3vw, 28px); margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 3px solid var(--tinta); }
-h3 { font-size: 18px; margin: 0 0 6px; }
-.heroi p { max-width: 70ch; color: var(--cinza); }
-.acoes { display: flex; flex-wrap: wrap; gap: 12px; margin: 20px 0; }
-.botao { display: inline-flex; align-items: center; min-height: 44px; padding: 10px 18px; background: var(--branco); color: var(--anil);
-  border: 3px solid var(--tinta); border-radius: 8px; box-shadow: 4px 4px 0 var(--tinta); text-decoration: none; transition: transform .12s, box-shadow .12s; }
-.botao:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--tinta); }
-.botao--ouro { background: var(--ouro); color: var(--tinta); }
-.base { font-size: 15px; }
-.grade { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
-.cartao, .exemplo, .passos li { background: var(--branco); border: 3px solid var(--tinta); border-radius: 12px; box-shadow: 5px 5px 0 var(--tinta); padding: 16px; }
-.cartao p { margin: 0 0 8px; font-size: 15px; color: var(--cinza); }
-.cartao__total { font-size: 13px; font-weight: 800; color: var(--anil); }
-.passos { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; }
-.passos h3 { display: flex; align-items: center; gap: 8px; }
-.passos h3 span { display: inline-grid; place-items: center; width: 30px; height: 30px; background: var(--ouro); border: 2px solid var(--tinta); border-radius: 6px; color: var(--tinta); }
-.passos p { margin: 0; font-size: 15px; }
-.endpoints, .codigos { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
-.endpoints li, .codigos li { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; background: var(--branco); border: 2px solid var(--tinta); border-radius: 8px; padding: 8px 12px; }
-.endpoints li span:last-child { color: var(--cinza); font-size: 15px; }
-.metodo { display: inline-block; min-width: 68px; text-align: center; padding: 2px 8px; border: 2px solid var(--tinta); border-radius: 4px; font: 800 13px var(--texto); color: var(--branco); }
-.metodo--get { background: #1d4ed8; }
-.metodo--post { background: #15803d; }
-.metodo--put { background: #b45309; }
-.metodo--patch { background: #6d28d9; }
-.metodo--delete { background: var(--lacre); }
-.exemplo { margin-bottom: 20px; }
-.exemplo h3 { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
-pre { margin: 10px 0; padding: 14px; background: var(--anil-escuro); color: #f8fafc; border: 3px solid var(--tinta); border-radius: 8px; overflow-x: auto; }
-pre code { background: none; border: 0; padding: 0; color: inherit; font-size: 14px; }
-.codigo { display: inline-block; min-width: 230px; }
-.codigo--ok { color: var(--verde); }
-.codigo--cliente { color: #b45309; }
-.codigo--servidor { color: var(--lacre); }
-.nota { font-size: 14px; color: var(--cinza); margin: 6px 0 0; }
-.aviso { margin: 40px 0 0; padding: 16px 18px; background: var(--ouro-claro); border: 2px dashed var(--tinta); border-radius: 8px; }
-.aviso--dica { background: #e4ebfb; }
-.rodape { margin-top: 56px; padding: 20px 0; background: var(--anil); color: #dbe4ff; border-top: 3px solid var(--tinta); font-size: 14px; }
-.rodape a { color: var(--branco); }
-@media (max-width: 560px) { .codigo { min-width: 0; } .endpoints li code { word-break: break-all; } }
-@media (prefers-reduced-motion: reduce) { .botao { transition: none; } }
-`;
+/** Estilo da página inicial: o CSS fica em docs/inicio.css (as mesmas peças do site) */

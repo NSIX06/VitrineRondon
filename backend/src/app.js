@@ -136,7 +136,7 @@ app.use(
 // JSON. Em desenvolvimento a mensagem aponta o site; em produção não cita
 // endereço nenhum, porque o site pode estar em outro domínio.
 const CSP_PAGINA_INICIAL =
-  "default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'";
+  "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'";
 
 app.get(['/', '/api'], (req, res) => {
   if (req.accepts(['json', 'html']) === 'html') {

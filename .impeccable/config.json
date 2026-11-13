@@ -9,6 +9,15 @@
         "value": "consolas",
         "createdAt": "2026-11-13T16:25:06.814Z",
         "reason": "Claude: monoespaçada só em blocos de código/JSON da documentação da API (uso para código, não decorativo)"
+      },
+      {
+        "rule": "gradient-text",
+        "value": "*",
+        "files": [
+          "backend/src/docs/inicio.css"
+        ],
+        "createdAt": "2026-11-13T16:39:35.942Z",
+        "reason": "Claude: letreiro da marca, sancionado em DESIGN.md (A Regra do Letreiro) e igual ao frontend/src/index.css"
       }
     ]
   }
